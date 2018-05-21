@@ -1,0 +1,6 @@
+set(DIR ${CMAKE_CURRENT_SOURCE_DIR})
+
+set(UNIT_CONTROL_SRC
+  ${DIR}/scoped.cpp
+  PARENT_SCOPE
+)

@@ -1,0 +1,10 @@
+BasedOnStyle: LLVM
+AlwaysBreakTemplateDeclarations: true
+BreakBeforeBraces: Custom
+BraceWrapping:
+  AfterStruct: false
+  AfterClass: true
+BreakConstructorInitializers: AfterColon
+ConstructorInitializerAllOnOneLineOrOnePerLine: true
+FixNamespaceComments: true
+ReflowComments: true
