@@ -53,6 +53,9 @@ using at = tao::pegtl::at<Rules...>;
 template <typename... Rules>
 using not_at = tao::pegtl::not_at<Rules...>;
 
+template <typename Padding, typename First, typename... Rules>
+using delimited_seq = seq<First, seq<Padding, Rules>...>;
+
 template<auto Min, auto Max, typename... Rules>
 using rep_min_max = tao::pegtl::rep_min_max<Min, Max, Rules...>;
 
