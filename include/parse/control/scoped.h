@@ -1,23 +1,12 @@
 #ifndef LIBPARSE_CONTROL_SCOPED_H_
 #define LIBPARSE_CONTROL_SCOPED_H_
 
+#include "./base.h"
 #include "../internal/detected.h"
 
 #include <tao/pegtl/normal.hpp>
 
 namespace Parse {
-
-using tao::pegtl::apply_mode;
-using tao::pegtl::rewind_mode;
-
-template <class T>
-using member_state_t = typename T::state;
-
-template <class T, class Rule>
-using member_action_t = typename T::template action<Rule>;
-
-template<class T>
-using member_error_t = decltype(T::error());
 
 template <class Rule>
 struct scoped_control : public tao::pegtl::normal<Rule> {
