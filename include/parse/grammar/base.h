@@ -15,7 +15,7 @@ template <char... Chars>
 using istring = tao::pegtl::istring<Chars...>;
 
 template <char... Chars>
-using string = tao::pegtl::istring<Chars...>;
+using string = tao::pegtl::string<Chars...>;
 
 template <typename Rule>
 using nothing = tao::pegtl::nothing<Rule>;
@@ -41,8 +41,14 @@ using range = tao::pegtl::range<Lo, Hi>;
 template <char... String>
 using one = tao::pegtl::one<String...>;
 
+template <char... String>
+using two = tao::pegtl::two<String...>;
+
 template <typename... Rules>
 using must = tao::pegtl::must<Rules...>;
+
+template <typename... Rules>
+using if_must = tao::pegtl::if_must<Rules...>;
 
 template <typename Rule>
 using until = tao::pegtl::until<Rule>;
