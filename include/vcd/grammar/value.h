@@ -46,11 +46,9 @@ struct vector_value_change : sor<
   real_value_change
 > {};
 
-struct value_change : seq<
-  sor<
-    vector_value_change,
-    scalar_value_change
-  >
+struct value_change : sor<
+  vector_value_change,
+  scalar_value_change
 > {};
 
 // clang-format on
