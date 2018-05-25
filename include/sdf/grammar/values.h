@@ -1,25 +1,25 @@
-#ifndef LIBSDF_GRAMMAR_DATA_VALUES_H
-#define LIBSDF_GRAMMAR_DATA_VALUES_H
+#ifndef LIBSDF_GRAMMAR_VALUES_H
+#define LIBSDF_GRAMMAR_VALUES_H
 
-#include "parse/grammar/base.h"
-#include "./numbers.h"
+#include "base.h"
+#include "numbers.h"
 
 namespace SDF {
 namespace Grammar {
-
-using namespace Parse::Grammar::Base;
+// clang-format off
 
 template<class Rule, int N>
 struct triple_number : Rule {};
 
 template <class Number>
-struct define_triple : seq<
-  not_at<string<"::">, not_at<Number>>,
-  opt<triple_number<Number, 0>>,
-  one<':'>,
-  opt<triple_number<Number, 1>>,
-  one<':'>,
-  opt<triple_number<Number, 2>>
+struct define_triple : 
+  op_sep_must<
+    must<not_at<string<':',':'>, not_at<Number>>>,
+    opt<triple_number<opt<Number>, 0>>,
+    one<':'>,
+    opt<triple_number<opt<Number>, 1>>,
+    one<':'>,
+    opt<triple_number<opt<Number>, 2>>
 > {};
 
 struct triple : define_triple<real_number> {};
@@ -52,13 +52,17 @@ struct retval_list : seq<
   rep_min_max<0, 2, plus_blank, delval>
 > {};
 
+//TODO: Should actually be either 1, 2, 3, 4-6 or 7-12 delval.
+// if there is a way to know which case passed rather than have to 
+// post process to figure it out, this would be better, surely?
+// see LRM page 23.
 struct delval_list : seq<
   delval,
   rep_min_max<0, 11, plus_blank, delval>
 > {};
 
-}
-}
+// clang-format on
+} // namespace Grammar
+} // namespace SDF
 
-
-#endif //PARSE_CONSTANTS_H
+#endif // LIBSDF_GRAMMAR_DATA_VALUES_H

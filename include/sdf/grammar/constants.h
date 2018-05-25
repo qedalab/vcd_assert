@@ -1,12 +1,12 @@
 #ifndef LIBSDF_GRAMMAR_CONSTANTS_H
 #define LIBSDF_GRAMMAR_CONSTANTS_H
 
-#include "parse/grammar/base.h"
+#include "base.h"
 
 namespace SDF {
 namespace Grammar {
 
-using namespace Parse::Grammar::Base;
+// clang-format off
 
 struct scalar_constant_b_prefix : one<'b','B'> {};
 struct scalar_constant_1b_prefix : seq<one<'1'>, one<'b','B'>> {};
@@ -26,8 +26,9 @@ struct scalar_constant : sor<
   scalar_constant_1
 > {};
 
-}
-}
+// clang-format on
 
+} // namespace Grammar
+} // namespace SDF
 
-#endif //PARSE_CONSTANTS_H
+#endif // LIBSDF_GRAMMAR_CONSTANTS_H

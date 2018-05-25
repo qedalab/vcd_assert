@@ -1,29 +1,27 @@
 #ifndef LIBSDF_GRAMMAR_NUMBERS_H
 #define LIBSDF_GRAMMAR_NUMBERS_H
 
-#include "parse/grammar/base.h"
-#include "./base.h"
+#include "base.h"
 
 namespace SDF {
 namespace Grammar {
-
-using namespace Parse::Grammar::Base;
+// clang-format off
 
 struct integer : plus<decimal_digit> {};
 
-struct real_number : seq<
-  integer,
-  opt<one<'.'>, integer>,
-  opt<one<'e'>, opt<sign>, integer>
+struct real_number : must<
+  opt<integer>,
+  opt<seq<one<'.'>, integer>>,
+  opt<seq<one<'e'>, opt<sign>, integer>>
 > {};
 
-struct signed_real_number : seq<
+struct signed_real_number : must<
   opt<sign>,
   real_number
 > {};
 
-}
-}
+// clang-format on
+} // namespace Grammar
+} // namespace SDF
 
-
-#endif //PARSE_CONSTANTS_H
+#endif // PARSE_CONSTANTS_H

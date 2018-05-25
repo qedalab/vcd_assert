@@ -1,12 +1,11 @@
 #ifndef LIBSDF_GRAMMAR_OPERATORS_H
 #define LIBSDF_GRAMMAR_OPERATORS_H
 
-#include "parse/grammar/base.h"
+#include "base.h"
 
 namespace SDF {
 namespace Grammar {
-
-using namespace Parse::Grammar::Base;
+// clang-format off
 
 struct case_inequality : string<'!','=','='> {};
 struct case_equality : string<'=','=','='> {};
@@ -31,12 +30,12 @@ struct inversion_operator : sor<
 struct arithmetic_identity : one<'+'> {};
 struct arithmetic_negation : one<'-'> {};
 struct reduction_unary_and : one<'&'> {};
-struct reduction_unary_nand : string<'~&'> {};
+struct reduction_unary_nand : string<'~','&'> {};
 struct reduction_unary_or : one<'|'> {};
 struct reduction_unary_nor : string<'~','|'> {};
 struct reduction_unary_xor : one<'^'> {};
 struct reduction_unary_xnor : string<'^','~'> {};
-struct reduction_unary_xnor_alt : string<'~','^'>;
+struct reduction_unary_xnor_alt : string<'~','^'>{};
 
 struct unary_operator : sor<
   reduction_unary_xnor_alt,
@@ -92,7 +91,8 @@ struct binary_operator : sor<
   arithmetic_quotient
 > {};
 
-}
-}
+// clang-format on
+} // namespace Grammar
+} // namespace SDF
 
-#endif //PARSE_OPERATORS_H
+#endif // PARSE_OPERATORS_H
