@@ -45,9 +45,8 @@ struct comment_end : until<blank_end_command> {
   static constexpr auto error() { return "Unterminated comment command"; }
 };
 
-struct comment_command : seq<
+struct comment_command : delimited_seq<plus<blank>,
   comment_keyword,
-  plus<blank>,
   must<comment_end>
 > {};
 
@@ -72,33 +71,27 @@ struct date_end : until<blank_end_command> {
   static constexpr auto error() { return "Unterminated date command"; }
 };
 
-struct date_command : seq<
+struct date_command : delimited_seq<plus_blank,
   date_keyword,
-  plus<blank>,
   must<date_end>
 > {};
 
-struct end_definitions_command : seq<
+struct end_definitions_command : delimited_seq<plus_blank,
   end_definitions_keyword,
-  plus<blank>,
   must<end_command>
 > {};
 
-struct scope_command : seq<
+struct scope_command : delimited_seq<plus_blank,
   scope_keyword,
-  plus<blank>,
-  must<
+  delimited_must<plus_blank,
     scope_type,
-    plus<blank>,
     scope_identifier,
-    plus<blank>,
     end_command
   >
 > {};
 
-struct timescale_command : seq<
+struct timescale_command : delimited_seq<plus_blank,
   timescale_keyword,
-  plus<blank>,
   must<
     time_number,
     plus<blank>,
@@ -108,23 +101,19 @@ struct timescale_command : seq<
   >
 > {};
 
-struct upscope_command : seq<
+struct upscope_command : delimited_seq<plus_blank,
   upscope_keyword,
-  plus<blank>,
   must<end_command>
 > {};
 
-struct var_command : seq<
+struct var_command : delimited_seq<plus_blank,
   var_keyword,
-  plus<blank>,
-  must<
+  delimited_must<plus<blank>,
     var_type,
-    plus_blank,
     size,
-    plus_blank,
-    identifier_code,
-    reference,
-    plus_blank,
+    must<
+        identifier_code,
+        reference>,
     end_command
   >
 > {};
@@ -133,9 +122,8 @@ struct version_end: until<blank_end_command> {
   static constexpr auto error() { return "Unterminated version end"; }
 };
 
-struct version_command : seq<
+struct version_command : delimited_seq<plus_blank,
   version_keyword,
-  plus<blank>,
   until<end_command>
 > {};
 
