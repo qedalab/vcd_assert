@@ -53,7 +53,7 @@ struct value_change : sor<
 
 // clang-format on
 
-} // namespace Grammer
+} // namespace Grammar
 } // namespace VCD
 
-#endif // LIBVCD_GRAMMER_ENUMS_H_
+#endif // LIBVCD_GRAMMAR_ENUMS_H_

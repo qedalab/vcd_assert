@@ -8,7 +8,7 @@
 using namespace Parse::Grammar;
 using namespace Parse::Test;
 
-TEST_CASE("Parse.Grammar.Part","[Parse][Parse.Grammar][Parse.Grammer.Base]") {
+TEST_CASE("Parse.Grammar.Part","[Parse][Parse.Grammar][Parse.Grammar.Base]") {
 
   SECTION("Sign") {
     CHECK(match_exactly<sign>("+"));

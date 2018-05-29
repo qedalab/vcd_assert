@@ -1,5 +1,5 @@
-#ifndef LIBVCD_GRAMMER_ENUMS_SCOPE_TYPE_H_
-#define LIBVCD_GRAMMER_ENUMS_SCOPE_TYPE_H_
+#ifndef LIBVCD_GRAMMAR_ENUMS_SCOPE_TYPE_H_
+#define LIBVCD_GRAMMAR_ENUMS_SCOPE_TYPE_H_
 
 #include "../../enums.h"
 
@@ -45,7 +45,7 @@ struct scope_type : sor<
 
 // clang-format on
 
-} // namespace Grammer
+} // namespace Grammar
 } // namespace VCD
 
 #endif

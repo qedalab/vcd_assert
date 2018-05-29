@@ -1,5 +1,5 @@
-#ifndef LIBVCD_GRAMMER_H_
-#define LIBVCD_GRAMMER_H_
+#ifndef LIBVCD_GRAMMAR_H_
+#define LIBVCD_GRAMMAR_H_
 
 #include "./commands.h"
 #include "./enums/scope_type.h"
@@ -53,8 +53,8 @@ struct value_change_dump : seq<
 
 // clang-format on
 
-} // namespace Grammer
+} // namespace Grammar
 
 } // namespace VCD
 
-#endif // LIBSDF_GRAMMER_H_
+#endif // LIBSDF_GRAMMAR_H_

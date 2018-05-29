@@ -16,4 +16,4 @@ enum class TimescaleNumber {
 
 }
 
-#endif // LIBSDF_GRAMMER_H_
+#endif // LIBSDF_GRAMMAR_H_

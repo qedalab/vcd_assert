@@ -35,8 +35,8 @@ set_property(GLOBAL PROPERTY COMPILE_OPTIONS "${target_compile_options}")
 
 #Use src/CMakeLists.txt for building executable
 add_subdirectory(src)
-add_library(parse ${SRC})
-target_link_libraries(parse ${CONAN_LIBS})
+add_library(libvcd_assert ${SRC})
+target_link_libraries(libvcd_assert ${CONAN_LIBS})
 
 if(${BUILD_TESTS})
     enable_testing()

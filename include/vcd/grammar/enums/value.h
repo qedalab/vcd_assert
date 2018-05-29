@@ -1,5 +1,5 @@
-#ifndef LIBVCD_GRAMMER_ENUMS_VALUE_H_
-#define LIBVCD_GRAMMER_ENUMS_VALUE_H_
+#ifndef LIBVCD_GRAMMAR_ENUMS_VALUE_H_
+#define LIBVCD_GRAMMAR_ENUMS_VALUE_H_
 
 #include "../../enums.h"
 
@@ -35,7 +35,7 @@ struct value : sor<value_1, value_0, value_x, value_z> {
 
 // clang-format on
 
-} // namespace Grammer
+} // namespace Grammar
 } // namespace VCD
 
-#endif // LIBVCD_GRAMMER_ENUMS_H_
+#endif // LIBVCD_GRAMMAR_ENUMS_H_

@@ -6,7 +6,7 @@
 namespace Parse {
 namespace Internal {
 
-/// FROM LibFundementals v2
+/// FROM LibFundamentals v2
 struct nonesuch {
   nonesuch() = delete;
   ~nonesuch() = delete;

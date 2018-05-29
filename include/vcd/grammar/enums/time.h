@@ -1,5 +1,5 @@
-#ifndef LIBVCD_GRAMMER_ENUMS_TIME_H_
-#define LIBVCD_GRAMMER_ENUMS_TIME_H_
+#ifndef LIBVCD_GRAMMAR_ENUMS_TIME_H_
+#define LIBVCD_GRAMMAR_ENUMS_TIME_H_
 
 #include "../../enums.h"
 
@@ -53,7 +53,7 @@ struct time_number : seq<
 
 // clang-format on
 
-} // namespace Grammer
+} // namespace Grammar
 } // namespace VCD
 
 #endif

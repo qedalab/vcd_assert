@@ -130,7 +130,7 @@ struct version_command : delimited_seq<plus_blank,
 
 // clang-format on
 
-} // namespace Grammer
+} // namespace Grammar
 } // namespace VCD
 
-#endif // LIBVCD_GRAMMER_ENUMS_H_
+#endif // LIBVCD_GRAMMAR_ENUMS_H_

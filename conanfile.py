@@ -22,7 +22,7 @@ class LibParseConan(ConanFile):
     )
     requires = (
         "pegtl/2.5.1@bincrafters/stable",
-        "range-v3/0.3.0@ericniebler/stable",
+        "range-v3/0.3.6@ericniebler/stable",
     )
     generators = "cmake"
 
@@ -52,6 +52,6 @@ class LibParseConan(ConanFile):
         self.cpp_info.libs.append("parse")
 
     def build_requirements(self):
-        self.build_requires("fmt/4.0.0@bincrafters/stable")
+        self.build_requires("fmt/5.0.0@bincrafters/stable")
         if self.options.build_tests:
             self.build_requires("catch2/2.2.2@bincrafters/stable")

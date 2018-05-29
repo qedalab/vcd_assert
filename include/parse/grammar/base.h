@@ -1,5 +1,5 @@
-#ifndef PARSE_GRAMMER_BASE_H_
-#define PARSE_GRAMMER_BASE_H_
+#ifndef PARSE_grammar_BASE_H_
+#define PARSE_grammar_BASE_H_
 
 #include <tao/pegtl/ascii.hpp>
 #include <tao/pegtl/nothing.hpp>
@@ -82,7 +82,7 @@ using bol = tao::pegtl::bol;
 using printable_ascii = tao::pegtl::print;
 
 } // namespace Base
-} // namespace Grammer
+} // namespace Grammar
 } // namespace Parse
 
-#endif // PARSE_GRAMMER_BASE_H_
+#endif // PARSE_GRAMMAR_BASE_H_

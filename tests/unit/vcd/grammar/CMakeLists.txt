@@ -2,8 +2,8 @@ set(DIR ${CMAKE_CURRENT_SOURCE_DIR})
 
 add_subdirectory(enums)
 
-set(UNIT_GRAMMER_SRC
-  ${UNIT_VCD_GRAMMER_ENUMS_SRC}
+set(UNIT_GRAMMAR_SRC
+  ${UNIT_VCD_GRAMMAR_ENUMS_SRC}
   ${DIR}/commands.cpp
   ${DIR}/keywords.cpp
   ${DIR}/numbers.cpp

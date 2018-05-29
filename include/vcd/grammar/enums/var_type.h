@@ -1,5 +1,5 @@
-#ifndef LIBVCD_GRAMMER_ENUMS_VAR_TYPE_H_
-#define LIBVCD_GRAMMER_ENUMS_VAR_TYPE_H_
+#ifndef LIBVCD_GRAMMAR_ENUMS_VAR_TYPE_H_
+#define LIBVCD_GRAMMAR_ENUMS_VAR_TYPE_H_
 
 #include "../../enums.h"
 
@@ -95,7 +95,7 @@ struct var_type : sor<
 
 // clang-format on
 
-} // namespace Grammer
+} // namespace Grammar
 } // namespace VCD
 
 #endif
