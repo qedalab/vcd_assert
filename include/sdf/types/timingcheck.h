@@ -1,11 +1,9 @@
 #ifndef LIBSDF_TYPES_TIMINGCHECK_H_
 #define LIBSDF_TYPES_TIMINGCHECK_H_
 
-#include <type_traits>
-#include <variant>
-
-#include "delay.h"
-#include "values.h"
+#include <sdf/types/delayfile.h>
+#include <sdf/types/values.h>
+#include <sdf/types/variant.h>
 
 namespace SDF {
 namespace Types {

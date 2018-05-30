@@ -1,21 +1,33 @@
-#ifndef LIBSDF_TYPES_DESIGN_H_
-#define LIBSDF_TYPES_DESIGN_H_
+#ifndef LIBSDF_TYPES_DELAYFILE_H_
+#define LIBSDF_TYPES_DELAYFILE_H_
 
-#include "delay.h"
-#include "spec.h"
-#include "values.h"
+#include <sdf/types/timingdelay.h>
 #include <parse/grammar/base.h>
-#include <sdf/grammar/enums.h>
+#include <sdf/enums.h>
+#include <sdf/types/values.h>
+#include <sdf/types/variant.h>
 
 namespace SDF {
 namespace Types {
 
-//THIS FILE IS NOT SDF SPECIFIC. 
-// scope tree constructs should be moved to 'vcdasser'(exe)
-// But Cell and Delayfile should stay.
+// clang-format off
+using TimingSpecVariant = std::variant<
+  Delay,
+  TimingCheck,
+  // TimingEnv, //unimplemented
+  // Label      //unimplemented
+>;
+// clang-format on
+
+struct TimingSpec : public TimingSpecVariant {
+  using TimingSpecVariant::TimingSpecVariant;
+};
+
+using TimingSpecPtl = std::unique_ptr<TimingSpec>;
+
 struct Timescale;
 
-struct Cell{
+struct Cell {
   std::string name;
   std::string instance;
   std : vector<TimingSpec> te_specs;
@@ -37,9 +49,7 @@ struct DelayFile {
   std::vector<Cell> cells;
 };
 
-
-
 } // namespace Types
 } // namespace SDF
 
-#endif // LIBSDF_TYPES_DESIGN_H_
+#endif // LIBSDF_TYPES_DELAYFILE_H_

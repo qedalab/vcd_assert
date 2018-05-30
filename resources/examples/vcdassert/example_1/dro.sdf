@@ -16,33 +16,25 @@
         */
     (CELL
         (CELLTYPE "dro")
-        (INSTANCE *)
-        //(LABEL
-        //    (ABSOLUTE
-        //        (ct_state0_set_reset 10)
-        //        (ct_state0_reset_set 10)
-        //        (ct_state1_set_reset 10)
-        //    ) 
-        //)
-        
+        (INSTANCE DUT)        
         (DELAY
             (ABSOLUTE
-                (COND state 
                 /*Conditional delays not supported by iverilog */
+                (COND state == 1
                     (IOPATH reset out (55))
                 )
             )
         )
+        /* iVerilog does not support built-in timing checks (yet) */ 
         (TIMINGCHECK
-        /* iVerilog also does not support built-in timing checks (yet) */ 
-            (HOLD reset (COND !state (posedge set)) (55)) 
-            (HOLD reset (COND !state (negedge set)) (55)) 
+            (HOLD reset (COND not_state (posedge set)) (55)) 
+            (HOLD reset (COND not_state (negedge set)) (55)) 
 
             (HOLD reset (COND state (posedge set)) (25)) 
             (HOLD reset (COND state (negedge set)) (25)) 
             
-            (HOLD set (COND !state (posedge reset)) (25)) 
-            (HOLD set (COND !state (negedge reset)) (25)) 
+            (HOLD set (COND not_state (posedge reset)) (25)) 
+            (HOLD set (COND not_state (negedge reset)) (25)) 
         )
     )
 )

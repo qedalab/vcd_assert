@@ -1,3 +1,14 @@
-build
-.idea
 .gitignore
+*.o
+*.bin
+*.outs
+build*
+build*
+external
+*old*
+*extra*
+.idea
+.*
+match_all_exactly.cpp
+test.sdf
+empty.sdf

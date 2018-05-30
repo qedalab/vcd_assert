@@ -1,24 +1,24 @@
 #ifndef LIBSDF_TYPES_VARIANT_H_
 #define LIBSDF_TYPES_VARIANT_H_
 
-#include <type_traits>
+// #include <type_traits>
 
 namespace SDF {
 namespace Types {
 namespace Extra {
 
-template <typename T, typename... Args>
-struct is_one_of : std::disjunction<std::is_same<std::decay_t<T>, Args>...> {};
+// template <typename T, typename... Args>
+// struct is_one_of : std::disjunction<std::is_same<std::decay_t<T>, Args>...> {};
 
-template <typename... Args>
-struct visit_only_for {
-  // delete templated call operator
-  template <typename T>
-  std::enable_if_t<!is_one_of<T, Args...>{}> operator()(T &&) const = delete;
-};
+// template <typename... Args>
+// struct visit_only_for {
+//   // delete templated call operator
+//   template <typename T>
+//   std::enable_if_t<!is_one_of<T, Args...>{}> operator()(T &&) const = delete;
+// };
 
-template<class... Ts> struct overloaded : Ts... { using Ts::operator()...; };
-template<class... Ts> overloaded(Ts...) -> overloaded<Ts...>;
+// template<class... Ts> struct overloaded : Ts... { using Ts::operator()...; };
+// template<class... Ts> overloaded(Ts...) -> overloaded<Ts...>;
 
 
 // std::visit([](auto&& arg) {

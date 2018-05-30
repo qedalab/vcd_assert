@@ -21,7 +21,7 @@ class LibParseConan(ConanFile):
         "build_docs=False",
     )
     requires = (
-        "PEGTL/2.4.0@local/stable",
+    	"pegtl/2.5.1@bincrafters/stable",
         "range-v3/0.3.0@ericniebler/stable",
     )
     generators = "cmake"

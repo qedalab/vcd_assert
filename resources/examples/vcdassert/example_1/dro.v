@@ -10,7 +10,11 @@ module dro (set, reset, out);
 input set, reset;
 output out;
 reg out_state;
-integer state;
+integer state_state;
+wire state, not_state;
+
+assign state = state_state;
+assign not_state = !state_state;
 
 assign out = out_state;
 
@@ -20,21 +24,21 @@ specify
     specparam ct_state0_reset_set    = 2.5;
     specparam ct_state1_set_reset    = 2.5;
 
-    if (state ) (reset => out) = delay_state1_reset_out;
+    if (state == 1) (reset => out) = delay_state1_reset_out;
    
-    $hold(reset, posedge set &&& (state == 0) , ct_state0_set_reset);
-    $hold(reset, negedge set &&& (state == 0) , ct_state0_set_reset);
+    $hold( posedge set &&& not_state , reset  , ct_state0_set_reset);
+    $hold( negedge set &&& not_state , reset  , ct_state0_set_reset);
 
-    $hold(reset, posedge set &&& (state == 1) , ct_state1_set_reset);
-    $hold(reset, negedge set &&& (state == 1) , ct_state1_set_reset);
+    $hold( posedge set &&& state , reset , ct_state1_set_reset);
+    $hold( negedge set &&& state , reset , ct_state1_set_reset);
 
-    $hold(set, posedge reset &&& (state == 0) , ct_state0_reset_set);
-    $hold(set, negedge reset &&& (state == 0) , ct_state0_reset_set);
+    $hold( posedge reset &&& not_state , set , ct_state0_reset_set);
+    $hold( negedge reset &&& not_state , set , ct_state0_reset_set);
 
 endspecify
 
 initial begin
-    state = 0;
+    state_state = 0;
     out_state = 0;
 end
 
@@ -42,7 +46,7 @@ always @(posedge set or negedge set)
 begin if ($time>2)
     case (state)
         0: begin 
-            state = 1;
+            state_state = 1;
         end
     endcase
 end
@@ -51,13 +55,7 @@ always @(posedge reset or negedge reset)
 begin if ($time>2)
     case (state)
         1: begin 
-	    // Note output is before state change for output delay to kick in
-        if (out == 0)
-        begin
-            out_state =  1;
-        end
-        else
-            out_state = 0;
+            out_state = !out_state;
         end
     endcase
 end

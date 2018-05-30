@@ -15,7 +15,7 @@ module tb_dro;
 
          #10 set = !set;
          #10 set = !set;
-         #10 reset = !reset;
+         #2.4 reset = !reset; //should cause timing violation
          #10 reset = !reset;
       end
 
