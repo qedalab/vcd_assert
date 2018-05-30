@@ -1,0 +1,48 @@
+(DELAYFILE
+    (SDFVERSION "4.0")
+    (DESIGN "tb_dro")
+    (DATE "Tuesday MAy 29 10:37:33 GMT 2018")
+    (VENDOR "voldemort")        //This is fake btw.
+    (PROGRAM "TimeEx")          //The program that create this file
+    (VERSION "x.y.z")
+    (DIVIDER .)
+    (PROCESS "typical")         // For documentation purposes only.
+    (TEMPERATURE 1:2:4)         // For documentation purposes only.
+    (TIMESCALE 100fs) 
+    /* LRM allows 1, 10, 100, 1.0, 10.0, or 100.0 
+        followed by a unit : s, ms, us, ns, ps, or fs; 
+        But both simulators will round up based on first term used in
+        the `timescale command. 
+        */
+    (CELL
+        (CELLTYPE "dro")
+        (INSTANCE *)
+        //(LABEL
+        //    (ABSOLUTE
+        //        (ct_state0_set_reset 10)
+        //        (ct_state0_reset_set 10)
+        //        (ct_state1_set_reset 10)
+        //    ) 
+        //)
+        
+        (DELAY
+            (ABSOLUTE
+                (COND state 
+                /*Conditional delays not supported by iverilog */
+                    (IOPATH reset out (55))
+                )
+            )
+        )
+        (TIMINGCHECK
+        /* iVerilog also does not support built-in timing checks (yet) */ 
+            (HOLD reset (COND !state (posedge set)) (55)) 
+            (HOLD reset (COND !state (negedge set)) (55)) 
+
+            (HOLD reset (COND state (posedge set)) (25)) 
+            (HOLD reset (COND state (negedge set)) (25)) 
+            
+            (HOLD set (COND !state (posedge reset)) (25)) 
+            (HOLD set (COND !state (negedge reset)) (25)) 
+        )
+    )
+)
