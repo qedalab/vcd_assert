@@ -1,8 +1,7 @@
 #include "vcd/grammar/enums/value.h"
-#include "vcd/enums.h"
+#include "vcd/types/enums.hpp"
 
 #include "parse/test/match.h"
-#include "parse/test/error.h"
 
 #include <catch.hpp>
 

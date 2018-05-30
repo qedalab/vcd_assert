@@ -1,7 +1,7 @@
 #ifndef LIBVCD_GRAMMAR_ENUMS_VALUE_H_
 #define LIBVCD_GRAMMAR_ENUMS_VALUE_H_
 
-#include "../../enums.h"
+#include "../../types/enums.hpp"
 
 #include <parse/grammar/base.h>
 

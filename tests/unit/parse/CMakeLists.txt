@@ -4,6 +4,7 @@ add_subdirectory(control)
 add_subdirectory(grammar)
 add_subdirectory(input)
 add_subdirectory(internal)
+add_subdirectory(util)
 add_subdirectory(test)
 
 add_executable(unit_parse
@@ -12,6 +13,7 @@ add_executable(unit_parse
   ${UNIT_INPUT_SRC}
   ${UNIT_INTERNAL_SRC}
   ${UNIT_TEST_SRC}
+  ${UNIT_UTIL_SRC}
   ../unit_main.cpp
 )
 

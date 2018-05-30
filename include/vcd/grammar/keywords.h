@@ -1,7 +1,7 @@
 #ifndef LIBVCD_GRAMMAR_KEYWORDS_H_
 #define LIBVCD_GRAMMAR_KEYWORDS_H_
 
-#include "../enums.h"
+#include "../types/enums.hpp"
 #include "parse/grammar/base.h"
 
 namespace VCD {

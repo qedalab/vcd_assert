@@ -1,6 +1,5 @@
-#ifndef LIBVCD_ENUMS_H_
-#define LIBVCD_ENUMS_H_
-
+#ifndef LIBVCD_ENUMS_HPP
+#define LIBVCD_ENUMS_HPP
 
 namespace VCD {
 
@@ -21,6 +20,6 @@ enum class Value {
   zero, one, x, z
 };
 
-}
+} // namespace VCD
 
-#endif // LIBSDF_GRAMMAR_H_
+#endif // LIBVCD_ENUMS_HPP
