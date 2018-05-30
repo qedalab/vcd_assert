@@ -13,15 +13,43 @@ enum class TimescaleNumber {
   _1, _10, _100
 };
 
-}
+enum class TimingSpecType {
+  delay,
+  timingCheck,
+  timingEnv,
+  label
+};
 
-enum class CellType{
-  Delay, TimingCheck, TimingEnv, Label
-} 
+enum class TimingCheckType {
+  setup,
+  hold,
+  setuphold,
+  recovery,
+  removal,
+  recrem,
+  skew,
+  bidirectskew,
+  width,
+  period,
+  nochange
+};
 
-enum class TimingCheckType{
-  setup, hold, setuphold, recovery, removal, recrem, skew, bidirectskew, width, period, nochange
-}
+enum class DataType {
+  value,
+  triple,
+  rvalue,
+  rtiple,
+  delval,
+  delval_list,
+  retval
+};
+
+enum class DelayType{
+  iopath,
+  interconnects
+};
 
 
-#endif // LIBSDF_GRAMMER_H_
+} // namespace SDF
+
+#endif // LIBSDF_ENUMS_H_
