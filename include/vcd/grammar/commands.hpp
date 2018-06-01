@@ -1,20 +1,19 @@
-#ifndef LIBVCD_GRAMMAR_COMMANDS_H_
-#define LIBVCD_GRAMMAR_COMMANDS_H_
+#ifndef LIBVCD_GRAMMAR_COMMANDS_HPP
+#define LIBVCD_GRAMMAR_COMMANDS_HPP
 
 #include "../types/enums.hpp"
 
 #include <parse/grammar/base.h>
 #include <parse/grammar/part.h>
 
-#include "./keywords.h"
-#include "./enums/scope_type.h"
-#include "./enums/time.h"
-#include "./enums/var_type.h"
-#include "./base.h"
-#include "./value.h"
+#include "./keywords.hpp"
+#include "./enums/scope_type.hpp"
+#include "./enums/time.hpp"
+#include "./enums/var_type.hpp"
+#include "./base.hpp"
+#include "./value.hpp"
 
-namespace VCD {
-namespace Grammar {
+namespace VCD::Grammar {
 
 using namespace Parse::Grammar::Base;
 
@@ -130,7 +129,6 @@ struct version_command : delimited_seq<plus_blank,
 
 // clang-format on
 
-} // namespace Grammar
-} // namespace VCD
+} // namespace VCD::Grammar
 
-#endif // LIBVCD_GRAMMAR_ENUMS_H_
+#endif // LIBVCD_GRAMMAR_COMMANDS_HPP

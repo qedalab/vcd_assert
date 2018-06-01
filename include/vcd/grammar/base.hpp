@@ -1,14 +1,13 @@
-#ifndef LIBVCD_GRAMMAR_BASE_H
-#define LIBVCD_GRAMMAR_BASE_H
+#ifndef LIBVCD_GRAMMAR_BASE_HPP
+#define LIBVCD_GRAMMAR_BASE_HPP
 
 #include "parse/grammar/base.h"
 #include "parse/grammar/part.h"
 
-#include "./enums/value.h"
-#include "./keywords.h"
+#include "./enums/value.hpp"
+#include "./keywords.hpp"
 
-namespace VCD {
-namespace Grammar {
+namespace VCD::Grammar {
 
 using namespace Parse::Grammar::Base;
 
@@ -52,7 +51,6 @@ struct identifier : sor<
   simple_identifier
 > {};
 
-}
-}
+} // namespace VCD::Grammar
 
-#endif // VCD_GRAMMAR_BASE_H
+#endif // LIBVCD_GRAMMAR_BASE_HPP

@@ -1,4 +1,4 @@
-#include "vcd/grammar/commands.h"
+#include "vcd/grammar/commands.hpp"
 
 #include "parse/test/match.h"
 

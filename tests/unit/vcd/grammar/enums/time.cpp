@@ -1,4 +1,4 @@
-#include "vcd/grammar/enums/time.h"
+#include "vcd/grammar/enums/time.hpp"
 #include "vcd/types/enums.hpp"
 
 #include "parse/test/match.h"

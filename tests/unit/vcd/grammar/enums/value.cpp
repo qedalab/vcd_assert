@@ -1,4 +1,4 @@
-#include "vcd/grammar/enums/value.h"
+#include "vcd/grammar/enums/value.hpp"
 #include "vcd/types/enums.hpp"
 
 #include "parse/test/match.h"

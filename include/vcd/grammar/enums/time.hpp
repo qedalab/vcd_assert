@@ -1,12 +1,11 @@
-#ifndef LIBVCD_GRAMMAR_ENUMS_TIME_H_
-#define LIBVCD_GRAMMAR_ENUMS_TIME_H_
+#ifndef LIBVCD_GRAMMAR_ENUMS_TIME_HPP
+#define LIBVCD_GRAMMAR_ENUMS_TIME_HPP
 
 #include "../../types/enums.hpp"
 
 #include <parse/grammar/base.h>
 
-namespace VCD {
-namespace Grammar {
+namespace VCD::Grammar {
 
 using namespace Parse::Grammar::Base;
 
@@ -53,7 +52,6 @@ struct time_number : seq<
 
 // clang-format on
 
-} // namespace Grammar
-} // namespace VCD
+} // namespace VCD::Grammar
 
-#endif
+#endif // LIBVCD_GRAMMAR_ENUMS_TIME_HPP

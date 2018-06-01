@@ -1,4 +1,4 @@
-#include "vcd/grammar/enums/scope_type.h"
+#include "vcd/grammar/enums/scope_type.hpp"
 #include "vcd/types/enums.hpp"
 
 #include "parse/test/match.h"

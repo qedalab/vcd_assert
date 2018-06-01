@@ -1,24 +1,22 @@
-#ifndef LIBVCD_GRAMMAR_H_
-#define LIBVCD_GRAMMAR_H_
+#ifndef LIBVCD_GRAMMAR_GRAMMAR_HPP
+#define LIBVCD_GRAMMAR_GRAMMAR_HPP
 
-#include "./commands.h"
-#include "./enums/scope_type.h"
-#include "./enums/time.h"
-#include "./enums/value.h"
-#include "./enums/var_type.h"
-#include "./keywords.h"
-#include "./value.h"
-#include "./base.h"
+#include "./commands.hpp"
+#include "./enums/scope_type.hpp"
+#include "./enums/time.hpp"
+#include "./enums/value.hpp"
+#include "./enums/var_type.hpp"
+#include "./keywords.hpp"
+#include "./value.hpp"
+#include "./base.hpp"
 
 #include <parse/grammar/base.h>
 
-namespace VCD {
+namespace VCD::Grammar {
 
-namespace Grammar {
 using namespace Parse::Grammar;
 
 // clang-format off
-
 
 struct simulation_time : seq<one<'#'>, decimal_number, command_separator> {};
 
@@ -53,8 +51,6 @@ struct value_change_dump : seq<
 
 // clang-format on
 
-} // namespace Grammar
+} // namespace VCD::Grammar
 
-} // namespace VCD
-
-#endif // LIBSDF_GRAMMAR_H_
+#endif // LIBVCD_GRAMMAR_GRAMMAR_HPP
