@@ -27,7 +27,7 @@ struct debug_control : public tao::pegtl::normal<Rule> {
   }
 
   template <apply_mode A, rewind_mode M, template <typename...> class Action,
-      template <typename...> class Control, typename Input,
+      template <typename...> class [[maybe_unused]] Control, typename Input,
       typename... States>
   static bool match(Input &in, States &&... states) {
     auto position = in.position();

@@ -6,8 +6,8 @@
 namespace VCD {
 
 class TimeScale {
-  TimeUnit unit_;
   int number_;
+  TimeUnit unit_;
 
 public:
   constexpr TimeScale(int number, TimeUnit unit) :

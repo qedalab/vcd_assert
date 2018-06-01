@@ -5,11 +5,12 @@
 #include "./enums.hpp"
 
 #include <vector>
+#include <memory>
 
 namespace VCD {
 
 class VCDHeaderFactory {
-  VCDHeader *header_;
+  std::unique_ptr<VCDHeader> header_;
 
   std::vector<std::size_t> scope_stack_;
 public:

@@ -24,7 +24,7 @@ class LibParseConan(ConanFile):
         "pegtl/2.5.1@bincrafters/stable",
         "range-v3/0.3.6@ericniebler/stable",
     )
-    generators = "cmake"
+    generators = "cmake_paths"
 
     def build(self):
         cmake = CMake(self)

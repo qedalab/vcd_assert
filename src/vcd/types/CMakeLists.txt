@@ -1,9 +1,8 @@
-set(DIR ${CMAKE_CURRENT_SOURCE_DIR})
+set(DIR ${CMAKE_CURRENT_LIST_DIR})
 
-set(TYPES_SRC
+target_sources(libvcd PRIVATE
   ${DIR}/factory.cpp
   ${DIR}/header.cpp
   ${DIR}/scope.cpp
   ${DIR}/variable.cpp
-  PARENT_SCOPE
   )

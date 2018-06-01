@@ -39,6 +39,9 @@ public:
   VCDScope &get_root_scope();
 
   std::size_t get_reference_index(std::string reference);
+
+  std::size_t num_scopes();
+  std::size_t num_variables();
 };
 
 } // namespace VCD

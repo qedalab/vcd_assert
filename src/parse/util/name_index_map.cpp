@@ -33,7 +33,6 @@ auto NameIndexMap::num_elements() noexcept -> index_t
 
 auto NameIndexMap::add_name(std::string name) -> index_t
 {
-  auto it = index_lookup_.find(name);
   if(auto it = index_lookup_.find(name); it != index_lookup_.end()) {
     return it->second;
   }

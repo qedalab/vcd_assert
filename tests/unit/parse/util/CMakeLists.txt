@@ -1,6 +1,5 @@
 set(DIR ${CMAKE_CURRENT_SOURCE_DIR})
 
-set(UNIT_UTIL_SRC
+target_sources(unit_parse PRIVATE
   ${DIR}/name_index_map.cpp
-  PARENT_SCOPE
-)
+  )
