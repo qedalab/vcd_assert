@@ -20,17 +20,17 @@ class VCDHeader {
 
   Parse::NameIndexMap reference_lookup_;
   std::vector<VCDVariable> variables_;
-  std::vector<VCDScope> scope_;
+  std::vector<VCDScope> scopes_;
 
   friend class VCDHeaderSerialFactory;
 public:
   std::optional<TimeScale> get_time_scale();
   bool has_time_scale();
 
-  std::optional<std::string> get_date();
+  std::optional<std::string_view> get_date();
   bool has_date();
 
-  std::optional<std::string> get_version();
+  std::optional<std::string_view> get_version();
   bool has_version();
 
   VCDVariable &get_variable(std::size_t index);
@@ -38,7 +38,8 @@ public:
   VCDScope &get_scope(std::size_t index);
   VCDScope &get_root_scope();
 
-  std::size_t get_reference_index(std::string reference);
+  std::size_t get_reference_index(std::string &reference);
+  bool has_reference(std::string &reference);
 
   std::size_t num_scopes();
   std::size_t num_variables();

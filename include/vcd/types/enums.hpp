@@ -7,6 +7,10 @@ enum class ScopeType {
   begin, fork, function, module, task
 };
 
+enum class TimeNumber {
+  _1, _10, _100
+};
+
 enum class TimeUnit {
   s, ms, us, ns, ps, fs
 };

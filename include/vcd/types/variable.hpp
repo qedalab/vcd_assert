@@ -8,16 +8,19 @@
 namespace VCD {
 
 class VCDVariable {
+  VarType type_;
+  std::size_t size_;
   std::string name_;
   std::string reference_;
-  VarType type_;
 
 public:
-  VCDVariable(std::string name, VarType type);
+  VCDVariable(VarType type, std::size_t size,
+              std::string name, std::string reference);
 
+  VarType get_type();
+  std::size_t get_size();
   std::string_view get_name();
   std::string_view get_reference();
-  VarType get_type();
 };
 
 } // namespace

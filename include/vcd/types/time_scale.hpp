@@ -6,11 +6,11 @@
 namespace VCD {
 
 class TimeScale {
-  int number_;
+  TimeNumber number_;
   TimeUnit unit_;
 
 public:
-  constexpr TimeScale(int number, TimeUnit unit) :
+  constexpr TimeScale(TimeNumber number, TimeUnit unit) :
       number_(number), unit_(unit) {}
 
   constexpr TimeUnit get_unit()
@@ -18,7 +18,7 @@ public:
     return unit_;
   }
 
-  constexpr int get_number()
+  constexpr TimeNumber get_number()
   {
     return number_;
   }

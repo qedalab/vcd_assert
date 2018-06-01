@@ -16,10 +16,10 @@ class VCDHeaderFactory {
 public:
   void scope(ScopeType type, std::string name);
   void upscope();
-  void var(VarType type, std::string name, std::string reference);
+  void var(VarType type, std::size_t size, std::string name, std::string reference);
   void version(std::string version_string);
   void date(std::string date_string);
-  void timescale(int number, TimeUnit unit);
+  void timescale(TimeNumber number, TimeUnit unit);
 };
 
 }

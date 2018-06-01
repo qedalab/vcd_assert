@@ -9,12 +9,13 @@
 namespace VCD {
 
 class VCDScope {
+  ScopeType type_;
   std::string name_;
-  ScopeType type;
 
   std::unordered_map<std::string, std::size_t> child_scopes_;
   std::unordered_map<std::string, std::size_t> child_variables_;
 public:
+  VCDScope(ScopeType type, std::string name);
 
   bool contains_variable(std::string &name);
   std::size_t get_variable_index(std::string &name);
