@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 3.1)
+cmake_minimum_required (VERSION 3.2)
 project (Parse)
 
 #Options
@@ -6,39 +6,35 @@ option(BUILD_TESTS "Build tests" FALSE)
 option(BUILD_DOCS "Build documentation [unused]" FALSE)
 
 #Include dependencies
-include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
-conan_basic_setup()
-
-#Compiler flag helper
-#include("./external/sugar/cmake/Sugar")
-#include(sugar_generate_warning_flags)
-
-#Add include directory
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include/)
-
-
-link_directories(${CONAN_LIB_DIRS})
-include_directories(${CONAN_INCLUDE_DIRS})
+find_package(pegtl REQUIRED)
+find_package(range-v3 0.3.6 REQUIRED)
 
 #Ensure C++17
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-#All warnings, Always
-#sugar_generate_warning_flags(
-#        target_compile_options
-#        target_properties
-#        ENABLE ALL
-#)
+#Add libparse library
+add_library(libparse "src/parse")
+target_include_directories(libparse PUBLIC "${PROJECT_SOURCE_DIR}/include/")
+target_link_libraries(libparse range-v3 taocpp::pegtl)
 
-set_property(GLOBAL PROPERTY COMPILE_OPTIONS "${target_compile_options}")
+#Add libvcd library
+add_library(libvcd "src/vcd")
+target_include_directories(libvcd PUBLIC "${PROJECT_SOURCE_DIR}/include/")
+target_link_libraries(libvcd PUBLIC libparse)
 
-#Use src/CMakeLists.txt for building executable
+#Enable warnings
+if ( CMAKE_COMPILER_IS_GNUCC )
+  set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Wall")
+endif()
+if ( MSVC )
+  set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} /W4")
+endif()
+
 add_subdirectory(src)
-add_library(parse ${SRC})
-target_link_libraries(parse ${CONAN_LIBS})
 
 if(${BUILD_TESTS})
-    enable_testing()
-    add_subdirectory(tests)
+  find_package(Catch2 2.2.2 REQUIRED)
+  enable_testing()
+  add_subdirectory(tests)
 endif()

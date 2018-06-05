@@ -15,7 +15,7 @@ constexpr char json_example[] =
     "  \"cars\":[ \"Ford\", \"BMW\", \"Fiat\" ]\n"
     "}";
 
-namespace json_grammer = tao::pegtl::json;
+namespace json_grammar = tao::pegtl::json;
 
 struct JSONValue;
 using JSONValuePtr = std::unique_ptr<JSONValue>;
@@ -45,7 +45,7 @@ struct JSONValue : public JSONValueVariant
 };
 
 template<>
-struct JSONActions<json_grammer::string_content> {
+struct JSONActions<json_grammar::string_content> {
     using state = JSONString;
     template<class Rule> using action = JSONActions<Rule>;
 
@@ -59,11 +59,11 @@ struct JSONActions<json_grammer::string_content> {
 };
 
 template<>
-struct JSONActions<json_grammer::key_content> :
-        public JSONActions<json_grammer::string_content> {};
+struct JSONActions<json_grammar::key_content> :
+        public JSONActions<json_grammar::string_content> {};
 
 template<>
-struct JSONActions<json_grammer::number> {
+struct JSONActions<json_grammar::number> {
     using state = JSONNumber;
     template<class Rule> using action = JSONActions<Rule>;
 
@@ -75,7 +75,7 @@ struct JSONActions<json_grammer::number> {
 };
 
 template<>
-struct JSONActions<json_grammer::array_content> {
+struct JSONActions<json_grammar::array_content> {
     using state = JSONArray;
     template<class Rule> using action = JSONActions<Rule>;
 
@@ -91,7 +91,7 @@ struct JSONActions<JSONArray> {
 };
 
 template<>
-struct JSONActions<json_grammer::value> {
+struct JSONActions<json_grammar::value> {
     using state = JSONValuePtr;
     template<class Rule> using action = JSONActions<Rule>;
 
@@ -120,7 +120,7 @@ struct JSONActions<JSONValuePtr> {
 };
 
 template<>
-struct JSONActions<json_grammer::true_> {
+struct JSONActions<json_grammar::true_> {
     using state = JSONBool;
     template<class Rule> using action = JSONActions<Rule>;
 
@@ -130,7 +130,7 @@ struct JSONActions<json_grammer::true_> {
 };
 
 template<>
-struct JSONActions<json_grammer::false_> {
+struct JSONActions<json_grammar::false_> {
     using state = JSONBool;
     template<class Rule> using action = JSONActions<Rule>;
 
@@ -140,7 +140,7 @@ struct JSONActions<json_grammer::false_> {
 };
 
 template<>
-struct JSONActions<json_grammer::object_content> {
+struct JSONActions<json_grammar::object_content> {
     using state = JSONObject;
     template<class Rule> using action = JSONActions<Rule>;
 
@@ -157,7 +157,7 @@ struct JSONActions<JSONObject> {
 };
 
 template<>
-struct JSONActions<json_grammer::member> {
+struct JSONActions<json_grammar::member> {
     using state = JSONObjectKeyPair;
     template<class Rule> using action = JSONActions<Rule>;
 
@@ -200,7 +200,7 @@ TEST_CASE("Parse.ScopedControl") {
         tao::pegtl::memory_input<> input(std::begin(json_example),
                                          std::end(json_example), "json_example");
 
-        bool success = tao::pegtl::parse<json_grammer::text, JSONActions,
+        bool success = tao::pegtl::parse<json_grammar::text, JSONActions,
                 scoped_control>(input, json);
 
         REQUIRE(success);

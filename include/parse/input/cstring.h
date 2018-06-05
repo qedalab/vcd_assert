@@ -11,7 +11,7 @@ struct CStringInput {
   size_t size_;
 
 public:
-  CStringInput(const char *str);
+  explicit CStringInput(const char *str);
 
   const char *data() const noexcept;
   size_t size() const noexcept;

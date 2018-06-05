@@ -1,11 +1,10 @@
-#ifndef LIBVCD_GRAMMAR_KEYWORDS_H_
-#define LIBVCD_GRAMMAR_KEYWORDS_H_
+#ifndef LIBVCD_GRAMMAR_KEYWORDS_HPP
+#define LIBVCD_GRAMMAR_KEYWORDS_HPP
 
-#include "../enums.h"
+#include "../types/enums.hpp"
 #include "parse/grammar/base.h"
 
-namespace VCD {
-namespace Grammar {
+namespace VCD::Grammar {
 
 using namespace Parse::Grammar::Base;
 
@@ -35,7 +34,6 @@ struct simulation_command_keyword : sor<
 
 // clang-format on
 
-} // namespace Grammer
-} // namespace VCD
+} // namespace VCD::Grammar
 
-#endif // LIBVCD_GRAMMER_ENUMS_H_
+#endif // LIBVCD_GRAMMAR_KEYWORDS_HPP

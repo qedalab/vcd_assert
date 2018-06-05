@@ -1,7 +1,3 @@
-//
-// Created by xonar on 2018/05/24.
-//
-
 #ifndef PARSE_TEST_DEBUG_CONTROL_H
 #define PARSE_TEST_DEBUG_CONTROL_H
 

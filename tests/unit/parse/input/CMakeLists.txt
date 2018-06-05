@@ -1,8 +1,7 @@
-set(DIR ${CMAKE_CURRENT_SOURCE_DIR})
+set(DIR ${CMAKE_CURRENT_LIST_DIR})
 
-set(UNIT_INPUT_SRC
+target_sources(unit_parse PRIVATE
   ${DIR}/file.cpp
   ${DIR}/cstring.cpp
   ${DIR}/memory.cpp
-  PARENT_SCOPE
-)
+  )

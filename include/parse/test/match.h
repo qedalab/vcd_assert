@@ -23,7 +23,7 @@ bool match_exactly(const std::string_view str) {
 
 template<class Rule, class Enum>
 bool match_value_exactly(const std::string_view str, Enum value) {
-  Enum state = static_cast<Enum>(0);
+  auto state = static_cast<Enum>(0);
   if(state == value) state = static_cast<Enum>(1);
 
   tao::pegtl::memory_input<> input(str.begin(), str.end(), "match_value_exactly");

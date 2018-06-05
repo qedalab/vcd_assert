@@ -1,14 +1,13 @@
-#ifndef LIBVCD_GRAMMAR_NUMBERS_H
-#define LIBVCD_GRAMMAR_NUMBERS_H
+#ifndef LIBVCD_GRAMMAR_NUMBERS_HPP
+#define LIBVCD_GRAMMAR_NUMBERS_HPP
 
 #include "parse/grammar/base.h"
 #include "parse/grammar/part.h"
 
-#include "./enums/value.h"
-#include "./keywords.h"
+#include "./enums/value.hpp"
+#include "./keywords.hpp"
 
-namespace VCD {
-namespace Grammar {
+namespace VCD::Grammar {
 
 using namespace Parse::Grammar::Base;
 
@@ -97,7 +96,6 @@ struct real_number : seq<
   >
 > {};
 
-}
-}
+} // namespace VCD::Grammar
 
-#endif // VCD_GRAMMAR_BASE_H
+#endif // LIBVCD_GRAMMAR_NUMBERS_HPP

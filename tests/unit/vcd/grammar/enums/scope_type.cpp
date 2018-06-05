@@ -1,8 +1,7 @@
-#include "vcd/grammar/enums/scope_type.h"
-#include "vcd/enums.h"
+#include "vcd/grammar/enums/scope_type.hpp"
+#include "vcd/types/enums.hpp"
 
 #include "parse/test/match.h"
-#include "parse/test/error.h"
 
 #include <catch.hpp>
 

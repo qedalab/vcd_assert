@@ -1,14 +1,13 @@
-#ifndef LIBVCD_GRAMMAR_VALUE_H_
-#define LIBVCD_GRAMMAR_VALUE_H_
+#ifndef LIBVCD_GRAMMAR_VALUE_HPP
+#define LIBVCD_GRAMMAR_VALUE_HPP
 
-#include "./base.h"
-#include "./numbers.h"
+#include "./base.hpp"
+#include "./numbers.hpp"
 
 #include <parse/grammar/base.h>
 #include <parse/grammar/part.h>
 
-namespace VCD {
-namespace Grammar {
+namespace VCD::Grammar {
 
 using namespace Parse::Grammar::Base;
 
@@ -53,7 +52,6 @@ struct value_change : sor<
 
 // clang-format on
 
-} // namespace Grammer
-} // namespace VCD
+} // namespace VCD::Grammar
 
-#endif // LIBVCD_GRAMMER_ENUMS_H_
+#endif // LIBVCD_GRAMMAR_VALUE_HPP
