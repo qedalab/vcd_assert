@@ -4,22 +4,20 @@
 #include "./enums.hpp"
 
 #include <string>
+#include <string_view>
+
+#include <cstddef>
 
 namespace VCD {
 
-class VCDVariable {
-  VarType type_;
-  std::size_t size_;
-  std::string name_;
-  std::string reference_;
+class Variable {
+  std::size_t id_code_;
+  std::string ref_;
 
 public:
-  VCDVariable(VarType type, std::size_t size,
-              std::string name, std::string reference);
+  Variable(std::size_t id_code, std::string reference);
 
-  VarType get_type();
-  std::size_t get_size();
-  std::string_view get_name();
+  std::size_t get_id_code_index();
   std::string_view get_reference();
 };
 

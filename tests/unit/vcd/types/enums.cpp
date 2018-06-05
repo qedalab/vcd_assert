@@ -1,1 +1,1 @@
-#include "vcd/types/enums.h"
+#include "vcd/types/enums.hpp"

@@ -3,6 +3,7 @@
 
 #include "./time_scale.hpp"
 #include "./variable.hpp"
+#include "./var_id_code.hpp"
 #include "./scope.hpp"
 
 #include "parse/util/name_index_map.hpp"
@@ -13,16 +14,20 @@
 
 namespace VCD {
 
-class VCDHeader {
+class Header {
   std::optional<TimeScale> time_scale_;
   std::optional<std::string> date_;
   std::optional<std::string> version_;
 
-  Parse::NameIndexMap reference_lookup_;
-  std::vector<VCDVariable> variables_;
-  std::vector<VCDScope> scopes_;
+  Parse::NameIndexMap var_id_code_map_;
 
-  friend class VCDHeaderSerialFactory;
+  std::vector<VarIdCode> id_codes_;
+  std::vector<Variable> variables_;
+  std::vector<Scope> scopes_;
+
+  friend class HeaderReader;
+  friend class HeaderWriter;
+
 public:
   std::optional<TimeScale> get_time_scale();
   bool has_time_scale();
@@ -33,16 +38,19 @@ public:
   std::optional<std::string_view> get_version();
   bool has_version();
 
-  VCDVariable &get_variable(std::size_t index);
+  Variable &get_var(std::size_t index);
 
-  VCDScope &get_scope(std::size_t index);
-  VCDScope &get_root_scope();
+  Scope &get_scope(std::size_t index);
+  Scope &get_root_scope();
 
-  std::size_t get_reference_index(std::string &reference);
-  bool has_reference(std::string &reference);
+  std::size_t get_var_id_code_index(std::string &id_code);
+  VarIdCode& get_var_id_code(std::size_t index);
+  bool has_var_id_code(std::string &id_code);
+
 
   std::size_t num_scopes();
   std::size_t num_variables();
+  std::size_t num_id_codes();
 };
 
 } // namespace VCD

@@ -2,32 +2,19 @@
 
 using namespace VCD;
 
-VCDVariable::VCDVariable(VCD::VarType type, std::size_t size,
-                         std::string name, std::string reference) :
-  type_(type),
-  size_(size),
-  name_(std::move(name)),
-  reference_(std::move(reference))
+Variable::Variable(std::size_t id_code, std::string reference) :
+  id_code_(id_code),
+  ref_(std::move(reference))
 {
   // Empty
 }
 
-VarType VCDVariable::get_type()
+std::size_t Variable::get_id_code_index()
 {
-  return type_;
+  return id_code_;
 }
 
-std::size_t VCDVariable::get_size()
+std::string_view Variable::get_reference()
 {
-  return size_;
-}
-
-std::string_view VCDVariable::get_name()
-{
-  return name_;
-}
-
-std::string_view VCDVariable::get_reference()
-{
-  return reference_;
+  return ref_;
 }

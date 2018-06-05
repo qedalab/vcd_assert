@@ -8,22 +8,26 @@
 
 namespace VCD {
 
-class VCDScope {
+class Scope {
   ScopeType type_;
-  std::string name_;
+  std::string identifier_;
 
   std::unordered_map<std::string, std::size_t> child_scopes_;
   std::unordered_map<std::string, std::size_t> child_variables_;
+
+  friend class HeaderReader;
 public:
-  VCDScope(ScopeType type, std::string name);
+  Scope(ScopeType type, std::string identifier);
 
-  bool contains_variable(std::string &name);
-  std::size_t get_variable_index(std::string &name);
+  bool contains_variable(std::string &reference);
+  std::size_t get_variable_index(std::string &reference);
+  std::size_t num_variables();
 
-  bool contains_scope(std::string &name);
-  std::size_t get_scope_index(std::string &name);
+  bool contains_scope(std::string &identifier);
+  std::size_t get_scope_index(std::string &identifier);
+  std::size_t num_scopes();
 
-  std::string_view get_name();
+  std::string_view get_identifier();
   ScopeType get_scope_type();
 };
 

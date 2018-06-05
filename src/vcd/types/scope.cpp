@@ -4,41 +4,51 @@
 
 using namespace VCD;
 
-VCDScope::VCDScope(VCD::ScopeType type, std::string name) :
+Scope::Scope(VCD::ScopeType type, std::string name) :
   type_(type),
-  name_(std::move(name))
+  identifier_(std::move(name))
 {
   // Nothing
 }
 
-bool VCDScope::contains_variable(std::string &name)
+bool Scope::contains_variable(std::string &reference)
 {
-  return child_variables_.count(name) > 0;
+  return child_variables_.count(reference) > 0;
 }
 
-std::size_t VCDScope::get_variable_index(std::string &name)
+std::size_t Scope::get_variable_index(std::string &reference)
 {
-  assert(contains_variable(name));
-  return child_variables_.at(name);
+  assert(contains_variable(reference));
+  return child_variables_.at(reference);
 }
 
-bool VCDScope::contains_scope(std::string &name)
+std::size_t Scope::num_variables()
 {
-  return child_scopes_.count(name) > 0;
+  return child_variables_.size();
 }
 
-std::size_t VCDScope::get_scope_index(std::string &name)
+bool Scope::contains_scope(std::string &identifier)
 {
-  assert(contains_scope(name));
-  return child_scopes_.at(name);
+  return child_scopes_.count(identifier) > 0;
 }
 
-std::string_view VCDScope::get_name()
+std::size_t Scope::get_scope_index(std::string &identifier)
 {
-  return name_;
+  assert(contains_scope(identifier));
+  return child_scopes_.at(identifier);
 }
 
-ScopeType VCDScope::get_scope_type()
+std::size_t Scope::num_scopes()
+{
+  return child_scopes_.size();
+}
+
+std::string_view Scope::get_identifier()
+{
+  return identifier_;
+}
+
+ScopeType Scope::get_scope_type()
 {
   return type_;
 }
