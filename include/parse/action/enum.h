@@ -26,6 +26,13 @@ struct ValueAction {
   }
 };
 
+template<class T>
+struct ScopedValueAction {
+  using state = T;
+  template<class Rule> using action = ValueAction<Rule>;
+  void apply0(const T&) {}
+};
+
 }
 
 #endif //PARSE_ENUM_H

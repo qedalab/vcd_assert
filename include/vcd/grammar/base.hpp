@@ -23,7 +23,7 @@ struct command_separator : sor<
 
 struct printable_ascii_except_whitespace : range<33,126> {};
 
-struct identifier_code : until<command_separator> {};
+struct identifier_code : until<at<command_separator>> {};
 
 struct simple_identifier : seq<
   sor<

@@ -1,5 +1,7 @@
 #include "vcd/types/header_reader.hpp"
 
+#include <cassert>
+
 using namespace VCD;
 
 HeaderReader::HeaderReader()

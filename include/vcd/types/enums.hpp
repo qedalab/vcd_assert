@@ -24,6 +24,10 @@ enum class Value {
   zero, one, x, z
 };
 
+enum class DumpType {
+  all, off, on, vars
+};
+
 } // namespace VCD
 
 #endif // LIBVCD_ENUMS_HPP

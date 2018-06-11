@@ -1,13 +1,11 @@
 #ifndef PARSE_UTIL_NAME_INDEX_MAP_HPP
 #define PARSE_UTIL_NAME_INDEX_MAP_HPP
 
-#include <type_traits>
 #include <cstddef>
 #include <string>
 #include <string_view>
 #include <vector>
 #include <unordered_map>
-#include <cassert>
 
 namespace Parse {
 

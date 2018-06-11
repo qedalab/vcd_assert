@@ -105,12 +105,14 @@ struct upscope_command : delimited_seq<plus_blank,
   must<end_command>
 > {};
 
+struct var_size : size {};
+
 struct var_command : delimited_seq<plus_blank,
   var_keyword,
-  delimited_must<plus<blank>,
+  delimited_must<plus_blank,
     var_type,
-    size,
-    must<
+    var_size,
+    delimited_must<plus_blank,
         identifier_code,
         reference>,
     end_command

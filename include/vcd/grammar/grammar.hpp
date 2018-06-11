@@ -40,12 +40,13 @@ struct declaration_command : sor<
   version_command
 > {};
 
-//struct size : decimal_number {};
-
+struct header_commands : seq<
+  star<declaration_command>,
+  end_definitions_command
+> {};
 
 struct value_change_dump : seq<
-  star<declaration_command>,
-  end_definitions_command,
+  header_commands,
   star<simulation_command>
 > {};
 

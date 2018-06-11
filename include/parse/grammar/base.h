@@ -5,8 +5,7 @@
 #include <tao/pegtl/nothing.hpp>
 #include <tao/pegtl/rules.hpp>
 
-namespace Parse {
-namespace Grammar {
+namespace Parse::Grammar {
 
 inline namespace Base {
 
@@ -82,7 +81,6 @@ using bol = tao::pegtl::bol;
 using printable_ascii = tao::pegtl::print;
 
 } // namespace Base
-} // namespace Grammar
-} // namespace Parse
+} // namespace Parse::Grammar
 
 #endif // PARSE_GRAMMAR_BASE_H_

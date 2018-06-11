@@ -7,7 +7,7 @@ using namespace VCD;
 
 Test::TestHeader vcd_empty_header {};
 
-Test::TestHeader vcd_4_state_example_header {
+static Test::TestHeader vcd_4_state_example_header {
   TimeScale {TimeNumber::_1, TimeUnit::ns},
   "June 26, 1989 10:05:41",
   "VERILOG-SIMULATOR 1.0a",
