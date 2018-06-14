@@ -47,7 +47,8 @@ struct header_commands : seq<
 
 struct value_change_dump : seq<
   header_commands,
-  star<simulation_command>
+  star<simulation_command>,
+  eof
 > {};
 
 // clang-format on

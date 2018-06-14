@@ -35,6 +35,7 @@ add_subdirectory(src)
 
 if(${BUILD_TESTS})
   find_package(Catch2 2.2.2 REQUIRED)
+  find_package(docopt 0.6.2 REQUIRED)
   enable_testing()
   add_subdirectory(tests)
 endif()

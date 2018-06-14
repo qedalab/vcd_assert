@@ -67,7 +67,6 @@ struct HeaderAction<Grammar::timescale_command> {
   template<class Rule> using action = TimeScaleAction<Rule>;
 
   static void apply0(HeaderReader&) {}
-
 };
 
 template<>

@@ -26,15 +26,9 @@ struct printable_ascii_except_whitespace : range<33,126> {};
 struct identifier_code : until<at<command_separator>> {};
 
 struct simple_identifier : seq<
-  sor<
-    range<'a','z'>,
-    range<'A','Z'>,
-    one<'_'>
-  >,
+  tao::pegtl::identifier_first,
   star<sor<
-    range<'a','z'>,
-    range<'A','Z'>,
-    range<'0','9'>,
+    tao::pegtl::alnum,
     one<'_','$'>
   >>
 > {};
