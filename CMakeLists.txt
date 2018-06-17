@@ -23,6 +23,11 @@ add_library(libvcd "src/vcd")
 target_include_directories(libvcd PUBLIC "${PROJECT_SOURCE_DIR}/include/")
 target_link_libraries(libvcd PUBLIC libparse)
 
+#Add libvcd library
+add_library(libsdf "src/sdf")
+target_include_directories(libsdf PUBLIC "${PROJECT_SOURCE_DIR}/include/")
+target_link_libraries(libsdf PUBLIC libparse)
+
 #Enable warnings
 if ( CMAKE_COMPILER_IS_GNUCC )
   set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Wall")
