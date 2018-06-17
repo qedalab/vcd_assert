@@ -23,7 +23,7 @@ add_library(libvcd "src/vcd")
 target_include_directories(libvcd PUBLIC "${PROJECT_SOURCE_DIR}/include/")
 target_link_libraries(libvcd PUBLIC libparse)
 
-#Add libvcd library
+#Add libsdf library
 add_library(libsdf "src/sdf")
 target_include_directories(libsdf PUBLIC "${PROJECT_SOURCE_DIR}/include/")
 target_link_libraries(libsdf PUBLIC libparse)

@@ -9,7 +9,7 @@
 #include <array>
 #include <iostream>
 #include <string>
-#include <catch.hpp>
+#include <catch/catch.hpp>
 #include <fmt/format.h>
 
 
