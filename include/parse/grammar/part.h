@@ -1,5 +1,5 @@
-#ifndef PARSE_GRAMMER_PART_H_
-#define PARSE_GRAMMER_PART_H_
+#ifndef PARSE_GRAMMAR_PART_H_
+#define PARSE_GRAMMAR_PART_H_
 
 #include "./base.h"
 
@@ -46,7 +46,7 @@ struct imaginary_unit : one<'i', 'j'> {
   }
 };
 
-} // namespace Grammer
+} // namespace Grammar
 } // namespace Parse
 
-#endif // PARSE_GRAMMER_PART_H_
+#endif // PARSE_GRAMMAR_PART_H_

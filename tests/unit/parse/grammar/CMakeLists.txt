@@ -1,7 +1,6 @@
 set(DIR ${CMAKE_CURRENT_SOURCE_DIR})
 
-set(UNIT_GRAMMER_SRC
+target_sources(unit_parse PRIVATE
   ${DIR}/base.cpp
   ${DIR}/part.cpp
-  PARENT_SCOPE
 )

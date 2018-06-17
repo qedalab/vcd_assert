@@ -1,13 +1,15 @@
 #ifndef PARSE_INTERNAL_ARRAY_APPEND_H
 #define PARSE_INTERNAL_ARRAY_APPEND_H
 
+#include <range/v3/algorithm/copy.hpp>
+
 #include <array>
 #include <type_traits>
 
 namespace Parse {
 namespace Internal {
 
-template<class T, std::size_t Base>
+template<class T, std::size_t Base, std::size_t... Sizes>
 constexpr auto array_append(std::array<T, Base> base) {
   return base;
 };
@@ -18,13 +20,8 @@ constexpr auto array_append(std::array<T, Base> base, std::array<T, Sizes>... ar
   std::array rest = array_append(arrays...);
   std::array<T, rest.size() + Base> out{};
 
-  std::size_t counter = 0;
-
-  for(auto v: base)
-    out[counter++] = v;
-
-  for(auto v: rest)
-    out[counter++] = v;
+  ranges::copy(base, out.begin());
+  ranges::copy(rest, out.begin() + Base);
 
   return out;
 };

@@ -1,11 +1,14 @@
-#ifndef LIBVCD_ENUMS_H_
-#define LIBVCD_ENUMS_H_
-
+#ifndef LIBVCD_ENUMS_HPP
+#define LIBVCD_ENUMS_HPP
 
 namespace VCD {
 
 enum class ScopeType {
   begin, fork, function, module, task
+};
+
+enum class TimeNumber {
+  _1, _10, _100
 };
 
 enum class TimeUnit {
@@ -21,6 +24,6 @@ enum class Value {
   zero, one, x, z
 };
 
-}
+} // namespace VCD
 
-#endif // LIBSDF_GRAMMER_H_
+#endif // LIBVCD_ENUMS_HPP

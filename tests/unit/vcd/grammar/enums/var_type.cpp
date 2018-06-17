@@ -1,8 +1,7 @@
-#include "vcd/grammar/enums/var_type.h"
-#include "vcd/enums.h"
+#include "vcd/grammar/enums/var_type.hpp"
+#include "vcd/types/enums.hpp"
 
 #include "parse/test/match.h"
-#include "parse/test/error.h"
 
 #include <catch.hpp>
 
@@ -12,7 +11,7 @@ using VCD::VarType;
 
 constexpr char event_str[] = "event";
 constexpr char integer_str[] = "integer";
-constexpr char paramter_str[] = "parameter";
+constexpr char parameter_str[] = "parameter";
 constexpr char real_str[] = "real";
 constexpr char realtime_str[] = "realtime";
 constexpr char reg_str[] = "reg";
@@ -33,7 +32,7 @@ TEST_CASE("VCD.Grammar.Enums.VarType", "[VCD][Grammar][Enums][VarType]") {
   SECTION("Individual") {
     CHECK(match_value_exactly<var_event>(event_str, VarType::event));
     CHECK(match_value_exactly<var_integer>(integer_str, VarType::integer));
-    CHECK(match_value_exactly<var_parameter>(paramter_str, VarType::parameter));
+    CHECK(match_value_exactly<var_parameter>(parameter_str, VarType::parameter));
     CHECK(match_value_exactly<var_real>(real_str, VarType::real));
     CHECK(match_value_exactly<var_realtime>(realtime_str, VarType::realtime));
     CHECK(match_value_exactly<var_reg>(reg_str, VarType::reg));
@@ -54,7 +53,7 @@ TEST_CASE("VCD.Grammar.Enums.VarType", "[VCD][Grammar][Enums][VarType]") {
   SECTION("Together") {
     CHECK(match_value_exactly<var_type>(event_str, VarType::event));
     CHECK(match_value_exactly<var_type>(integer_str, VarType::integer));
-    CHECK(match_value_exactly<var_type>(paramter_str, VarType::parameter));
+    CHECK(match_value_exactly<var_type>(parameter_str, VarType::parameter));
     CHECK(match_value_exactly<var_type>(real_str, VarType::real));
     CHECK(match_value_exactly<var_type>(realtime_str, VarType::realtime));
     CHECK(match_value_exactly<var_type>(reg_str, VarType::reg));

@@ -28,7 +28,7 @@ struct level_three : seq<one<'('>, must<level_fail>, one<')'>> {};
 struct level_two : seq<one<'('>, level_three, one<')'>> {};
 struct level_one : seq<one<'('>, level_two, one<')'>> {};
 
-TEST_CASE("DebugContol") {
+TEST_CASE("DebugControl") {
   REQUIRE_THROWS_AS(match_exactly<level_one>("(((-)))"), DebugException);
   CHECK_THROWS_WITH(match_exactly<level_one>("(((-)))"), expected_out);
 

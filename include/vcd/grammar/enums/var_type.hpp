@@ -1,12 +1,11 @@
-#ifndef LIBVCD_GRAMMER_ENUMS_VAR_TYPE_H_
-#define LIBVCD_GRAMMER_ENUMS_VAR_TYPE_H_
+#ifndef LIBVCD_GRAMMAR_ENUMS_VAR_TYPE_HPP
+#define LIBVCD_GRAMMAR_ENUMS_VAR_TYPE_HPP
 
-#include "../../enums.h"
+#include "../../types/enums.hpp"
 
 #include <parse/grammar/base.h>
 
-namespace VCD {
-namespace Grammar {
+namespace VCD::Grammar {
 
 using namespace Parse::Grammar::Base;
 
@@ -95,7 +94,6 @@ struct var_type : sor<
 
 // clang-format on
 
-} // namespace Grammer
-} // namespace VCD
+} // namespace VCD::Grammar
 
-#endif
+#endif // LIBVCD_GRAMMAR_ENUMS_VAR_TYPE_HPP
