@@ -8,6 +8,7 @@ option(BUILD_DOCS "Build documentation [unused]" FALSE)
 #Include dependencies
 find_package(pegtl REQUIRED)
 find_package(range-v3 0.3.6 REQUIRED)
+find_package(fmt 5.0.0 REQUIRED)
 
 #Ensure C++17
 set(CMAKE_CXX_STANDARD 17)
