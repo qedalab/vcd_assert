@@ -1,7 +1,7 @@
 #include "parse/grammar/part.h"
 #include "parse/test/match.h"
 
-#include <catch.hpp>
+#include <catch2/catch.hpp>
 
 using namespace Parse::Grammar;
 using namespace Parse::Test;

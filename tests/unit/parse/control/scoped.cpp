@@ -1,6 +1,6 @@
 #include "parse/control/scoped.h"
 
-#include <catch.hpp>
+#include <catch2/catch.hpp>
 #include <tao/pegtl/contrib/json.hpp>
 
 #include <variant>

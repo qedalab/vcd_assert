@@ -3,7 +3,7 @@
 #include "parse/test/parse.hpp"
 #include "../types/header.hpp"
 
-#include <catch/catch.hpp>
+#include <catch2/catch.hpp>
 
 using namespace VCD;
 

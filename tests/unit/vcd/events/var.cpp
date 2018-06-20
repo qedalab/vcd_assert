@@ -4,7 +4,7 @@
 #include "parse/test/parse.hpp"
 
 
-#include <catch/catch.hpp>
+#include <catch2/catch.hpp>
 #include <string_view>
 
 constexpr char var_str[] = "$var\n  integer 32 (2 index\n$end";

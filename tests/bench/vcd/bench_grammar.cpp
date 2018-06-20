@@ -1,7 +1,7 @@
 #include "vcd/grammar/grammar.hpp"
 #include "vcd/version.hpp"
 
-#include <docopt/docopt.h>
+#include <docopt.h>
 #include <tao/pegtl/file_input.hpp>
 #include <tao/pegtl/parse.hpp>
 

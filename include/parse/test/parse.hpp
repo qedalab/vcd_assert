@@ -6,7 +6,7 @@
 
 #include <tao/pegtl/memory_input.hpp>
 #include <tao/pegtl/parse.hpp>
-#include <catch/catch.hpp>
+#include <catch2/catch.hpp>
 
 namespace Parse::Test {
 

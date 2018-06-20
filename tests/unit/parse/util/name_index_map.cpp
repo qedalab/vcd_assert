@@ -1,6 +1,6 @@
 #include "parse/util/name_index_map.hpp"
 
-#include <catch.hpp>
+#include <catch2/catch.hpp>
 
 using namespace Parse;
 
