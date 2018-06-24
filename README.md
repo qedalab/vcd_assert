@@ -32,3 +32,4 @@ cmake --build .
 * To compile with libc++ you need a version newer than https://github.com/llvm-mirror/libcxx/commit/8a50bbc2b96117fc222bf3f8718b5aba8330000a for std::array deduction guides
 * Building with clang with libstdc++ can trigger `https://bugs.llvm.org/show_bug.cgi?id=31852`
 * Requires Catch2 with `dev-new-cmake` patches - Not in released version (2.2.3) yet
+* CLI11 master has incompatible changes to v1.5.4
