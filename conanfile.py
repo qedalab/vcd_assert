@@ -19,7 +19,6 @@ class VCDAssertConan(ConanFile):
         cmake.definitions["BUILD_DOCS"] = "ON"
         cmake.definitions["CMAKE_TOOLCHAIN_FILE"] = "conan_paths.cmake"
 
-        cmake.verbose = True
         cmake.configure()
 
         cmake.build()
@@ -29,8 +28,8 @@ class VCDAssertConan(ConanFile):
         pass
 
     def build_requirements(self):
-        self.build_requires("pegtl/2.5.2@pleroux0/stable")
+        self.build_requires("pegtl/2.6.0@taocpp/stable")
         self.build_requires("range-v3/0.3.6@pleroux0/stable")
         self.build_requires("fmt/5.0.0@bincrafters/stable")
         self.build_requires("Catch/2.2.3@pleroux0/stable")
-        #self.build_requires("docopt/0.6.2b@pleroux0/stable")
+        self.build_requires("CLI11/1.5.4@CLIUtils/stable")
