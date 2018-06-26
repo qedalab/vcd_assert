@@ -8,6 +8,11 @@
 
 namespace VCD {
 
+struct ScopeDataView {
+  ScopeType type;
+  std::string_view identifier;
+};
+
 class Scope {
   ScopeType type_;
   std::string identifier_;
@@ -29,6 +34,8 @@ public:
 
   std::string_view get_identifier();
   ScopeType get_scope_type();
+
+  operator ScopeDataView() const noexcept;
 };
 
 } // VCD

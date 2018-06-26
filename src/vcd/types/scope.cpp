@@ -52,3 +52,10 @@ ScopeType Scope::get_scope_type()
 {
   return type_;
 }
+
+Scope::operator ScopeDataView() const noexcept {
+  return {
+    .type = type_,
+    .identifier = identifier_
+  };
+}

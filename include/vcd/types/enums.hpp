@@ -8,7 +8,7 @@ enum class ScopeType {
 };
 
 enum class TimeNumber {
-  _1, _10, _100
+  _1=1, _10=10, _100=100
 };
 
 enum class TimeUnit {

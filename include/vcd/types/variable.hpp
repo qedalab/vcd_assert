@@ -10,6 +10,13 @@
 
 namespace VCD {
 
+struct VariableView {
+  VarType type;
+  std::size_t size;
+  std::string_view identifier_code;
+  std::string_view reference;
+};
+
 class Variable {
   std::size_t id_code_;
   std::string ref_;
