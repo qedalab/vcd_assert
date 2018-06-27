@@ -12,7 +12,7 @@ TEST_CASE("VCD.Events.TimeScale", "[VCD][Events][TimeScale]")
 {
   using Parse::Test::require_parse;
 
-  TimeScaleEvent event{};
+  TimeScaleView event{};
   require_parse<Grammar::timescale_command, TimeScaleAction>(timescale_str, event);
 
   CHECK(event.unit == TimeUnit::ns);

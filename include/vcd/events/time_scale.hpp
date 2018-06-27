@@ -2,17 +2,14 @@
 #define VCD_EVENT_TIME_SCALE_HPP
 
 #include "vcd/types/enums.hpp"
+#include "../types/enums.hpp"
+#include "../types/time_scale.hpp"
 
 #include <tao/pegtl/nothing.hpp>
 #include <vcd/grammar/enums/time.hpp>
 #include <parse/action/enum.h>
 
 namespace VCD {
-
-struct TimeScaleEvent {
-  TimeNumber number;
-  TimeUnit unit;
-};
 
 template <class Rule>
 struct TimeScaleAction : tao::pegtl::nothing<Rule> {};
@@ -23,7 +20,7 @@ struct TimeScaleAction<Grammar::time_unit> : Parse::ScopedValueAction<TimeUnit> 
 template<>
 struct TimeScaleAction<Grammar::time_number> {
   template<class Input>
-  static void apply(const Input& input, TimeScaleEvent& event) {
+  static void apply(const Input& input, TimeScaleView& event) {
     switch(input.size()) {
     case 1:
       event.number = TimeNumber::_1;
@@ -41,12 +38,12 @@ struct TimeScaleAction<Grammar::time_number> {
 };
 
 template<>
-struct TimeScaleAction<TimeScaleEvent> {
-  static void success(TimeScaleEvent& event, TimeNumber number) {
+struct TimeScaleAction<TimeScaleView> {
+  static void success(TimeScaleView& event, TimeNumber number) {
     event.number = number;
   }
 
-  static void success(TimeScaleEvent& event, TimeUnit unit) {
+  static void success(TimeScaleView& event, TimeUnit unit) {
     event.unit = unit;
   }
 };

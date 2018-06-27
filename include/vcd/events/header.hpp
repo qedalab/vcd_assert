@@ -18,7 +18,7 @@ struct HeaderAction : tao::pegtl::nothing<Rule> {};
 
 template<>
 struct HeaderAction<Grammar::scope_command> {
-  using state = ScopeEvent;
+  using state = ScopeDataView;
 
   template<class Rule>
   using action = ScopeAction<Rule>;
@@ -28,7 +28,7 @@ struct HeaderAction<Grammar::scope_command> {
 
 template<>
 struct HeaderAction<Grammar::var_command> {
-  using state = VarEvent;
+  using state = VariableView;
 
   template<class Rule>
   using action = VarAction<Rule>;
@@ -62,7 +62,7 @@ struct HeaderAction<Grammar::date_command> {
 
 template<>
 struct HeaderAction<Grammar::timescale_command> {
-  using state = TimeScaleEvent;
+  using state = TimeScaleView;
 
   template<class Rule> using action = TimeScaleAction<Rule>;
 
@@ -71,15 +71,15 @@ struct HeaderAction<Grammar::timescale_command> {
 
 template<>
 struct HeaderAction<HeaderReader> {
-  static void success(HeaderReader &reader, ScopeEvent event) {
+  static void success(HeaderReader &reader, ScopeDataView event) {
     reader.scope(event.type, std::string(event.identifier));
   }
 
-  static void success(HeaderReader &reader, VarEvent event) {
-    reader.var(event.type, event.size, std::string(event.id_code), std::string(event.reference));
+  static void success(HeaderReader &reader, VariableView event) {
+    reader.var(event.type, event.size, std::string(event.identifier_code), std::string(event.reference));
   }
 
-  static void success(HeaderReader &reader, TimeScaleEvent event) {
+  static void success(HeaderReader &reader, TimeScaleView event) {
     reader.timescale(event.number, event.unit);
   }
 };

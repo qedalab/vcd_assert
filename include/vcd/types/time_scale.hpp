@@ -5,6 +5,11 @@
 
 namespace VCD {
 
+struct TimeScaleView {
+  TimeNumber number;
+  TimeUnit unit;
+};
+
 class TimeScale {
   TimeNumber number_;
   TimeUnit unit_;

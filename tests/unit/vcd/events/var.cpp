@@ -14,11 +14,11 @@ using namespace VCD;
 TEST_CASE("VCD.Events.Var", "[VCD][Events][Var]") {
   using Parse::Test::require_parse;
 
-  VarEvent event;
+  VariableView event;
   require_parse<Grammar::var_command, VarAction>(var_str, event);
 
   CHECK(event.size == 32);
   CHECK(event.type == VarType::integer);
   CHECK(event.reference == "index");
-  CHECK(event.id_code == "(2");
+  CHECK(event.identifier_code == "(2");
 }
