@@ -6,8 +6,14 @@
 
 namespace VCD {
 
-template<class OutputIterator>
-void serialize_version(OutputIterator oi, std::string_view version) {
+/// Serialize VCD version
+/// \tparam OutputIterator must meet the requirements of OutputIterator
+/// \param oi The OutputIterator being written to
+/// \param version The version to write
+/// \exception Throws if writing to the OutputIterator throws otherwise noexcept
+template <class OutputIterator>
+void serialize_version(OutputIterator oi, std::string_view version) noexcept(
+    noexcept(*oi++ = '!')) {
   using std::literals::string_view_literals::operator""sv;
 
   ranges::copy("$version "sv, oi);

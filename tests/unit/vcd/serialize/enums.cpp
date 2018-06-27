@@ -32,7 +32,22 @@ TEST_CASE("VCD.Serialize.Enums", "[Serialize]") {
   SECTION("VarType") {
     CHECK(var_type_to_string(VarType::event) == "event");
     CHECK(var_type_to_string(VarType::integer) == "integer");
-    // TODO do rest for coverage
+    CHECK(var_type_to_string(VarType::parameter) == "parameter");
+    CHECK(var_type_to_string(VarType::real) == "real");
+    CHECK(var_type_to_string(VarType::realtime) == "realtime");
+    CHECK(var_type_to_string(VarType::reg) == "reg");
+    CHECK(var_type_to_string(VarType::supply0) == "supply0");
+    CHECK(var_type_to_string(VarType::supply1) == "supply1");
+    CHECK(var_type_to_string(VarType::time) == "time");
+    CHECK(var_type_to_string(VarType::tri) == "tri");
+    CHECK(var_type_to_string(VarType::triand) == "triand");
+    CHECK(var_type_to_string(VarType::trior) == "trior");
+    CHECK(var_type_to_string(VarType::trireg) == "trireg");
+    CHECK(var_type_to_string(VarType::tri0) == "tri0");
+    CHECK(var_type_to_string(VarType::tri1) == "tri1");
+    CHECK(var_type_to_string(VarType::wand) == "wand");
+    CHECK(var_type_to_string(VarType::wire) == "wire");
+    CHECK(var_type_to_string(VarType::wor) == "wor");
   }
 
   SECTION("ValueChar") {

@@ -6,8 +6,14 @@
 
 namespace VCD {
 
-template<class OutputIterator>
-void serialize_date(OutputIterator oi, std::string_view date) {
+/// Serialize VCD date
+/// \tparam OutputIterator must meet the requirements of OutputIterator
+/// \param oi The OutputIterator being written to
+/// \param date The date to write
+/// \exception Throws if writing to the OutputIterator throws otherwise noexcept
+template <class OutputIterator>
+void serialize_date(OutputIterator oi,
+                    std::string_view date) noexcept(noexcept(*oi++ = '!')) {
   using std::literals::string_view_literals::operator""sv;
 
   ranges::copy("$date "sv, oi);

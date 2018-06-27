@@ -3,12 +3,18 @@
 
 #include "../types/enums.hpp"
 
-#include <stdexcept>
+#include <string_view>
+#include <cassert>
+#include <cstdlib>
 
 namespace VCD {
 
-constexpr std::string_view scope_type_to_string(ScopeType st) {
-  switch(st) {
+/// Convert ScopeType enum to string representation
+/// \param st The ScopeType to convert.
+///           Must be in valid enum state undefined behaviour otherwise
+/// \returns static view of ScopeType string
+constexpr std::string_view scope_type_to_string(ScopeType st) noexcept {
+  switch (st) {
   case ScopeType::begin:
     return "begin";
   case ScopeType::fork:
@@ -19,11 +25,18 @@ constexpr std::string_view scope_type_to_string(ScopeType st) {
     return "module";
   case ScopeType::task:
     return "task";
+  default:
+    assert(false && "Invalid enum state");
+    abort();
   }
 }
 
-constexpr std::string_view time_unit_to_string(TimeUnit tu) {
-  switch(tu) {
+/// Convert TimeUnit enum to string representation
+/// \param tu The TimeUnit to convert.
+///           Must be in valid enum state undefined behaviour otherwise
+/// \returns static view of TimeUnit string
+constexpr std::string_view time_unit_to_string(TimeUnit tu) noexcept {
+  switch (tu) {
   case TimeUnit::s:
     return "s";
   case TimeUnit::ms:
@@ -36,22 +49,36 @@ constexpr std::string_view time_unit_to_string(TimeUnit tu) {
     return "ps";
   case TimeUnit::fs:
     return "fs";
+  default:
+    assert(false && "Invalid enum state");
+    abort();
   }
 }
 
-constexpr std::string_view time_number_to_string(TimeNumber tn) {
-  switch(tn) {
+/// Convert TimeNumber enum to string representation
+/// \param tn The TimeNumber to convert.
+///           Must be in valid enum state undefined behaviour otherwise
+/// \returns static view of TimeNumber string
+constexpr std::string_view time_number_to_string(TimeNumber tn) noexcept {
+  switch (tn) {
   case TimeNumber::_1:
     return "1";
   case TimeNumber::_10:
     return "10";
   case TimeNumber::_100:
     return "100";
+  default:
+    assert(false && "Invalid enum state");
+    abort();
   }
 }
 
-constexpr std::string_view var_type_to_string(VarType vr) {
-  switch(vr) {
+/// Convert VarNumber enum to string representation
+/// \param vr The VarNumber to convert.
+///           Must be in valid enum state undefined behaviour otherwise
+/// \returns static view of VarType string
+constexpr std::string_view var_type_to_string(VarType vr) noexcept {
+  switch (vr) {
   case VarType::event:
     return "event";
   case VarType::integer:
@@ -88,12 +115,18 @@ constexpr std::string_view var_type_to_string(VarType vr) {
     return "wire";
   case VarType::wor:
     return "wor";
+  default:
+    assert(false && "Invalid enum state");
+    abort();
   }
 }
 
-
-constexpr char value_to_char(Value v) {
-  switch(v) {
+/// Convert Value enum to char representation
+/// \param v The Value to convert.
+///          Must be in valid enum state undefined behaviour otherwise
+/// \returns char representing the Value
+constexpr char value_to_char(Value v) noexcept {
+  switch (v) {
   case Value::zero:
     return '0';
   case Value::one:
@@ -102,11 +135,18 @@ constexpr char value_to_char(Value v) {
     return 'Z';
   case Value::x:
     return 'X';
+  default:
+    assert(false && "Invalid enum state");
+    abort();
   }
 }
 
+/// Convert Value enum to string representation
+/// \param v The Value to convert.
+///          Must be in valid enum state undefined behaviour otherwise
+/// \returns static view of Value string
 constexpr std::string_view value_to_string(Value v) {
-  switch(v) {
+  switch (v) {
   case Value::zero:
     return "0";
   case Value::one:
@@ -115,9 +155,12 @@ constexpr std::string_view value_to_string(Value v) {
     return "Z";
   case Value::x:
     return "X";
+  default:
+    assert(false && "Invalid enum state");
+    abort();
   }
 }
 
 } // namespace VCD
 
-#endif // LIBCD_WRITER_ENUM_HPP
+#endif // LIBVCD_SERIALIZE_ENUM_HPP

@@ -10,14 +10,16 @@ TEST_CASE("VCD.Serialize.ValueChange", "[Serialize]") {
 
   SECTION("Scalar") {
     std::string output;
-    VCD::serialize_value_change(ranges::back_inserter(output), {Value::z, "my_id_code"} );
+    VCD::serialize_value_change(ranges::back_inserter(output),
+                                {Value::z, "my_id_code"} );
     CHECK(output == "Zmy_id_code\n");
   }
 
   SECTION("Vector") {
     std::string output;
     Value data[] = {Value::z, Value::x, Value::one, Value::zero};
-    VCD::serialize_value_change(ranges::back_inserter(output), {data, "my_id_code"} );
+    VCD::serialize_value_change(ranges::back_inserter(output),
+                                {data, "my_id_code"} );
     CHECK(output == "bZX10 my_id_code\n");
   }
 
@@ -26,7 +28,8 @@ TEST_CASE("VCD.Serialize.ValueChange", "[Serialize]") {
     double value = 3.14;
     std::string expected = "r"s + std::to_string(value) + " my_id_code\n";
 
-    VCD::serialize_value_change(ranges::back_inserter(output), {value, "my_id_code"} );
+    VCD::serialize_value_change(ranges::back_inserter(output),
+                                {value, "my_id_code"} );
     CHECK(output == expected);
   }
 }

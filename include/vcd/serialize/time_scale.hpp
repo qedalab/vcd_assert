@@ -5,11 +5,18 @@
 #include "./enums.hpp"
 
 #include <range/v3/algorithm/copy.hpp>
+#include <string_view>
 
 namespace VCD {
 
-template<class OutputIterator>
-void serialize_time_scale(OutputIterator oi, TimeScale ts) {
+/// Serialize VCD time scale
+/// \tparam OutputIterator must meet the requirements of OutputIterator
+/// \param oi The OutputIterator being written to
+/// \param ts The time scale to write
+/// \exception Throws if writing to the OutputIterator throws otherwise noexcept
+template <class OutputIterator>
+void serialize_time_scale(OutputIterator oi,
+                          TimeScale ts) noexcept(noexcept(*oi++ = '!')) {
   using std::literals::string_view_literals::operator""sv;
 
   ranges::copy("$timescale "sv, oi);

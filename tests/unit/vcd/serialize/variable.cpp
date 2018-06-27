@@ -7,6 +7,7 @@ using namespace VCD;
 
 TEST_CASE("VCD.Serialize.Variable", "[Serialize]") {
   std::string output;
-  VCD::serialize_variable(ranges::back_inserter(output), {VarType::reg, 32, "my_id_code", "my_reference"});
+  VCD::serialize_variable(ranges::back_inserter(output),
+                          {VarType::reg, 32, "my_id_code", "my_reference"});
   CHECK(output == "$var reg 32 my_id_code my_reference $end\n");
 }

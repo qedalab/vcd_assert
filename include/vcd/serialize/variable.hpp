@@ -5,11 +5,18 @@
 #include "./enums.hpp"
 
 #include <range/v3/algorithm/copy.hpp>
+#include <string_view>
 
 namespace VCD {
 
-template<class OutputIterator>
-void serialize_variable(OutputIterator oi, VariableView vv) {
+/// Serialize VCD variable declaration
+/// \tparam OutputIterator must meet the requirements of OutputIterator
+/// \param oi The OutputIterator being written to
+/// \param vv The variable to write
+/// \exception Throws if writing to the OutputIterator throws otherwise noexcept
+template <class OutputIterator>
+void serialize_variable(OutputIterator oi,
+                        VariableView vv) noexcept(noexcept(*oi++ = '!')) {
   using std::literals::string_view_literals::operator""sv;
 
   ranges::copy("$var "sv, oi);

@@ -7,6 +7,7 @@ using namespace VCD;
 
 TEST_CASE("VCD.Serialize.TimeScale", "[Serialize]") {
   std::string output;
-  VCD::serialize_time_scale(ranges::back_inserter(output), {TimeNumber::_1, TimeUnit::ns} );
+  VCD::serialize_time_scale(ranges::back_inserter(output),
+                            {TimeNumber::_1, TimeUnit::ns} );
   CHECK(output == "$timescale 1ns $end\n");
 }

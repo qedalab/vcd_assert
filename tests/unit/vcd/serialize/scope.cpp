@@ -7,6 +7,7 @@ using namespace VCD;
 
 TEST_CASE("VCD.Serialize.Scope", "[Serialize]") {
   std::string output;
-  VCD::serialize_scope(ranges::back_inserter(output), {ScopeType::module, "my_scope"});
+  VCD::serialize_scope(ranges::back_inserter(output),
+                       {ScopeType::module, "my_scope"});
   CHECK(output == "$scope module my_scope $end\n");
 }
