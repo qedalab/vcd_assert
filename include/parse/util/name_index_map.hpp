@@ -13,16 +13,16 @@ class NameIndexMap {
 public:
   using index_t = std::size_t;
 
-  index_t get_index(std::string &name);
-  bool has_index(index_t index) noexcept;
+  index_t get_index(std::string &name) const;
+  bool has_index(index_t index) const noexcept;
 
-  std::string_view get_name(index_t index);
-  bool has_name(std::string &index) noexcept;
+  std::string_view get_name(index_t index) const;
+  bool has_name(std::string &index) const noexcept;
 
   index_t add_name(std::string name);
   index_t add_new_name(std::string name);
 
-  index_t num_elements() noexcept;
+  index_t num_elements() const noexcept;
 private:
 
   // Unordered map can't search with string_view (C++17)

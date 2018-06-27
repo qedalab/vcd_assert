@@ -8,19 +8,25 @@
 
 namespace VCD {
 
+/// View of scalar value change
+/// \todo ensure identifier code correctness
 struct ScalarValueChangeView {
-  Value value;
-  std::string_view identifier_code;
+  Value value;                      /// scalar value
+  std::string_view identifier_code; /// identifier code
 };
 
+/// View of vector value change
+/// \todo ensure identifier code correctness
 struct VectorValueChangeView {
-  ranges::span<Value> values;
-  std::string_view identifier_code;
+  ranges::span<Value> values;       /// view of vector values
+  std::string_view identifier_code; /// identifier code
 };
 
+/// View of real value change
+/// \todo ensure identifier code correctness
 struct RealValueChangeView {
-  double value;
-  std::string_view identifier_code;
+  double value;                     /// real value
+  std::string_view identifier_code; /// identifier code
 };
 
 } // namespace VCD

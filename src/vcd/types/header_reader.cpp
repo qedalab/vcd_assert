@@ -95,12 +95,12 @@ void HeaderReader::version(std::string version_string)
   header_->version_ = std::move(version_string);
 }
 
-void HeaderReader::overwrite_version(std::string version_string)
+void HeaderReader::overwrite_version(std::string version_string) noexcept
 {
   header_->version_ = std::move(version_string);
 }
 
-bool HeaderReader::has_version()
+bool HeaderReader::has_version() const noexcept
 {
   return header_->has_version();
 }
@@ -113,12 +113,12 @@ void HeaderReader::date(std::string date_string)
   header_->date_ = std::move(date_string);
 }
 
-void HeaderReader::overwrite_date(std::string date_string)
+void HeaderReader::overwrite_date(std::string date_string) noexcept
 {
   header_->date_ = std::move(date_string);
 }
 
-bool HeaderReader::has_date()
+bool HeaderReader::has_date() const noexcept
 {
   return header_->has_date();
 }
@@ -131,12 +131,12 @@ void HeaderReader::timescale(TimeNumber number, TimeUnit unit)
   header_->time_scale_ = TimeScale{number, unit};
 }
 
-void HeaderReader::overwrite_timescale(TimeNumber number, TimeUnit unit)
+void HeaderReader::overwrite_timescale(TimeNumber number, TimeUnit unit) noexcept
 {
   header_->time_scale_ = TimeScale{number, unit};
 }
 
-bool HeaderReader::has_timescale()
+bool HeaderReader::has_timescale() const noexcept
 {
   return header_->has_time_scale();
 }

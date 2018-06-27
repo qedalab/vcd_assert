@@ -9,32 +9,73 @@
 
 namespace VCD {
 
+/// VCD header reader class
+/// This class populates and returns a populated VCD::Header
 class HeaderReader {
-  std::unique_ptr<Header> header_;
+  std::unique_ptr<Header> header_;       /// Pointer to VCD Header
+  std::vector<std::size_t> scope_stack_; /// Stack of current scopes
 
-  std::vector<std::size_t> scope_stack_;
 public:
+  /// HeaderReader constructor
   HeaderReader();
 
+  /// Introdocue a new scope
   void scope(ScopeType type, std::string name);
+
+  /// Exits current scope
   void upscope();
+
+  /// Adds a variable to the scope
   void var(VarType type, std::size_t size, std::string identifier_code, std::string reference);
 
+  /// Set Header version string
+  /// \param version_string The version string
+  /// \exception Throws if and only if version is already set
   void version(std::string version_string);
-  void overwrite_version(std::string version_string);
-  bool has_version();
 
+  /// Set Header version string overwriting if it already exists
+  /// \param version_string The version string
+  void overwrite_version(std::string version_string) noexcept;
+
+  /// True if the current header contains version information
+  /// \returns Wether the current header contains version information
+  bool has_version() const noexcept;
+
+  /// Set the header date
+  /// \param date_string The date string
+  /// \exception Throws if and only if date is already set
   void date(std::string date_string);
-  void overwrite_date(std::string date_string);
-  bool has_date();
 
+  /// Set the header date overwriting if is alreadt set
+  /// \param date_string The date string
+  void overwrite_date(std::string date_string) noexcept;
+
+  /// True if the current header contains a date
+  /// \returns Wether the current header contains a date
+  bool has_date() const noexcept;
+
+  /// Set header time scale
+  /// \param number The time scale number
+  /// \param unit The time unit number
+  /// \exception Throws if and only if time scale is already set
   void timescale(TimeNumber number, TimeUnit unit);
-  void overwrite_timescale(TimeNumber number, TimeUnit unit);
-  bool has_timescale();
 
+  /// Set the header time scale, overwriting if already set
+  /// \param number The time scale number
+  /// \param unit The time unit number
+  void overwrite_timescale(TimeNumber number, TimeUnit unit) noexcept;
+
+  /// True if the current header contains a time scale
+  /// \returns Wether the current header contains a time scale
+  bool has_timescale() const noexcept;
+
+  /// Releases the header file that was read in.
+  /// Essentially finalizaing the data within the header file.
+  /// \returns Owning pointer to the Header
+  /// \exception Throws if all there is still scope in the stack.
   std::unique_ptr<Header> release();
 };
 
 }
 
-#endif //LIBVCD_TYPES_HEADER_BUILDER_HPP
+#endif //LIBVCD_TYPES_HEADER_READER_HPP
