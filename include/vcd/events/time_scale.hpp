@@ -1,51 +1,65 @@
 #ifndef VCD_EVENT_TIME_SCALE_HPP
 #define VCD_EVENT_TIME_SCALE_HPP
 
-#include "vcd/types/enums.hpp"
 #include "../types/enums.hpp"
 #include "../types/time_scale.hpp"
 
+#include "parse/actions/storage/member.hpp"
+#include "parse/actions/apply/rule_value.hpp"
+
+#include "parse/action/enum.h"
+
+#include "parse/actions/dispatch.hpp"
+#include "parse/actions/command/inner_action.hpp"
+#include "parse/actions/command/apply0.hpp"
+#include "parse/actions/command/apply.hpp"
+#include "parse/actions/command/pegtl_action.hpp"
+
 #include <tao/pegtl/nothing.hpp>
 #include <vcd/grammar/enums/time.hpp>
-#include <parse/action/enum.h>
 
-namespace VCD {
 
-template <class Rule>
-struct TimeScaleAction : tao::pegtl::nothing<Rule> {};
+namespace VCD::Actions {
 
-template<>
-struct TimeScaleAction<Grammar::time_unit> : Parse::ScopedValueAction<TimeUnit> {};
+using namespace Parse;
 
-template<>
-struct TimeScaleAction<Grammar::time_number> {
-  template<class Input>
-  static void apply(const Input& input, TimeScaleView& event) {
-    switch(input.size()) {
+struct TimeUnitAction : all_dispatch<apply0<Apply::rule_value>>
+{
+  using state = TimeUnit;
+};
+
+struct TimeNumberApply {
+  template <class Rule, class ActionInput>
+  static bool apply(const ActionInput &input, TimeNumber &tn) {
+    switch (input.size()) {
     case 1:
-      event.number = TimeNumber::_1;
+      tn = TimeNumber::_1;
       break;
     case 2:
-      event.number = TimeNumber::_10;
+      tn = TimeNumber::_10;
       break;
     case 3:
-      event.number = TimeNumber::_100;
+      tn = TimeNumber::_100;
       break;
     default:
-      throw std::runtime_error("Internal error: bad Grammar::time_number match");
+      throw std::runtime_error("InternalError");
     }
+
+    return true;
   }
 };
 
-template<>
-struct TimeScaleAction<TimeScaleView> {
-  static void success(TimeScaleView& event, TimeNumber number) {
-    event.number = number;
-  }
+struct TimeNumberAction : single_dispatch <
+    Grammar::time_number, apply<TimeNumberApply>
+> {
+  using state = TimeNumber;
+};
 
-  static void success(TimeScaleView& event, TimeUnit unit) {
-    event.unit = unit;
-  }
+struct TimeScaleAction : multi_dispatch <
+    Grammar::time_number, inner_action<TimeNumberAction, Storage::member<&TimeScaleView::number>>,
+    Grammar::time_unit, inner_action<TimeUnitAction, Storage::member<&TimeScaleView::unit>>
+> {
+  using state = TimeScaleView;
 };
 
 } // namespace VCD

@@ -1,89 +1,58 @@
 #ifndef LIBVCD_EVENTS_HEADER_HPP
 #define LIBVCD_EVENTS_HEADER_HPP
 
-#include <tao/pegtl/nothing.hpp>
+#include "../types/header_reader.hpp"
 
-#include "vcd/grammar/commands.hpp"
-#include "vcd/events/scope.hpp"
-#include "vcd/events/var.hpp"
-#include "vcd/events/time_scale.hpp"
-#include "vcd/types/header_reader.hpp"
+#include "./scope.hpp"
+#include "./var.hpp"
+#include "./time_scale.hpp"
 
-#include <iostream>
+#include "parse/actions/apply/string.hpp"
+#include "parse/actions/storage/function.hpp"
 
-namespace VCD {
+#include <string>
 
-template<class Rule>
-struct HeaderAction : tao::pegtl::nothing<Rule> {};
+namespace VCD::Actions {
 
-template<>
-struct HeaderAction<Grammar::scope_command> {
-  using state = ScopeDataView;
+using namespace Parse;
 
-  template<class Rule>
-  using action = ScopeAction<Rule>;
-
-  static void apply0(HeaderReader&) {};
+struct VersionAction : single_dispatch<
+    Grammar::version_command, apply<Apply::string>
+> {
+  using state = std::string;
 };
 
-template<>
-struct HeaderAction<Grammar::var_command> {
-  using state = VariableView;
-
-  template<class Rule>
-  using action = VarAction<Rule>;
-
-  static void apply0(HeaderReader&) {}
+struct DateAction : single_dispatch<
+    Grammar::date_command, apply<Apply::string>
+> {
+  using state = std::string;
 };
 
-template<>
-struct HeaderAction<Grammar::upscope_command> {
-  static void apply0(HeaderReader &reader) {
-    reader.upscope();
-  }
+using HeaderVarFunctionType = void (HeaderReader::*)(VariableView);
+using HeaderScopeFunctionType = void (HeaderReader::*)(ScopeDataView);
+using HeaderTimeScaleFunctionType = void (HeaderReader::*)(TimeScaleView);
+
+struct HeaderAction : multi_dispatch<
+    Grammar::date_command, inner_action<
+        DateAction, Storage::function<&HeaderReader::date>>,
+    Grammar::timescale_command, inner_action<
+        TimeScaleAction, Storage::function<
+            static_cast<HeaderTimeScaleFunctionType>(&HeaderReader::timescale)>>,
+    Grammar::version_command, inner_action<
+        VersionAction, Storage::function<&HeaderReader::version>>,
+    Grammar::scope_command, inner_action<
+        ScopeAction,
+        Storage::function<
+            static_cast<HeaderScopeFunctionType >(&HeaderReader::scope)>>,
+    Grammar::upscope_command, apply0<UpscopeApply>,
+    Grammar::var_command, inner_action<
+        VarAction,
+        Storage::function<
+            static_cast<HeaderVarFunctionType>(&HeaderReader::var)>>
+> {
+  using state = HeaderReader;
 };
 
-template<>
-struct HeaderAction<Grammar::version_command> {
-  template<class Input>
-  static void apply(const Input& input, HeaderReader &reader) {
-    reader.version(input.string());
-  }
-};
-
-template<>
-struct HeaderAction<Grammar::date_command> {
-  template<class Input>
-  static void apply(const Input& input, HeaderReader &reader) {
-    // TODO handle with grammar rather than trimming
-    reader.date(input.string());
-  }
-};
-
-template<>
-struct HeaderAction<Grammar::timescale_command> {
-  using state = TimeScaleView;
-
-  template<class Rule> using action = TimeScaleAction<Rule>;
-
-  static void apply0(HeaderReader&) {}
-};
-
-template<>
-struct HeaderAction<HeaderReader> {
-  static void success(HeaderReader &reader, ScopeDataView event) {
-    reader.scope(event.type, std::string(event.identifier));
-  }
-
-  static void success(HeaderReader &reader, VariableView event) {
-    reader.var(event.type, event.size, std::string(event.identifier_code), std::string(event.reference));
-  }
-
-  static void success(HeaderReader &reader, TimeScaleView event) {
-    reader.timescale(event.number, event.unit);
-  }
-};
-
-} // namespace VCD
+} // namespace VCD::Actions
 
 #endif // LIBVCD_EVENTS_HEADER_HPP

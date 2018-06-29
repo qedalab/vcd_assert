@@ -22,6 +22,12 @@ struct multi_dispatch<Rule, Command> : single_dispatch<Rule, Command> {
   using single_dispatch<Rule, Command>::dispatch;
 };
 
+template<class Command>
+struct all_dispatch {
+  template<class Rule>
+  static Command dispatch(Internal::Tag<Rule>);
+};
+
 template <typename Action, typename Rule>
 using action_tag_dispatch_decl =
     decltype(Action::dispatch(Internal::Tag<Rule>{}));

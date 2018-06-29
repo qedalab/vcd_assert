@@ -15,7 +15,7 @@ TEST_CASE("VCD.Events.Var", "[VCD][Events][Var]") {
   using Parse::Test::require_parse;
 
   VariableView event;
-  require_parse<Grammar::var_command, VarAction>(var_str, event);
+  require_parse<Grammar::var_command, Actions::VarAction>(var_str, event);
 
   CHECK(event.size == 32);
   CHECK(event.type == VarType::integer);

@@ -22,11 +22,17 @@ public:
   /// Introdocue a new scope
   void scope(ScopeType type, std::string name);
 
+  /// Introduce a new scope
+  void scope(ScopeDataView scope);
+
   /// Exits current scope
   void upscope();
 
   /// Adds a variable to the scope
   void var(VarType type, std::size_t size, std::string identifier_code, std::string reference);
+
+  /// Adds a variable to the scope
+  void var(VariableView variable);
 
   /// Set Header version string
   /// \param version_string The version string
@@ -59,6 +65,11 @@ public:
   /// \param unit The time unit number
   /// \exception Throws if and only if time scale is already set
   void timescale(TimeNumber number, TimeUnit unit);
+
+  /// Set header time scale
+  /// \param timescale The time scale
+  /// \exception Throws if and only if time scale is already set
+  void timescale(TimeScaleView time_scale);
 
   /// Set the header time scale, overwriting if already set
   /// \param number The time scale number

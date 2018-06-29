@@ -13,46 +13,52 @@
 #include <vcd/grammar/base.hpp>
 #include <vcd/grammar/commands.hpp>
 
-namespace VCD {
+#include "parse/actions/storage/member.hpp"
+#include "parse/actions/apply/rule_value.hpp"
+#include "parse/actions/apply/string_view.hpp"
+#include "parse/actions/apply/integer.hpp"
 
-template<class Rule>
-struct VarAction : tao::pegtl::nothing<Rule> {};
+#include "parse/actions/dispatch.hpp"
+#include "parse/actions/command/inner_action.hpp"
+#include "parse/actions/command/apply0.hpp"
+#include "parse/actions/command/apply.hpp"
+#include "parse/actions/command/pegtl_action.hpp"
 
-template<>
-struct VarAction<Grammar::var_type> : Parse::ScopedValueAction<VarType> {};
+namespace VCD::Actions {
 
-template<>
-struct VarAction<VariableView> {
-  static void success(VariableView &parent, VarType type) {
-    parent.type = type;
-  }
+using namespace Parse;
+
+struct IdentifierCodeAction : single_dispatch<
+    Grammar::identifier_code, apply<Apply::string_view>
+> {
+  using state = std::string_view;
 };
 
-template<>
-struct VarAction<Grammar::identifier_code> {
-  template<class Input>
-  static void apply(const Input& input, VariableView& state) {
-    state.identifier_code = std::string_view{input.begin(), input.size()};
-  }
+struct ReferenceAction : single_dispatch<
+    Grammar::reference, apply<Apply::string_view>
+> {
+  using state = std::string_view;
 };
 
-template<>
-struct VarAction<Grammar::reference> {
-  template<class Input>
-  static void apply(const Input& input, VariableView& state) {
-    state.reference = std::string_view{input.begin(), input.size()};
-  }
+struct SizeAction : single_dispatch<
+    Grammar::size, apply<Apply::integer>
+> {
+  using state = int;
 };
 
-template<>
-struct VarAction<Grammar::var_size> {
-  template<class Input>
-  static void apply(const Input& input, VariableView& state) {
-    // TODO avoid the string alloc
-    state.size = std::stoul(input.string());
-  }
+struct VarTypeAction : all_dispatch<apply0<Apply::rule_value>> {
+  using state = VarType;
 };
 
-} // namespace VCD
+struct VarAction : multi_dispatch<
+    Grammar::var_type, inner_action<VarTypeAction, Storage::member<&VariableView::type>>,
+    Grammar::var_size, inner_action<SizeAction, Storage::member<&VariableView::size>>,
+    Grammar::identifier_code, inner_action<IdentifierCodeAction, Storage::member<&VariableView::identifier_code>>,
+    Grammar::reference, inner_action<ReferenceAction, Storage::member<&VariableView::reference>>
+> {
+  using state = VariableView;
+};
+
+} // namespace VCD::Actions
 
 #endif // LIBVCD_TYPES_EVENT_VAR_HPP

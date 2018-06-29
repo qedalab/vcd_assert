@@ -37,6 +37,11 @@ void HeaderReader::scope(ScopeType type, std::string name)
   }
 }
 
+void HeaderReader::scope(VCD::ScopeDataView scope)
+{
+  this->scope(scope.type, std::string(scope.identifier));
+}
+
 void HeaderReader::upscope()
 {
   if(scope_stack_.empty())
@@ -87,6 +92,12 @@ void HeaderReader::var(VarType type, std::size_t size, std::string identifier_co
   current_scope_ref.child_variables_[reference] = var_index;
 }
 
+void HeaderReader::var(VCD::VariableView variable)
+{
+  this->var(variable.type, variable.size, std::string(variable.identifier_code),
+            std::string(variable.reference));
+}
+
 void HeaderReader::version(std::string version_string)
 {
   if(has_version())
@@ -129,6 +140,11 @@ void HeaderReader::timescale(TimeNumber number, TimeUnit unit)
     throw std::runtime_error("Header already has version property");
 
   header_->time_scale_ = TimeScale{number, unit};
+}
+
+void HeaderReader::timescale(TimeScaleView time_scale)
+{
+  timescale(time_scale.number, time_scale.unit);
 }
 
 void HeaderReader::overwrite_timescale(TimeNumber number, TimeUnit unit) noexcept

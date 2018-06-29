@@ -13,7 +13,7 @@ TEST_CASE("VCD.Events.Scope", "[VCD][Events][Scope]")
   using Parse::Test::require_parse;
 
   ScopeDataView event{};
-  require_parse<Grammar::scope_command, ScopeAction>(scope_str, event);
+  require_parse<Grammar::scope_command, Actions::ScopeAction>(scope_str, event);
 
   CHECK(event.identifier == "top");
   CHECK(event.type == ScopeType::module);

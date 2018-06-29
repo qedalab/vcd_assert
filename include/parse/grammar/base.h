@@ -22,6 +22,9 @@ using nothing = tao::pegtl::nothing<Rule>;
 template <typename... Rules>
 using sor = tao::pegtl::sor<Rules...>;
 
+template <typename Rule>
+using alias = tao::pegtl::seq<Rule>;
+
 template <typename... Rules>
 using seq = tao::pegtl::seq<Rules...>;
 

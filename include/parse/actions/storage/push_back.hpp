@@ -7,7 +7,7 @@ namespace Parse::Storage {
 
 struct push_back {
   template <class Parent, class Type>
-  static bool store(Parent &parent, Type &&child) {
+  static bool store(Parent &parent, Type child) {
     parent.emplace_back(std::move(child));
     return true;
   }

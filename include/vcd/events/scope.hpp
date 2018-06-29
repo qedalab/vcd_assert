@@ -7,30 +7,51 @@
 #include "../grammar/commands.hpp"
 
 #include "parse/action/enum.h"
+#include "parse/actions/storage/member.hpp"
+#include "parse/actions/command/apply.hpp"
+#include "parse/actions/command/apply0.hpp"
+#include "parse/actions/command/inner_action.hpp"
+#include "parse/actions/command/pegtl_action.hpp"
+#include "parse/actions/apply/string_view.hpp"
+#include "parse/actions/apply/rule_value.hpp"
+#include "parse/actions/dispatch.hpp"
+#include "parse/action/enum.h"
 
 #include <string_view>
+#include <parse/actions/apply/string_view.hpp>
 
-namespace VCD {
+namespace VCD::Actions {
 
-template<class Rule>
-struct ScopeAction : tao::pegtl::nothing<Rule> {};
+using namespace Parse;
 
-template<>
-struct ScopeAction<Grammar::scope_type> : Parse::ScopedValueAction<ScopeType> {};
-
-template<>
-struct ScopeAction<ScopeDataView> {
-  static void success(ScopeDataView &parent, ScopeType type) {
-    parent.type = type;
+struct UpscopeApply {
+  template<class Rule, class Parent>
+  static bool apply0(Parent& parent) {
+    parent.upscope();
+    return true;
   }
 };
 
-template<>
-struct ScopeAction<Grammar::scope_identifier> {
-  template<class Input>
-  static void apply(const Input& input, ScopeDataView& state) {
-    state.identifier = std::string_view{input.begin(), input.size()};
-  }
+struct ScopeTypeAction : all_dispatch<apply0<Apply::rule_value>> {
+  using state = ScopeType;
+};
+
+struct ScopeIdentifierAction : Parse::single_dispatch<
+    Grammar::scope_identifier, Parse::apply<Parse::Apply::string_view>
+> {
+  using state = std::string_view;
+};
+
+struct ScopeAction
+    : Parse::multi_dispatch<
+          Grammar::scope_type,
+          Parse::inner_action<ScopeTypeAction,
+                              Parse::Storage::member<&ScopeDataView::type>>,
+          Grammar::scope_identifier,
+          Parse::inner_action<ScopeIdentifierAction,
+                              Parse::Storage::member<&ScopeDataView::identifier>>
+> {
+  using state = ScopeDataView;
 };
 
 }

@@ -15,7 +15,7 @@ struct member {
 
 template <class Class, class Type, Type Class::*Member>
 struct member<Member> {
-  static bool store(Class &parent, Type &&child) {
+  static bool store(Class &parent, Type child) {
     parent.*Member = std::move(child);
     return true;
   }

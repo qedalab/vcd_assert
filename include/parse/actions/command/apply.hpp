@@ -18,7 +18,7 @@ struct apply {
   template <typename Rule, rewind_mode M, template <typename...> class Action,
             template <typename...> class Control, class Input,
             typename... States>
-  static bool command(Input &input, States &&... states) {
+  static bool command(Input &input, States &... states) {
     using duseltronik =
         tao::pegtl::internal::duseltronik<Rule, apply_mode::NOTHING, M, Action,
                                           Control>;

@@ -69,7 +69,7 @@ TEST_CASE("VCD.Events.Header", "[VCD][Events][Header]") {
   using Parse::Test::require_parse;
 
   HeaderReader reader;
-  require_parse<Grammar::header_commands, HeaderAction>(
+  require_parse<Grammar::header_commands, Actions::HeaderAction>(
       four_state_vcd_example_header_str, reader);
 
   auto header_p = reader.release();

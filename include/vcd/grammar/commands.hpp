@@ -106,7 +106,7 @@ struct upscope_command : delimited_seq<plus_blank,
   must<end_command>
 > {};
 
-struct var_size : size {};
+struct var_size : alias<size> {};
 
 struct var_command : delimited_seq<plus_blank,
   var_keyword,
