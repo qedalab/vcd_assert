@@ -22,9 +22,22 @@ struct CellStorage {
 
 struct TimingSpecStorage {
   static bool store(Cell &cell, TimingSpec cell) {
-    cell.te_specs.emplace_back(std::move(spec))
+    cell.timing_specs.emplace_back(std::move(spec))
     return true;
   }
+};
+
+struct CellInstanceAction : multi_dispatch<
+  Grammar::one<'*'>, inner_value<
+    QStringAction,
+    Storage::member<&Cell::celltype>
+  >
+  Grammar::cell_instance, inner_value<
+    CellInstanceAction,
+    Storage::member<&Cell::cell_instance>
+  >
+> {
+  using state = Cell;
 };
 
 struct CellAction : multi_dispatch<
@@ -38,7 +51,7 @@ struct CellAction : multi_dispatch<
   >
   Grammar::timing_spec, inner_value<
     TimingSpecAction,
-    Storage::push_back<&Cell::te_specs>
+    Storage::push_back<&Cell::timing_specs>
   >
 > {
   using state = Cell;
@@ -46,4 +59,4 @@ struct CellAction : multi_dispatch<
 
 }
 
-#endif LIBSDF_ACTIONS_CELL_HPP
+#endif // LIBSDF_ACTIONS_CELL_HPP

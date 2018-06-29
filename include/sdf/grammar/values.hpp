@@ -1,5 +1,5 @@
-#ifndef LIBSDF_GRAMMAR_VALUES_H
-#define LIBSDF_GRAMMAR_VALUES_H
+#ifndef LIBSDF_GRAMMAR_VALUES_HPP 
+#define LIBSDF_GRAMMAR_VALUES_HPP 
 
 #include <sdf/grammar/base.hpp>
 #include <sdf/grammar/numbers.hpp>
@@ -65,4 +65,4 @@ struct delval_list : seq<
 } // namespace Grammar
 } // namespace SDF
 
-#endif // LIBSDF_GRAMMAR_DATA_VALUES_H
+#endif // LIBSDF_GRAMMAR_VALUES_HPP 

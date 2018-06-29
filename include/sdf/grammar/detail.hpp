@@ -1,5 +1,5 @@
-#ifndef LIBSDF_GRAMMAR_DETAIL_H
-#define LIBSDF_GRAMMAR_DETAIL_H
+#ifndef LIBSDF_GRAMMAR_DETAIL_HPP 
+#define LIBSDF_GRAMMAR_DETAIL_HPP 
 
 
 namespace SDF {
@@ -12,4 +12,4 @@ namespace Grammar {
 } // namespace Grammar
 } // namespace SDF
 
-#endif // LIBSDF_GRAMMAR_DETAIL_H
+#endif // LIBSDF_GRAMMAR_DETAIL_HPP 

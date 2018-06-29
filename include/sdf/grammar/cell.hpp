@@ -1,6 +1,6 @@
 
-#ifndef LIBSDF_GRAMMAR_CELL_H
-#define LIBSDF_GRAMMAR_CELL_H
+#ifndef LIBSDF_GRAMMAR_CELL_HPP 
+#define LIBSDF_GRAMMAR_CELL_HPP 
 
 
 #include <sdf/grammar/base.hpp>
@@ -17,15 +17,12 @@ struct celltype : block<
   qstring
 >{};
 
-struct cell_instance : unimplemented< key_instance >{};
-// struct cell_instance : block< 
-//   pegtl::must < 
-//     key_instance,
-//     sor<
-//       pegtl::opt<hierarchical_identifier>, one< '*' > 
-//     >
-//   >
-// >{};
+struct cell_instance : block< 
+  key_instance,
+  sor<
+    opt<hierarchical_identifier>, one< '*' > 
+  >
+>{};
 
 // struct cell : unimplemented< key_cell >{}; 
 struct cell : block< 
@@ -40,4 +37,4 @@ struct cell : block<
 } // namespace Grammar
 } // namespace SDF
 
-#endif // LIBSDF_GRAMMAR_CELL_H
+#endif // LIBSDF_GRAMMAR_CELL_HPP 

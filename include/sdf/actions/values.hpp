@@ -28,4 +28,4 @@ struct TripleValueAction : single_dispatch<
 
 }
 
-#endif LIBSDF_ACTIONS_VALUES_HPP
+#endif // LIBSDF_ACTIONS_VALUES_HPP

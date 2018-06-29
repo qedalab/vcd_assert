@@ -11,6 +11,20 @@ enum class TimescaleNumber {
   _1, _10, _100
 };
 
+struct Wildcard;
+struct Scope;
+enum class HierarchicalIdentifier;
+
+enum class HierarchicalIdentifier {
+  Scope,
+  HierarchicalIdentifier
+};
+
+enum class CelInstance {
+  HierarchicalIdentifier, Wildcard
+};
+
+
 enum class TimingSpecType {
   delay,
   timingCheck,

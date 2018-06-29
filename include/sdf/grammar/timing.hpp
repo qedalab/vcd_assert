@@ -1,5 +1,5 @@
-#ifndef LIBSDF_GRAMMAR_SPEC_H
-#define LIBSDF_GRAMMAR_SPEC_H
+#ifndef LIBSDF_GRAMMAR_TIMING_HPP 
+#define LIBSDF_GRAMMAR_TIMING_HPP 
 
 #include <sdf/grammar/base.hpp>
 #include <sdf/grammar/cell.hpp>
@@ -525,11 +525,10 @@ struct lbl_spec : unimplemented< key_label >{};
 //     plus< lbl_type >
 // >{};
 
-struct tc_spec : unimplemented< key_timingcheck >{};
-// struct tc_spec : block<
-//     key_timingcheck,
-//     plus< tchk_def >
-// >{};
+struct tc_spec : block<
+    key_timingcheck,
+    plus< tchk_def >
+>{};
 
 struct del_spec : unimplemented< key_delay >{};
 
@@ -549,4 +548,4 @@ struct timing_spec : sor<
 } // namespace Grammar
 } // namespace SDF
 
-#endif // LIBSDF_GRAMMAR_SPEC_H
+#endif // LIBSDF_GRAMMAR_TIMING_HPP 

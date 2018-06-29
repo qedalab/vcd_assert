@@ -1,5 +1,5 @@
-#ifndef LIBSDF_GRAMMAR_CONDITIONS_H
-#define LIBSDF_GRAMMAR_CONDITIONS_H
+#ifndef LIBSDF_GRAMMAR_CONDITIONS_HPP 
+#define LIBSDF_GRAMMAR_CONDITIONS_HPP 
 
 #include <sdf/grammar/base.hpp>
 #include <sdf/grammar/constants.hpp>
@@ -80,4 +80,4 @@ struct scalar_node : sor<
 } // namespace Grammar
 } // namespace SDF
 
-#endif // LIBSDF_GRAMMAR_CONDITIONS_H
+#endif // LIBSDF_GRAMMAR_CONDITIONS_HPP 

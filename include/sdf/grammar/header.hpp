@@ -1,6 +1,6 @@
 
-#ifndef LIBSDF_GRAMMAR_HEADER_H
-#define LIBSDF_GRAMMAR_HEADER_H
+#ifndef LIBSDF_GRAMMAR_HEADER_HPP 
+#define LIBSDF_GRAMMAR_HEADER_HPP 
 
 #include <sdf/grammar/base.hpp>
 #include <sdf/grammar/keywords.hpp>
@@ -105,5 +105,5 @@ struct sdf_header : op_sep_seq< //make ws_ignored_seq
 } // namespace Grammar
 } // namespace SDF
 
-#endif // LIBSDF_GRAMMAR_HEADER_H
+#endif // LIBSDF_GRAMMAR_HEADER_HPP 
 

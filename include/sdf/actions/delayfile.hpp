@@ -71,4 +71,4 @@ struct DelayFileAction : multi_dispatch<
 // clang-format on
 
 }
-#endif LIBSDF_ACTIONS_DELAYFILE_HPP
+#endif // LIBSDF_ACTIONS_DELAYFILE_HPP

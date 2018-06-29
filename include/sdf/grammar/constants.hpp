@@ -1,5 +1,5 @@
-#ifndef LIBSDF_GRAMMAR_CONSTANTS_H
-#define LIBSDF_GRAMMAR_CONSTANTS_H
+#ifndef LIBSDF_GRAMMAR_CONSTANTS_HPP 
+#define LIBSDF_GRAMMAR_CONSTANTS_HPP 
 
 #include <sdf/grammar/base.hpp>
 
@@ -31,4 +31,4 @@ struct scalar_constant : sor<
 } // namespace Grammar
 } // namespace SDF
 
-#endif // LIBSDF_GRAMMAR_CONSTANTS_H
+#endif // LIBSDF_GRAMMAR_CONSTANTS_HPP 

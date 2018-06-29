@@ -1,6 +1,6 @@
 
-#ifndef LIBSDF_GRAMMAR_DELAYFILE_H
-#define LIBSDF_GRAMMAR_DELAYFILE_H
+#ifndef LIBSDF_GRAMMAR_DELAYFILE_HPP 
+#define LIBSDF_GRAMMAR_DELAYFILE_HPP 
 
 #include <sdf/grammar/cell.hpp>
 #include <sdf/grammar/header.hpp>
@@ -21,4 +21,4 @@ struct delay_file : block<
 } // namespace Grammar
 } // namespace SDF
 
-#endif // LIBSDF_GRAMMAR_DELAYFILE_H
+#endif // LIBSDF_GRAMMAR_DELAYFILE_HPP 

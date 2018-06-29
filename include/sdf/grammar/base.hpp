@@ -1,5 +1,5 @@
-#ifndef LIBSDF_GRAMMAR_BASE_H
-#define LIBSDF_GRAMMAR_BASE_H
+#ifndef LIBSDF_GRAMMAR_BASE_HPP 
+#define LIBSDF_GRAMMAR_BASE_HPP 
 
 #include <parse/grammar/base.h>
 #include <tao/pegtl.hpp>
@@ -195,4 +195,4 @@ struct unimplemented : if_must<
 } // namespace Grammar
 } // namespace SDF
 
-#endif // PARSE_GRAMMAR_BASE_H
+#endif // LIBSDF_GRAMMAR_BASE_HPP 

@@ -19,7 +19,7 @@ namespace Types {
 struct Cell {
   std::string celltype;
   std::string cell_instance;
-  std::vector<TimingSpec> te_specs;
+  std::vector<TimingSpec> timing_specs;
 };
 
 }

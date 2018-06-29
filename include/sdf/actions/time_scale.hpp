@@ -1,5 +1,5 @@
-#ifndef LIBSDF_EVENT_TIME_SCALE_HPP
-#define LIBSDF_EVENT_TIME_SCALE_HPP
+#ifndef LIBSDF_ACTIONS_TIME_SCALE_HPP
+#define LIBSDF_ACTIONS_TIME_SCALE_HPP
 
 #include <sdf/types/enums.hpp>
 #include <sdf/grammar/enums/time.hpp>
@@ -39,4 +39,4 @@ struct TimeScaleAction : multi_dispatch<
 
 } // namespace SDF
 
-#endif // SDF_EVENT_TIME_SCALE_HPP
+#endif // SDF_ACTIONS_TIME_SCALE_HPP

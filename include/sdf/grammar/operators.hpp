@@ -1,5 +1,5 @@
-#ifndef LIBSDF_GRAMMAR_OPERATORS_H
-#define LIBSDF_GRAMMAR_OPERATORS_H
+#ifndef LIBSDF_GRAMMAR_OPERATORS_HPP 
+#define LIBSDF_GRAMMAR_OPERATORS_HPP 
 
 #include <sdf/grammar/base.hpp>
 
@@ -95,4 +95,4 @@ struct binary_operator : sor<
 } // namespace Grammar
 } // namespace SDF
 
-#endif // PARSE_OPERATORS_H
+#endif // LIBSDF_GRAMMAR_OPERATORS_HPP 

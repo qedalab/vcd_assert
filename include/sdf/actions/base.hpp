@@ -52,4 +52,4 @@ struct QStringAction : single_dispatch<
 
 }
 
-#endif LIBSDF_ACTIONS_BASE_HPP
+#endif // LIBSDF_ACTIONS_BASE_HPP

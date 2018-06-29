@@ -1,5 +1,5 @@
-#ifndef LIBSDF_GRAMMAR_KEYWORDS_H
-#define LIBSDF_GRAMMAR_KEYWORDS_H
+#ifndef LIBSDF_GRAMMAR_KEYWORDS_HPP 
+#define LIBSDF_GRAMMAR_KEYWORDS_HPP 
 
 #include <sdf/grammar/base.hpp>
 
@@ -204,4 +204,4 @@ struct keyword : key< str_keyword > {};
 } // namespace Grammar
 } // namespace SDF
 
-#endif // LIBSDF_GRAMMAR_KEYWORDS_H
+#endif // LIBSDF_GRAMMAR_KEYWORDS_HPP 

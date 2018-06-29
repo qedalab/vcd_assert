@@ -1,5 +1,5 @@
-#ifndef LIBSDF_GRAMMAR_NUMBERS_H
-#define LIBSDF_GRAMMAR_NUMBERS_H
+#ifndef LIBSDF_GRAMMAR_NUMBERS_HPP 
+#define LIBSDF_GRAMMAR_NUMBERS_HPP 
 
 #include <sdf/grammar/base.hpp>
 
@@ -24,4 +24,4 @@ struct signed_real_number : must<
 } // namespace Grammar
 } // namespace SDF
 
-#endif // PARSE_CONSTANTS_H
+#endif // LIBSDF_GRAMMAR_NUMBERS_HPP 
