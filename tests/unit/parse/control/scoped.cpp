@@ -6,43 +6,12 @@
 #include <variant>
 #include <tao/pegtl/parse.hpp>
 
+#include "./json.hpp"
+
 using namespace Parse;
-
-constexpr char json_example[] =
-    "{\n"
-    "  \"name\":\"John\",\n"
-    "  \"age\":30,\n"
-    "  \"cars\":[ \"Ford\", \"BMW\", \"Fiat\" ]\n"
-    "}";
-
-namespace json_grammar = tao::pegtl::json;
-
-struct JSONValue;
-using JSONValuePtr = std::unique_ptr<JSONValue>;
-struct JSONNull {};
-
-using JSONString = std::string;
-using JSONNumber = double;
-using JSONBool = bool;
-using JSONArray = std::vector<JSONValuePtr>;
-using JSONObject = std::map<JSONString, JSONValuePtr>;
-
-// I require this object for keeping the state of key
-struct JSONObjectKeyPair {
-    JSONValuePtr value;
-    JSONString key;
-};
 
 template<class Rule>
 struct JSONActions : tao::pegtl::nothing<Rule> {};
-
-using JSONValueVariant = std::variant<JSONNull, JSONString, JSONNumber, JSONArray,
-        JSONObject, JSONBool>;
-
-struct JSONValue : public JSONValueVariant
-{
-    using JSONValueVariant::JSONValueVariant;
-};
 
 template<>
 struct JSONActions<json_grammar::string_content> {

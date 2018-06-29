@@ -1,6 +1,6 @@
 set(DIR ${CMAKE_CURRENT_SOURCE_DIR})
 
-add_executable(unit_parse ../unit_main.cpp)
+add_executable(unit_parse ../unit_main.cpp ./capture/dispatch.cpp)
 target_link_libraries(unit_parse libparse Catch2::Catch2)
 add_test(NAME unit_parse COMMAND unit_parse)
 
