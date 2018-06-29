@@ -2,8 +2,8 @@
 #define LIBSDF_TEST_SDF_KEYWORDS_H
 
 
-#include "./base.hpp"
-#include <sdf/grammar/keywords.h>
+#include "base.hpp"
+#include <sdf/grammar/keywords.hpp>
 
 
 namespace Test {

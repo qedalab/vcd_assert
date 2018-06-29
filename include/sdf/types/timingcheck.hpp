@@ -1,26 +1,26 @@
 #ifndef LIBSDF_TYPES_TIMINGCHECK_H_
 #define LIBSDF_TYPES_TIMINGCHECK_H_
 
-#include <sdf/types/delayfile.h>
-#include <sdf/types/values.h>
-#include <sdf/types/variant.h>
+#include <sdf/types/delayfile.hpp>
+#include <sdf/types/values.hpp>
+#include <sdf/types/variant.hpp>
 
 namespace SDF {
 namespace Types {
 
 // clang-format off
 using TimingCheckVariant = std::variant<
-  // Setup,
+  // Setup,         //unsupported
   Hold,
-  // Setuphold,
-  // Recovery,
-  // Removal,
-  // Recrem,
-  // Skew,
-  // Bidirectskew,
-  // Width,
-  // Period,
-  // Nochange
+  // Setuphold,     //unsupported
+  // Recovery,      //unsupported
+  // Removal,       //unsupported
+  // Recrem,        //unsupported
+  // Skew,          //unsupported
+  // Bidirectskew,  //unsupported
+  // Width,         //unsupported
+  // Period,        //unsupported
+  // Nochange       //unsupported
 >;
 // clang-format on
 
@@ -31,11 +31,8 @@ struct TimingCheck : public TimingCheckVariant {
 using TimingCheckPtl = std::unique_ptr<TimingCheck>;
 
 // clang-format off
-//(Almost)All timingcheck types use two ports to define the assert.
 struct Hold {
   std::tuple<Port,Port> ports;
-  // Port data_port;
-  // Port clock_port;
   double value;
 };
 // clang-format on

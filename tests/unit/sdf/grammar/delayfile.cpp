@@ -1,4 +1,4 @@
-#include "./delayfile.hpp"
+#include "delayfile.hpp"
 
 using namespace Parse::Test;
 using namespace SDF::Grammar;

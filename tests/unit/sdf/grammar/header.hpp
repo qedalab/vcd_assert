@@ -2,8 +2,8 @@
 #define LIBSDF_TEST_SDF_HEADER_H
 
 
-#include "./base.hpp"
-#include <sdf/grammar/header.h>
+#include "base.hpp"
+#include <sdf/grammar/header.hpp>
 
 namespace Test {
 namespace SDF {

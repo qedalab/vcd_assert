@@ -1,8 +1,8 @@
 #ifndef LIBSDF_GRAMMAR_VALUES_H
 #define LIBSDF_GRAMMAR_VALUES_H
 
-#include "base.h"
-#include "numbers.h"
+#include <sdf/grammar/base.hpp>
+#include <sdf/grammar/numbers.hpp>
 
 namespace SDF {
 namespace Grammar {

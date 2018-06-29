@@ -2,9 +2,9 @@
 #ifndef LIBSDF_GRAMMAR_DELAYFILE_H
 #define LIBSDF_GRAMMAR_DELAYFILE_H
 
-#include "cell.h"
-#include "header.h"
-#include "keywords.h"
+#include <sdf/grammar/cell.hpp>
+#include <sdf/grammar/header.hpp>
+#include <sdf/grammar/keywords.hpp>
 
 namespace SDF {
 namespace Grammar {

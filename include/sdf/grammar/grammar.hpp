@@ -2,8 +2,8 @@
 #ifndef LIBSDF_GRAMMAR_H
 #define LIBSDF_GRAMMAR_H
 
-#include "base.h"
-#include "delayfile.h"
+#include <sdf/grammar/base.hpp>
+#include <sdf/grammar/delayfile.hpp>
 
 namespace SDF {
 namespace Grammar {

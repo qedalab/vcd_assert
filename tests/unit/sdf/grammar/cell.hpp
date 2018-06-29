@@ -1,8 +1,8 @@
 #ifndef LIBSDF_TEST_SDF_CELL_H
 #define LIBSDF_TEST_SDF_CELL_H
 
-#include "./base.hpp"
-#include <sdf/grammar/cell.h>
+#include "base.hpp"
+#include <sdf/grammar/cell.hpp>
 
 namespace Test {
 namespace SDF {

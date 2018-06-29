@@ -1,8 +1,6 @@
 #ifndef LIBSDF_ENUMS_H_
 #define LIBSDF_ENUMS_H_
 
-#include <parse/grammar/base.h>
-
 namespace SDF {
 
 enum class TimescaleUnit {

@@ -1,4 +1,4 @@
-#include "./values.hpp"
+#include "values.hpp"
 
 using namespace Parse::Test;
 using namespace SDF::Grammar;

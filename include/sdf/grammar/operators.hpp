@@ -1,7 +1,7 @@
 #ifndef LIBSDF_GRAMMAR_OPERATORS_H
 #define LIBSDF_GRAMMAR_OPERATORS_H
 
-#include "base.h"
+#include <sdf/grammar/base.hpp>
 
 namespace SDF {
 namespace Grammar {

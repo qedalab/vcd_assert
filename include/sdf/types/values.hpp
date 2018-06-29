@@ -1,7 +1,7 @@
 #ifndef LIBSDF_TYPES_VALUES_H_
 #define LIBSDF_TYPES_VALUES_H_
 
-// #include "sdf/grammar/base.h"
+// #include <sdf/grammar/base.hpp>
 
 namespace SDF {
 namespace Types {

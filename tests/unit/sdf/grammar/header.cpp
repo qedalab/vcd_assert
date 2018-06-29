@@ -1,4 +1,4 @@
-#include "./header.hpp"
+#include "header.hpp"
 
 using namespace Parse::Test;
 using namespace SDF::Grammar;

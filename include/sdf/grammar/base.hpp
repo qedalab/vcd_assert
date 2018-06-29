@@ -1,7 +1,7 @@
 #ifndef LIBSDF_GRAMMAR_BASE_H
 #define LIBSDF_GRAMMAR_BASE_H
 
-#include "parse/grammar/base.h"
+#include <parse/grammar/base.h>
 #include <tao/pegtl.hpp>
 
 namespace SDF {

@@ -2,7 +2,7 @@
 #define LIBSDF_TYPES_TIMINGDELAY_H_
 
 
-struct Delay {
+struct TimingDelay {
   
 };
 

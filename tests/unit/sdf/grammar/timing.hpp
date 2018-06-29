@@ -1,8 +1,8 @@
 #ifndef LIBSDF_TEST_SDF_TIMING_H
 #define LIBSDF_TEST_SDF_TIMING_H
 
-#include "./base.hpp"
-#include <sdf/grammar/values.h>
+#include "base.hpp"
+#include <sdf/grammar/values.hpp>
 
 namespace Test {
 namespace SDF {

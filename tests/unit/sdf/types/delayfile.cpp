@@ -1,7 +1,7 @@
-// #include <sdf/types/delayfile.h>
-// #include <sdf/types/scopetree.h>
-// #include <sdf/types/timingcheck.h>
-// #include <sdf/types/timingdelay.h>
-// #include <sdf/types/values.h>
-// #include <sdf/types/variant.h>
-// #include <sdf/enums.h>
+// #include <sdf/types/delayfile.hpp>
+// #include <sdf/types/scopetree.hpp>
+// #include <sdf/types/timingcheck.hpp>
+// #include <sdf/types/timingdelay.hpp>
+// #include <sdf/types/values.hpp>
+// #include <sdf/types/variant.hpp>
+// #include <sdf/enums.hpp>

@@ -1,8 +1,8 @@
 #ifndef LIBSDF_TEST_SDF_DELAYFILE_H
 #define LIBSDF_TEST_SDF_DELAYFILE_H
 
-#include "./base.hpp"
-#include <sdf/grammar/delayfile.h>
+#include "base.hpp"
+#include <sdf/grammar/delayfile.hpp>
 
 namespace Test {
 namespace SDF {

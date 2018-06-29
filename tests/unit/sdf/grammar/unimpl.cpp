@@ -1,5 +1,5 @@
-#include "./base.hpp"
-#include "./unimpl.hpp"
+#include "base.hpp"
+#include "unimpl.hpp"
 
 using namespace Parse::Test;
 using namespace SDF::Grammar;

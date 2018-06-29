@@ -1,9 +1,9 @@
 #ifndef LIBSDF_TEST_SDF_GRAMMAR_H
 #define LIBSDF_TEST_SDF_GRAMMAR_H
 
-#include "./base.hpp"
-#include "./delayfile.hpp"
-#include <sdf/grammar/grammar.h>
+#include "base.hpp"
+#include "delayfile.hpp"
+#include <sdf/grammar/grammar.hpp>
 
 namespace Test {
 namespace SDF {

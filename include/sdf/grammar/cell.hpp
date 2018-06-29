@@ -3,9 +3,9 @@
 #define LIBSDF_GRAMMAR_CELL_H
 
 
-#include "base.h"
-#include "keywords.h"
-#include "timing.h"
+#include <sdf/grammar/base.hpp>
+#include <sdf/grammar/keywords.hpp>
+#include <sdf/grammar/timing.hpp>
 
 namespace SDF {
 namespace Grammar {

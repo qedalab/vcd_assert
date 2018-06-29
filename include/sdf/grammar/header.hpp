@@ -2,10 +2,9 @@
 #ifndef LIBSDF_GRAMMAR_HEADER_H
 #define LIBSDF_GRAMMAR_HEADER_H
 
-#include "parse/grammar/base.h"
-#include "base.h"
-#include "keywords.h"
-#include "values.h"
+#include <sdf/grammar/base.hpp>
+#include <sdf/grammar/keywords.hpp>
+#include <sdf/grammar/values.hpp>
 
 namespace SDF {
 namespace Grammar {

@@ -1,10 +1,10 @@
 #ifndef LIBSDF_GRAMMAR_CONDITIONS_H
 #define LIBSDF_GRAMMAR_CONDITIONS_H
 
-#include "base.h"
-#include "constants.h"
-#include "operators.h"
-#include "timing.h"
+#include <sdf/grammar/base.hpp>
+#include <sdf/grammar/constants.hpp>
+#include <sdf/grammar/operators.hpp>
+#include <sdf/grammar/timing.hpp>
 
 
 namespace SDF {

@@ -1,4 +1,4 @@
-#include "./cell.hpp"
+#include "cell.hpp"
 
 
 namespace Test {

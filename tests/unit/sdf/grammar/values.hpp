@@ -2,8 +2,8 @@
 #define LIBSDF_TEST_SDF_VALUES_H
 
 
-#include "./base.hpp"
-#include <sdf/grammar/values.h>
+#include "base.hpp"
+#include <sdf/grammar/values.hpp>
 
 namespace Test {
 namespace SDF {

@@ -1,12 +1,12 @@
 #ifndef LIBSDF_GRAMMAR_SPEC_H
 #define LIBSDF_GRAMMAR_SPEC_H
 
-#include "base.h"
-#include "cell.h"
-#include "conditions.h"
-#include "keywords.h"
-#include "numbers.h"
-#include "values.h"
+#include <sdf/grammar/base.hpp>
+#include <sdf/grammar/cell.hpp>
+#include <sdf/grammar/conditions.hpp>
+#include <sdf/grammar/keywords.hpp>
+#include <sdf/grammar/numbers.hpp>
+#include <sdf/grammar/values.hpp>
 #include <tao/pegtl.hpp>
 
 namespace SDF {

@@ -1,8 +1,8 @@
 #ifndef LIBSDF_TEST_SDF_UNIMPL_H
 #define LIBSDF_TEST_SDF_UNIMPL_H
 
-#include "./base.hpp"
-#include <sdf/grammar/keywords.h>
+#include "base.hpp"
+#include <sdf/grammar/keywords.hpp>
 
 namespace Test {
 namespace SDF {

@@ -2,9 +2,9 @@
 #define LIBSDF_TEST_SDF_BASE_H
 
 
-#include "sdf/grammar/base.h"
-#include "parse/test/match.h"
-#include "parse/internal/array_append.h"
+#include <sdf/grammar/base.hpp>
+#include <parse/test/match.h>
+#include <parse/internal/array_append.h>
 
 #include <array>
 #include <iostream>
