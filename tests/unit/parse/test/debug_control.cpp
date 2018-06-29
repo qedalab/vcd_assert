@@ -3,7 +3,7 @@
 #include "parse/test/match.h"
 #include "parse/grammar/base.h"
 
-#include <catch.hpp>
+#include <catch2/catch.hpp>
 
 using namespace Parse::Test;
 using namespace Parse;

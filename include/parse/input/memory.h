@@ -14,7 +14,7 @@ class MemoryInput {
 public:
   template <class Range> MemoryInput(Range range) {
     size_ = ranges::distance(range);
-    data_ = std::move(std::make_unique<char[]>(size_));
+    data_ = std::make_unique<char[]>(size_);
     std::copy_n(range.begin(), size_, data_.get());
   }
 

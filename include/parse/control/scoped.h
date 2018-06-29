@@ -2,6 +2,7 @@
 #define LIBPARSE_CONTROL_SCOPED_H_
 
 #include "./base.h"
+#include "./error.hpp"
 #include "../internal/detected.h"
 
 #include <tao/pegtl/normal.hpp>
@@ -9,21 +10,9 @@
 namespace Parse {
 
 template <class Rule>
-struct scoped_control : public tao::pegtl::normal<Rule> {
+struct scoped_control : public error_control<Rule> {
 
   using normal_rule = tao::pegtl::normal<Rule>;
-
-  template <typename Input, typename... States>
-  static void raise(const Input &in, States &&... /*unused*/) {
-    // throw ParseException(Rule::error(), in.position()));
-    constexpr bool has_error = Internal::is_detected<member_error_t, Rule>;
-    if constexpr (has_error) {
-      throw std::runtime_error(Rule::error());
-    } else {
-      throw std::runtime_error("Failed parsing Rule without error: " + tao::pegtl::internal::demangle<Rule>());
-
-    }
-  }
 
   template <apply_mode A, rewind_mode M, template <typename...> class Action,
             template <typename...> class Control, typename Input,
@@ -34,7 +23,7 @@ struct scoped_control : public tao::pegtl::normal<Rule> {
         Internal::is_detected<member_state_t, Action<Rule>>;
 
     constexpr bool has_member_action =
-            Internal::is_detected<member_action_t, Action<Rule>, void>;
+        Internal::is_detected<member_action_t, Action<Rule>, void>;
 
     static_assert(!(has_member_state ^ has_member_action),
                   "Need both or neither scope, action");
