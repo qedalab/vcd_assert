@@ -1,18 +1,18 @@
-#include "parse/capture/storage/member.hpp"
-#include "parse/capture/control.hpp"
-#include "parse/capture/storage/push_back.hpp"
-#include "parse/capture/inner_action.hpp"
-#include "parse/capture/apply.hpp"
-#include "parse/capture/apply0.hpp"
-#include "parse/capture/apply/string.hpp"
-#include "parse/capture/apply/value.hpp"
-#include "parse/capture/apply/integer.hpp"
+#include "parse/actions/storage/member.hpp"
+#include "parse/actions/control.hpp"
+#include "parse/actions/storage/push_back.hpp"
+#include "parse/actions/command/inner_action.hpp"
+#include "parse/actions/command/apply.hpp"
+#include "parse/actions/command/apply0.hpp"
+#include "parse/actions/dispatch.hpp"
+#include "parse/actions/apply/string.hpp"
+#include "parse/actions/apply/value.hpp"
+#include "parse/actions/apply/integer.hpp"
 
 #include <catch2/catch.hpp>
 
 #include <variant>
 #include <tao/pegtl/parse.hpp>
-#include <parse/capture/multi_dispatch.hpp>
 
 #include "./json.hpp"
 
