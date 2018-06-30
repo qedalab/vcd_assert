@@ -17,6 +17,7 @@ struct celltype : block<
   qstring
 >{};
 
+// struct cell_instance : unimplemented< key_instance >{}; 
 struct cell_instance : block< 
   key_instance,
   sor<

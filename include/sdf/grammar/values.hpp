@@ -6,6 +6,7 @@
 
 namespace SDF {
 namespace Grammar {
+
 // clang-format off
 
 template<class Rule, int N>
@@ -27,13 +28,16 @@ struct rtriple : define_triple<signed_real_number> {};
 
 template <class Number, class Triple>
 struct define_value : sor<
-  seq<Number, not_at<one<':'>>>,
-  Triple
+  seq<
+    one<'('>,
+    Triple,
+    one<')'>
+  >,
+  seq<Number>
 > {};
 
-
 struct value : define_value<real_number, triple> {};
-struct rvalue : define_value<signed_real_number, triple> {};
+struct rvalue : define_value<signed_real_number, rtriple> {};
 
 struct delval : sor<
   rvalue,
@@ -62,6 +66,7 @@ struct delval_list : seq<
 > {};
 
 // clang-format on
+
 } // namespace Grammar
 } // namespace SDF
 

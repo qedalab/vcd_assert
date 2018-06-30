@@ -25,25 +25,25 @@ R"####(
                     (IOPATH (posedge CP) QN (4:4:4) (5:5:5) )
                 )
             )
-        (ABSOLUTE
-            (COND (TE == 1 && RB == 1 && SB == 1)
-                (IOPATH (posedge CP) Q (6:6:6) (7:7:7) )
+            (ABSOLUTE
+                (COND (TE == 1 && RB == 1 && SB == 1)
+                    (IOPATH (posedge CP) Q (6:6:6) (7:7:7) )
+                )
             )
-        )
-        (ABSOLUTE
-            (COND (TE == 1 && RB == 1 && SB == 1)
-                (IOPATH (posedge CP) QN (8:8:8) (9:9:9) )
+            (ABSOLUTE
+                (COND (TE == 1 && RB == 1 && SB == 1)
+                    (IOPATH (posedge CP) QN (8:8:8) (9:9:9) )
+                )
             )
-        )
-        (ABSOLUTE
-            (IOPATH (negedge RB) Q (1:1:1) (1:1:1) ) )
-        (ABSOLUTE
-            (IOPATH (negedge RB) QN (1:1:1) (1:1:1) ) )
-        (ABSOLUTE
-            (IOPATH (negedge SB) Q (1:1:1) (1:1:1) ) )
-        (ABSOLUTE
-            (IOPATH (negedge SB) QN (1:1:1) (1:1:1) ) )
-        )
+            (ABSOLUTE
+                (IOPATH (negedge RB) Q (1:1:1) (1:1:1) ) )
+            (ABSOLUTE
+                (IOPATH (negedge RB) QN (1:1:1) (1:1:1) ) )
+            (ABSOLUTE
+                (IOPATH (negedge SB) Q (1:1:1) (1:1:1) ) )
+            (ABSOLUTE
+                (IOPATH (negedge SB) QN (1:1:1) (1:1:1) ) )
+            )
         (DELAY
             (ABSOLUTE
                 (PORT D (0:0:0) (0:0:0) (5:5:5) ) )

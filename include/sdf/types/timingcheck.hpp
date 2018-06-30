@@ -10,8 +10,8 @@ namespace Types {
 
 // clang-format off
 using TimingCheckVariant = std::variant<
-  // Setup,         //unsupported
   Hold,
+  // Setup,         //unsupported
   // Setuphold,     //unsupported
   // Recovery,      //unsupported
   // Removal,       //unsupported
@@ -28,12 +28,12 @@ struct TimingCheck : public TimingCheckVariant {
   using TimingCheckVariant::TimingCheckVariant;
 };
 
-using TimingCheckPtl = std::unique_ptr<TimingCheck>;
+using TimingCheckPtr = std::unique_ptr<TimingCheck>;
 
 // clang-format off
 struct Hold {
   std::tuple<Port,Port> ports;
-  double value;
+  Value value;
 };
 // clang-format on
 

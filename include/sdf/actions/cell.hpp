@@ -21,23 +21,28 @@ struct CellStorage {
 };
 
 struct TimingSpecStorage {
-  static bool store(Cell &cell, TimingSpec cell) {
+  static bool store(Cell &cell, TimingSpec spec) {
     cell.timing_specs.emplace_back(std::move(spec))
     return true;
   }
 };
 
+struct HierarchicalIdentifierStorage {
+  static bool store(Cell &cell, TimingSpec spec) {
+    cell.timing_specs.emplace_back(std::move(spec))
+    return true;
+  }
+};
+
+
 struct CellInstanceAction : multi_dispatch<
-  Grammar::one<'*'>, inner_value<
-    QStringAction,
-    Storage::member<&Cell::celltype>
-  >
-  Grammar::cell_instance, inner_value<
-    CellInstanceAction,
-    Storage::member<&Cell::cell_instance>
+  Grammar::one<'*'>, apply0<Apply::value<Star>>,
+  Grammar::hierarchical_identifier, inner_value<
+    IdentifierAction,
+    Storage::push_back<InstanceVariant::Path>
   >
 > {
-  using state = Cell;
+  using state = CellInstance;
 };
 
 struct CellAction : multi_dispatch<

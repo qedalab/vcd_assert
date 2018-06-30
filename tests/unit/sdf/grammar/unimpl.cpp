@@ -30,6 +30,11 @@ TEST_CASE("SDF.Grammar.Unimplemented", "[SDF][Grammar][Unimplemented]") {
           fmt::format(" (INSTANCE xyz ((xyz)) top.x1())")
         )
       );
+      CHECK(
+        match_exactly<unimplemented<key_setuphold>>(
+          fmt::format("(SETUPHOLD TI E (1:1:1) (1:1:1))")
+        )
+      );
     }
     /*
       These cases dont prove anything. Incorrectly specifying 

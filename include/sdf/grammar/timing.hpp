@@ -127,7 +127,6 @@ struct lbl_def : op_sep_seq<
   one< ')' >
 >{};
 
-
 struct lbl_type : op_sep_seq< 
   one< '(' >,
   sor< key_increment, key_absolute >,
@@ -209,7 +208,6 @@ struct tenv_def : sor<
   slack_env,
   waveform_env
 >{};
-
 
 struct constraint_path : op_sep_seq< 
   one< '(' >,
@@ -303,7 +301,8 @@ struct port_tchk : sor<
   port_spec
 >{};
 
-struct nochange_timing_check : block<
+struct nochange_timing_check : unimplemented<key_nochange>{};
+struct disabled_nochange_timing_check : block<
   key_nochange,
   port_tchk,
   port_tchk,
@@ -311,20 +310,22 @@ struct nochange_timing_check : block<
   rvalue
 >{};
 
-
-struct period_timing_check : block<
+struct period_timing_check : unimplemented<key_period>{};
+struct disabled_period_timing_check : block<
   key_period,
   port_tchk,
   value
 >{};
 
-struct width_timing_check : block<
+struct width_timing_check : unimplemented<key_width>{};
+struct disabled_width_timing_check : block<
   key_width,
   port_tchk,
   value
 >{};
 
-struct bidirectskew_timing_check : block<
+struct bidirectskew_timing_check : unimplemented<key_bidirectskew>{};
+struct disabled_bidirectskew_timing_check : block<
   key_bidirectskew,
   port_tchk,
   port_tchk,
@@ -332,15 +333,16 @@ struct bidirectskew_timing_check : block<
   value
 >{};
 
-
-struct skew_timing_check : block<
+struct skew_timing_check : unimplemented<key_skew>{};
+struct disabled_skew_timing_check : block<
   key_skew,
   port_tchk,
   port_tchk,
   rvalue
 >{};
 
-struct recrem_timing_check : block<
+struct recrem_timing_check : unimplemented<key_recrem>{};
+struct disabled_recrem_timing_check : block<
   key_recrem,
   port_tchk,
   port_tchk,
@@ -349,30 +351,23 @@ struct recrem_timing_check : block<
   if_must< scond, opt<sps>, ccond > 
 >{};
 
-struct removal_timing_check : block<
+struct removal_timing_check : unimplemented<key_removal>{};
+struct disabled_removal_timing_check : block<
   key_removal,
   port_tchk,
   port_tchk,
   value
 >{};
 
-
-struct recovery_timing_check : block<
+struct recovery_timing_check : unimplemented<key_recovery>{};
+struct disabled_recovery_timing_check : block<
   key_recovery,
   port_tchk,
   port_tchk,
   value
 >{};
 
-struct setuphold_timing_check : block<
-  key_setuphold,
-  port_tchk,
-  port_tchk,
-  rvalue,
-  rvalue,
-  if_must< scond, opt<sps>, ccond > 
->{};
-
+// struct hold_timing_check : unimplemented<key_hold>{};
 struct hold_timing_check : block<
   key_hold,
   port_tchk,
@@ -380,7 +375,28 @@ struct hold_timing_check : block<
   value
 >{};
 
-struct setup_timing_check : block<
+struct setuphold_timing_check : unimplemented<key_setuphold>{};
+struct disabled_setuphold_timing_check : sor<
+  block<
+    key_setuphold,
+    port_tchk,
+    port_tchk,
+    rvalue,
+    rvalue 
+  >,
+  block<
+    key_setuphold,
+    port_spec,
+    port_spec,
+    rvalue,
+    rvalue,
+    opt<scond>,
+    opt<ccond> 
+  >
+>{};
+
+struct setup_timing_check : unimplemented<key_setup>{};
+struct disabled_setup_timing_check : block<
   key_setup,
   port_tchk,
   port_tchk,
@@ -407,7 +423,6 @@ struct device_def : block<
   delval_list
 >{};
 
-
 struct netdelay_def : block<
   key_netdelay,
   net_spec,
@@ -420,7 +435,6 @@ struct interconnect_def : block<
   port_instance,
   delval_list
 >{};
-
 
 struct port_def : block<
   key_port,
@@ -440,6 +454,7 @@ struct iopath_def : block<
   star< retain_def >,
   delval_list
 >{};
+
 struct condelse_def : block<
   key_condelse,
   iopath_def
@@ -452,20 +467,6 @@ struct cond_def : block<
   iopath_def
 >{};
 
-
-// struct retain_def : block<
-//     key_retain,
-//     retval_list
-// >{};
-
-// struct iopath_def : block<
-//     key_iopath,
-//     port_spec,
-//     port_instance,
-//     star< retain_def >,
-//     delval_list
-// >{};
-
 struct del_def : sor< 
   port_def,
   netdelay_def,
@@ -475,7 +476,6 @@ struct del_def : sor<
   condelse_def,
   cond_def
 >{};
-
 
 struct input_output_path : op_sep_seq< 
   port_instance, 
@@ -525,6 +525,7 @@ struct lbl_spec : unimplemented< key_label >{};
 //     plus< lbl_type >
 // >{};
 
+// struct tc_spec : unimplemented< key_timingcheck >{};
 struct tc_spec : block<
     key_timingcheck,
     plus< tchk_def >

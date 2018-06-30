@@ -44,6 +44,13 @@ namespace SDF {
 // bracket_pairs
 // unimplemented
 
+struct IdentifierAction : single_dispatch<
+    Grammar::identifier, apply0<Apply::value<std::string>>,
+> {
+  using state = std::string;
+};
+
+
 struct QStringAction : single_dispatch<
     Grammar::qstring, apply0<Apply::value<std::string>>,
 > {

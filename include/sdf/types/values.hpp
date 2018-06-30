@@ -14,6 +14,13 @@ struct Triple {
   double max;
 };
 
+struct Number {
+  std::array<3, double> triple;
+  double min;
+  double typ;
+  double max;
+};
+
 } // namespace Types
 } // namespace SDF
 

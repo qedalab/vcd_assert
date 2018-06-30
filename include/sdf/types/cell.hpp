@@ -16,9 +16,25 @@
 namespace SDF {
 namespace Types {
 
+struct Star;
+using Path = std::vector<std::string>; // TODO : check for validity
+
+// clang-format off
+using InstanceVariant = std::variant<
+  Star,
+  Path
+>;
+// clang-format on
+
+// struct TimingSpec : public TimingSpecVariant {
+//   using TimingSpecVariant::TimingSpecVariant;
+// };
+
+// using TimingSpecPtr = std::unique_ptr<TimingSpec>;
+
 struct Cell {
   std::string celltype;
-  std::string cell_instance;
+  InstanceVariant cell_instance;
   std::vector<TimingSpec> timing_specs;
 };
 

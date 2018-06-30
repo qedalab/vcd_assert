@@ -179,14 +179,16 @@ struct bracket_pair : seq<
 >{};
 
 struct bracket_pairs : plus<
-  opt<sps>,pegtl::list<bracket_pair,opt<sps>>
+  opt<sps>,
+  pegtl::list<bracket_pair,opt<sps>>
 >{};
 
 template<typename T>
 struct unimplemented : if_must<
   seq<open, T>,
-  opt<sps>,
+  star<bracket_contents>,
   star<bracket_pairs>,
+  star<bracket_contents>,
   until<close>
 >{};
 
