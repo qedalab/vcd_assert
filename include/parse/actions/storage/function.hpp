@@ -3,13 +3,13 @@
 
 #include <utility>
 
-#include "../../internal/dependant_value.hpp"
+#include "parse/util/dependant_value.hpp"
 
 namespace Parse::Storage {
 
 template <auto Invalid>
 struct function {
-  static_assert(Parse::Internal::dependant_value<false, decltype(Invalid)>,
+  static_assert(Parse::Util::dependant_value<false, decltype(Invalid)>,
                 "Not a class member function");
 };
 

@@ -8,10 +8,10 @@ using namespace Parse;
 
 TEST_CASE("MemoryInput", "[Input]")
 {
-  std::vector<std::string> test_data {
+  std::vector<std::string_view> test_data {
     "qwer",
     "asdf\nzxcv",
-    "a\0bs"
+    "a\fbs"
   };
 
   SECTION("Data")

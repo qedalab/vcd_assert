@@ -26,7 +26,7 @@ class Header
   std::optional<std::string> date_;     /// Date of VCD file
   std::optional<std::string> version_;  /// Version of simulator
 
-  Parse::NameIndexMap var_id_code_map_; /// 'identifier code' <-> 'index' lookup
+  Parse::Util::NameIndexMap var_id_code_map_; /// 'identifier code' <-> 'index' lookup
 
   std::vector<VarIdCode> id_codes_;     /// Identifier codes
   std::vector<Variable> variables_;     /// Variable
@@ -65,33 +65,41 @@ public:
 
   /// Get scope by index
   /// \param index the scope index
+  /// \returns the scope
   Scope &get_scope(std::size_t index);
 
   /// Get the first scope defined in the header
+  /// \returns the root scope
   Scope &get_root_scope();
 
   /// Get the identifier code index by string
-  /// \param id_code the identifier code index
+  /// \param id_code the identifier code string
+  /// \returns the identifier code index
   std::size_t get_var_id_code_index(std::string &id_code) const;
 
   /// Get the identifier code by index
   /// \param index the identifier code index
+  /// \returns the identifier code
   VarIdCode &get_var_id_code(std::size_t index);
 
   /// True if header contains the identifier code
   /// \param id_code the identifier code string
+  /// \returns Wether the header contains the identifier code
   bool has_var_id_code(std::string &id_code) const noexcept;
 
   /// Returns the number of scopes defined in the header
+  /// \returns the number of scopes defined in the header
   std::size_t num_scopes() const noexcept;
 
   /// Returns the number of variables defined in the header
+  /// \returns the number of scopes defined in the header
   std::size_t num_variables() const noexcept;
 
   /// Returns the number of identifier codes defined in the header
+  /// \returns the number of identifier code define din the header
   std::size_t num_id_codes() const noexcept;
 };
 
 } // namespace VCD
 
-#endif //LIBVCD_TYPES_HEADER_HPP
+#endif // LIBVCD_TYPES_HEADER_HPP

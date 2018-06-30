@@ -1,6 +1,6 @@
-#include "parse/test/debug_exception.h"
+#include "parse/test/debug_exception.hpp"
 
-using namespace Parse;
+using namespace Parse::Test;
 
 std::string DebugState::to_string() {
   return rule + " at " + "(" + std::to_string(line) + ":" + std::to_string(col) + ")\n";

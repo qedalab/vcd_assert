@@ -1,15 +1,16 @@
-#ifndef PARSE_UTIL_NAME_INDEX_MAP_HPP
-#define PARSE_UTIL_NAME_INDEX_MAP_HPP
+#ifndef LIBPARSE_UTIL_NAME_INDEX_MAP_HPP
+#define LIBPARSE_UTIL_NAME_INDEX_MAP_HPP
 
 #include <cstddef>
 #include <string>
 #include <string_view>
-#include <vector>
 #include <unordered_map>
+#include <vector>
 
-namespace Parse {
+namespace Parse::Util {
 
-class NameIndexMap {
+class NameIndexMap
+{
 public:
   using index_t = std::size_t;
 
@@ -23,8 +24,8 @@ public:
   index_t add_new_name(std::string name);
 
   index_t num_elements() const noexcept;
-private:
 
+private:
   // Unordered map can't search with string_view (C++17)
   // SSO in std::string can invalidate string_view so use string
   std::unordered_map<std::string, index_t> index_lookup_;
@@ -34,6 +35,6 @@ private:
   std::vector<std::string> names_;
 };
 
-}
+} // namespace Parse::Util
 
-#endif //PARSE_UTIL_NAME_INDEX_MAP_HPP
+#endif // LIBPARSE_UTIL_NAME_INDEX_MAP_HPP

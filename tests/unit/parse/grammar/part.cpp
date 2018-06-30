@@ -1,5 +1,5 @@
 #include "parse/grammar/part.h"
-#include "parse/test/match.h"
+#include "parse/test/match.hpp"
 
 #include <catch2/catch.hpp>
 
