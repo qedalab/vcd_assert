@@ -29,13 +29,14 @@ struct reference_bit_select : seq<one<'['>, bit_select_index, one<']'>> {};
 struct reference_msb_lsb_select : seq<one<'['>, msb_index, one<':'>, lsb_index, one<']'>> {};
 
 struct reference : seq< identifier, sor<
-  reference_bit_select,
-  reference_msb_lsb_select,
+  seq<star<blank>, reference_bit_select>,
+  seq<star<blank>, reference_msb_lsb_select>,
   seq<>
 >> {};
 // end move into own header
 
-struct scope_identifier : identifier {};
+// See IVerilog quirks for why not identifier
+struct scope_identifier : reference {};
 
 struct end_command : seq<end_keyword, command_separator> {};
 struct blank_end_command : seq<blank, end_command> {};
@@ -93,9 +94,9 @@ struct timescale_command : delimited_seq<plus_blank,
   timescale_keyword,
   must<
     time_number,
-    plus<blank>,
+    opt<plus<blank>>,
     time_unit,
-    plus<blank>,
+    plus_blank,
     end_command
   >
 > {};
@@ -105,12 +106,14 @@ struct upscope_command : delimited_seq<plus_blank,
   must<end_command>
 > {};
 
+struct var_size : alias<size> {};
+
 struct var_command : delimited_seq<plus_blank,
   var_keyword,
-  delimited_must<plus<blank>,
+  delimited_must<plus_blank,
     var_type,
-    size,
-    must<
+    var_size,
+    delimited_must<plus_blank,
         identifier_code,
         reference>,
     end_command

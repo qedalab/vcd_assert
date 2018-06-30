@@ -4,29 +4,29 @@
 
 using namespace Parse;
 
-auto NameIndexMap::get_index(std::string &name) -> index_t
+auto NameIndexMap::get_index(std::string &name) const -> index_t
 {
   assert(has_name(name));
   return index_lookup_.at(name);
 }
 
-bool NameIndexMap::has_index(index_t index) noexcept
+bool NameIndexMap::has_index(index_t index) const noexcept
 {
   return names_.size() > index;
 }
 
-std::string_view NameIndexMap::get_name(index_t index)
+std::string_view NameIndexMap::get_name(index_t index) const
 {
   assert(has_index(index));
   return names_.at(index);
 }
 
-bool NameIndexMap::has_name(std::string &name) noexcept
+bool NameIndexMap::has_name(std::string &name) const noexcept
 {
   return index_lookup_.count(name) != 0;
 }
 
-auto NameIndexMap::num_elements() noexcept -> index_t
+auto NameIndexMap::num_elements() const noexcept -> index_t
 {
   return names_.size();
 }

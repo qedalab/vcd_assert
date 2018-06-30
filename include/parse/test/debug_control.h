@@ -2,6 +2,7 @@
 #define PARSE_TEST_DEBUG_CONTROL_H
 
 #include "../control/base.h"
+#include "../control/error.hpp"
 #include "./debug_exception.h"
 #include "../internal/detected.h"
 
@@ -17,7 +18,7 @@ struct debug_control : public tao::pegtl::normal<Rule> {
   template<typename Input, typename... States>
   static void raise(const Input &in, States &&... /*unused*/) {
     // throw ParseException(Rule::error(), in.position()));
-    constexpr bool has_error = Internal::is_detected<member_error_t, Rule>;
+    constexpr bool has_error = Internal::is_detected<Internal::member_error_decl, Rule>;
     if constexpr (has_error) {
       throw DebugException(Rule::error());
     } else {

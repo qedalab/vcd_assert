@@ -1,5 +1,7 @@
 #include "vcd/types/header_reader.hpp"
 
+#include <cassert>
+
 using namespace VCD;
 
 HeaderReader::HeaderReader()
@@ -33,6 +35,11 @@ void HeaderReader::scope(ScopeType type, std::string name)
     // Make new scope active
     scope_stack_.push_back(index);
   }
+}
+
+void HeaderReader::scope(VCD::ScopeDataView scope)
+{
+  this->scope(scope.type, std::string(scope.identifier));
 }
 
 void HeaderReader::upscope()
@@ -85,6 +92,12 @@ void HeaderReader::var(VarType type, std::size_t size, std::string identifier_co
   current_scope_ref.child_variables_[reference] = var_index;
 }
 
+void HeaderReader::var(VCD::VariableView variable)
+{
+  this->var(variable.type, variable.size, std::string(variable.identifier_code),
+            std::string(variable.reference));
+}
+
 void HeaderReader::version(std::string version_string)
 {
   if(has_version())
@@ -93,12 +106,12 @@ void HeaderReader::version(std::string version_string)
   header_->version_ = std::move(version_string);
 }
 
-void HeaderReader::overwrite_version(std::string version_string)
+void HeaderReader::overwrite_version(std::string version_string) noexcept
 {
   header_->version_ = std::move(version_string);
 }
 
-bool HeaderReader::has_version()
+bool HeaderReader::has_version() const noexcept
 {
   return header_->has_version();
 }
@@ -111,12 +124,12 @@ void HeaderReader::date(std::string date_string)
   header_->date_ = std::move(date_string);
 }
 
-void HeaderReader::overwrite_date(std::string date_string)
+void HeaderReader::overwrite_date(std::string date_string) noexcept
 {
   header_->date_ = std::move(date_string);
 }
 
-bool HeaderReader::has_date()
+bool HeaderReader::has_date() const noexcept
 {
   return header_->has_date();
 }
@@ -129,12 +142,17 @@ void HeaderReader::timescale(TimeNumber number, TimeUnit unit)
   header_->time_scale_ = TimeScale{number, unit};
 }
 
-void HeaderReader::overwrite_timescale(TimeNumber number, TimeUnit unit)
+void HeaderReader::timescale(TimeScaleView time_scale)
+{
+  timescale(time_scale.number, time_scale.unit);
+}
+
+void HeaderReader::overwrite_timescale(TimeNumber number, TimeUnit unit) noexcept
 {
   header_->time_scale_ = TimeScale{number, unit};
 }
 
-bool HeaderReader::has_timescale()
+bool HeaderReader::has_timescale() const noexcept
 {
   return header_->has_time_scale();
 }

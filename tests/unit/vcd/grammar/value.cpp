@@ -2,7 +2,7 @@
 
 #include "parse/test/match.h"
 
-#include <catch.hpp>
+#include <catch2/catch.hpp>
 
 constexpr char scalar_str[] = "1*@";
 constexpr char vector_str[] = "b1100x01z (k";

@@ -5,8 +5,7 @@
 #include <tao/pegtl/nothing.hpp>
 #include <tao/pegtl/rules.hpp>
 
-namespace Parse {
-namespace Grammar {
+namespace Parse::Grammar {
 
 inline namespace Base {
 
@@ -22,6 +21,9 @@ using nothing = tao::pegtl::nothing<Rule>;
 
 template <typename... Rules>
 using sor = tao::pegtl::sor<Rules...>;
+
+template <typename Rule>
+using alias = tao::pegtl::seq<Rule>;
 
 template <typename... Rules>
 using seq = tao::pegtl::seq<Rules...>;
@@ -82,7 +84,6 @@ using bol = tao::pegtl::bol;
 using printable_ascii = tao::pegtl::print;
 
 } // namespace Base
-} // namespace Grammar
-} // namespace Parse
+} // namespace Parse::Grammar
 
 #endif // PARSE_GRAMMAR_BASE_H_

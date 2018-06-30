@@ -4,7 +4,7 @@
 #include "./header.hpp"
 #include "./scope.hpp"
 
-#include <catch.hpp>
+#include <catch2/catch.hpp>
 
 using namespace VCD::Test;
 

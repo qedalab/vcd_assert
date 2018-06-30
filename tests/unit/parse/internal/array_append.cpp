@@ -1,6 +1,6 @@
 #include "parse/internal/array_append.h"
 
-#include <catch.hpp>
+#include <catch2/catch.hpp>
 
 using namespace Parse;
 

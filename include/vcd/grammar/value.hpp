@@ -15,7 +15,8 @@ using namespace Parse::Grammar::Base;
 
 struct scalar_value_change : seq<
   value,
-  identifier_code
+  identifier_code,
+  command_separator
 > {};
 
 /// Used binary_value instead of binary_number
@@ -25,8 +26,9 @@ struct binary_value_change : seq<
   one<'b','B'>,
   must<
     binary_value,
-    plus<blank>,
-    identifier_code
+    plus_blank,
+    identifier_code,
+    command_separator
   >
 > {};
 
@@ -36,7 +38,8 @@ struct real_value_change : seq<
   one<'r','R'>,
   must<
     real_number,
-    identifier_code
+    identifier_code,
+    command_separator
   >
 > {};
 
