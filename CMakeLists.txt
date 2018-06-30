@@ -17,7 +17,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 #Add libparse library
 add_library(libparse "src/parse")
 target_include_directories(libparse PUBLIC "${PROJECT_SOURCE_DIR}/include/")
-target_link_libraries(libparse range-v3 taocpp::pegtl)
+target_link_libraries(libparse range-v3 taocpp::pegtl fmt-header-only)
 
 #Add libvcd library
 add_library(libvcd "src/vcd")
@@ -27,7 +27,7 @@ target_link_libraries(libvcd PUBLIC libparse)
 #Add libsdf library
 add_library(libsdf "src/sdf")
 target_include_directories(libsdf PUBLIC "${PROJECT_SOURCE_DIR}/include/")
-target_link_libraries(libsdf PUBLIC libparse)
+target_link_libraries(libsdf PUBLIC libparse )
 
 #Enable warnings
 if ( CMAKE_COMPILER_IS_GNUCC )
