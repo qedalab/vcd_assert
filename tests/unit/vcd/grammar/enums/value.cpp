@@ -1,7 +1,7 @@
 #include "vcd/grammar/enums/value.hpp"
 #include "vcd/types/enums.hpp"
 
-#include "parse/test/match.h"
+#include "parse/test/match.hpp"
 
 #include <catch2/catch.hpp>
 

@@ -1,6 +1,6 @@
 #include "vcd/grammar/commands.hpp"
 
-#include "parse/test/match.h"
+#include "parse/test/match.hpp"
 
 #include <catch2/catch.hpp>
 

@@ -2,7 +2,7 @@
 
 #include <cassert>
 
-using namespace Parse;
+using namespace Parse::Util;
 
 auto NameIndexMap::get_index(std::string &name) const -> index_t
 {

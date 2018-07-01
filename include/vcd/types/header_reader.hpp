@@ -32,6 +32,7 @@ public:
   void var(VarType type, std::size_t size, std::string identifier_code, std::string reference);
 
   /// Adds a variable to the scope
+  /// \param VariableView view of variable to add
   void var(VariableView variable);
 
   /// Set Header version string
@@ -89,4 +90,4 @@ public:
 
 }
 
-#endif //LIBVCD_TYPES_HEADER_READER_HPP
+#endif // LIBVCD_TYPES_HEADER_READER_HPP

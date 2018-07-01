@@ -2,7 +2,7 @@
 
 #include <catch2/catch.hpp>
 
-using namespace Parse;
+using namespace Parse::Util;
 
 std::string id_a = "abc";
 std::string id_b = "def";

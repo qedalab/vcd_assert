@@ -97,11 +97,6 @@ struct JSONValueAction : multi_dispatch<
 };
 
 TEST_CASE("Parse.CaptureControl") {
-  REQUIRE(action_has_tag_dispatch<JSONValueAction, json_grammar::object>);
-
-  static_assert(action_has_tag_dispatch<JSONValueAction, json_grammar::object>);
-  static_assert(std::is_same_v<make_pegtl_template<JSONValueAction>::type<struct Foo>, JSONValueAction>);
-
   SECTION("JSON") {
     JSONValuePtr json;
 

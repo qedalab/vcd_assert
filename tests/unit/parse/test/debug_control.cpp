@@ -1,6 +1,6 @@
-#include "parse/test/debug_control.h"
+#include "parse/test/debug_control.hpp"
 
-#include "parse/test/match.h"
+#include "parse/test/match.hpp"
 #include "parse/grammar/base.h"
 
 #include <catch2/catch.hpp>
@@ -29,7 +29,8 @@ struct level_two : seq<one<'('>, level_three, one<')'>> {};
 struct level_one : seq<one<'('>, level_two, one<')'>> {};
 
 TEST_CASE("DebugControl") {
+  CHECK(Concepts::Rule<level_fail>);
+  CHECK(Concepts::ErrorRule<level_fail>);
   REQUIRE_THROWS_AS(match_exactly<level_one>("(((-)))"), DebugException);
   CHECK_THROWS_WITH(match_exactly<level_one>("(((-)))"), expected_out);
-
 }
