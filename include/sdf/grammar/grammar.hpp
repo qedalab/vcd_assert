@@ -1,6 +1,6 @@
 
-#ifndef LIBSDF_GRAMMAR_HPP 
-#define LIBSDF_GRAMMAR_HPP 
+#ifndef LIBSDF_GRAMMAR_GRAMMAR_HPP 
+#define LIBSDF_GRAMMAR_GRAMMAR_HPP 
 
 #include <sdf/grammar/base.hpp>
 #include <sdf/grammar/delayfile.hpp>
@@ -21,4 +21,4 @@ struct grammar : must<
 } // namespace Grammar
 } // namespace SDF
 
-#endif // LIBSDF_GRAMMAR_HPP 
+#endif // LIBSDF_GRAMMAR_GRAMMAR_HPP 

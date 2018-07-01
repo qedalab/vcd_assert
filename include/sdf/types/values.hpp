@@ -1,5 +1,5 @@
-#ifndef LIBSDF_TYPES_VALUES_H_
-#define LIBSDF_TYPES_VALUES_H_
+#ifndef LIBSDF_TYPES_VALUES_HPP_
+#define LIBSDF_TYPES_VALUES_HPP_
 
 // #include <sdf/grammar/base.hpp>
 
@@ -8,20 +8,17 @@ namespace Types {
 
 // choice : min/typ/max -> but must look at edge-transitions too
 struct Triple {
-  std::array<3, double> triple;
+  std::array<double, 3> triple;
   double min;
   double typ;
   double max;
 };
 
 struct Number {
-  std::array<3, double> triple;
-  double min;
-  double typ;
-  double max;
+  double value; 
 };
 
 } // namespace Types
 } // namespace SDF
 
-#endif // LIBSDF_TYPES_VALUES_H_
+#endif // LIBSDF_TYPES_VALUES_HPP_

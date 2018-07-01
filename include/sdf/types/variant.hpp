@@ -1,5 +1,5 @@
-#ifndef LIBSDF_TYPES_VARIANT_H_
-#define LIBSDF_TYPES_VARIANT_H_
+#ifndef LIBSDF_TYPES_VARIANT_HPP_
+#define LIBSDF_TYPES_VARIANT_HPP_
 
 // #include <type_traits>
 
@@ -46,4 +46,4 @@ namespace Extra {
 } // namespace Types
 } // namespace SDF
 
-#endif //LIBSDF_TYPES_VARIANT_H_
+#endif //LIBSDF_TYPES_VARIANT_HPP_

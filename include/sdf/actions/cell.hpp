@@ -1,67 +1,74 @@
-#ifndef LIBSDF_ACTIONS_CELL_HPP
-#define LIBSDF_ACTIONS_CELL_HPP
+// #ifndef LIBSDF_ACTIONS_CELL_HPP_
+// #define LIBSDF_ACTIONS_CELL_HPP_
 
-#include <sdf/actions/delayfile.hpp>
-#include <sdf/actions/timing_spec.hpp>
-#include <sdf/types/cell.hpp>
+// #include <sdf/actions/base.hpp>
 
-namespace SDF{
+// #include <sdf/actions/timingspec.hpp>
 
-struct CellStorage {
-  template<class InnerValue>
-  static bool store(JSONValuePtr& value_ptr, InnerValue value) {
-    if constexpr (std::is_same_v<JSONValuePtr, InnerValue>) {
-      value_ptr = std::move(value);
-    } else {
-      value_ptr = std::make_unique<JSONValue>(std::move(value));
-    }
+// #include <sdf/types/cell.hpp>
+// #include <sdf/grammar/cell.hpp>
 
-    return true;
-  }
-};
+// namespace SDF{
+// namespace Actions{
 
-struct TimingSpecStorage {
-  static bool store(Cell &cell, TimingSpec spec) {
-    cell.timing_specs.emplace_back(std::move(spec))
-    return true;
-  }
-};
-
-struct HierarchicalIdentifierStorage {
-  static bool store(Cell &cell, TimingSpec spec) {
-    cell.timing_specs.emplace_back(std::move(spec))
-    return true;
-  }
-};
+// using namespace Parse;  
+// using namespace SDF::Types;  
 
 
-struct CellInstanceAction : multi_dispatch<
-  Grammar::one<'*'>, apply0<Apply::value<Star>>,
-  Grammar::hierarchical_identifier, inner_value<
-    IdentifierAction,
-    Storage::push_back<InstanceVariant::Path>
-  >
-> {
-  using state = CellInstance;
-};
+// struct CellInstancePathStorage {
+//   static bool store(CellInstanceVariant::Path &path, std::vector<std::string> ss) {
+//     path = std::move(s)
+//     return true;
+//   }
+// };
 
-struct CellAction : multi_dispatch<
-  Grammar::celltype, inner_value<
-    QStringAction,
-    Storage::member<&Cell::celltype>
-  >
-  Grammar::cell_instance, inner_value<
-    CellInstanceAction,
-    Storage::member<&Cell::cell_instance>
-  >
-  Grammar::timing_spec, inner_value<
-    TimingSpecAction,
-    Storage::push_back<&Cell::timing_specs>
-  >
-> {
-  using state = Cell;
-};
+// struct CellInstancePathAction : multi_dispatch<
+//   Grammar::hierarchical_identifier, inner_action<
+//     HierarchicalIdentifierAction,
+//     CellInstancePathStorage
+//   >
+// > {
+//   using state = Path;
+// };
 
-}
+// struct CellInstanceAction : multi_dispatch<
+//   Grammar:::one<'*'>, apply0<Apply::value<CellInstanceVariant::Star>>,
+//   Grammar::hierarchical_identifier, inner_action<
+//     HierarchicalIdentifierAction,
+//     CellInstancePathStorage
+//   >
+// > {
+//   using state = CellInstanceVariant;
+// };
 
-#endif // LIBSDF_ACTIONS_CELL_HPP
+// struct CellAction : multi_dispatch<
+//   Grammar::celltype, inner_action<
+//     QStringAction,
+//     Storage::member<&Cell::celltype>
+//   >
+//   Grammar::cell_instance, inner_action<
+//     CellInstanceAction,
+//     Storage::member<&Cell::cell_instance>
+//   >
+//   Grammar::timing_spec, inner_action<
+//     TimingSpecArrayAction,
+//     Storage::member<&Cell::timing_specs>
+//   >
+// > {
+//   using state = Cell;
+// };
+
+// struct CellArrayAction : single_dispatch<
+//   Grammar::cell, inner_action<
+//     CellAction,
+//     Storage::push_back
+//   >
+// > {
+//   using state = std::vector<Cell>;
+// };
+
+
+// }
+// }
+
+// #endif // LIBSDF_ACTIONS_CELL_HPP_

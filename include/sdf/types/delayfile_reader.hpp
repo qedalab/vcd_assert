@@ -1,5 +1,5 @@
-#ifndef LIBSDF_TYPES_DELAYFILE_READER_HPP
-#define LIBSDF_TYPES_DELAYFILE_READER_HPP
+#ifndef LIBSDF_TYPES_DELAYFILE_READER_HPP_
+#define LIBSDF_TYPES_DELAYFILE_READER_HPP_
 
 #include <sdf/types/delayfile.hpp>
 #include <sdf/types/enums.hpp>
@@ -69,4 +69,4 @@ public:
 
 }
 
-#endif //LIBSDF_TYPES_HEADER_BUILDER_HPP
+#endif //LIBSDF_TYPES_HEADER_BUILDER_HPP_

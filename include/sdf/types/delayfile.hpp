@@ -1,15 +1,20 @@
-#ifndef LIBSDF_TYPES_DELAYFILE_H_
-#define LIBSDF_TYPES_DELAYFILE_H_
+#ifndef LIBSDF_TYPES_DELAYFILE_HPP_
+#define LIBSDF_TYPES_DELAYFILE_HPP_
 
-#include <sdf/types/timingdelay.hpp>
+#include <sdf/types/base.hpp>
+#include <sdf/types/cell.hpp>
+#include <sdf/types/enums.hpp>
 #include <sdf/types/values.hpp>
 #include <sdf/types/variant.hpp>
+
+#include <optional>
 
 namespace SDF {
 namespace Types {
 
 
-struct DelayFile {
+class DelayFile {
+public:
   std::string sdf_version;
   std::optional<std::string> design_name;
   std::optional<std::string> date;
@@ -20,9 +25,9 @@ struct DelayFile {
   std::optional<char> hierarchy_divider;
   std::optional<Triple> voltage;
   std::optional<Triple> temperature;
-  std::optional<Timescale> time_scale;
+  std::optional<TimeScale> time_scale;
   std::vector<Cell> cells;
-}
+};
 
 // class DelayFile
 // {
@@ -148,4 +153,4 @@ struct DelayFile {
 } // namespace Types
 } // namespace SDF
 
-#endif // LIBSDF_TYPES_DELAYFILE_H_
+#endif // LIBSDF_TYPES_DELAYFILE_HPP_

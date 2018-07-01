@@ -8,8 +8,12 @@
 #include <tao/pegtl/parse.hpp>
 #include <catch2/catch.hpp>
 #include "parse/actions/control.hpp"
+#include "parse/actions/make_pegtl_template.hpp"
 
 namespace Parse::Test {
+
+using namespace Parse;
+ 
 
 template<class Rule, class Action, class... States>
 void require_parse(std::string_view input_str, States&... states)

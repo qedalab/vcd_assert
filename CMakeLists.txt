@@ -17,7 +17,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 #Add libparse library
 add_library(libparse "src/parse")
 target_include_directories(libparse PUBLIC "${PROJECT_SOURCE_DIR}/include/")
-target_link_libraries(libparse range-v3 taocpp::pegtl fmt-header-only)
+target_link_libraries(libparse range-v3 taocpp::pegtl)
 
 #Add libvcd library
 add_library(libvcd "src/vcd")

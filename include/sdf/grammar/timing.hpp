@@ -395,6 +395,9 @@ struct disabled_setuphold_timing_check : sor<
   >
 >{};
 
+// using hold_port_tchk_1 =  port_tchk;
+// using hold_port_tchk_2 =  port_tchk;
+
 struct setup_timing_check : unimplemented<key_setup>{};
 struct disabled_setup_timing_check : block<
   key_setup,

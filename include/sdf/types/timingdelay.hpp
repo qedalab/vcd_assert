@@ -1,9 +1,0 @@
-#ifndef LIBSDF_TYPES_TIMINGDELAY_H_
-#define LIBSDF_TYPES_TIMINGDELAY_H_
-
-
-struct TimingDelay {
-  
-};
-
-#endif //LIBSDF_TYPES_TIMINGDELAY_H_

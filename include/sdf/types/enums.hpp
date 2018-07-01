@@ -1,29 +1,19 @@
-#ifndef LIBSDF_ENUMS_H_
-#define LIBSDF_ENUMS_H_
+#ifndef LIBSDF_ENUMS_HPP_
+#define LIBSDF_ENUMS_HPP_
 
 namespace SDF {
 
-enum class TimescaleUnit {
-  s, ms, us, ns, ps
+enum class HChar {
+  dot, slash
 };
 
-enum class TimescaleNumber {
+enum class TimeScaleUnit {
+  s, ms, us, ns, ps, fs
+};
+
+enum class TimeScaleNumber {
   _1, _10, _100
 };
-
-struct Wildcard;
-struct Scope;
-enum class HierarchicalIdentifier;
-
-enum class HierarchicalIdentifier {
-  Scope,
-  HierarchicalIdentifier
-};
-
-enum class CelInstance {
-  HierarchicalIdentifier, Wildcard
-};
-
 
 enum class TimingSpecType {
   delay,
@@ -64,4 +54,4 @@ enum class DelayType{
 
 } // namespace SDF
 
-#endif // LIBSDF_ENUMS_H_
+#endif // LIBSDF_ENUMS_HPP_

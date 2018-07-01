@@ -3,6 +3,7 @@
 #define LIBSDF_GRAMMAR_HEADER_HPP 
 
 #include <sdf/grammar/base.hpp>
+
 #include <sdf/grammar/keywords.hpp>
 #include <sdf/grammar/values.hpp>
 
@@ -62,22 +63,41 @@ struct temperature : block<
 >{};
 
 
-struct timescale_number : sor< 
-    TAO_PEGTL_ISTRING( "100.0" ),
-    TAO_PEGTL_ISTRING( "10.0" ),
+struct timescale_number_1 : sor<
     TAO_PEGTL_ISTRING( "1.0" ),
-    TAO_PEGTL_ISTRING( "100" ),
-    TAO_PEGTL_ISTRING( "10" ),
     TAO_PEGTL_ISTRING( "1" )
 >{};
 
+struct timescale_number_10 : sor<
+    TAO_PEGTL_ISTRING( "10.0" ),
+    TAO_PEGTL_ISTRING( "10" )
+>{};
+
+struct timescale_number_100 : sor<
+    TAO_PEGTL_ISTRING( "100.0" ),
+    TAO_PEGTL_ISTRING( "100" )
+>{};
+
+struct timescale_number : sor< 
+    timescale_number_100,
+    timescale_number_10,
+    timescale_number_1
+>{};
+
+struct timescale_unit_fs : TAO_PEGTL_ISTRING("fs") {};
+struct timescale_unit_ps : TAO_PEGTL_ISTRING("ps") {};
+struct timescale_unit_ns : TAO_PEGTL_ISTRING("ns") {};
+struct timescale_unit_us : TAO_PEGTL_ISTRING("us") {};
+struct timescale_unit_ms : TAO_PEGTL_ISTRING("ms") {};
+struct timescale_unit_s : TAO_PEGTL_ISTRING("s") {};
+
 struct timescale_unit : sor< 
-    TAO_PEGTL_ISTRING( "fs" ),
-    TAO_PEGTL_ISTRING( "ps" ),
-    TAO_PEGTL_ISTRING( "ns" ),
-    TAO_PEGTL_ISTRING( "us" ),
-    TAO_PEGTL_ISTRING( "ms" ),
-    TAO_PEGTL_ISTRING( "s" )
+    timescale_unit_fs,
+    timescale_unit_ps,
+    timescale_unit_ns,
+    timescale_unit_us,
+    timescale_unit_ms,
+    timescale_unit_s
 >{};
 
 struct time_scale : block< 
@@ -87,7 +107,7 @@ struct time_scale : block<
 >{};
 
 
-struct sdf_header : op_sep_seq< //make ws_ignored_seq
+struct sdf_header : op_sep_seq< 
   must<sdf_version>,
   opt<design_name>,
   opt<date>,

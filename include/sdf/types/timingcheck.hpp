@@ -1,26 +1,55 @@
-#ifndef LIBSDF_TYPES_TIMINGCHECK_H_
-#define LIBSDF_TYPES_TIMINGCHECK_H_
+#ifndef LIBSDF_TYPES_TIMINGCHECK_HPP_
+#define LIBSDF_TYPES_TIMINGCHECK_HPP_
 
-#include <sdf/types/delayfile.hpp>
+
 #include <sdf/types/values.hpp>
-#include <sdf/types/variant.hpp>
+
+#include <variant>
+#include <tuple>
 
 namespace SDF {
 namespace Types {
 
+namespace Unsupported {
+  struct Setup{};
+  struct Setuphold{};
+  struct Recovery{};
+  struct Removal{};
+  struct Recrem{};
+  struct Skew{};
+  struct Bidirectskew{};
+  struct Width{};
+  struct Period{};
+  struct Nochange{};
+}
+
+struct Port {
+  std::string identifier;
+};
+
+struct Value {
+  std::string identifier;
+};
+
+struct Hold {
+  std::tuple<Port,Port> ports;
+  Value value;
+};
+
+
 // clang-format off
 using TimingCheckVariant = std::variant<
   Hold,
-  // Setup,         //unsupported
-  // Setuphold,     //unsupported
-  // Recovery,      //unsupported
-  // Removal,       //unsupported
-  // Recrem,        //unsupported
-  // Skew,          //unsupported
-  // Bidirectskew,  //unsupported
-  // Width,         //unsupported
-  // Period,        //unsupported
-  // Nochange       //unsupported
+  Unsupported::Setup,
+  Unsupported::Setuphold,
+  Unsupported::Recovery,
+  Unsupported::Removal,
+  Unsupported::Recrem,
+  Unsupported::Skew,
+  Unsupported::Bidirectskew,
+  Unsupported::Width,
+  Unsupported::Period,
+  Unsupported::Nochange 
 >;
 // clang-format on
 
@@ -30,14 +59,7 @@ struct TimingCheck : public TimingCheckVariant {
 
 using TimingCheckPtr = std::unique_ptr<TimingCheck>;
 
-// clang-format off
-struct Hold {
-  std::tuple<Port,Port> ports;
-  Value value;
-};
-// clang-format on
-
 } // namespace Types
 } // namespace SDF
 
-#endif // LIBSDF_TYPES_TIMINGCHECK_H_
+#endif // LIBSDF_TYPES_TIMINGCHECK_HPP_
