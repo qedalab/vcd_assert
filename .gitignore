@@ -2,3 +2,4 @@ build
 .idea
 .gitignore
 resources/benchmark/*/results/*
+compile_commands.json
