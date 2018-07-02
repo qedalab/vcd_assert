@@ -1,7 +1,7 @@
 #include "parse/test/debug_control.hpp"
 
-#include "parse/test/match.hpp"
 #include "parse/grammar/base.h"
+#include "parse/test/match.hpp"
 
 #include <catch2/catch.hpp>
 

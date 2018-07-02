@@ -4,11 +4,11 @@
 
 using namespace Parse;
 
-constexpr std::array arr_1 {'a'};
-constexpr std::array arr_2 {'b', 'c', 'd'};
-constexpr std::array arr_3 {'e'};
+constexpr std::array<char, 1> arr_1 {'a'};
+constexpr std::array<char, 3> arr_2 {'b', 'c', 'd'};
+constexpr std::array<char, 1> arr_3 {'e'};
 
-constexpr std::array arr_123 {'a', 'b', 'c', 'd', 'e'};
+constexpr std::array<char, 5> arr_123 {'a', 'b', 'c', 'd', 'e'};
 
 TEST_CASE("Parse.Util.ArrayAppend", "[Util]") {
   constexpr auto appended_arr = Util::array_append(arr_1, arr_2, arr_3);

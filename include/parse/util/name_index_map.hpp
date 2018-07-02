@@ -18,7 +18,7 @@ public:
   bool has_index(index_t index) const noexcept;
 
   std::string_view get_name(index_t index) const;
-  bool has_name(std::string &index) const noexcept;
+  bool has_name(std::string &name) const noexcept;
 
   index_t add_name(std::string name);
   index_t add_new_name(std::string name);

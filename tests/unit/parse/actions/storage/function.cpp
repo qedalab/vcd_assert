@@ -10,14 +10,14 @@ struct State {};
 struct HasFunction {
   int called =0;
 
-  Return Function(State) {
+  Return function([[maybe_unused]] State state) {
     called++;
     return {};
   }
 };
 
 TEST_CASE("Parse.Actions.Storage.Function", "[Parse][Actions][Storage]") {
-  using function_storage = Storage::function<&HasFunction::Function>;
+  using function_storage = Storage::function<&HasFunction::function>;
 
   HasFunction parent;
   State child;

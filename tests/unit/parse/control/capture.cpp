@@ -1,18 +1,18 @@
-#include "parse/actions/storage/member.hpp"
-#include "parse/actions/control.hpp"
-#include "parse/actions/storage/push_back.hpp"
-#include "parse/actions/command/inner_action.hpp"
-#include "parse/actions/command/apply.hpp"
-#include "parse/actions/command/apply0.hpp"
-#include "parse/actions/dispatch.hpp"
+#include "parse/actions/apply/integer.hpp"
 #include "parse/actions/apply/string.hpp"
 #include "parse/actions/apply/value.hpp"
-#include "parse/actions/apply/integer.hpp"
+#include "parse/actions/command/apply.hpp"
+#include "parse/actions/command/apply0.hpp"
+#include "parse/actions/command/inner_action.hpp"
+#include "parse/actions/control.hpp"
+#include "parse/actions/dispatch.hpp"
+#include "parse/actions/storage/member.hpp"
+#include "parse/actions/storage/push_back.hpp"
 
 #include <catch2/catch.hpp>
+#include <tao/pegtl/parse.hpp>
 
 #include <variant>
-#include <tao/pegtl/parse.hpp>
 
 #include "./json.hpp"
 
@@ -26,8 +26,8 @@ struct JSONObjectStorage {
 };
 
 struct JSONValuePtrStorage {
-  template<class InnerValue>
-  static bool store(JSONValuePtr& value_ptr, InnerValue value) {
+  template <class InnerValue>
+  static bool store(JSONValuePtr &value_ptr, InnerValue value) {
     if constexpr (std::is_same_v<JSONValuePtr, InnerValue>) {
       value_ptr = std::move(value);
     } else {
@@ -132,7 +132,7 @@ TEST_CASE("Parse.CaptureControl") {
     // Check that cars == ["Ford", "BMW", "Fiat"]
     JSONValuePtr& cars_value = main_object->at("cars");
     REQUIRE(std::holds_alternative<JSONArray>(*cars_value));
-    JSONArray& cars_array = std::get<JSONArray>(*cars_value);
+    auto& cars_array = std::get<JSONArray>(*cars_value);
 
     REQUIRE(cars_array.size() == 3);
     REQUIRE(std::holds_alternative<JSONString>(*cars_array[0]));

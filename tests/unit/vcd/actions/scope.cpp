@@ -1,6 +1,7 @@
 #include "vcd/actions/scope.hpp"
-#include "vcd/grammar/commands.hpp"
+
 #include "parse/test/parse.hpp"
+#include "vcd/grammar/commands.hpp"
 
 #include <catch2/catch.hpp>
 

@@ -1,8 +1,9 @@
 #include "vcd/types/scope.hpp"
 
 #include "vcd/types/header_reader.hpp"
-#include "./variable.hpp"
+
 #include "./scope.hpp"
+#include "./variable.hpp"
 
 #include <catch2/catch.hpp>
 #include <string>
