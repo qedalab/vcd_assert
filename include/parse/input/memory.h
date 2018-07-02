@@ -2,9 +2,9 @@
 #define PARSE_INPUT_MEMORY_H_
 
 #include <algorithm>
+#include <memory>
 #include <range/v3/distance.hpp>
 #include <string_view>
-#include <memory>
 
 namespace Parse {
 class MemoryInput {

@@ -12,8 +12,8 @@ namespace VCD {
 
 /// View of Variable
 struct VariableView {
-  VarType type;                     /// Variable type
-  std::size_t size;                 /// Variable size
+  VarType type = VarType::reg;      /// Variable type
+  std::size_t size = 0;             /// Variable size
   std::string_view identifier_code; /// Variable identifier code
   std::string_view reference;       /// Variable reference
 };

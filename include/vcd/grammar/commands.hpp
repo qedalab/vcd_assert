@@ -3,15 +3,15 @@
 
 #include "../types/enums.hpp"
 
-#include <parse/grammar/base.h>
-#include <parse/grammar/part.h>
-
-#include "./keywords.hpp"
+#include "./base.hpp"
 #include "./enums/scope_type.hpp"
 #include "./enums/time.hpp"
 #include "./enums/var_type.hpp"
-#include "./base.hpp"
+#include "./keywords.hpp"
 #include "./value.hpp"
+
+#include <parse/grammar/base.h>
+#include <parse/grammar/part.h>
 
 namespace VCD::Grammar {
 

@@ -1,11 +1,11 @@
 #ifndef LIBVCD_TYPES_HEADER_READER_HPP
 #define LIBVCD_TYPES_HEADER_READER_HPP
 
-#include "./header.hpp"
 #include "./enums.hpp"
+#include "./header.hpp"
 
-#include <vector>
 #include <memory>
+#include <vector>
 
 namespace VCD {
 

@@ -4,8 +4,8 @@
 #include "../types/header_reader.hpp"
 
 #include "./scope.hpp"
-#include "./var.hpp"
 #include "./time_scale.hpp"
+#include "./var.hpp"
 
 #include "parse/actions/apply/string.hpp"
 #include "parse/actions/storage/function.hpp"

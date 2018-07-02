@@ -1,9 +1,9 @@
 #ifndef LIBPARSE_TEST_MATCH_HPP
 #define LIBPARSE_TEST_MATCH_HPP
 
-#include "./debug_control.hpp"
 #include "../actions/apply/rule_value.hpp"
 #include "../actions/make_pegtl_template.hpp"
+#include "./debug_control.hpp"
 
 #include <tao/pegtl/memory_input.hpp>
 #include <tao/pegtl/parse.hpp>

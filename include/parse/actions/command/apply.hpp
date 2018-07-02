@@ -1,10 +1,10 @@
 #ifndef LIBPARSE_ACTIONS_COMMAND_APPLY_HPP
 #define LIBPARSE_ACTIONS_COMMAND_APPLY_HPP
 
-#include <tao/pegtl/rewind_mode.hpp>
 #include <tao/pegtl/apply_mode.hpp>
-#include <tao/pegtl/internal/duseltronik.hpp>
 #include <tao/pegtl/internal/action_input.hpp>
+#include <tao/pegtl/internal/duseltronik.hpp>
+#include <tao/pegtl/rewind_mode.hpp>
 
 // TODO don't rely on pegtl::internal
 

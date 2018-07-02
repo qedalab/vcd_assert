@@ -3,15 +3,15 @@
 
 #include "./enums.hpp"
 
-#include <unordered_map>
 #include <string>
+#include <unordered_map>
 
 namespace VCD {
 
 /// View of scope data
 /// \todo Ensure identifier correctness
 struct ScopeDataView {
-  ScopeType type;
+  ScopeType type = ScopeType::begin;
   std::string_view identifier;
 };
 

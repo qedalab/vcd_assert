@@ -1,9 +1,10 @@
 #ifndef TEST_VCD_TYPES_HEADER_HPP
 #define TEST_VCD_TYPES_HEADER_HPP
 
+#include "./scope.hpp"
+
 #include "vcd/types/enums.hpp"
 #include "vcd/types/header_reader.hpp"
-#include "./scope.hpp"
 
 namespace VCD::Test {
 

@@ -42,7 +42,7 @@ struct line_end : seq<star_whitespace, eolf> {
 
 struct imaginary_unit : one<'i', 'j'> {
   static constexpr auto error() {
-    return "Expected imaginary unit: \'i\' or \'j\'";
+    return R"(Expected imaginary unit: 'i' or 'j')";
   }
 };
 

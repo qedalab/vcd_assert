@@ -1,22 +1,22 @@
 #ifndef LIBVCD_TYPES_EVENT_SCOPE_HPP
 #define LIBVCD_TYPES_EVENT_SCOPE_HPP
 
+#include "../grammar/commands.hpp"
+#include "../grammar/enums/scope_type.hpp"
 #include "../types/enums.hpp"
 #include "../types/scope.hpp"
-#include "../grammar/enums/scope_type.hpp"
-#include "../grammar/commands.hpp"
 
-#include "parse/actions/storage/member.hpp"
+#include "parse/actions/apply/rule_value.hpp"
+#include "parse/actions/apply/string_view.hpp"
 #include "parse/actions/command/apply.hpp"
 #include "parse/actions/command/apply0.hpp"
 #include "parse/actions/command/inner_action.hpp"
 #include "parse/actions/command/pegtl_action.hpp"
-#include "parse/actions/apply/string_view.hpp"
-#include "parse/actions/apply/rule_value.hpp"
 #include "parse/actions/dispatch.hpp"
+#include "parse/actions/storage/member.hpp"
 
-#include <string_view>
 #include <parse/actions/apply/string_view.hpp>
+#include <string_view>
 
 namespace VCD::Actions {
 

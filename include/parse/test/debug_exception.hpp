@@ -2,8 +2,8 @@
 #define LIBPARSE_TEST_DEBUG_EXCEPTION_HPP
 
 #include <stdexcept>
-#include <vector>
 #include <string>
+#include <vector>
 
 namespace Parse::Test {
 

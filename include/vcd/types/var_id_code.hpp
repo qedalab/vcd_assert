@@ -3,8 +3,8 @@
 
 #include "./enums.hpp"
 
-#include <string>
 #include <cstddef>
+#include <string>
 
 namespace VCD {
 

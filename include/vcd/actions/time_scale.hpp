@@ -6,16 +6,15 @@
 
 #include "parse/actions/apply/rule_value.hpp"
 #include "parse/actions/apply/value.hpp"
-#include "parse/actions/dispatch.hpp"
-#include "parse/actions/command/inner_action.hpp"
-#include "parse/actions/command/apply0.hpp"
 #include "parse/actions/command/apply.hpp"
+#include "parse/actions/command/apply0.hpp"
+#include "parse/actions/command/inner_action.hpp"
 #include "parse/actions/command/pegtl_action.hpp"
+#include "parse/actions/dispatch.hpp"
 #include "parse/actions/storage/member.hpp"
 
 #include <tao/pegtl/nothing.hpp>
 #include <vcd/grammar/enums/time.hpp>
-
 
 namespace VCD::Actions {
 
