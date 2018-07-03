@@ -1,7 +1,7 @@
 #include "parse/input/cstring.h"
 
-#include <cstring>
 #include <algorithm>
+#include <cstring>
 
 using namespace Parse;
 

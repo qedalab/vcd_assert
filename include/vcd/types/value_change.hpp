@@ -3,8 +3,8 @@
 
 #include "./enums.hpp"
 
-#include <string_view>
 #include <range/v3/span.hpp>
+#include <string_view>
 
 namespace VCD {
 

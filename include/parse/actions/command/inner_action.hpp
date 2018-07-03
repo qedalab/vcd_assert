@@ -3,10 +3,10 @@
 
 #include "../make_pegtl_template.hpp"
 
-#include <tao/pegtl/rewind_mode.hpp>
 #include <tao/pegtl/apply_mode.hpp>
-#include <tao/pegtl/internal/duseltronik.hpp>
 #include <tao/pegtl/internal/action_input.hpp>
+#include <tao/pegtl/internal/duseltronik.hpp>
+#include <tao/pegtl/rewind_mode.hpp>
 
 // TODO don't depend on pegtl::internal
 
@@ -36,4 +36,3 @@ struct inner_action {
 } // namespace Parse
 
 #endif // LIBPARSE_ACTIONS_COMMAND_INNER_ACTION_HPP
-

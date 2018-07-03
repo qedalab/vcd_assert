@@ -13,4 +13,4 @@ match_all_exactly.cpp
 test.sdf
 empty.sdf
 resources/benchmark/*/results/*
-
+compile_commands.json

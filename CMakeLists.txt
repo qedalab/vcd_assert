@@ -29,6 +29,11 @@ add_library(libsdf "src/sdf")
 target_include_directories(libsdf PUBLIC "${PROJECT_SOURCE_DIR}/include/")
 target_link_libraries(libsdf PUBLIC libparse )
 
+#Add vcd_assert library
+add_library(libvcd_assert "src/vcd_assert")
+target_include_directories(libvcd PUBLIC "${PROJECT_SOURCE_DIR}/include/")
+target_link_libraries(libvcd_assert PUBLIC libvcd)
+
 #Enable warnings
 if ( CMAKE_COMPILER_IS_GNUCC )
   set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Wall")
@@ -42,6 +47,6 @@ add_subdirectory(src)
 if(${BUILD_TESTS})
   find_package(Catch2 2.2.3 REQUIRED)
   find_package(CLI11 REQUIRED)
-  enable_testing()
+  include(CTest)
   add_subdirectory(tests)
 endif()

@@ -1,6 +1,7 @@
 #ifndef LIBVCD_GRAMMAR_GRAMMAR_HPP
 #define LIBVCD_GRAMMAR_GRAMMAR_HPP
 
+#include "./base.hpp"
 #include "./commands.hpp"
 #include "./enums/scope_type.hpp"
 #include "./enums/time.hpp"
@@ -8,7 +9,6 @@
 #include "./enums/var_type.hpp"
 #include "./keywords.hpp"
 #include "./value.hpp"
-#include "./base.hpp"
 
 #include <parse/grammar/base.h>
 

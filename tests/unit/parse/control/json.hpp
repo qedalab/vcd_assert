@@ -1,11 +1,12 @@
 #ifndef PARSE_JSON_HPP
 #define PARSE_JSON_HPP
 
-#include <memory>
-#include <vector>
 #include <map>
+#include <memory>
 #include <string>
 #include <variant>
+#include <vector>
+
 #include <tao/pegtl/contrib/json.hpp>
 
 constexpr char json_example[] =

@@ -4,8 +4,8 @@
 #include "../types/header_reader.hpp"
 
 #include "./scope.hpp"
-#include "./var.hpp"
 #include "./time_scale.hpp"
+#include "./var.hpp"
 
 #include "parse/actions/apply/string.hpp"
 #include "parse/actions/storage/function.hpp"
@@ -17,13 +17,13 @@ namespace VCD::Actions {
 using namespace Parse;
 
 struct VersionAction : single_dispatch<
-    Grammar::version_command, apply<Apply::string>
+    Grammar::string_before_end, apply<Apply::string>
 > {
   using state = std::string;
 };
 
 struct DateAction : single_dispatch<
-    Grammar::date_command, apply<Apply::string>
+    Grammar::string_before_end, apply<Apply::string>
 > {
   using state = std::string;
 };

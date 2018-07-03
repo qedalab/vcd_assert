@@ -4,9 +4,9 @@
 
 using namespace VCD;
 
-Scope::Scope(VCD::ScopeType type, std::string name) noexcept :
+Scope::Scope(VCD::ScopeType type, std::string identifier) noexcept :
     type_(type),
-    identifier_(std::move(name)) {}
+    identifier_(std::move(identifier)) {}
 
 bool Scope::contains_variable(std::string &reference) const noexcept
 {

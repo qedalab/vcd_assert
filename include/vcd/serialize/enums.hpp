@@ -3,9 +3,9 @@
 
 #include "../types/enums.hpp"
 
-#include <string_view>
 #include <cassert>
 #include <cstdlib>
+#include <string_view>
 
 namespace VCD {
 

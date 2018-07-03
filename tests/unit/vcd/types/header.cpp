@@ -1,6 +1,7 @@
 #include "vcd/types/header.hpp"
 
 #include "vcd/types/header_reader.hpp"
+
 #include "./header.hpp"
 #include "./scope.hpp"
 

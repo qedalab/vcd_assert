@@ -3,15 +3,15 @@
 
 #include "../types/enums.hpp"
 
-#include <parse/grammar/base.h>
-#include <parse/grammar/part.h>
-
-#include "./keywords.hpp"
+#include "./base.hpp"
 #include "./enums/scope_type.hpp"
 #include "./enums/time.hpp"
 #include "./enums/var_type.hpp"
-#include "./base.hpp"
+#include "./keywords.hpp"
 #include "./value.hpp"
+
+#include <parse/grammar/base.h>
+#include <parse/grammar/part.h>
 
 namespace VCD::Grammar {
 
@@ -41,6 +41,15 @@ struct scope_identifier : reference {};
 struct end_command : seq<end_keyword, command_separator> {};
 struct blank_end_command : seq<blank, end_command> {};
 
+struct string_before_end : until<
+  at<blank_end_command>
+> {};
+
+struct until_end : seq<
+  string_before_end,
+  blank_end_command
+> {};
+
 struct comment_end : until<blank_end_command> {
   static constexpr auto error() { return "Unterminated comment command"; }
 };
@@ -67,7 +76,7 @@ struct dumpon_command : dump_command<dumpon_keyword> {};
 struct dumpoff_command : dump_command<dumpoff_keyword> {};
 struct dumpvars_command : dump_command<dumpvars_keyword> {};
 
-struct date_end : until<blank_end_command> {
+struct date_end : until_end {
   static constexpr auto error() { return "Unterminated date command"; }
 };
 
@@ -120,13 +129,13 @@ struct var_command : delimited_seq<plus_blank,
   >
 > {};
 
-struct version_end: until<blank_end_command> {
+struct version_end: until_end {
   static constexpr auto error() { return "Unterminated version end"; }
 };
 
 struct version_command : delimited_seq<plus_blank,
   version_keyword,
-  until<end_command>
+  must<version_end>
 > {};
 
 

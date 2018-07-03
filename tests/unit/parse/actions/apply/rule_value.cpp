@@ -2,4 +2,19 @@
 
 #include <catch2/catch.hpp>
 
-// TODO tests
+#include <string>
+
+using namespace Parse;
+
+struct Rule {
+  static constexpr auto value = 42;
+
+  template <class Input, class... States>
+  static bool match(Input& input, States&&... states) {return true;}
+};
+
+TEST_CASE("Parse.Actions.Apply.RuleValue", "[Actions][Apply]") {
+  int state = 404;
+  Apply::rule_value::apply0<Rule>(state);
+  REQUIRE(state == 42);
+}

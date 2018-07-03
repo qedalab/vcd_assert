@@ -1,11 +1,11 @@
 #ifndef LIBVCD_TYPES_HEADER_READER_HPP
 #define LIBVCD_TYPES_HEADER_READER_HPP
 
-#include "./header.hpp"
 #include "./enums.hpp"
+#include "./header.hpp"
 
-#include <vector>
 #include <memory>
+#include <vector>
 
 namespace VCD {
 
@@ -29,7 +29,8 @@ public:
   void upscope();
 
   /// Adds a variable to the scope
-  void var(VarType type, std::size_t size, std::string identifier_code, std::string reference);
+  void var(VarType type, std::size_t size, std::string identifier_code,
+           std::string reference);
 
   /// Adds a variable to the scope
   /// \param VariableView view of variable to add

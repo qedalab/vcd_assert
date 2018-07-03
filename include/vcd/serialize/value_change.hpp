@@ -1,8 +1,8 @@
 #ifndef LIBVCD_SERIALIZE_VALUE_CHANGE_HPP
 #define LIBVCD_SERIALIZE_VALUE_CHANGE_HPP
 
-#include "./enums.hpp"
 #include "../types/value_change.hpp"
+#include "./enums.hpp"
 
 #include <range/v3/algorithm/copy.hpp>
 #include <string_view>

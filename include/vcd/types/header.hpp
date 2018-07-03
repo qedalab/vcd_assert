@@ -1,17 +1,17 @@
 #ifndef LIBVCD_TYPES_HEADER_HPP
 #define LIBVCD_TYPES_HEADER_HPP
 
-#include "./time_scale.hpp"
-#include "./variable.hpp"
-#include "./var_id_code.hpp"
 #include "./scope.hpp"
+#include "./time_scale.hpp"
+#include "./var_id_code.hpp"
+#include "./variable.hpp"
 
 #include "parse/util/name_index_map.hpp"
 
+#include <optional>
 #include <string>
 #include <string_view>
 #include <vector>
-#include <optional>
 
 namespace VCD {
 

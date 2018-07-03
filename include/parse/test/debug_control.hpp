@@ -1,8 +1,8 @@
 #ifndef PARSE_TEST_DEBUG_CONTROL_H
 #define PARSE_TEST_DEBUG_CONTROL_H
 
-#include "./debug_exception.hpp"
 #include "../concepts/error_rule.hpp"
+#include "./debug_exception.hpp"
 
 #include <tao/pegtl/normal.hpp>
 

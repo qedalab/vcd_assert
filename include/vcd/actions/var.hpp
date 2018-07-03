@@ -3,26 +3,25 @@
 
 #include "./identifier_code.hpp"
 
-#include "../types/enums.hpp"
+#include "../grammar/base.hpp"
+#include "../grammar/commands.hpp"
 #include "../grammar/enums/var_type.hpp"
+#include "../types/enums.hpp"
 #include "../types/variable.hpp"
+
+#include "parse/actions/apply/integer.hpp"
+#include "parse/actions/apply/rule_value.hpp"
+#include "parse/actions/apply/string_view.hpp"
+#include "parse/actions/command/apply.hpp"
+#include "parse/actions/command/apply0.hpp"
+#include "parse/actions/command/inner_action.hpp"
+#include "parse/actions/command/pegtl_action.hpp"
+#include "parse/actions/dispatch.hpp"
+#include "parse/actions/storage/member.hpp"
 
 #include <tao/pegtl/nothing.hpp>
 
 #include <string_view>
-#include <vcd/grammar/base.hpp>
-#include <vcd/grammar/commands.hpp>
-
-#include "parse/actions/storage/member.hpp"
-#include "parse/actions/apply/rule_value.hpp"
-#include "parse/actions/apply/string_view.hpp"
-#include "parse/actions/apply/integer.hpp"
-
-#include "parse/actions/dispatch.hpp"
-#include "parse/actions/command/inner_action.hpp"
-#include "parse/actions/command/apply0.hpp"
-#include "parse/actions/command/apply.hpp"
-#include "parse/actions/command/pegtl_action.hpp"
 
 namespace VCD::Actions {
 
