@@ -5,6 +5,8 @@ project (Parse)
 option(BUILD_TESTS "Build tests" FALSE)
 option(BUILD_DOCS "Build documentation [unused]" FALSE)
 
+include(cmake/warnings.cmake)
+
 #Include dependencies
 find_package(pegtl REQUIRED)
 find_package(range-v3 0.3.6 REQUIRED)
@@ -17,16 +19,19 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 add_library(libparse "src/parse")
 target_include_directories(libparse PUBLIC "${PROJECT_SOURCE_DIR}/include/")
 target_link_libraries(libparse range-v3 taocpp::pegtl)
+target_add_warnings(libparse)
 
 #Add libvcd library
 add_library(libvcd "src/vcd")
 target_include_directories(libvcd PUBLIC "${PROJECT_SOURCE_DIR}/include/")
 target_link_libraries(libvcd PUBLIC libparse)
+target_add_warnings(libvcd)
 
 #Add vcd_assert library
 add_library(libvcd_assert "src/vcd_assert")
 target_include_directories(libvcd PUBLIC "${PROJECT_SOURCE_DIR}/include/")
 target_link_libraries(libvcd_assert PUBLIC libvcd)
+target_add_warnings(libvcd_assert)
 
 #Enable warnings
 if ( CMAKE_COMPILER_IS_GNUCC )

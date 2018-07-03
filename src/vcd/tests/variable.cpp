@@ -13,7 +13,7 @@ void VCD::Test::read_in_test_var(VCD::HeaderReader &reader, TestVar &test)
   reader.var(test.type, test.size, test.id_code, test.ref);
 }
 
-void VCD::Test::catch_test_var(VCD::Header &header, VCD::Scope &scope,
+void VCD::Test::catch_test_var(VCD::Header &header,
                                VCD::Variable &variable, TestVar test)
 {
   CHECK(variable.get_reference() == test.ref);

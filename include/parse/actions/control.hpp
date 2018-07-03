@@ -16,7 +16,7 @@ struct capture_control : public tao::pegtl::normal<Rule> {
   using rewind_mode = tao::pegtl::rewind_mode;
 
   template <typename Input, typename... States>
-  static void raise(const Input &in, States &&... /*unused*/) {
+  static void raise(const Input &, States &&... /*unused*/) {
     // throw ParseException(Rule::error(), in.position()));
     if constexpr (Concepts::ErrorRule<Rule>) {
       throw std::runtime_error(Rule::error());

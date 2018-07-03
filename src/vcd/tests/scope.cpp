@@ -49,7 +49,7 @@ void VCD::Test::catch_test_scope(VCD::Header &header, VCD::Scope &scope,
       auto var_index = scope.get_variable_index(test_var.ref);
       REQUIRE(var_index < header.num_variables());
       auto &var = header.get_var(var_index);
-      catch_test_var(header, scope, var, test_var);
+      catch_test_var(header, var, test_var);
     }
   }
 }

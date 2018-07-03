@@ -16,7 +16,7 @@ struct debug_control : public tao::pegtl::normal<Rule> {
   using normal_rule = tao::pegtl::normal<Rule>;
 
   template <typename Input, typename... States>
-  static void raise(const Input &in, States &&... /*unused*/) {
+  static void raise(const Input & /*unused*/, States &&... /*unused*/) {
     // throw ParseException(Rule::error(), in.position()));
     if constexpr (Concepts::ErrorRule<Rule>) {
       throw DebugException(Rule::error());
@@ -33,9 +33,9 @@ struct debug_control : public tao::pegtl::normal<Rule> {
     auto position = in.position();
 
     DebugState trace {
-      .rule = tao::pegtl::internal::demangle<Rule>(),
-      .line = position.line,
-      .col = position.byte_in_line,
+      tao::pegtl::internal::demangle<Rule>(),
+      position.line,
+      position.byte_in_line,
     };
 
     try {

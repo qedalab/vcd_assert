@@ -11,7 +11,7 @@ namespace Parse::Util {
 template <class T, std::size_t Base, std::size_t... Sizes>
 constexpr auto array_append(std::array<T, Base> base) {
   return base;
-};
+}
 
 template <class T, std::size_t Base, std::size_t... Sizes>
 constexpr auto array_append(std::array<T, Base> base,
@@ -24,7 +24,7 @@ constexpr auto array_append(std::array<T, Base> base,
   ranges::copy(rest, out.begin() + Base);
 
   return out;
-};
+}
 
 } // namespace Parse::Util
 

@@ -31,10 +31,9 @@ void serialize_scope(OutputIterator oi,
 /// \param oi The OutputIterator being written to
 /// \exception Throws if writing to the OutputIterator throws otherwise noexcept
 template <class OutputIterator>
-void serialize_upscope(OutputIterator oi,
-                       ScopeDataView ts) noexcept(noexcept(*oi++ = '!')) {
+void serialize_upscope(OutputIterator oi) noexcept(noexcept(*oi++ = '!')) {
   using std::literals::string_view_literals::operator""sv;
-  ranges::copy("$upscope $end\n"sv);
+  ranges::copy("$upscope $end\n"sv, oi);
 }
 
 } // namespace VCD

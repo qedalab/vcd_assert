@@ -62,7 +62,7 @@ State::State(VCD::Header& header)
   }
 
   assert(pointer == (&packed_vector_values_.back())+1);
-};
+}
 
 StateValuePointer State::get_value_pointer(std::size_t index) {
   StateValue& state_value = values_.at(index);
@@ -81,7 +81,7 @@ StateValuePointer State::get_value_pointer(std::size_t index) {
       static_assert(Parse::Util::dependant_value<false, T>);
     
   }, state_value);
-};
+}
 
 VCD::Value State::get_scalar_value(std::size_t index) const {
   const StateValue& state_value = values_.at(index);
