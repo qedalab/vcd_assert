@@ -13,7 +13,7 @@ using namespace Parse::Test;
 using namespace SDF::Grammar;
 
 
-constexpr auto time_scale_ex1_str_fmt    = "(TIMESCALE     1ns{})";
+constexpr auto timescale_ex1_str_fmt    = "(TIMESCALE     1ns{})";
 
 constexpr auto sdf_version_ex1_str       = R"((SDFVERSION "4.0" ))"; 
 constexpr auto design_name_ex1_str       = R"((DESIGN "system" ))";
@@ -26,7 +26,7 @@ constexpr auto voltage_ex1_str           = R"((VOLTAGE 5.5:5.0:4.5))";
 constexpr auto process_ex1_str           = R"((PROCESS "worst"))";
 constexpr auto timescale_number_ex1_str  = R"(1)";
 constexpr auto timescale_unit_ex1_str    = R"(ns)";
-constexpr auto time_scale_ex1_str        = R"((TIMESCALE     1ns))";
+constexpr auto timescale_ex1_str        = R"((TIMESCALE     1ns))";
 constexpr auto temperature_ex1_str       = R"((TEMPERATURE :25:))";
 
 

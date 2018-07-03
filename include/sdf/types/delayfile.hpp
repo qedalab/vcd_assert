@@ -1,156 +1,143 @@
-#ifndef LIBSDF_TYPES_DELAYFILE_HPP_
-#define LIBSDF_TYPES_DELAYFILE_HPP_
+#ifndef LIBSDF_TYPES_DELAYFILE_HPP
+#define LIBSDF_TYPES_DELAYFILE_HPP
 
 #include <sdf/types/base.hpp>
 #include <sdf/types/cell.hpp>
 #include <sdf/types/enums.hpp>
+#include <sdf/types/time_scale.hpp>
 #include <sdf/types/values.hpp>
-#include <sdf/types/variant.hpp>
 
 #include <optional>
 
 namespace SDF {
-namespace Types {
 
+/// Stores the SDF data.
+/// Can only be populated with DelayFileReader
+/// \related DelayFileReader
+class DelayFile
+{
+  std::string sdf_version_;                   /// Version of the SDF file
+  std::optional<std::string> design_name_;    /// Name of design being annotated
+  std::optional<std::string> date_;           /// Date of SDF file creation
+  std::optional<std::string> vendor_;         /// Vendor that supplied the SDF file
+  std::optional<std::string> program_name_;   /// Name of program that created the SDF file
+  std::optional<std::string> program_version_;/// Version of program that created the SDF file
+  std::optional<std::string> process_;        /// Process specification
+  std::optional<char> hierarchy_divider_;     /// Character used to separate hierarchial identifiers
+  std::optional<Triple> voltage_;             /// Voltage specification
+  std::optional<Triple> temperature_;         /// Temperature specification
+  std::optional<TimeScale> timescale_;        /// Timescale specification
+  std::vector<Cell> cells_;                   /// Cells of the SDF file
 
-class DelayFile {
+  friend class DelayFileReader;
+// #ifdef DEBUG
+//   friend TestDelayFile;
+// #endif
+
 public:
-  std::string sdf_version;
-  std::optional<std::string> design_name;
-  std::optional<std::string> date;
-  std::optional<std::string> vendor;
-  std::optional<std::string> program_name;
-  std::optional<std::string> program_version;
-  std::optional<std::string> process;
-  std::optional<char> hierarchy_divider;
-  std::optional<Triple> voltage;
-  std::optional<Triple> temperature;
-  std::optional<TimeScale> time_scale;
-  std::vector<Cell> cells;
+  // DelayFile();
+  
+  std::string_view get_sdf_version();
+
+  /// Get the design_name if present
+  /// \returns The design_name if present
+  std::optional<std::string_view> get_design_name();
+  
+  /// True if the delayfile header contains a design_name
+  /// \returns Whether the delayfile contains a design_name
+  bool has_design_name() const noexcept;
+
+  /// Get the date if present
+  /// \returns The date if present
+  std::optional<std::string_view> get_date();
+  
+  /// True if the delayfile header contains a date
+  /// \returns Whether the delayfile contains a date
+  bool has_date() const noexcept;
+
+  /// Get the vendor if present
+  /// \returns The vendor if present
+  std::optional<std::string_view> get_vendor();
+  
+  /// True if the delayfile header contains a vendor
+  /// \returns Whether the delayfile contains a vendor
+  bool has_vendor() const noexcept;
+
+  /// Get the program_name if present
+  /// \returns The program_name if present
+  std::optional<std::string_view> get_program_name();
+  
+  /// True if the delayfile header contains a program_name
+  /// \returns Whether the delayfile contains a program_name
+  bool has_program_name() const noexcept;
+
+  /// Get the program_version if present
+  /// \returns The program_version if present
+  std::optional<std::string_view> get_program_version();
+  
+  /// True if the delayfile header contains a program_version
+  /// \returns Whether the delayfile contains a program_version
+  bool has_program_version() const noexcept;
+
+  /// Get the process if present
+  /// \returns The process if present
+  std::optional<std::string_view> get_process();
+  
+  /// True if the delayfile header contains a process
+  /// \returns Whether the delayfile contains a process
+  bool has_process() const noexcept;
+
+  /// Get the hierarchy_divider if present
+  /// \returns The hierarchy_divider if present
+  std::optional<char> get_hierarchy_divider();
+  
+  /// True if the delayfile header contains a hierarchy_divider
+  /// \returns Whether the delayfile contains a hierarchy_divider
+  bool has_hierarchy_divider() const noexcept;
+
+  /// Get the voltage if present
+  /// \returns The voltage if present
+  std::optional<Triple> get_voltage();
+  
+  /// True if the delayfile header contains a voltage
+  /// \returns Whether the delayfile contains a voltage
+  bool has_voltage() const noexcept;
+
+  /// Get the temperature if present
+  /// \returns The temperature if present
+  std::optional<Triple> get_temperature();
+  
+  /// True if the delayfile header contains a temperature
+  /// \returns Whether the delayfile contains a temperature
+  bool has_temperature() const noexcept;
+
+  /// Get the timescale if present
+  /// \returns The timescale if present
+  std::optional<TimeScale> get_timescale();
+  
+  /// True if the delayfile header contains a timescale
+  /// \returns Whether the delayfile contains a timescale
+  bool has_timescale() const noexcept;
+
+  // std::vector<Cell> get_cells() const noexcept;
+  Cell& get_cell(std::size_t index);
+  std::size_t num_cells() const noexcept;
+
+  // TimingSpec &get_timingdelay(Unsupported::TimingDelay timing_delay);
+  // std::size_t num_timing_delays();
+
+  // TimingSpec &get_timingcheck(TimingCheck timing_check);
+  // std::size_t num_timing_checks();
+
+  // TimingSpec &get_timingenv(Unsupported::TimingEnv timing_env);
+  // std::size_t num_timing_envs();
+
+  // TimingSpec &get_timinglabel(Unsupported::TimingLabel timing_label);
+  // std::size_t num_timing_labels();
+
 };
 
-// class DelayFile
-// {
-//   // std::string file_path_;
-//   std::string sdf_version_;
-//   std::optional<std::string> design_name_;
-//   std::optional<std::string> date_;
-//   std::optional<std::string> vendor_;
-//   std::optional<std::string> program_name_;
-//   std::optional<std::string> program_version_;
-//   std::optional<std::string> process_;
-//   std::optional<char> hierarchy_divider_;
-//   std::optional<Triple> voltage_;
-//   std::optional<Triple> temperature_;
-//   std::optional<Timescale> time_scale_;
-//   std::vector<Cell> cells_;
-
-//   friend class DelayFileReader;
-
-// public:
-//   std::string_view get_sdf_version();
-
-//   std::optional<std::string_view> get_design_name();
-//   // bool has_design_name(); optional implicitly covers this..
-
-//   std::optional<std::string_view> get_date();
-//   // bool has_date(); optional implicitly covers this..
-
-//   std::optional<std::string_view> get_vendor();
-//   // bool has_vendor(); optional implicitly covers this..
-
-//   std::optional<std::string_view> get_program_name();
-//   // bool has_program_name(); optional implicitly covers this..
-
-//   std::optional<std::string_view> get_program_version();
-//   // bool has_program_version(); optional implicitly covers this..
-
-//   std::optional<std::string_view> get_process();
-//   // bool has_process(); optional implicitly covers this..
-
-//   std::optional<char> get_hierarchy_divider();
-//   // bool has_hierarchy_divider(); optional implicitly covers this..
-
-//   std::optional<Triple> get_voltage();
-//   // bool has_voltage(); optional implicitly covers this..
-
-//   std::optional<Triple> get_temperature();
-//   // bool has_temperature(); optional implicitly covers this..
-
-//   std::optional<Timescale> get_time_scale();
-//   // bool has_time_scale(); optional implicitly covers this..
-
-//   Cell &get_cell(std::size_t index);
-
-//   Delay &get_timingdelay(std::string hierarchy);
-//   TimingCheck &get_timingcheck(std::string hierarchy);
-//   TimingEnv &get_timingenv(std::string hierarchy);
-//   Label &get_timinglabel(std::string hierarchy);
-
-//   std::size_t num_scopes();
-// };
-
-
-// class DelayFileReader {
-//   std::unique_ptr<DelayFile> delayfile_;
-//   std::vector<std::size_t> scope_stack_;
-// public:
-//   DelayFileReader();
-
-//   void scope(ScopeType type, std::string name);
-//   void upscope();
-//   void var(VarType type, std::size_t size, std::string identifier_code, std::string reference);
-
-//   sdf_version(std::string sdf_version_string );
-
-//   design_name(std::string design_name_string );
-//   // bool has_design_name(); optional implicitly covers this..
-
-//   date(std::string date_string );
-//   // bool has_date(); optional implicitly covers this..
-
-//   vendor(std::string vendor_string );
-//   // bool has_vendor(); optional implicitly covers this..
-
-//   program_name(std::string program_name_string );
-//   // bool has_program_name(); optional implicitly covers this..
-
-//   program_version(std::string program_version_string );
-//   // bool has_program_version(); optional implicitly covers this..
-
-//   process(std::string process_string );
-//   // bool has_process(); optional implicitly covers this..
-
-//   hierarchy_divider(std::string hierarchy_divider_string );
-//   // bool has_hierarchy_divider(); optional implicitly covers this..
-
-//   voltage(std::string voltage_string );
-//   // bool has_voltage(); optional implicitly covers this..
-
-//   temperature(std::string temperature_string );
-//   // bool has_temperature(); optional implicitly covers this..
-
-//   time_scale(std::string time_scale_string );
-
-
-//   void version(std::string version_string);
-//   void overwrite_version(std::string version_string);
-//   bool has_version();
-
-//   void date(std::string date_string);
-//   void overwrite_date(std::string date_string);
-//   bool has_date();
-
-//   void timescale(TimeNumber number, TimeUnit unit);
-//   void overwrite_timescale(TimeNumber number, TimeUnit unit);
-//   bool has_timescale();
-
-//   std::unique_ptr<DelayFile> release();
-// };
-
-
-
-} // namespace Types
+ 
 } // namespace SDF
 
-#endif // LIBSDF_TYPES_DELAYFILE_HPP_
+#endif // LIBSDF_TYPES_DELAYFILE_HPP

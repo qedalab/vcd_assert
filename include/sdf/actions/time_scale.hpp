@@ -1,5 +1,5 @@
-#ifndef LIBSDF_ACTIONS_TIMESCALE_HPP_
-#define LIBSDF_ACTIONS_TIMESCALE_HPP_
+#ifndef LIBSDF_ACTIONS_TIMESCALE_HPP
+#define LIBSDF_ACTIONS_TIMESCALE_HPP
 
 #include <sdf/actions/base.hpp>
 
@@ -7,12 +7,12 @@
 
 #include <sdf/types/base.hpp>
 #include <sdf/types/enums.hpp>
+#include <sdf/types/time_scale.hpp>
 
 namespace SDF{
 namespace Actions{
 
 using namespace Parse;  
-using namespace SDF::Types;  
 
 struct TimeScaleNumberApply {
   template <class Rule, class ActionInput>
@@ -55,17 +55,17 @@ struct TimeScaleUnitAction : multi_dispatch<
 struct TimeScaleAction : multi_dispatch<
   Grammar::timescale_number, inner_action<
       TimeScaleNumberAction, 
-      Storage::member<&TimeScale::number>
+      Storage::member<&TimeScaleView::number>
   >,
   Grammar::timescale_unit, inner_action<
       TimeScaleUnitAction, 
-      Storage::member<&TimeScale::unit>
+      Storage::member<&TimeScaleView::unit>
   >
 > {
-  using state = TimeScale;
+  using state = TimeScaleView;
 };
 
 }
 } 
 
-#endif // SDF_ACTIONS_TIME_SCALE_HPP_
+#endif // SDF_ACTIONS_TIME_SCALE_HPP

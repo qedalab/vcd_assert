@@ -1,6 +1,6 @@
 
-#ifndef LIBSDF_GRAMMAR_CELL_HPP_
-#define LIBSDF_GRAMMAR_CELL_HPP_
+#ifndef LIBSDF_GRAMMAR_CELL_HPP
+#define LIBSDF_GRAMMAR_CELL_HPP
 
 
 #include <sdf/grammar/base.hpp>
@@ -38,4 +38,4 @@ struct cell : block<
 } // namespace Grammar
 } // namespace SDF
 
-#endif // LIBSDF_GRAMMAR_CELL_HPP_
+#endif // LIBSDF_GRAMMAR_CELL_HPP

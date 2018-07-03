@@ -1,5 +1,5 @@
-// #ifndef LIBSDF_ACTIONS_TIMINGCHECK_HPP_
-// #define LIBSDF_ACTIONS_TIMINGCHECK_HPP_
+// #ifndef LIBSDF_ACTIONS_TIMINGCHECK_HPP
+// #define LIBSDF_ACTIONS_TIMINGCHECK_HPP
 
 // #include <sdf/actions/base.hpp>
 // #include <sdf/actions/values.hpp>
@@ -8,7 +8,7 @@
 // #include <sdf/grammar/timing.hpp>
 // // #include <sdf/grammar/cell.hpp>
 
-// #include <sdf/types/timingcheck.hpp>
+// #include <sdf/types/timing_check.hpp>
 // #include <sdf/types/cell.hpp>
 
 
@@ -16,7 +16,6 @@
 // namespace Actions{
 
 // using namespace Parse;  
-// using namespace SDF::Types;  
 
 // // template <typename...> struct file_loader {};
 // //     template <typename... Format>
@@ -162,4 +161,4 @@
 
 // }
 
-// #endif // LIBSDF_ACTIONS_TIMINGSPEC_HPP_
+// #endif // LIBSDF_ACTIONS_TIMINGSPEC_HPP

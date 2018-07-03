@@ -1,9 +1,9 @@
-// #ifndef LIBSDF_ACTIONS_CELL_HPP_
-// #define LIBSDF_ACTIONS_CELL_HPP_
+// #ifndef LIBSDF_ACTIONS_CELL_HPP
+// #define LIBSDF_ACTIONS_CELL_HPP
 
 // #include <sdf/actions/base.hpp>
 
-// #include <sdf/actions/timingspec.hpp>
+// #include <sdf/actions/timing_spec.hpp>
 
 // #include <sdf/types/cell.hpp>
 // #include <sdf/grammar/cell.hpp>
@@ -12,30 +12,30 @@
 // namespace Actions{
 
 // using namespace Parse;  
-// using namespace SDF::Types;  
+// ;  
 
 
-// struct CellInstancePathStorage {
-//   static bool store(CellInstanceVariant::Path &path, std::vector<std::string> ss) {
+// struct CellInstanceHierIdStorage {
+//   static bool store(CellInstanceVariant::HierarchicalIdentifier &path, std::vector<std::string> ss) {
 //     path = std::move(s)
 //     return true;
 //   }
 // };
 
-// struct CellInstancePathAction : multi_dispatch<
+// struct CellInstanceHierIdAction : multi_dispatch<
 //   Grammar::hierarchical_identifier, inner_action<
 //     HierarchicalIdentifierAction,
-//     CellInstancePathStorage
+//     CellInstanceHierIdStorage
 //   >
 // > {
-//   using state = Path;
+//   using state = HierarchicalIdentifier;
 // };
 
 // struct CellInstanceAction : multi_dispatch<
 //   Grammar:::one<'*'>, apply0<Apply::value<CellInstanceVariant::Star>>,
 //   Grammar::hierarchical_identifier, inner_action<
 //     HierarchicalIdentifierAction,
-//     CellInstancePathStorage
+//     CellInstanceHierIdStorage
 //   >
 // > {
 //   using state = CellInstanceVariant;
@@ -71,4 +71,4 @@
 // }
 // }
 
-// #endif // LIBSDF_ACTIONS_CELL_HPP_
+// #endif // LIBSDF_ACTIONS_CELL_HPP

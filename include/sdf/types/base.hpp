@@ -1,5 +1,5 @@
-#ifndef LIBSDF_TYPES_BASE_HPP_
-#define LIBSDF_TYPES_BASE_HPP_
+#ifndef LIBSDF_TYPES_BASE_HPP
+#define LIBSDF_TYPES_BASE_HPP
 
 #include <sdf/types/enums.hpp>
 
@@ -7,19 +7,15 @@
 #include <vector>
 
 namespace SDF {
-namespace Types {
+ 
 
 struct Star{};
 
-using Path = std::vector<std::string>; // TODO : check for validity
+using HierarchicalIdentifier = std::vector<std::string>; // TODO : check for validity
 
-struct TimeScale {
-  TimeScaleNumber number;
-  TimeScaleUnit unit;
-};
 
-} // namespace Types
+ 
 } // namespace SDF
 
-#endif // LIBSDF_TYPES_BASE_HPP_
+#endif // LIBSDF_TYPES_BASE_HPP
 

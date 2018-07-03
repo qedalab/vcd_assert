@@ -1,10 +1,7 @@
-#include "base.hpp"
+#include "./base.hpp"
 
-
-using namespace Parse::Test;
 using namespace SDF::Grammar;
 using namespace Test::SDF::Grammar;
-
 
 TEST_CASE("SDF.Grammar.Base", "[SDF][Grammar][Base]") {
 

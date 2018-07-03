@@ -1,5 +1,5 @@
-#ifndef LIBSDF_ENUMS_HPP_
-#define LIBSDF_ENUMS_HPP_
+#ifndef LIBSDF_ENUMS_HPP
+#define LIBSDF_ENUMS_HPP
 
 namespace SDF {
 
@@ -22,6 +22,11 @@ enum class TimingSpecType {
   label
 };
 
+enum class TimingDelayType{
+  iopath,
+  interconnects
+};
+
 enum class TimingCheckType {
   setup,
   hold,
@@ -40,18 +45,15 @@ enum class DataType {
   value,
   triple,
   rvalue,
-  rtiple,
+  rtriple,
   delval,
   delval_list,
   retval
 };
 
-enum class DelayType{
-  iopath,
-  interconnects
-};
+
 
 
 } // namespace SDF
 
-#endif // LIBSDF_ENUMS_HPP_
+#endif // LIBSDF_ENUMS_HPP

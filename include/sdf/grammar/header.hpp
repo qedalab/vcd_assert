@@ -100,7 +100,7 @@ struct timescale_unit : sor<
     timescale_unit_s
 >{};
 
-struct time_scale : block< 
+struct timescale : block< 
   key_timescale,
   timescale_number,
   timescale_unit
@@ -118,7 +118,7 @@ struct sdf_header : op_sep_seq<
   opt<voltage>,
   opt<process>,
   opt<temperature>,
-  opt<time_scale>
+  opt<timescale>
 >{};
 
 // clang-format on

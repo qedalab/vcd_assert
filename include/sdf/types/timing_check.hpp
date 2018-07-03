@@ -1,5 +1,5 @@
-#ifndef LIBSDF_TYPES_TIMINGCHECK_HPP_
-#define LIBSDF_TYPES_TIMINGCHECK_HPP_
+#ifndef LIBSDF_TYPES_TIMINGCHECK_HPP
+#define LIBSDF_TYPES_TIMINGCHECK_HPP
 
 
 #include <sdf/types/values.hpp>
@@ -8,8 +8,7 @@
 #include <tuple>
 
 namespace SDF {
-namespace Types {
-
+ 
 namespace Unsupported {
   struct Setup{};
   struct Setuphold{};
@@ -27,15 +26,19 @@ struct Port {
   std::string identifier;
 };
 
-struct Value {
-  std::string identifier;
+using ValueVariant = std::variant<
+  Triple,
+  Number
+>;
+
+struct Value : public ValueVariant {
+  using ValueVariant::ValueVariant;
 };
 
 struct Hold {
   std::tuple<Port,Port> ports;
   Value value;
 };
-
 
 // clang-format off
 using TimingCheckVariant = std::variant<
@@ -53,13 +56,17 @@ using TimingCheckVariant = std::variant<
 >;
 // clang-format on
 
-struct TimingCheck : public TimingCheckVariant {
-  using TimingCheckVariant::TimingCheckVariant;
+struct TimingCheck {
+  std::vector<TimingCheckVariant> tchk_defs;
 };
 
-using TimingCheckPtr = std::unique_ptr<TimingCheck>;
+// struct TimingCheck : public TimingCheckVariant {
+//   using TimingCheckVariant::TimingCheckVariant;
+// };
 
-} // namespace Types
+// using TimingCheckDefPtr = std::unique_ptr<TimingCheckDef>;
+
+ 
 } // namespace SDF
 
-#endif // LIBSDF_TYPES_TIMINGCHECK_HPP_
+#endif // LIBSDF_TYPES_TIMINGCHECK_HPP

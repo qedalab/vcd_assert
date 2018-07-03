@@ -11,7 +11,7 @@ namespace SDF {
 namespace Grammar {
 // clang-format off
 
-// farward
+// forward
 struct simple_expression;
 struct concat_expression;
 struct timing_check_condition;

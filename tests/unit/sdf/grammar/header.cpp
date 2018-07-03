@@ -84,10 +84,10 @@ TEST_CASE("SDF.Grammar.Header", "[SDF][Grammar][Header]") {
   }
   
   SECTION(fmt::format(
-      "Testing \"time_scale\" header line : \n{}\n",
-        time_scale_ex1_str)) {
+      "Testing \"timescale\" header line : \n{}\n",
+        timescale_ex1_str)) {
 
-      CHECK(match_exactly<time_scale>(time_scale_ex1_str));
+      CHECK(match_exactly<timescale>(timescale_ex1_str));
   }
   
   SECTION(fmt::format(

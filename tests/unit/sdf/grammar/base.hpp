@@ -1,10 +1,11 @@
 #ifndef LIBSDF_TEST_SDF_BASE_H
 #define LIBSDF_TEST_SDF_BASE_H
 
-
 #include <sdf/grammar/base.hpp>
-#include <parse/test/match.h>
-#include <parse/internal/array_append.h>
+
+#include <parse/util/array_append.hpp>
+#include <parse/test/match.hpp>
+#include <parse/test/parse.hpp>
 
 #include <array>
 #include <iostream>
@@ -17,8 +18,9 @@ namespace Test {
 namespace SDF {
 namespace Grammar {
 
-using namespace Parse::Internal;
-using namespace tao;
+using namespace Parse::Test;
+using namespace Parse::Util;
+
 
 constexpr char empty_str[] = "";
 constexpr char blank_1_str[] = " ";

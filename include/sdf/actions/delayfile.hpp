@@ -1,10 +1,10 @@
-// #ifndef LIBSDF_ACTIONS_DELAYFILE_HPP_
-// #define LIBSDF_ACTIONS_DELAYFILE_HPP_
+// #ifndef LIBSDF_ACTIONS_DELAYFILE_HPP
+// #define LIBSDF_ACTIONS_DELAYFILE_HPP
 
 // #include <sdf/actions/base.hpp>
 
 // #include <sdf/actions/cell.hpp>
-// #include <sdf/actions/timescale.hpp>
+// #include <sdf/actions/time_scale.hpp>
 // #include <sdf/actions/values.hpp>
 
 // #include <sdf/grammar/cell.hpp>
@@ -19,7 +19,7 @@
 // namespace Actions {
 
 // using namespace Parse;  
-// using namespace SDF::Types;  
+
 
 // // clang-format off
 // struct DelayFileAction : multi_dispatch<
@@ -63,9 +63,9 @@
 //       TripleAction, 
 //       Storage::member<&DelayFile::temperature>
 //   >,
-//   Grammar::time_scale, inner_action<
+//   Grammar::timescale, inner_action<
 //       TimeScaleAction, 
-//       Storage::member<&DelayFile::time_scale>
+//       Storage::member<&DelayFile::timescale>
 //   >,
 //   Grammar::cell, inner_action<
 //       CellArrayAction, 

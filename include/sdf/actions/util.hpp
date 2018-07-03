@@ -1,6 +1,8 @@
 
-#ifndef LIBSDF_ACTIONS_UTIL_HPP_
-#define LIBSDF_ACTIONS_UTIL_HPP_
+#ifndef LIBSDF_ACTIONS_UTIL_HPP
+#define LIBSDF_ACTIONS_UTIL_HPP
+
+#include <tuple>
 
 namespace SDF {
 namespace Actions {
@@ -20,4 +22,4 @@ std::tuple<To...> as_tuple(std::array<From, N> const &arr) {
 } // namespace Actions
 } // namespace SDF
 
-#endif // LIBSDF_ACTIONS_UTIL_HPP_
+#endif // LIBSDF_ACTIONS_UTIL_HPP
