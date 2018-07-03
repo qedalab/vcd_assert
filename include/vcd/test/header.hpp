@@ -1,5 +1,5 @@
-#ifndef TEST_VCD_TYPES_HEADER_HPP
-#define TEST_VCD_TYPES_HEADER_HPP
+#ifndef LIBVCD_TEST_HEADER_HPP
+#define LIBVCD_TEST_HEADER_HPP
 
 #include "./scope.hpp"
 
@@ -21,4 +21,4 @@ void catch_test_header(VCD::Header &header, TestHeader &test);
 
 } // namespace VCD::Test
 
-#endif // TEST_VCD_TYPES_HEADER_HPP
+#endif // LIBVCD_TEST_HEADER_HPP

@@ -1,6 +1,6 @@
 #include "vcd/types/header_reader.hpp"
 
-#include "./header.hpp"
+#include "vcd/test/header.hpp"
 
 #include <catch2/catch.hpp>
 
