@@ -17,13 +17,13 @@ namespace VCD::Actions {
 using namespace Parse;
 
 struct VersionAction : single_dispatch<
-    Grammar::version_command, apply<Apply::string>
+    Grammar::string_before_end, apply<Apply::string>
 > {
   using state = std::string;
 };
 
 struct DateAction : single_dispatch<
-    Grammar::date_command, apply<Apply::string>
+    Grammar::string_before_end, apply<Apply::string>
 > {
   using state = std::string;
 };
