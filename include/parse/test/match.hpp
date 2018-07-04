@@ -39,7 +39,7 @@ bool match_value_exactly(const std::string_view str, Enum value) {
   bool value_match = state == value;
 
   return success and end_of_str and value_match;
-};
+}
 
 } // namespace Parse::Test
 

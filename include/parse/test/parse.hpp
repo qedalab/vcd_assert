@@ -21,7 +21,7 @@ void require_parse(std::string_view input_str, States &... states) {
   memory_input<> input(input_str.begin(), input_str.end(), "require_parse");
   REQUIRE(parse<Rule, make_pegtl_template<Action>::template type,
                 Parse::capture_control>(input, states...));
-};
+}
 
 } // namespace Parse::Test
 

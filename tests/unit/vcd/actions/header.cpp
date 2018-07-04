@@ -2,8 +2,7 @@
 
 #include "parse/test/parse.hpp"
 #include "vcd/grammar/grammar.hpp"
-
-#include "../types/header.hpp"
+#include "vcd/test/header.hpp"
 
 #include <catch2/catch.hpp>
 
