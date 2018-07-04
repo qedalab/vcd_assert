@@ -83,7 +83,7 @@ public:
   /// Set the delayfile hierarchy_divider
   /// \param hierarchy_divider The delayfile hierarchy_divider
   /// \exception Throws if and only if hierarchy_divider is already set
-  void hierarchy_divider(char hierarchy_divider);
+  void hierarchy_divider(HChar hierarchy_divider);
   
   /// True if the current delayfile contains a xxx
   /// \returns Whether the current delayfile contains a xxx

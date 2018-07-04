@@ -19,10 +19,10 @@ struct NodeType{
   std::optional<std::size_t> size; //scalar if 0 or 1?
 };
 
-struct Port : NodeType{
+struct Port : public NodeType{
   using NodeType::NodeType;
 };
-struct Net : NodeType{
+struct Net : public NodeType{
   using NodeType::NodeType;
 };
 

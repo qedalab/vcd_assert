@@ -22,27 +22,13 @@ std::string_view Cell::get_cell_type() const noexcept
   return cell_type_;
 }
 
-// std::vector<std::size_t> Cell::get_timing_specs_indices(std::string &timing_spec_type) const noexcept
-// {
-//   std::vector<std::size_t> result;
-//   std::size_t i = 0;
-  
-//   for(auto&& ts : timing_specs_){
-//     if(timing_spec_type == std::holds_alternative<TimingSpec>(ts)()){
-//       result.emplace_back(i);
-//     }
-//     i++; 
-//   }
-//   return result;
-// }
-
 std::vector<std::size_t> Cell::get_timing_spec_indices_by_type(TimingSpecType &type) const
 {
   std::vector<std::size_t> result;
   std::size_t i = 0;
   
   for(auto&& ts : timing_specs_){
-    if(type == ts.type){
+    if(type == ts.get_enum_type()){
       result.emplace_back(i);
     }
     i++; 

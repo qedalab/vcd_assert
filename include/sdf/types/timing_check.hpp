@@ -4,6 +4,7 @@
 
 #include <sdf/types/timing.hpp>
 #include <sdf/types/values.hpp>
+#include <parse/util/dependant_value.hpp>
 
 #include <variant>
 #include <tuple>
@@ -23,32 +24,36 @@ namespace Unsupported {
   struct Nochange{};
 }
 
+
 struct InvertedNode : public Node {
   using Node::Node;
 };
 
 using NodeEqualityTuple = std::tuple<Node,Node>;
 
-struct NodeEquality : public NodeEqualityTuple {
-  using NodeEqualityTuple::NodeEqualityTuple;
+struct NodeScalarEquality {
+  Node left;
+  bool right;
+  EqualityOperator op;
 };
 
-using TimingCheckConditionVariant = std::variant<
+using TimingCheckCondition = std::variant<
   Node,
   InvertedNode,
-  NodeEquality
+  NodeScalarEquality
 >;
 
-struct TimingCheckCondition : public TimingCheckConditionVariant {
-  using TimingCheckConditionVariant::TimingCheckConditionVariant;
-};
+// struct TimingCheckCondition : public TimingCheckConditionVariant {
+//   using TimingCheckConditionVariant::TimingCheckConditionVariant;
+// };
 
 struct PortTimingCheck{
-  Port port_instance;
   std::optional<std::string> edge_identifier;
-  std::optional<std::string> symbolic_name;
   std::optional<TimingCheckCondition> timing_check_condition;
+  std::optional<std::string> symbolic_name;
+  Port port;
 };
+
 struct Hold {
   PortTimingCheck input; //subject
   PortTimingCheck output; //stimili //change
@@ -58,7 +63,7 @@ struct Hold {
 // clang-format off
 using TimingCheckVariant = std::variant<
   Hold,
-  Unsupported::Setup,
+  Unsupported::Setup, // TODO
   Unsupported::Setuphold,
   Unsupported::Recovery,
   Unsupported::Removal,
@@ -74,14 +79,52 @@ using TimingCheckVariant = std::variant<
 struct TimingCheck {
   TimingCheckType type;
   TimingCheckVariant value;
+
+  TimingCheckType get_enum_type() const {
+
+    return std::visit([](auto&& param) -> TimingCheckType {
+
+      using T = typename std::decay<decltype(param)>::type;
+
+      if constexpr (std::is_same_v<T, Unsupported::Setup>) {
+          return TimingCheckType::setup;
+      } else if constexpr (std::is_same_v<T, Hold>) {
+          return TimingCheckType::hold;
+      } else if constexpr (std::is_same_v<T, Unsupported::Setuphold>) {
+          return TimingCheckType::setuphold;
+      } else if constexpr (std::is_same_v<T, Unsupported::Recovery>) {
+          return TimingCheckType::recovery;
+      } else if constexpr (std::is_same_v<T, Unsupported::Removal>) {
+          return TimingCheckType::removal;
+      } else if constexpr (std::is_same_v<T, Unsupported::Recrem>) {
+          return TimingCheckType::recrem;
+      } else if constexpr (std::is_same_v<T, Unsupported::Skew>) {
+          return TimingCheckType::skew;
+      } else if constexpr (std::is_same_v<T, Unsupported::Bidirectskew>) {
+          return TimingCheckType::bidirectskew;
+      } else if constexpr (std::is_same_v<T, Unsupported::Width>) {
+          return TimingCheckType::width;
+      } else if constexpr (std::is_same_v<T, Unsupported::Period>) {
+          return TimingCheckType::period;
+      } else if constexpr (std::is_same_v<T, Unsupported::Nochange>) {
+          return TimingCheckType::nochange;
+      } else {
+          static_assert(Parse::Util::dependant_value<false, T>);
+      }
+    }, value);
+  }
+
 };
 
-struct TimingCheckSpec{
-  std::vector<TimingCheck> timing_checks;
+using TimingCheckVector = std::vector<TimingCheck>;
+
+struct TimingCheckSpec : public TimingCheckVector {
+  using TimingCheckVector::TimingCheckVector;
 
   std::vector<std::size_t> get_timing_check_indices_by_type(TimingCheckType &type) const;
 };
 
+// get_timing_check_indices_by_type<TimingCheckVariant::Hold>()
  
 } // namespace SDF
 

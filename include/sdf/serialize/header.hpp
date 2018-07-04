@@ -14,10 +14,11 @@ namespace SDF {
 /// \param sdf_version The sdf_version to write
 /// \exception Throws if writing to the OutputIterator throws otherwise noexcept
 template <class OutputIterator>
-void serialize_sdf_version(OutputIterator oi, std::string_view sdf_version) noexcept(
+void serialize_sdf_version(OutputIterator oi, int indent, std::string_view sdf_version) noexcept(
     noexcept(*oi++ = '!')) {
   using std::literals::string_view_literals::operator""sv;
 
+  serialize_indent(oi, indent);
   ranges::copy("(SDFVERSION "sv, oi);
   serialize_quoted(oi, sdf_version);
   ranges::copy(" )\n"sv, oi);
@@ -33,6 +34,7 @@ void serialize_design_name(OutputIterator oi, design_name_type design_name) noex
     noexcept(*oi++ = '!')) {
   using std::literals::string_view_literals::operator""sv;
 
+  serialize_indent(oi, indent);
   ranges::copy("(DESIGN "sv, oi);
   serialize_quoted(oi, design_name);
   ranges::copy(" )\n"sv, oi);
@@ -48,6 +50,7 @@ void serialize_date(OutputIterator oi, date_type date) noexcept(
     noexcept(*oi++ = '!')) {
   using std::literals::string_view_literals::operator""sv;
 
+  serialize_indent(oi, indent);
   ranges::copy("(DATE "sv, oi);
   serialize_quoted(oi, date);
   ranges::copy(" )\n"sv, oi);
@@ -63,6 +66,7 @@ void serialize_vendor(OutputIterator oi, vendor_type vendor) noexcept(
     noexcept(*oi++ = '!')) {
   using std::literals::string_view_literals::operator""sv;
 
+  serialize_indent(oi, indent);
   ranges::copy("(VENDOR "sv, oi);
   serialize_quoted(oi, vendor);
   ranges::copy(" )\n"sv, oi);
@@ -78,6 +82,7 @@ void serialize_program_name(OutputIterator oi, program_name_type program_name) n
     noexcept(*oi++ = '!')) {
   using std::literals::string_view_literals::operator""sv;
 
+  serialize_indent(oi, indent);
   ranges::copy("(PROGRAM "sv, oi);
   serialize_quoted(oi, program_name);
   ranges::copy(" )\n"sv, oi);
@@ -93,6 +98,7 @@ void serialize_program_version(OutputIterator oi, program_version_type program_v
     noexcept(*oi++ = '!')) {
   using std::literals::string_view_literals::operator""sv;
 
+  serialize_indent(oi, indent);
   ranges::copy("(VERSION "sv, oi);
   serialize_quoted(oi, program_version);
   ranges::copy(" )\n"sv, oi);
@@ -108,6 +114,7 @@ void serialize_hierarchy_divider(OutputIterator oi, hierarchy_divider_type hiera
     noexcept(*oi++ = '!')) {
   using std::literals::string_view_literals::operator""sv;
 
+  serialize_indent(oi, indent);
   ranges::copy("(DIVIDER "sv, oi);
   hierarchy_divider;
   ranges::copy(" )\n"sv, oi);
@@ -123,6 +130,7 @@ void serialize_voltage(OutputIterator oi, voltage_type voltage) noexcept(
     noexcept(*oi++ = '!')) {
   using std::literals::string_view_literals::operator""sv;
 
+  serialize_indent(oi, indent);
   ranges::copy("(VOLTAGE "sv, oi);
   triple_type_to_string(voltage);
   ranges::copy(" )\n"sv, oi);
@@ -138,6 +146,7 @@ void serialize_process(OutputIterator oi, process_type process) noexcept(
     noexcept(*oi++ = '!')) {
   using std::literals::string_view_literals::operator""sv;
 
+  serialize_indent(oi, indent);
   ranges::copy("(PROCESS "sv, oi);
   serialize_quoted(oi, process);
   ranges::copy(" )\n"sv, oi);
@@ -153,6 +162,7 @@ void serialize_temperature(OutputIterator oi, Triple temperature) noexcept(
     noexcept(*oi++ = '!')) {
   using std::literals::string_view_literals::operator""sv;
 
+  serialize_indent(oi, indent);
   ranges::copy("(TEMPERATURE "sv, oi);
   triple_type_to_string(temperature);
   ranges::copy(" )\n"sv, oi);
@@ -168,6 +178,7 @@ void serialize_timescale(OutputIterator oi, TimeScale timescale) noexcept(
     noexcept(*oi++ = '!')) {
   using std::literals::string_view_literals::operator""sv;
 
+  serialize_indent(oi, indent);
   ranges::copy("(TIMESCALE "sv, oi);
   ranges::copy(timescale_number_to_string(ts.get_number()), oi);
   ranges::copy(timescale_unit_to_string(ts.get_unit()), oi);

@@ -7,6 +7,13 @@ enum class HChar {
   dot, slash
 };
 
+enum class EqualityOperator {
+  logic_equal,
+  logic_inv,
+  case_equal,
+  case_inv
+};
+
 enum class TimeScaleUnit {
   s, ms, us, ns, ps, fs
 };
@@ -17,8 +24,8 @@ enum class TimeScaleNumber {
 
 enum class TimingSpecType {
   delay,
-  timingCheck,
-  timingEnv,
+  timing_check,
+  timing_env,
   label
 };
 

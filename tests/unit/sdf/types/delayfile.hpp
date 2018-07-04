@@ -15,7 +15,7 @@ struct TestDelayFile {
   std::optional<std::string> program_name;
   std::optional<std::string> program_version;
   std::optional<std::string> process;
-  std::optional<char> hierarchy_divider;
+  std::optional<HChar> hierarchy_divider;
   std::optional<Triple> voltage;
   std::optional<Triple> temperature;
   std::optional<TimeScale> timescale;

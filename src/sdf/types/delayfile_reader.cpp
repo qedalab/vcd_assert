@@ -86,7 +86,7 @@ bool DelayFileReader::has_process() const noexcept
   return delayfile_->has_process();
 }
 
-void DelayFileReader::hierarchy_divider(char hierarchy_divider)
+void DelayFileReader::hierarchy_divider(HChar hierarchy_divider)
 {
   if(has_hierarchy_divider())
     throw std::runtime_error("hierarchy_divider has already been set");

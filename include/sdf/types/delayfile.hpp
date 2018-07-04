@@ -23,7 +23,7 @@ class DelayFile
   std::optional<std::string> program_name_;   /// Name of program that created the SDF file
   std::optional<std::string> program_version_;/// Version of program that created the SDF file
   std::optional<std::string> process_;        /// Process specification
-  std::optional<char> hierarchy_divider_;     /// Character used to separate hierarchial identifiers
+  std::optional<HChar> hierarchy_divider_;     /// Character used to separate hierarchial identifiers
   std::optional<Triple> voltage_;             /// Voltage specification
   std::optional<Triple> temperature_;         /// Temperature specification
   std::optional<TimeScale> timescale_;        /// Timescale specification
@@ -89,7 +89,7 @@ public:
 
   /// Get the hierarchy_divider if present
   /// \returns The hierarchy_divider if present
-  std::optional<char> get_hierarchy_divider();
+  std::optional<HChar> get_hierarchy_divider();
   
   /// True if the delayfile header contains a hierarchy_divider
   /// \returns Whether the delayfile contains a hierarchy_divider

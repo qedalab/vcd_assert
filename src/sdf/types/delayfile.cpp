@@ -70,7 +70,7 @@ bool DelayFile::has_process() const noexcept
   return process_.has_value();
 }
 
-std::optional<char> DelayFile::get_hierarchy_divider()
+std::optional<HChar> DelayFile::get_hierarchy_divider()
 {
   return hierarchy_divider_; 
 }
