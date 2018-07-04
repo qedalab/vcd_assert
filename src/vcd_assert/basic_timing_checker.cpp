@@ -38,11 +38,7 @@ void BasicTimingChecker::hold(std::size_t index, std::size_t sim_time,
 
   // If it falls within setup time
   std::size_t time_passed = sim_time - entry.last_event;
-  if (setup_time > time_passed)
-    return false;
-
-  // setup time not violated
-  return true;
+  return !(setup_time > time_passed);
 }
 
 [[nodiscard]] bool BasicTimingChecker::event(std::size_t index,
@@ -52,8 +48,5 @@ void BasicTimingChecker::hold(std::size_t index, std::size_t sim_time,
   auto& entry = storage_.at(index);
   entry.last_event = sim_time;
 
-  if(entry.hold_until > sim_time)
-    return false;
-
-  return true;
+  return !(entry.hold_until > sim_time);
 }

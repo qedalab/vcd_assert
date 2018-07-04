@@ -4,7 +4,7 @@
 namespace Parse::Util {
 
 template <auto Value, typename... Args>
-constexpr auto dependant_value = Value;
+constexpr auto dependent_value = Value;
 
 } // namespace Parse::Util
 

@@ -1,8 +1,8 @@
 #include "vcd_assert/state.hpp"
-#include "parse/util/dependant_value.hpp"
+#include "parse/util/dependent_value.hpp"
 
-#include <range/v3/view/indices.hpp>
 #include <range/v3/algorithm/copy.hpp>
+#include <range/v3/view/indices.hpp>
 
 using namespace VCDAssert;
 using namespace ranges::view;
@@ -78,7 +78,7 @@ StateValuePointer State::get_value_pointer(std::size_t index) {
     else if constexpr (std::is_same_v<T, double>)
       return &value;
     else
-      static_assert(Parse::Util::dependant_value<false, T>);
+      static_assert(Parse::Util::dependent_value<false, T>);
     
   }, state_value);
 }
