@@ -1,8 +1,9 @@
 #ifndef LIBSDF_TYPES_VALUES_HPP
 #define LIBSDF_TYPES_VALUES_HPP
 
-// #include <sdf/grammar/base.hpp>
+// #include <sdf/types/base.hpp>
 #include <array>
+#include <variant>
 
 namespace SDF {
  
@@ -26,6 +27,15 @@ struct Number {
   }
 };
 
+using ValueVariant = std::variant<
+  Triple,
+  Number
+>;
+
+struct Value : public ValueVariant {
+  using ValueVariant::ValueVariant;
+};
+ 
  
 } // namespace SDF
 

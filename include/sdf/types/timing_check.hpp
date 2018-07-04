@@ -2,6 +2,7 @@
 #define LIBSDF_TYPES_TIMINGCHECK_HPP
 
 
+#include <sdf/types/timing.hpp>
 #include <sdf/types/values.hpp>
 
 #include <variant>
@@ -22,21 +23,35 @@ namespace Unsupported {
   struct Nochange{};
 }
 
-struct Port {
-  std::string identifier;
+struct InvertedNode : public Node {
+  using Node::Node;
 };
 
-using ValueVariant = std::variant<
-  Triple,
-  Number
+using NodeEqualityTuple = std::tuple<Node,Node>;
+
+struct NodeEquality : public NodeEqualityTuple {
+  using NodeEqualityTuple::NodeEqualityTuple;
+};
+
+using TimingCheckConditionVariant = std::variant<
+  Node,
+  InvertedNode,
+  NodeEquality
 >;
 
-struct Value : public ValueVariant {
-  using ValueVariant::ValueVariant;
+struct TimingCheckCondition : public TimingCheckConditionVariant {
+  using TimingCheckConditionVariant::TimingCheckConditionVariant;
 };
 
+struct PortTimingCheck{
+  Port port_instance;
+  std::optional<std::string> edge_identifier;
+  std::optional<std::string> symbolic_name;
+  std::optional<TimingCheckCondition> timing_check_condition;
+};
 struct Hold {
-  std::tuple<Port,Port> ports;
+  PortTimingCheck input; //subject
+  PortTimingCheck output; //stimili //change
   Value value;
 };
 
@@ -57,14 +72,15 @@ using TimingCheckVariant = std::variant<
 // clang-format on
 
 struct TimingCheck {
-  std::vector<TimingCheckVariant> tchk_defs;
+  TimingCheckType type;
+  TimingCheckVariant value;
 };
 
-// struct TimingCheck : public TimingCheckVariant {
-//   using TimingCheckVariant::TimingCheckVariant;
-// };
+struct TimingCheckSpec{
+  std::vector<TimingCheck> timing_checks;
 
-// using TimingCheckDefPtr = std::unique_ptr<TimingCheckDef>;
+  std::vector<std::size_t> get_timing_check_indices_by_type(TimingCheckType &type) const;
+};
 
  
 } // namespace SDF

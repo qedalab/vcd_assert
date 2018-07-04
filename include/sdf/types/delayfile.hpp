@@ -120,9 +120,22 @@ public:
   bool has_timescale() const noexcept;
 
   // std::vector<Cell> get_cells() const noexcept;
-  Cell& get_cell(std::size_t index);
+  Cell& get_cell(std::size_t index); //todo: rather output CellView?
   std::size_t num_cells() const noexcept;
 
+  /// Get all cell indices by cell type 
+  /// \param type The cell type string
+  /// \returns The cell indices
+  std::vector<std::size_t> get_cell_indices_by_type(std::string &cell_type) const noexcept;
+
+  /// Get all cell indices by cell instance string
+  /// \param type The cell type string
+  /// \returns The cell indices
+  std::vector<std::size_t> get_cell_indices_by_instance(CellInstance &cell_instance) const noexcept;
+
+  /// Get all cells  
+  /// \param type The cell type sting
+  /// \returns The cell indices
   // TimingSpec &get_timingdelay(Unsupported::TimingDelay timing_delay);
   // std::size_t num_timing_delays();
 

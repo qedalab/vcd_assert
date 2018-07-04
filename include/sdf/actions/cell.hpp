@@ -12,7 +12,7 @@
 // namespace Actions{
 
 // using namespace Parse;  
-// ;  
+
 
 
 // struct CellInstanceHierIdStorage {
@@ -42,9 +42,9 @@
 // };
 
 // struct CellAction : multi_dispatch<
-//   Grammar::celltype, inner_action<
+//   Grammar::cell_type, inner_action<
 //     QStringAction,
-//     Storage::member<&Cell::celltype>
+//     Storage::member<&Cell::cell_type>
 //   >
 //   Grammar::cell_instance, inner_action<
 //     CellInstanceAction,

@@ -17,12 +17,10 @@ using namespace SDF::Test;
 
 void SDF::Test::read_in_test_delayfile(SDF::DelayFileReader &reader, TestDelayFile &test)
 {
-
   
   auto t_sdf_version = test.sdf_version;
   reader.sdf_version(t_sdf_version);
-  
-  
+    
   if(test.design_name) {
     auto t_design_name = test.design_name.value();
     reader.design_name(t_design_name);
@@ -72,8 +70,7 @@ void SDF::Test::read_in_test_delayfile(SDF::DelayFileReader &reader, TestDelayFi
     auto t_timescale = test.timescale.value();
     reader.timescale(t_timescale.get_number(), t_timescale.get_unit());
   }
-  
-  
+    
   auto t_cells = test.cells;
   reader.cells(t_cells);
  

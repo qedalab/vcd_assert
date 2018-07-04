@@ -12,8 +12,8 @@ namespace Grammar {
 
 // clang-format off
 
-struct celltype : block< 
-  key_celltype,
+struct cell_type : block< 
+  key_cell_type,
   qstring
 >{};
 
@@ -28,7 +28,7 @@ struct cell_instance : block<
 // struct cell : unimplemented< key_cell >{}; 
 struct cell : block< 
   key_cell,
-  celltype,
+  cell_type,
   cell_instance,
   star< timing_spec >
 >{};

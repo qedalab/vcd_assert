@@ -2,26 +2,30 @@
 #define LIBSDF_TYPES_TIMINGSPEC_HPP
 
 #include <sdf/types/timing_check.hpp>
+#include <sdf/types/enums.hpp>
 
 namespace SDF {
  
 namespace Unsupported{
-
-  struct TimingDelay{};
-  struct TimingEnv{};
-  struct TimingLabel{};
-  
+  struct TimingDelaySpec{};
+  struct TimingEnvSpec{};
+  struct TimingLabelSpec{};
 } // namespace Unsupported
 
 // clang-format off
-using TimingSpec = std::variant<
-  TimingCheck,
-  Unsupported::TimingDelay,
-  Unsupported::TimingEnv,
-  Unsupported::TimingLabel
+using TimingSpecVariant = std::variant<
+  TimingCheckSpec,
+  Unsupported::TimingDelaySpec,
+  Unsupported::TimingEnvSpec,
+  Unsupported::TimingLabelSpec
 >;
 // clang-format on
- 
+
+struct TimingSpec {
+  TimingSpecType type;
+  TimingSpecVariant value;
+};
+
 } // namespace SDF
 
 

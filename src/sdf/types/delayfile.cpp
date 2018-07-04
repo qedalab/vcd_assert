@@ -1,4 +1,5 @@
 #include <sdf/types/delayfile.hpp>
+#include <sdf/types/cell.hpp>
 
 #include <cassert>
 
@@ -123,4 +124,31 @@ Cell& DelayFile::get_cell(std::size_t index)
 {
   assert(index < num_cells());
   return cells_.at(index);
+}
+
+std::vector<std::size_t> DelayFile::get_cell_indices_by_type(std::string &cell_type) const noexcept
+{
+  std::vector<std::size_t> result;
+  std::size_t i = 0;
+  
+  for(auto&& cell : cells_){
+    if(cell_type == cell.get_cell_type()){
+      result.emplace_back(i);
+    }
+    i++; 
+  }
+  return result;
+}
+std::vector<std::size_t> DelayFile::get_cell_indices_by_instance(CellInstance &cell_instance) const noexcept
+{
+  std::vector<std::size_t> result;
+  std::size_t i = 0;
+  
+  for(auto&& cell : cells_){
+    if(cell_instance == cell.get_cell_instance()){
+      result.emplace_back(i);
+    }
+    i++; 
+  }
+  return result;
 }

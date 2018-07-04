@@ -140,7 +140,6 @@ bool DelayFileReader::has_timescale() const noexcept
   return delayfile_->has_timescale();
 }
 
-
 void DelayFileReader::cells(std::vector<Cell> cells)
 {
   if(has_cells())

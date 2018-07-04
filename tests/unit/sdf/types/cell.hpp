@@ -7,7 +7,7 @@
 namespace SDF::Test {
 
 struct TestCell {
-  std::string celltype;
+  std::string cell_type;
   CellInstance cell_instance;
   std::vector<TimingSpec> timing_specs;
 };

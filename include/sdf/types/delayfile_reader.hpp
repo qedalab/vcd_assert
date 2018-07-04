@@ -133,7 +133,7 @@ public:
 
   /// Add delayfile cell
   /// \param cell The delayfile cell
-  void add_cell(Cell cell) const noexcept;
+  void add_cell(Cell cell) const noexcept; //todo remove
 
   /// Releases the delayfile file that was read in.
   /// Essentially finalizing the data within the delayfile file.

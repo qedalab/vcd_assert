@@ -67,7 +67,7 @@ struct concat_expression : op_sep_seq<
 >{};
 
 struct timing_check_condition : sor<
-  seq< inversion_operator, sps, scalar_node >,
+  seq< inversion_operator, scalar_node >,
   seq< scalar_node, equality_operator, scalar_constant >,
   scalar_node
 >{};

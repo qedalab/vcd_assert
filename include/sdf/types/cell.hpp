@@ -46,18 +46,7 @@ public:
   /// \param type The cell type
   /// \param instance The cell instance
   /// \param specs The timing specs
-  Cell(std::string type, CellInstance instance, std::vector<TimingSpec> specs) noexcept;
-
-  /// Get the timing spec indices by type
-  /// \param type The cell type
-  /// \returns The cell index
-  /// \todo change to iterator/range-view
-  std::vector<std::size_t> get_timing_specs_indices(std::string &celltype) const;
-  std::vector<std::size_t> get_timing_specs_indices(TimingSpecType &type) const;
-
-  /// Number of timing_specs in cell
-  /// \returns The number of timing_specs directly in this cell
-  std::size_t num_timing_specs() const noexcept;
+  Cell(std::string cell_type, CellInstance cell_instance, std::vector<TimingSpec> timing_specs) noexcept;
 
   /// Get cell instance
   /// \returns CellInstance of either HierarchialIdentifier or Star.
@@ -66,6 +55,29 @@ public:
   /// Get cell type
   /// \returns The cell type
   std::string_view get_cell_type() const noexcept;
+
+  /// Get all timing spec indices of the specified type 
+  /// \param cell_type The cell type string
+  /// \returns The timing spec indices
+  // std::vector<std::size_t> get_timing_spec_indices_by_type(std::string &timing_spec_type) const noexcept;
+    
+  // /// Get all timing spec indices of the specified type 
+  // /// \param type The cell type enum
+  // /// \returns The timing spec indices
+  std::vector<std::size_t> get_timing_spec_indices_by_type(TimingSpecType &type) const;
+
+  /// Get timing spec by index
+  /// \returns The timing spec
+  TimingSpec& get_timing_spec(std::size_t index); //todo: rather output CellView?
+
+  /// Number of timing_specs in cell
+  /// \returns The number of timing_specs directly in this cell
+  std::size_t num_timing_specs() const noexcept;
+
+  /// Get all timing specs
+  /// \returns The timing spec
+  std::vector<TimingSpec> get_timing_specs() const noexcept; //todo return View
+
 
   /// Convert to CellView
   /// \returns CellView of Cell
