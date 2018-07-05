@@ -6,6 +6,7 @@ target_add_warnings(unit_vcd_assert)
 add_test(NAME unit_vcd_assert COMMAND unit_vcd_assert)
 
 target_sources(unit_vcd_assert PRIVATE
+  ${DIR}/conditional.cpp
   ${DIR}/basic_timing_checker.cpp
   ${DIR}/state.cpp
   ${DIR}/timing_checker.cpp
