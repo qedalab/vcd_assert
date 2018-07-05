@@ -33,14 +33,6 @@ target_include_directories(libvcd PUBLIC "${PROJECT_SOURCE_DIR}/include/")
 target_link_libraries(libvcd_assert PUBLIC libvcd)
 target_add_warnings(libvcd_assert)
 
-#Enable warnings
-if ( CMAKE_COMPILER_IS_GNUCC )
-  set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Wall")
-endif()
-if ( MSVC )
-  set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} /W4")
-endif()
-
 add_subdirectory(src)
 
 if(${BUILD_TESTS})
