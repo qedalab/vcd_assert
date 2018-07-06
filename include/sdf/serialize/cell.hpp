@@ -1,7 +1,11 @@
-#ifndef LIBSDF_SERIALIZE_DELAYFILE_HPP
-#define LIBSDF_SERIALIZE_DELAYFILE_HPP
+#ifndef LIBSDF_SERIALIZE_CELL_HPP
+#define LIBSDF_SERIALIZE_CELL_HPP
 
 // #include <sdf/serialize/enum/time_scale.hpp>
+#include <sdf/serialize/base.hpp>
+#include <sdf/serialize/timing_spec.hpp>
+
+#include <sdf/types/cell.hpp>
 
 #include <range/v3/algorithm/copy.hpp>
 #include <string_view>
@@ -15,12 +19,12 @@ namespace SDF {
 /// \exception Throws if writing to the OutputIterator throws otherwise noexcept
 template <class OutputIterator>
 void serialize_cell_type(OutputIterator oi, int indent,
-                     Cell cell) noexcept(noexcept(*oi++ = '!')) {
+                     std::string_view cell_type) noexcept(noexcept(*oi++ = '!')) {
   using std::literals::string_view_literals::operator""sv;
 
   serialize_indent(oi, indent);
   ranges::copy("(CELLTYPE "sv, oi);
-  serialize_quoted(oi, cell.cell_type);
+  serialize_quoted(oi, cell_type);
   ranges::copy(")\n"sv, oi);
 }
 
@@ -31,12 +35,17 @@ void serialize_cell_type(OutputIterator oi, int indent,
 /// \exception Throws if writing to the OutputIterator throws otherwise noexcept
 template <class OutputIterator>
 void serialize_cell_instance(OutputIterator oi, int indent,
-                     Cell cell) noexcept(noexcept(*oi++ = '!')) {
+                     CellInstance cell_instance) noexcept(noexcept(*oi++ = '!')) {
   using std::literals::string_view_literals::operator""sv;
 
   serialize_indent(oi, indent);
   ranges::copy("(CELLINSTANCE "sv, oi);
-  serialize_quoted(oi, cell.cell_type);
+  if(std::holds_alternative<Star>(cell_instance)){
+    ranges::copy("*");
+  }else{
+    serialize_hierarchical_identifier(oi, indent, std::get<HierarchicalIdentifier>(cell_instance));
+  }
+  // serialize_quoted(oi, cell_instance);
   ranges::copy(")\n"sv, oi);
 }
 
@@ -52,10 +61,10 @@ void serialize_cell(OutputIterator oi, int indent,
 
   serialize_indent(oi, indent);
   ranges::copy("(CELL \n"sv, oi);
-  serialize_cell_type(oi, indent+1, cell.cell_type);
-  serialize_cell_instance(oi, indent+1, cell.cell_type);
+  serialize_cell_type(oi, indent+1, cell.get_cell_type());
+  serialize_cell_instance(oi, indent+1, cell.get_cell_instance());
 
-  for (auto &&timing_spec : cell.timing_specs) {
+  for (auto &&timing_spec : cell.get_timing_specs()) {
     serialize_timing_spec(oi, indent+1, timing_spec);
   }
   serialize_indent(oi, indent);
@@ -81,4 +90,4 @@ void serialize_cells(OutputIterator oi, int indent,
 
 } // namespace SDF
 
-#endif // LIBSDF_SERIALIZE_HEADER_HPP
+#endif // LIBSDF_SERIALIZE_CELL_HPP

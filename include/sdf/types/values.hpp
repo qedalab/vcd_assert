@@ -8,25 +8,26 @@
 namespace SDF {
  
 
+
+
+// struct Number {
+//   double value;
+//   bool operator==(const Number& t) const noexcept{
+//     return value == t.value;
+//   }
+// };
+
+using Number = double;
+
 // // choice : min/typ/max -> but must look at edge-transitions too
 struct Triple {
-  // std::array<double, 3> triple;
-  double min;
-  double typ;
-  double max;
-  // auto operator<=>(const Triple&) = default;
+  Number min;
+  Number typ;
+  Number max;
   bool operator==(const Triple& t) const noexcept{
     return ((min == t.min) && (typ == t.typ) && (max == t.max));
   }
 };
-
-struct Number {
-  double value;
-  bool operator==(const Number& t) const noexcept{
-    return value == t.value;
-  }
-};
-
 using ValueVariant = std::variant<
   Triple,
   Number

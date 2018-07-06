@@ -1,12 +1,25 @@
 #ifndef LIBSDF_SERIALIZE_BASE_HPP
 #define LIBSDF_SERIALIZE_BASE_HPP
 
+#include <sdf/types/base.hpp>
+
 #include <range/v3/algorithm/copy.hpp>
 #include <string_view>
 
 namespace SDF {
 
-template <class OutputIterator, class Type>
+template <class OutputIterator>
+void serialize_indent(OutputIterator oi,
+                      int indent) noexcept(noexcept(*oi++ = '!')) {
+  using std::literals::string_view_literals::operator""sv;
+
+  for (int i = 0; i < indent; i++) {
+    ranges::copy("  "sv, oi);
+  }
+}
+
+
+template <class OutputIterator>
 void serialize_quoted(OutputIterator oi,
                       std::string_view input) noexcept(noexcept(*oi++ = '!')) {
   using std::literals::string_view_literals::operator""sv;
@@ -16,30 +29,48 @@ void serialize_quoted(OutputIterator oi,
   ranges::copy("\""sv, oi);
 }
 
-template <class OutputIterator, class InnerSerializer, class Type>
-void serialize_quoted(OutputIterator oi, InnerSerializer inner,
-                      Type input) noexcept(noexcept(*oi++ = '!')) {
+template <class OutputIterator, typename T, typename... Ts>
+void serialize_quoted_alt(OutputIterator oi, T (*inner)(Ts...),
+                          Ts &&... args) noexcept(noexcept(*oi++ = '!')) {
   using std::literals::string_view_literals::operator""sv;
 
   ranges::copy("\""sv, oi);
-  inner(oi, input);
+  inner(oi, std::forward<Ts>(args)...);
   ranges::copy("\""sv, oi);
 }
 
-/// Serialize SDF HierarchicalIdentifier
+/// Serialize hierarchical identifier 
 /// \tparam OutputIterator must meet the requirements of OutputIterator
 /// \param oi The OutputIterator being written to
-/// \param comment The comment to write
+/// \param hi The HierarchicalIdentifier to write
 /// \exception Throws if writing to the OutputIterator throws otherwise noexcept
 template <class OutputIterator>
 void serialize_hierarchical_identifier(
-    OutputIterator oi, std::string_view hi) noexcept(noexcept(*oi++ = '!')) {
+    OutputIterator oi, int indent,
+    HierarchicalIdentifier hi) noexcept(noexcept(*oi++ = '!')) {
   using std::literals::string_view_literals::operator""sv;
 
-  ranges::copy("/*"sv, oi);
-  ranges::copy(hi, oi);
-  ranges::copy("*/"sv, oi);
+  auto sep = hi.sep == HChar::dot ? "."sv : "/"sv;
+  for(auto&& str : hi.value){
+    ranges::copy(str, oi);
+    ranges::copy(sep, oi);    
+  }
 }
+
+// /// Serialize SDF HierarchicalIdentifier
+// /// \tparam OutputIterator must meet the requirements of OutputIterator
+// /// \param oi The OutputIterator being written to
+// /// \param comment The comment to write
+// /// \exception Throws if writing to the OutputIterator throws otherwise noexcept
+// template <class OutputIterator>
+// void serialize_hierarchical_identifier(
+//     OutputIterator oi, int indent, std::string_view hi) noexcept(noexcept(*oi++ = '!')) {
+//   using std::literals::string_view_literals::operator""sv;
+
+//   for
+//   ranges::copy(hi, oi);
+
+// }
 
 /// Serialize SDF comment
 /// \tparam OutputIterator must meet the requirements of OutputIterator
@@ -73,4 +104,4 @@ void serialize_comment_sl(OutputIterator oi, std::string_view comment) noexcept(
 
 } // namespace SDF
 
-#endif // LIBSDF_SERIALIZE_COMMENT_HPP
+#endif // LIBSDF_SERIALIZE_BASE_HPP

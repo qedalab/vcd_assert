@@ -31,7 +31,7 @@ target_add_warnings(libvcd)
 #Add libsdf library
 add_library(libsdf "src/sdf")
 target_include_directories(libsdf PUBLIC "${PROJECT_SOURCE_DIR}/include/")
-target_link_libraries(libsdf PUBLIC libparse )
+target_link_libraries(libsdf PUBLIC libparse fmt::fmt)
 
 #Add vcd_assert library
 add_library(libvcd_assert "src/vcd_assert")

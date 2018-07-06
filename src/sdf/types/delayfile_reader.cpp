@@ -157,3 +157,8 @@ bool DelayFileReader::has_cells() const noexcept
 {
   return delayfile_->cells_.size() > 0;
 }
+
+std::unique_ptr<DelayFile> DelayFileReader::release()
+{
+  return std::move(delayfile_);
+}

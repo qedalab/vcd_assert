@@ -58,7 +58,15 @@ enum class DataType {
   retval
 };
 
+enum class EdgeType {
+  posedge,
+  negedge
+};
 
+enum class NodeType{
+  port,
+  net
+};
 
 
 } // namespace SDF

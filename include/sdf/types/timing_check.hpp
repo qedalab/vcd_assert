@@ -25,33 +25,31 @@ namespace Unsupported {
 }
 
 
-struct InvertedNode : public Node {
-  using Node::Node;
-};
+struct InvertedNode : public Node {};
 
 using NodeEqualityTuple = std::tuple<Node,Node>;
 
 struct NodeScalarEquality {
   Node left;
-  bool right;
   EqualityOperator op;
+  bool right;
 };
 
-using TimingCheckCondition = std::variant<
+using TimingCheckConditionVariant = std::variant<
   Node,
   InvertedNode,
   NodeScalarEquality
 >;
 
-// struct TimingCheckCondition : public TimingCheckConditionVariant {
-//   using TimingCheckConditionVariant::TimingCheckConditionVariant;
-// };
+struct TimingCheckCondition : public TimingCheckConditionVariant {
+  using TimingCheckConditionVariant::TimingCheckConditionVariant;
+};
 
 struct PortTimingCheck{
-  std::optional<std::string> edge_identifier;
+  Node port;
+  std::optional<EdgeType> edge;
   std::optional<TimingCheckCondition> timing_check_condition;
   std::optional<std::string> symbolic_name;
-  Port port;
 };
 
 struct Hold {
@@ -77,7 +75,6 @@ using TimingCheckVariant = std::variant<
 // clang-format on
 
 struct TimingCheck {
-  TimingCheckType type;
   TimingCheckVariant value;
 
   TimingCheckType get_enum_type() const {

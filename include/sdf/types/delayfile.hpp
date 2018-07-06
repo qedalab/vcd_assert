@@ -16,6 +16,9 @@ namespace SDF {
 /// \related DelayFileReader
 class DelayFile
 {
+// #ifdef RELEASE
+public:
+// #endif
   std::string sdf_version_;                   /// Version of the SDF file
   std::optional<std::string> design_name_;    /// Name of design being annotated
   std::optional<std::string> date_;           /// Date of SDF file creation
@@ -119,7 +122,10 @@ public:
   /// \returns Whether the delayfile contains a timescale
   bool has_timescale() const noexcept;
 
-  // std::vector<Cell> get_cells() const noexcept;
+  /// Get all cells  
+  std::vector<Cell> get_cells() const noexcept;
+
+  /// Get a cell  
   Cell& get_cell(std::size_t index); //todo: rather output CellView?
   std::size_t num_cells() const noexcept;
 
@@ -133,7 +139,7 @@ public:
   /// \returns The cell indices
   std::vector<std::size_t> get_cell_indices_by_instance(CellInstance &cell_instance) const noexcept;
 
-  /// Get all cells  
+
   /// \param type The cell type sting
   /// \returns The cell indices
   // TimingSpec &get_timingdelay(Unsupported::TimingDelay timing_delay);

@@ -51,6 +51,7 @@ constexpr std::string_view timescale_number_to_string(TimeScaleNumber tn) noexce
   }
 }
 
+
 } // namespace SDF
 
 #endif // LIBSDF_SERIALIZE_ENUM_TIMESCALE_HPP

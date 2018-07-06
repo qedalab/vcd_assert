@@ -110,10 +110,10 @@ bool DelayFile::has_timescale() const noexcept
   return timescale_.has_value();
 }
 
-// std::vector<Cell> DelayFile::get_cells() const noexcept
-// {
-//   return cells_; 
-// }
+std::vector<Cell> DelayFile::get_cells() const noexcept
+{
+  return move(cells_); 
+}
 
 std::size_t DelayFile::num_cells() const noexcept
 {

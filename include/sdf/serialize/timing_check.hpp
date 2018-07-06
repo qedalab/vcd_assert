@@ -1,6 +1,9 @@
 #ifndef LIBSDF_SERIALIZE_TIMINGCHECK_HPP
 #define LIBSDF_SERIALIZE_TIMINGCHECK_HPP
 
+#include <sdf/serialize/base.hpp>
+#include <sdf/serialize/values.hpp>
+#include <sdf/serialize/enum/base.hpp>
 #include <sdf/types/timing_check.hpp>
 #include <sdf/types/enums.hpp>
 
@@ -9,47 +12,49 @@
 
 namespace SDF {
 
-/// Serialize port definition
+
+/// Serialize node definition
 /// \tparam OutputIterator must meet the requirements of OutputIterator
 /// \param oi The OutputIterator being written to
 /// \param pt The HOLD check definition to write
 /// \exception Throws if writing to the OutputIterator throws otherwise noexcept
 template <class OutputIterator>
-void serialize_hierarchical_identifier(
-    OutputIterator oi, int indent,
-    HierarchicalIdentifier hi) noexcept(noexcept(*oi++ = '!')) {
-  using std::literals::string_view_literals::operator""sv;
-
-  auto sep = hi.sep == HChar::dot ? "."sv : "/"sv;
-  for(auto&& str : hi.value){
-    ranges::copy(str, oi);
-    ranges::copy(sep, oi);    
-  }
-}
-
-/// Serialize port definition
-/// \tparam OutputIterator must meet the requirements of OutputIterator
-/// \param oi The OutputIterator being written to
-/// \param pt The HOLD check definition to write
-/// \exception Throws if writing to the OutputIterator throws otherwise noexcept
-template <class OutputIterator>
-void serialize_node_spec(
+void serialize_node(
     OutputIterator oi, int indent,
     Node node) noexcept(noexcept(*oi++ = '!')) {
   using std::literals::string_view_literals::operator""sv;
 
-  auto hi = node.hierarchical_identifier;
-  if(hi){
-    serialize_hierarchical_identifier(oi,indent,hi);
-  }
   serialize_indent(oi, indent);
+
+  // auto hi = static_cast<Port>(node).hierarchical_identifier;
+  auto hi = node.hierarchical_identifier;
+  if(hi.has_value()){
+    serialize_hierarchical_identifier(oi,indent,hi.value());
+  }
+
   ranges::copy(node.basename_identifier, oi);
-  if(node.size()){
+
+  if(node.size.has_value()){
     ranges::copy("["sv, oi);
-    ranges::copy(node.basename_identifier, oi);
+    ranges::copy(std::to_string(node.size.value()), oi);
     ranges::copy("]"sv, oi);
   }
 }
+
+// /// Serialize node definition
+// /// \tparam OutputIterator must meet the requirements of OutputIterator
+// /// \param oi The OutputIterator being written to
+// /// \param pt The HOLD check definition to write
+// /// \exception Throws if writing to the OutputIterator throws otherwise noexcept
+// template <class OutputIterator>
+// void serialize_node(
+//     OutputIterator oi, int indent,
+//     Node node) noexcept(noexcept(*oi++ = '!')) {
+//   using std::literals::string_view_literals::operator""sv;
+  
+//   serialize_node(oi, indent, std::get<Port>(node));
+
+// }
 
 /// Serialize timing check conditional
 /// \tparam OutputIterator must meet the requirements of OutputIterator
@@ -64,17 +69,17 @@ void serialize_timing_check_condition_inner(
 
   Node node;
   if(std::holds_alternative<InvertedNode>(cond)){
-    node = cond;
+    node = std::get<InvertedNode>(cond);
     ranges::copy("~"sv, oi);
   }else if(std::holds_alternative<NodeScalarEquality>(cond)){
     auto eq = std::get<NodeScalarEquality>(cond);
     node = eq.left;
     serialize_node(oi, indent, eq.left);
-    if(eq.op == logic_equal){
+    if(eq.op == EqualityOperator::logic_equal){
       ranges::copy("=="sv, oi);
-    }else if(eq.op == logic_inv){
+    }else if(eq.op == EqualityOperator::logic_inv){
       ranges::copy("!="sv, oi);
-    }else if(eq.op == case_equal){
+    }else if(eq.op == EqualityOperator::case_equal){
       ranges::copy("==="sv, oi);
     }else{
       ranges::copy("!=="sv, oi);
@@ -84,6 +89,8 @@ void serialize_timing_check_condition_inner(
     }else{
       ranges::copy("0"sv, oi);    
     }
+  }else{
+    node = std::get<Node>(cond);
   }
   serialize_node(oi, indent, node);
 }
@@ -99,36 +106,37 @@ void serialize_port_tchk(
     PortTimingCheck port_tchk) noexcept(noexcept(*oi++ = '!')) {
   using std::literals::string_view_literals::operator""sv;
 
-  if (port_tchk.timing_check_condition) {
+  if (port_tchk.timing_check_condition.has_value()) {
     serialize_indent(oi, indent);
     ranges::copy("(COND "sv, oi);
   }
 
   {
-    if (port_tchk.symbolic_name) {
-      ranges::copy(port_tchk.edge_identifier, oi);
+    if (port_tchk.symbolic_name.has_value()) {
+      ranges::copy(port_tchk.symbolic_name.value(), oi);
       ranges::copy(" "sv, oi);
     }
 
-    if (port_tchk.timing_check_condition) {
-      serialize_timing_check_condition_inner(oi, indent, port_tchk.timing_check_condition)
+    if (port_tchk.timing_check_condition.has_value()) {
+      serialize_timing_check_condition_inner(oi, indent, port_tchk.timing_check_condition.value());
+      ranges::copy(" "sv, oi);
     }
 
-    if (port_tchk.edge_identifier) {
+    if (port_tchk.edge.has_value()) {
       ranges::copy("("sv, oi);
-      ranges::copy(port_tchk.edge_identifier, oi);
+      ranges::copy(edgetype_to_string(port_tchk.edge.value()), oi);
       ranges::copy(" "sv, oi);
     }
 
-    serialize_node_spec(oi, 0, port_tchk.port);
+    serialize_node(oi, 0, port_tchk.port);
 
-    if (port_tchk.edge_identifier) {
+    if (port_tchk.edge.has_value()) {
       ranges::copy(")"sv, oi);
     }
   }
 
-  if (pt.timing_check_condition) {
-    ranges::copy(" )"sv, oi);
+  if (port_tchk.timing_check_condition.has_value()) {
+    ranges::copy(")"sv, oi);
   }
 }
 /// Serialize HOLD timing check
@@ -148,7 +156,7 @@ void serialize_hold_check(OutputIterator oi, int indent,
   serialize_port_tchk(oi, 0, hold.output);
   ranges::copy(" "sv, oi);
   serialize_value(oi, 0, hold.value);
-  ranges::copy(" )\n"sv, oi);
+  ranges::copy(")\n"sv, oi);
 }
 
 /// Serialize SDF timing check definition
@@ -164,24 +172,22 @@ void serialize_timing_check(OutputIterator oi, int indent,
   // only HOLD timing checks supported at the moment.
   assert(tc.get_enum_type() == TimingCheckType::hold);
 
-  serialize_indent(oi, indent);
+  // serialize_indent(oi, indent);
 
-  switch (ts.get_enum_type()) {
-  case TimingSpecType::delay:
+  switch (tc.get_enum_type()) {
+  case TimingCheckType::setup:
     throw std::runtime_error("InternalError");
-    // ranges::copy("(SETUP "sv, oi);
-    // serialize_setup_checks(oi, indent + 1, ts);
+    // serialize_setup_check(oi, indent + 1, tc);
     break;
-  case TimingSpecType::timing_check:
-    ranges::copy("(HOLD "sv, oi);
-    serialize_hold_checks(oi, indent + 1, ts);
+  case TimingCheckType::hold:
+    serialize_hold_check(oi, indent, std::get<Hold>(tc.value));
     break;
   default:
     throw std::runtime_error("InternalError");
   }
 
-  serialize_indent(oi, indent);
-  ranges::copy(")\n"sv, oi);
+  // serialize_indent(oi, indent);
+  // ranges::copy(")\n"sv, oi);
 }
 
 /// Serialize SDF timing check specification

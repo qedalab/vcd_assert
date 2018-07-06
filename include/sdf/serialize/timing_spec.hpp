@@ -3,6 +3,9 @@
 
 #include <sdf/types/timing_spec.hpp>
 
+#include <sdf/serialize/base.hpp>
+#include <sdf/serialize/timing_check.hpp>
+
 #include <range/v3/algorithm/copy.hpp>
 #include <string_view>
 
@@ -31,7 +34,7 @@ void serialize_timing_spec(OutputIterator oi, int indent,
       break;
     case TimingSpecType::timing_check:
       ranges::copy("(TIMINGCHECK \n"sv, oi);
-      serialize_timing_check_spec(oi, indent + 1, ts);
+      serialize_timing_check_spec(oi, indent + 1, std::get<TimingCheckSpec>(ts.value));
       break;
     case TimingSpecType::timing_env:
       throw std::runtime_error("InternalError");  
@@ -49,7 +52,7 @@ void serialize_timing_spec(OutputIterator oi, int indent,
 
   serialize_indent(oi, indent);
   ranges::copy(")\n"sv, oi);
-s
+
 }
 
 } // namespace SDF
