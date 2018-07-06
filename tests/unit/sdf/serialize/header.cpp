@@ -58,8 +58,8 @@ TEST_CASE("SDF.Serialize.DIVIDER", "[Serialize]") {
 
 TEST_CASE("SDF.Serialize.VOLTAGE", "[Serialize]") {
   std::string output;
-  serialize_voltage(ranges::back_inserter(output),zero, Triple{1,1,1});
-  CHECK(output == "(VOLTAGE 1:1:1)\n");
+  serialize_voltage(ranges::back_inserter(output),zero, Triple{5.4,5,4.5});
+  CHECK(output == "(VOLTAGE 5.4:5.0:4.5)\n");
 }
 
 TEST_CASE("SDF.Serialize.PROCESS", "[Serialize]") {
@@ -70,6 +70,6 @@ TEST_CASE("SDF.Serialize.PROCESS", "[Serialize]") {
 
 TEST_CASE("SDF.Serialize.TEMPERATURE", "[Serialize]") {
   std::string output;
-  serialize_temperature(ranges::back_inserter(output),zero, Triple{1,1,1});
-  CHECK(output == "(TEMPERATURE 1:1:1)\n");
+  serialize_temperature(ranges::back_inserter(output),zero, Triple{55,85,125});
+  CHECK(output == "(TEMPERATURE 55:85:125)\n");
 }

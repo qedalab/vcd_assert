@@ -76,11 +76,11 @@ void serialize_triple(OutputIterator oi, int indent,
   using std::literals::string_view_literals::operator""sv;
 
   serialize_indent(oi, indent);
-  serialize_number(oi,t.min);
+  serialize_number(oi,0, t.min);
   ranges::copy(":"sv, oi);
-  serialize_number(oi,t.typ);
+  serialize_number(oi,0,t.typ);
   ranges::copy(":"sv, oi);
-  serialize_number(oi,t.max);
+  serialize_number(oi,0,t.max);
 }
 
 // /// Serialize SDF timing spec

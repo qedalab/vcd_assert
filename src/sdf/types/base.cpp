@@ -3,9 +3,9 @@
 #include <cassert>
 
 using namespace SDF;
+using namespace ranges;
 
 bool HierarchicalIdentifier::operator==(const HierarchicalIdentifier& other) const noexcept{
-  using namespace ranges;
   if(value.size() == other.value.size()){
     if(value.size() == 0){
       return true;

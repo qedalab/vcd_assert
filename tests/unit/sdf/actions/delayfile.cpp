@@ -1,75 +1,74 @@
-#include "sdf/actions/delayfile.hpp"
-#include "sdf/grammar/grammar.hpp"
-#include "parse/test/parse.hpp"
-// #include "../types/header.hpp"
+#include <sdf/grammar/base.hpp>
+#include <sdf/actions/base.hpp>
+#include <sdf/types/delayfile.hpp>
+
+// using namespace Parse::Test;
+using namespace SDF;
+using namespace SDF::Grammar;
+
 
 #include <catch2/catch.hpp>
 
-using namespace SDF;
 
-auto constexpr sdf_header_str = 
-R"###(
-  (SDFVERSION "4.0")
-  (DESIGN "system")
-  (DATE "Saturday September 30 08:30:33 PST 1990")
-  (VENDOR "Yosemite Semiconductor")
-  (PROGRAM "delay_calc")
-  (VERSION "1.5")
-  (DIVIDER /)
-  (VOLTAGE 5.5:5.0:4.5)
-  (PROCESS "worst")
-  (TEMPERATURE 55:85:125)
-  (TIMESCALE 1ns)
-)###";
+TEST_CASE("SDF.Actions.Base", "[SDF][Actions][Base]") {
 
-// static Test::TestHeader sdf_header_example_header {
-//     TimeScale {TimeNumber::_1, TimeUnit::ns},
-//     "June 26, 1989 10:05:41",
-//     "VERILOG-SIMULATOR 1.0a",
-//     Test::TestScope {
-//         ScopeType::module,
-//         "top",
-//         {
-//             Test::TestScope {
-//                 ScopeType::module,
-//                 "m1",
-//                 {
-//                     // No modules in m1
-//                 },
-//                 {
-//                     {VarType::trireg, 1, "*@", "net1"},
-//                     {VarType::trireg, 1, "*#", "net2"},
-//                     {VarType::trireg, 1, "*$", "net3"}
-//                 }
-//             },
-//             Test::TestScope {
-//                 ScopeType::task,
-//                 "t1",
-//                 {
-//                     // modules in t1
-//                 },
-//                 {
-//                     {VarType::reg, 32, "(k", "accumulator[31:0]"},
-//                     {VarType::integer, 32, "{2", "index"}
-//                 }
-//             }
-//         },
-//         {
-//             // No variables in top
-//         }
-//     }
-// };
+  std::string result;
+  require_parse<Grammar::qstring, Actions::QStringAction>(
+      qstring_example_1_str, result);
 
-// TEST_CASE("VCD.Events.Header", "[VCD][Events][Header]") {
-//   using Parse::Test::require_parse;
+  auto header_p = reader.release();
+  REQUIRE(header_p.operator bool());
+  auto &header = *header_p.get();
+  Test::catch_test_header(header, vcd_4_state_example_header);
+}
 
-//   HeaderReader reader;
-//   require_parse<Grammar::header_commands, Actions::HeaderAction>(
-//       four_state_vcd_example_header_str, reader);
 
-//   auto header_p = reader.release();
-//   REQUIRE(header_p.operator bool());
-//   auto &header = *header_p.get();
-//   Test::catch_test_header(header, vcd_4_state_example_header);
-// }
+TEST_CASE("SDF.Actions") {
+  SECTION("Delayfile") {
+    
+    using Parse::Test::require_parse;
+    
+    DelayFileReader dfr;
 
+    require_parse<Grammar::delayfile, Actions::HeaderAction>(
+        basic_example_delayfile, dfr);
+
+    auto header_p = reader.release();
+    REQUIRE(header_p.operator bool());
+    Test::catch_test_header(*header_p, vcd_4_state_example_header);
+    // // Make sure that the main object exists
+    // REQUIRE(bool(json));
+    // REQUIRE(std::holds_alternative<JSONObject>(*json));
+    // JSONObject* main_object = &std::get<JSONObject>(*json);
+
+    // Ensure that there are not excessive keys in the object
+    REQUIRE(main_object->size() == 3);
+
+    // Check that name == "John
+    main_object->at("name");
+    JSONValuePtr& name_value = main_object->at("name");
+    REQUIRE(bool(name_value));
+    REQUIRE(std::holds_alternative<JSONString>(*name_value));
+    REQUIRE(std::get<JSONString>(*name_value) == "John");
+
+    // Check that age == 30
+    JSONValuePtr& age_value = main_object->at("age");
+    REQUIRE(std::holds_alternative<JSONNumber>(*age_value));
+    REQUIRE(std::get<JSONNumber>(*age_value) == Approx(30));
+
+    // Check that cars == ["Ford", "BMW", "Fiat"]
+    JSONValuePtr& cars_value = main_object->at("cars");
+    
+    REQUIRE(std::holds_alternative<JSONArray>(*cars_value));
+    
+    JSONArray& cars_array = std::get<JSONArray>(*cars_value);
+    
+    REQUIRE(cars_array.size() == 3);
+    REQUIRE(std::holds_alternative<JSONString>(*cars_array[0]));
+    REQUIRE(std::get<JSONString>(*cars_array[0]) == "Ford");
+    REQUIRE(std::holds_alternative<JSONString>(*cars_array[1]));
+    REQUIRE(std::get<JSONString>(*cars_array[1]) == "BMW");
+    REQUIRE(std::holds_alternative<JSONString>(*cars_array[2]));
+    REQUIRE(std::get<JSONString>(*cars_array[2]) == "Fiat");
+  }
+}

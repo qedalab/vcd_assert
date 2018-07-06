@@ -1,4 +1,5 @@
 #include "sdf/serialize/delayfile.hpp"
+#include "sdf/types/delayfile.hpp"
 // #include "sdf/serialize/time_scale.hpp"
 
 #include "../types/delayfile.hpp"
@@ -7,11 +8,13 @@
 #include <range/v3/utility/iterator.hpp>
 
 using namespace SDF;
-
+using namespace SDF::Test;
 
 
 TEST_CASE("SDF.Serialize.DELAYFILE", "[Serialize]") {
   std::string output;
-  SDF::serialize_delayfile(ranges::back_inserter(output), SDF::Test::test_delayfile_1);
-  CHECK(output == SDF::Test::basic_example_delayfile);
+  DelayFileTester dft = DelayFileTester();
+  auto delayfile_p = dft.get_test_delayfile(test_delayfile_1);
+  serialize_delayfile(ranges::back_inserter(output), delayfile_p);
+  CHECK(output == basic_example_delayfile);
 }

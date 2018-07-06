@@ -11,14 +11,32 @@
 
 namespace SDF {
 
+
+struct DelayFileView
+{
+  std::string sdf_version;                        
+  std::optional<std::string> design_name;         
+  std::optional<std::string> date;                
+  std::optional<std::string> vendor;              
+  std::optional<std::string> program_name;        
+  std::optional<std::string> program_version;     
+  std::optional<std::string> process;             
+  std::optional<HChar> hierarchy_divider;         
+  std::optional<Triple> voltage;                  
+  std::optional<Triple> temperature;              
+  std::optional<TimeScale> timescale;             
+  std::vector<Cell> cells;                        
+};
+
+namespace Test {
+  class DelayFileTester;
+}
+
 /// Stores the SDF data.
 /// Can only be populated with DelayFileReader
 /// \related DelayFileReader
-class DelayFile
-{
-// #ifdef RELEASE
-public:
-// #endif
+class DelayFile 
+{ 
   std::string sdf_version_;                   /// Version of the SDF file
   std::optional<std::string> design_name_;    /// Name of design being annotated
   std::optional<std::string> date_;           /// Date of SDF file creation
@@ -33,13 +51,27 @@ public:
   std::vector<Cell> cells_;                   /// Cells of the SDF file
 
   friend class DelayFileReader;
-// #ifdef DEBUG
-//   friend TestDelayFile;
-// #endif
-
+  friend class Test::DelayFileTester;
+private: 
+  DelayFile(DelayFileView dfw) 
+  : sdf_version_(dfw.sdf_version),
+    design_name_(dfw.design_name),
+    date_(dfw.date),
+    vendor_(dfw.vendor),
+    program_name_(dfw.program_name),
+    program_version_(dfw.program_version),
+    process_(dfw.process),
+    hierarchy_divider_(dfw.hierarchy_divider),
+    voltage_(dfw.voltage),
+    temperature_(dfw.temperature),
+    timescale_(dfw.timescale),
+    cells_(dfw.cells){};
 public:
-  // DelayFile();
-  
+  DelayFile() = default;
+  // {
+  //   assert(sdf_version_.has_value());
+  // };
+
   std::string_view get_sdf_version();
 
   /// Get the design_name if present
@@ -156,7 +188,17 @@ public:
 
 };
 
+namespace Test {
+  // using namespace SDF;
+  struct DelayFileTester{
+    SDF::DelayFile get_test_delayfile(SDF::DelayFileView dfw){
+      return SDF::DelayFile(dfw);
+    }
+  };
+} // namespace Test
  
 } // namespace SDF
 
+
+// class DelayFile;
 #endif // LIBSDF_TYPES_DELAYFILE_HPP

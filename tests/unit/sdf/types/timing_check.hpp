@@ -1,6 +1,8 @@
 #ifndef TEST_SDF_TYPES_TIMINGCHECK_HPP
 #define TEST_SDF_TYPES_TIMINGCHECK_HPP
 
+#include <catch2/catch.hpp>
+
 // #include <sdf/types/base.hpp>
 #include <sdf/types/timing_check.hpp>
 

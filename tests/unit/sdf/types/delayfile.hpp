@@ -9,7 +9,11 @@
 #include "sdf/types/delayfile.hpp"
 #include "./cell.hpp"
 
+#include <catch2/catch.hpp>
+
+
 namespace SDF::Test {
+  using namespace SDF;
 
 // struct TestDelayFile {
 //   std::string sdf_version;
@@ -26,9 +30,22 @@ namespace SDF::Test {
 //   std::vector<Cell> cells;
 // };
 
-struct TestDelayFile : public DelayFile{};
+  // struct DelayFileTester{
+  //   DelayFileTester dft;
+  //   dft.get_test_delayfile(test_delayfile_1);
+  // //   // void catch_test_delayfile(SDF::DelayFile &delayfile, TestDelayFile &test);
+  // //   void catch_test_delayfile(SDF::DelayFile &delayfile, TestDelayFile &test);
 
-static const TestDelayFile sdf_empty_delayfile {};
+  //   // DelayFile get_test_delayfile(){
+  //   //   return DelayFile(Test::test_delayfile_1);
+  //   // }
+
+  // };
+
+// using TestDelayFile = DelayFile;
+// struct TestDelayFile : public DelayFileView{};
+
+static const DelayFileView sdf_empty_delayfile {};
 
 auto constexpr basic_example_delayfile = 
 R"####((DELAYFILE
@@ -55,7 +72,7 @@ R"####((DELAYFILE
 )
 )####";
 
-static const TestDelayFile test_delayfile_1 {
+static const DelayFileView test_delayfile_1 {
   "4.0",                                                //std::string sdf_version;
   "system",                                             //std::optional<std::string> design_name;
   "Saturday September 30 08:30:33 PST 1990",            //std::optional<std::string> date;
@@ -64,15 +81,14 @@ static const TestDelayFile test_delayfile_1 {
   "1.5",                                                //std::optional<std::string> program_version;
   "worst",                                              //std::optional<std::string> process;
   HChar::slash,                                         //std::optional<SDF::HChar> hierarchy_divider;
-  Triple{5.5,5.0,4.5},                                        //std::optional<SDF::Triple> voltage;
-  Triple{55.0,85.0,125.0},                                    //std::optional<SDF::Triple> temperature;
+  Triple{5.5,5.0,4.5},                                  //std::optional<SDF::Triple> voltage;
+  Triple{55.0,85.0,125.0},                              //std::optional<SDF::Triple> temperature;
   TimeScale {TimeScaleNumber::_1, TimeScaleUnit::ns},   //std::optional<SDF::TimeScale> timescale;
-  {test_testcell_1}                                       //std::vector<SDF::Cell> cells;
+  {test_testcell_1}                                     //std::vector<SDF::Cell> cells;
 };
 
-void read_in_test_delayfile(SDF::DelayFileReader &reader, TestDelayFile &test);
-// void catch_test_delayfile(SDF::DelayFile &delayfile, TestDelayFile &test);
+  void catch_test_delayfile(SDF::DelayFile &delayfile, const DelayFileView &test);
 
-} // namespace Test
+}
 
 #endif // TEST_SDF_TYPES_DELAYFILE_HPP

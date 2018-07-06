@@ -5,6 +5,10 @@
 
 using namespace SDF;
 
+// DelayFile::DelayFile(DelayFileView dfw){
+
+// }
+
 std::string_view DelayFile::get_sdf_version()
 {
   return sdf_version_; 
@@ -132,7 +136,7 @@ std::vector<std::size_t> DelayFile::get_cell_indices_by_type(std::string &cell_t
   std::size_t i = 0;
   
   for(auto&& cell : cells_){
-    if(cell_type == cell.get_cell_type()){
+    if(cell_type == cell.cell_type){
       result.emplace_back(i);
     }
     i++; 
@@ -145,7 +149,7 @@ std::vector<std::size_t> DelayFile::get_cell_indices_by_instance(CellInstance &c
   std::size_t i = 0;
   
   for(auto&& cell : cells_){
-    if(cell_instance == cell.get_cell_instance()){
+    if(cell_instance == cell.cell_instance){
       result.emplace_back(i);
     }
     i++; 

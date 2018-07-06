@@ -17,7 +17,14 @@ namespace SDF {
 //   }
 // };
 
+// using NumberValue = double;
 using Number = double;
+
+// struct Number : NumberValue{
+//   bool operator==(const Number& t) const noexcept{
+//     return value == t.value;
+//   }
+// };
 
 // // choice : min/typ/max -> but must look at edge-transitions too
 struct Triple {

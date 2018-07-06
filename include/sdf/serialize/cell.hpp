@@ -61,10 +61,10 @@ void serialize_cell(OutputIterator oi, int indent,
 
   serialize_indent(oi, indent);
   ranges::copy("(CELL \n"sv, oi);
-  serialize_cell_type(oi, indent+1, cell.get_cell_type());
-  serialize_cell_instance(oi, indent+1, cell.get_cell_instance());
+  serialize_cell_type(oi, indent+1, cell.cell_type);
+  serialize_cell_instance(oi, indent+1, cell.cell_instance);
 
-  for (auto &&timing_spec : cell.get_timing_specs()) {
+  for (auto &&timing_spec : cell.timing_specs) {
     serialize_timing_spec(oi, indent+1, timing_spec);
   }
   serialize_indent(oi, indent);
