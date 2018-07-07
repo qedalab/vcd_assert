@@ -3,7 +3,18 @@
 using namespace SDF::Test;
 
 
+// ?? Should each cpp file call its own tests (thus not from delayfile.cpp downwards.)
+//      or is it enough to call 'catch_test_delayfile' only?
+
 TEST_CASE("SDF.Types.DelayFile") {
+
+  SECTION("Case 1: Empty DelayFile example ") {
+
+    DelayFileTester dft = DelayFileTester();
+    auto delayfile_p = dft.get_test_delayfile(sdf_empty_delayfile);
+
+    SDF::Test::catch_test_delayfile(delayfile_p, sdf_empty_delayfile);
+  }
 
   SECTION("Case 2: From SDF Example") {
     //Write DelayFile file with the same structure as the SDF example

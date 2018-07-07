@@ -42,6 +42,16 @@ using ValueVariant = std::variant<
 
 struct Value : public ValueVariant {
   using ValueVariant::ValueVariant;
+  bool operator==(const Value& other) const noexcept{
+    if(std::holds_alternative<Triple>(*this) && std::holds_alternative<Triple>(other)){
+      return (std::get<Triple>(*this) == std::get<Triple>(other));
+    } 
+    else if(std::holds_alternative<Number>(*this) && std::holds_alternative<Number>(other)){
+      return (std::get<Number>(*this) == std::get<Number>(other));
+    }else{
+      return false;
+    }
+  }
 };
  
  

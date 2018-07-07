@@ -1,6 +1,6 @@
 #include "./delayfile_reader.hpp"
 
-using namespace SDF;
+// using namespace SDF;
 
 
 void SDF::Test::read_in_test_delayfile_w_reader(SDF::DelayFileReader &reader, SDF::DelayFileView &test)

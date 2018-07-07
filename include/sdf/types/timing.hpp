@@ -7,11 +7,8 @@
 #include <variant>
 
 namespace SDF {
-  
- 
-namespace Unsupported{
-  
-} // namespace Unsupported
+
+namespace Unsupported {} // namespace Unsupported
 
 // struct NodeType{};
 // struct Port : public NodeType{};
@@ -22,15 +19,24 @@ namespace Unsupported{
 //   Net
 // >;
 
-struct Node  {
+struct Node {
   NodeType type;
   std::string basename_identifier;
   std::optional<HierarchicalIdentifier> hierarchical_identifier;
-  std::optional<std::size_t> size; //scalar if 0 or 1?
+  std::optional<std::size_t> size; // scalar if 0 or 1?
+
+  bool operator==(const Node &other) const noexcept {
+    if ((basename_identifier == other.basename_identifier) &&
+        (hierarchical_identifier == other.hierarchical_identifier) &&
+        (type == other.type) && (size == other.size)){
+      return true;
+    } else {
+      return false;
+    }
+  }
+
 };
 
 } // namespace SDF
 
-
 #endif // LIBSDF_TYPES_TIMING_HPP
-

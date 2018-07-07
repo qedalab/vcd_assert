@@ -52,11 +52,13 @@ static const Cell test_testcell_1{
 };
 
 // void SDF::Test::read_in_test_cell(SDF::DelayFileReader &reader, TestCell &test)
-void catch_test_timing_checks(TimingCheckSpec &check, TimingCheckSpec &test);
+void catch_test_port_tchk(PortTimingCheck &pt, PortTimingCheck &test);
+void catch_test_hold_check(Hold &hold, Hold &test);
+void catch_test_timing_checks(std::vector<TimingCheck> &checks, std::vector<TimingCheck> &tests);
+// void catch_test_timing_checks(TimingCheckSpec &check, TimingCheckSpec &test);
 void catch_test_timing_specs(std::vector<TimingSpec> specs, std::vector<TimingSpec> tests);
 void catch_test_cell(Cell cell, Cell test);
 void catch_test_cells(std::vector<Cell> cells, std::vector<Cell> tests);
-
 // // void read_in_test_cell(SDF::DelayFileReader &reader, TestCell &test);
 // void catch_test_cells(std::vector<Cell> cells, std::vector<Cell> test);
 // void catch_test_cell(SDF::Cell &cell, SDF::Cell &test);

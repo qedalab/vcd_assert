@@ -1,36 +1,59 @@
 #include "./cell.hpp"
 
-// using namespace SDF::Test;
 #include <variant>
 using namespace SDF;
 using namespace SDF::Test;
 
 using namespace std::literals::string_literals;
 
-// catch_test_cells(delayfile, delayfile.get_cells(), test.cells);
-
-
-// void SDF::Test::read_in_test_cell(SDF::DelayFileReader &reader, TestCell &test)
-// { 
-
-//   Cell c = Cell(test.cell_type, test.cell_instance, test.timing_specs);
-//   reader.add_cell(c);
-
-//   for(auto& ts: test.timing_specs) {
-//     read_in_test_timing_spec(reader, cell); // timing spec reader does not exist.
-//   }
-
-// }
-void catch_test_timing_checks(TimingCheckSpec &check, TimingCheckSpec &test)
+void SDF::Test::catch_test_port_tchk(PortTimingCheck &pt, PortTimingCheck &test)
 {
-  
-  REQUIRE(check.size() == test.size());
-  // REQUIRE(cells.size() == tests.size())
-  // REQUIRE(cells.size() == tests.size())
-  
+  REQUIRE(pt.port == test.port);
+
+  if(test.edge.has_value()){
+    REQUIRE(pt.edge.has_value());
+    REQUIRE(test.edge == pt.edge) ;
+  }
+  if(test.timing_check_condition.has_value()){
+    REQUIRE(pt.timing_check_condition.has_value());
+    REQUIRE(test.timing_check_condition == pt.timing_check_condition);
+  }
+  if(test.symbolic_name.has_value()){
+    REQUIRE(pt.symbolic_name.has_value());
+    REQUIRE(test.symbolic_name == pt.symbolic_name);
+  }
 }
 
-void catch_test_timing_specs(std::vector<TimingSpec> specs, std::vector<TimingSpec> tests)
+void SDF::Test::catch_test_hold_check(Hold &hold, Hold &test)
+{
+  REQUIRE(hold.value == test.value);
+  catch_test_port_tchk(hold.input,test.input);
+  catch_test_port_tchk(hold.output,test.output);
+}
+
+void SDF::Test::catch_test_timing_checks(std::vector<TimingCheck> &checks, std::vector<TimingCheck> &tests)
+{
+  REQUIRE(checks.size() == tests.size());
+  view::zip_with(
+    [](auto check, auto test) -> void { 
+      REQUIRE(check.get_enum_type()==test.get_enum_type());
+      switch (test.get_enum_type()) {
+        case TimingCheckType::hold:
+          REQUIRE(std::holds_alternative<Hold>(check.value));
+          
+          catch_test_hold_check(std::get<Hold>(check.value),
+                                    std::get<Hold>(test.value));
+                                    
+          break;
+        default:
+          throw std::runtime_error("InternalError");
+      }
+    },
+    checks,tests
+  );      
+}
+
+void SDF::Test::catch_test_timing_specs(std::vector<TimingSpec> specs, std::vector<TimingSpec> tests)
 {
   view::zip_with(
     [](auto spec, auto test) -> void { 
@@ -40,8 +63,6 @@ void catch_test_timing_specs(std::vector<TimingSpec> specs, std::vector<TimingSp
           throw std::runtime_error("InternalError");  
           break;
         case TimingSpecType::timing_check:
-
-          // TimingCheckSpec sp = std::get<TimingCheckSpec>(std::move(spec));
           REQUIRE(std::holds_alternative<TimingCheckSpec>(spec.value));
           
           catch_test_timing_checks(std::get<TimingCheckSpec>(spec.value),
@@ -62,7 +83,7 @@ void catch_test_timing_specs(std::vector<TimingSpec> specs, std::vector<TimingSp
   );      
 }
 
-void catch_test_cell(Cell cell, Cell test)
+void SDF::Test::catch_test_cell(Cell cell, Cell test)
 {
 
   REQUIRE(cell.cell_type == test.cell_type);
@@ -73,7 +94,7 @@ void catch_test_cell(Cell cell, Cell test)
 }
 
 
-void catch_test_cells(std::vector<Cell> cells, std::vector<Cell> tests)
+void SDF::Test::catch_test_cells(std::vector<Cell> cells, std::vector<Cell> tests)
 {
 
   REQUIRE(cells.size() == tests.size());

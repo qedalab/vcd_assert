@@ -33,6 +33,15 @@ struct NodeScalarEquality {
   Node left;
   EqualityOperator op;
   bool right;
+  bool operator==(const NodeScalarEquality& other) const noexcept{
+    if((left == other.left)
+        && (op == other.op) 
+        && (right == other.right)){
+            return true;
+    }else{
+        return false;
+    }
+  }
 };
 
 using TimingCheckConditionVariant = std::variant<
@@ -43,6 +52,28 @@ using TimingCheckConditionVariant = std::variant<
 
 struct TimingCheckCondition : public TimingCheckConditionVariant {
   using TimingCheckConditionVariant::TimingCheckConditionVariant;
+//   bool operator==(const TimingCheckCondition& other) const noexcept{
+//     if(std::holds_alternative<Node>(*this) && std::holds_alternative<Node>(other)){
+//       return std::get<Node>(*this) == std::get<Node>(other);
+//     }else if(std::holds_alternative<Number>(*this) && std::holds_alternative<Number>(other)){
+//       return std::get<InvertedNode>(*this) == std::get<InvertedNode>(other);
+//     }else if(std::holds_alternative<Number>(*this) && std::holds_alternative<Number>(other)){
+//       return std::get<NodeScalarEquality>(*this) == std::get<NodeScalarEquality>(other);
+//     }else{
+//       return false;
+//     }
+//   }
+//     bool operator==(const TimingCheckCondition& other) const noexcept{
+//     if(std::holds_alternative<Node>(*this) && std::holds_alternative<Node>(other)){
+//       return std::get<Node>(*this) == std::get<Node>(other);
+//     }else if(std::holds_alternative<Number>(*this) && std::holds_alternative<Number>(other)){
+//       return std::get<InvertedNode>(*this) == std::get<InvertedNode>(other);
+//     }else if(std::holds_alternative<Number>(*this) && std::holds_alternative<Number>(other)){
+//       return std::get<NodeScalarEquality>(*this) == std::get<NodeScalarEquality>(other);
+//     }else{
+//       return false;
+//     }
+//   }
 };
 
 struct PortTimingCheck{
@@ -50,6 +81,10 @@ struct PortTimingCheck{
   std::optional<EdgeType> edge;
   std::optional<TimingCheckCondition> timing_check_condition;
   std::optional<std::string> symbolic_name;
+    
+//   bool operator==(const TimingCheckCondition& other) const noexcept{
+  
+//   }
 };
 
 struct Hold {

@@ -13,7 +13,7 @@
 
 namespace SDF::Test{
   
-void read_in_test_delayfile_w_reader(SDF::DelayFileReader &reader, DelayFileView &test);
+void read_in_test_delayfile_w_reader(SDF::DelayFileReader &reader, SDF::DelayFileView &test);
 }
 
 
