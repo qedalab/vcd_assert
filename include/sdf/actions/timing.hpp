@@ -20,7 +20,7 @@ struct BusRangeStorage  {
 };
 
 struct BusIndexAction : single_dispatch<
-    Grammar::integer, apply0<Apply::integer>
+    Grammar::integer, apply<Apply::integer>
 >{
   using state = size_t;
 };

@@ -2,7 +2,7 @@
 #define LIBSDF_GRAMMAR_TIMING_HPP 
 
 #include <sdf/grammar/base.hpp>
-#include <sdf/grammar/cell.hpp>
+// #include <sdf/grammar/cell.hpp>
 #include <sdf/grammar/conditions.hpp>
 #include <sdf/grammar/keywords.hpp>
 #include <sdf/grammar/numbers.hpp>

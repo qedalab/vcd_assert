@@ -1,18 +1,23 @@
-// #include "parse/test/parse.hpp"
+#include "parse/test/parse.hpp"
 
 #include <sdf/actions/timing.hpp>
 // #include "sdf/grammar/header.hpp"
-// // #include "sdf/grammar/timing.hpp"
+#include "sdf/grammar/timing.hpp"
 
-// // #include "../types/timing.hpp"
+#include "../types/timing.hpp"
 
-// #include <catch2/catch.hpp>
-// #include <fmt/format.h>
+#include <catch2/catch.hpp>
+#include <fmt/format.h>
 
-// using namespace SDF;
-// using namespace SDF::Test;
-// using Parse::Test::require_parse;
+using namespace SDF;
+using namespace SDF::Test;
+using Parse::Test::require_parse;
 
+// constexpr char test_hchar_str[] = ".";
+// constexpr char test_hierarchicalidentifier_str[] = "root/DUT/test/DFF";
+// constexpr char test_identifier_str[] = "DFF";
+// constexpr char test_qstring_str[] = "\"This is a test qstring\"";
+constexpr char test_hold_str_[] = ".";
 
 /* TODO 
 constexpr char test_scalar_port_str[] = "DIN";
@@ -30,24 +35,24 @@ struct TimingCheckAction : single_dispatch<
 struct TimingCheckArrayAction : single_dispatch<
 */
 
-// TEST_CASE("SDF.Actions.Node", "[SDF][Actions][Node]")
-// {
-//   SECTION(fmt::format("ScalarNode {}", port_1_str)){
+TEST_CASE("SDF.Actions.Node", "[SDF][Actions][Node]")
+{
+  SECTION(fmt::format("ScalarNode {}", port_1_str)){
 
-//     Node test{};
-//     Node wanted{NodeType::port, std::string{port_1_str}};
-//     // require_parse<Grammar::scalar_node, Actions::ScalarNodeAction>(test_hold_str_,test);
-//     // REQUIRE(test == wanted);
-//     REQUIRE(1);
-//   }
+    Node test{};
+    Node wanted{NodeType::port, std::string{port_1_str}};
+    require_parse<Grammar::scalar_node, Actions::NodeAction>(test_hold_str_,test);
+    REQUIRE(test == wanted);
+    // REQUIRE_FALSE(1);
+  }
 
-//   // SECTION(fmt::format("VecrorNode {}", port_1_str)){ //unimplemented
-//   //   Node test{};
-//   //   Node wanted{test_hold_str};
-//   //   require_parse<Grammar::vector_node, Actions::VectorNode>(test_vector_port_str, test);
-//   //   REQUIRE(test == wanted);
-//   // }
+  // SECTION(fmt::format("VecrorNode {}", port_1_str)){ //unimplemented
+  //   Node test{};
+  //   Node wanted{test_hold_str};
+  //   require_parse<Grammar::vector_node, Actions::VectorNode>(test_vector_port_str, test);
+  //   REQUIRE(test == wanted);
+  // }
   
-// }
+}
 
 
