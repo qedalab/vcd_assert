@@ -3,6 +3,7 @@
 
 // #include <sdf/actions/base.hpp>
 // #include <sdf/actions/values.hpp>
+// #include <sdf/actions/timing.hpp>
 // #include <sdf/actions/util.hpp>
 
 // #include <sdf/grammar/timing.hpp>
@@ -16,47 +17,6 @@
 // namespace Actions{
 
 // using namespace Parse;  
-
-// // template <typename...> struct file_loader {};
-// //     template <typename... Format>
-// //     struct
-// //     file_loader<format<Format...> > {
-// //         void load_file() {
-// //             size_t strsize = 500u;
-// //             char *str = new char[strsize]();
-
-// //             auto is = fopen("RESULT","r");
-// //             /* example of RESULT:
-// //                  dataset2,0.1004,524288
-// //                  dataset1,0.3253,4194304
-// //             */
-// //             while(getline(&str, &strsize, is) >= 0) {
-// //                 std::array<char*, 3> toks{};
-// //                 auto s = str;
-// //                 int i = 2;
-// //                 while(i --> 0)
-// //                     toks[i] = strsep (&s, ",");
-// //                 toks[2] = strsep (&s, ",\n");
-
-// //                 std::tuple<Format...> the_line = as_tuple<Format...>(toks);
-// //                 //// current solution:
-// //                 // auto the_line{
-// //                 // as_std_tuple( // <-- unnecessary conversion I'd like to avoid
-// //                 //  boost::fusion::transform(boost::fusion::zip(types, toks), boost::fusion::make_fused( CAST() ))
-// //                 //  )};
-
-
-// //                 // do something with the_line
-// //             }
-// //         }
-// //     };
-
-// struct ScalarNodeAction : multi_dispatch<
-//   Grammar::scala_port, inner_action<>,
-//   Grammar::scala_net, inner_action<>
-// >{
-//   using state = ScalarNode;
-// };
 
 // struct TimingCheckCondAction : multi_dispatch<
 //   Grammar::scalar_node inner_action<

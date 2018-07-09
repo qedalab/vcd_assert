@@ -23,12 +23,13 @@ struct Node {
   NodeType type;
   std::string basename_identifier;
   std::optional<HierarchicalIdentifier> hierarchical_identifier;
-  std::optional<std::size_t> size; // scalar if 0 or 1?
+  std::optional<std::size_t> start;
+  std::optional<std::size_t> end;
 
   bool operator==(const Node &other) const noexcept {
     if ((basename_identifier == other.basename_identifier) &&
         (hierarchical_identifier == other.hierarchical_identifier) &&
-        (type == other.type) && (size == other.size)){
+        (type == other.type) && (start == other.start) && (end == other.end)){
       return true;
     } else {
       return false;

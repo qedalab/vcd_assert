@@ -9,6 +9,10 @@ using namespace SDF;
 // TEST_CASE("SDF.Types.Timing") {
 
 // SECTION("Case 1: Empty") {
+
+// }
+
+// SECTION("Case 1: Empty") {
 //     //Write Header file with the same structure as the VCD example
 //     HeaderReader reader;
 //     Test::read_in_test_header(reader, vcd_empty_header);

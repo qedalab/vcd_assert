@@ -9,21 +9,23 @@ namespace Actions {
 
 using namespace Parse;  
 
-struct RealNumberAction : single_dispatch<
-    Grammar::integer, apply0<Apply::string>
-> {
-  using state = std::string;
-};
+//TODO : fix
 
-struct IntegerAction : single_dispatch<
-    Grammar::integer, apply0<Apply::string>
-> {
-  using state = std::string;
-};
+// struct RealNumberAction : single_dispatch<
+//     Grammar::integer, apply0<Apply::string>
+// > {
+//   using state = std::string;
+// };
+
+// struct IntegerAction : single_dispatch<
+//     Grammar::integer, apply0<Apply::string>
+// > {
+//   using state = std::string;
+// };
 
 }
 }
 
-#endi // LIBSDF_ACTIONS_NUMBERS_HPP
+#endif // LIBSDF_ACTIONS_NUMBERS_HPP
 
 

@@ -25,22 +25,32 @@ struct iopath_def;
   TIMING SPECIFICATIONS
 */
 
+struct bus_index :  op_sep_seq<
+  one< '[' >,
+  integer,
+  one< ']' >
+>{};
+
+struct bus_range : op_sep_seq<
+  one< '[' >,
+  integer,
+  one< ':' >,
+  integer,
+  one< ']' >
+>{};
+
 struct bus_net : op_sep_seq< 
   hierarchical_identifier,
   opt<
-    op_sep_seq<
-      one< '[' >,
-      integer,
-      one< ':' >,
-      integer,
-      one< ']' >
-    >
+    bus_range
   >
 >{};
 
 struct scalar_net : op_sep_seq< 
   hierarchical_identifier,
-  opt< integer >
+  opt<
+    bus_index
+  >
 >{};
 
 struct net : sor< 
@@ -63,22 +73,19 @@ struct net_spec : sor<
   net_instance
 >{};
 
+
 struct bus_port : op_sep_seq< 
   hierarchical_identifier,
   opt<
-    op_sep_seq<
-      one< '[' >,
-      integer,
-      one< ':' >,
-      integer,
-      one< ']' >
-    >
+    bus_range
   >
 >{};
 
 struct scalar_port : op_sep_seq< 
-    hierarchical_identifier,
-    opt< integer >
+  hierarchical_identifier,
+  opt<
+    bus_index
+  >
 >{};
 
 struct port : sor< 

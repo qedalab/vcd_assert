@@ -16,9 +16,11 @@ struct Star{
   }
 };
 
+using Identifier = std::string; 
+
 struct HierarchicalIdentifier {
   HChar sep; 
-  std::vector<std::string> value; //should make this contiguous?
+  std::vector<Identifier> value; //should make this contiguous?
 
   bool operator==(const HierarchicalIdentifier& other) const noexcept{
     using namespace ranges;

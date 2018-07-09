@@ -16,7 +16,9 @@ TEST_CASE("SDF.Actions.TimeScale", "[SDF][Actions][TimeScale]")
 
   TimeScaleView event{};
   require_parse<Grammar::timescale, Actions::TimeScaleAction>(timescale_str, event);
-
-  CHECK(event.unit == TimeScaleUnit::ns);
-  CHECK(event.number == TimeScaleNumber::_10);
+   
+  SECTION("Timescale"){
+    REQUIRE(event.unit == TimeScaleUnit::ns);
+    REQUIRE(event.number == TimeScaleNumber::_10);
+  }
 }

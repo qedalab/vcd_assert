@@ -7,6 +7,7 @@
 #include "parse/actions/apply/value.hpp"
 #include "parse/actions/apply/rule_value.hpp"
 #include "parse/actions/apply/string.hpp"
+#include "parse/actions/apply/integer.hpp"
 
 #include "parse/actions/command/inner_action.hpp"
 #include "parse/actions/command/apply0.hpp"
@@ -25,19 +26,18 @@ namespace Actions {
 
 using namespace Parse;  
 
+struct QStringAction : single_dispatch<
+    Grammar::qstring, apply<Apply::string>
+> {
+  using state = std::string;
+};
+
 struct HCharAction : multi_dispatch<
     Grammar::one<'.'>, apply0<Apply::value<HChar::dot>>,
     Grammar::one<'/'>, apply0<Apply::value<HChar::slash>>
 > {
-  using state = HierarchicalIdentifier;
+  using state = HChar;
 };
-
-struct HierarchicalIdentifierAction : single_dispatch<
-    Grammar::identifier, Storage::push_back
-> {
-  using state = HierarchicalIdentifier;
-};
-
 
 struct IdentifierAction : single_dispatch<
     Grammar::identifier, apply<Apply::string>
@@ -45,12 +45,28 @@ struct IdentifierAction : single_dispatch<
   using state = std::string;
 };
 
-
-struct QStringAction : single_dispatch<
-    Grammar::qstring, apply<Apply::string>
+struct IdentifierArrayAction : single_dispatch<
+    Grammar::identifier, inner_action<
+      IdentifierAction, 
+      Storage::push_back
+    >
 > {
-  using state = std::string;
+  using state = std::vector<std::string>;
 };
+
+struct HierarchicalIdentifierAction : multi_dispatch<
+    Grammar::hchar, inner_action<
+      HCharAction, 
+      Storage::member<&HierarchicalIdentifier::sep>
+    >,
+    Grammar::hierarchical_identifier, inner_action<
+      IdentifierArrayAction, 
+      Storage::member<&HierarchicalIdentifier::value>
+    >
+> {
+  using state = HierarchicalIdentifier;
+};
+
 
 
 // blank

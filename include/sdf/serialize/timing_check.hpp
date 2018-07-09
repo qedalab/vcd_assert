@@ -34,32 +34,22 @@ void serialize_node(
 
   ranges::copy(node.basename_identifier, oi);
 
-  if(node.size.has_value()){
+  if(node.start.has_value()){
     ranges::copy("["sv, oi);
-    ranges::copy(std::to_string(node.size.value()), oi);
+    if(node.end.has_value()){
+      ranges::copy(std::to_string(node.end.value()), oi);
+      ranges::copy(":"sv, oi);
+    }
+    ranges::copy(std::to_string(node.start.value()), oi);
     ranges::copy("]"sv, oi);
   }
 }
 
-// /// Serialize node definition
-// /// \tparam OutputIterator must meet the requirements of OutputIterator
-// /// \param oi The OutputIterator being written to
-// /// \param pt The HOLD check definition to write
-// /// \exception Throws if writing to the OutputIterator throws otherwise noexcept
-// template <class OutputIterator>
-// void serialize_node(
-//     OutputIterator oi, int indent,
-//     Node node) noexcept(noexcept(*oi++ = '!')) {
-//   using std::literals::string_view_literals::operator""sv;
-  
-//   serialize_node(oi, indent, std::get<Port>(node));
 
-// }
-
-/// Serialize timing check conditional
+/// Serialize timing check conditional content
 /// \tparam OutputIterator must meet the requirements of OutputIterator
 /// \param oi The OutputIterator being written to
-/// \param pt The HOLD check definition to write
+/// \param cond The TimingCheckCondition check definition to write
 /// \exception Throws if writing to the OutputIterator throws otherwise noexcept
 template <class OutputIterator>
 void serialize_timing_check_condition_inner(

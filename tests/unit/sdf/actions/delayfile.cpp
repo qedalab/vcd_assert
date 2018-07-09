@@ -6,9 +6,7 @@
 using namespace SDF;
 using namespace SDF::Grammar;
 
-
 #include <catch2/catch.hpp>
-
 
 TEST_CASE("SDF.Actions.Base", "[SDF][Actions][Base]") {
 
@@ -21,7 +19,6 @@ TEST_CASE("SDF.Actions.Base", "[SDF][Actions][Base]") {
   auto &header = *header_p.get();
   Test::catch_test_header(header, vcd_4_state_example_header);
 }
-
 
 TEST_CASE("SDF.Actions") {
   SECTION("Delayfile") {
