@@ -40,16 +40,16 @@ TEST_CASE("SDF.Actions.Node", "[SDF][Actions][Node]")
   SECTION(fmt::format("ScalarNode {}", port_1_str)){
 
     Node test{};
-    Node wanted{NodeType::port, std::string{port_1_str}};
+    Node wanted{NodeType::port, port_1_str};
     require_parse<Grammar::scalar_node, Actions::NodeAction>(test_hold_str_,test);
     REQUIRE(test == wanted);
     // REQUIRE_FALSE(1);
   }
 
-  // SECTION(fmt::format("VecrorNode {}", port_1_str)){ //unimplemented
+  // SECTION(fmt::format("BusNode {}", port_1_str)){ //unimplemented
   //   Node test{};
   //   Node wanted{test_hold_str};
-  //   require_parse<Grammar::vector_node, Actions::VectorNode>(test_vector_port_str, test);
+  //   require_parse<Grammar::bus_node, Actions::NodeAction>(test_vector_port_str, test);
   //   REQUIRE(test == wanted);
   // }
   

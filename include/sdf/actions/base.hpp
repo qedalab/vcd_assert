@@ -54,14 +54,21 @@ struct IdentifierArrayAction : single_dispatch<
   using state = std::vector<std::string>;
 };
 
+struct HierarchicalIdentifierStorage{
+  static bool store(HierarchicalIdentifier &hi, std::string s) {
+     hi.value.push_back(std::move(s));
+     return true;
+   }
+ };
+
 struct HierarchicalIdentifierAction : multi_dispatch<
     Grammar::hchar, inner_action<
       HCharAction, 
       Storage::member<&HierarchicalIdentifier::sep>
     >,
-    Grammar::hierarchical_identifier, inner_action<
-      IdentifierArrayAction, 
-      Storage::member<&HierarchicalIdentifier::value>
+    Grammar::identifier, inner_action<
+      IdentifierAction, 
+      HierarchicalIdentifierStorage
     >
 > {
   using state = HierarchicalIdentifier;
