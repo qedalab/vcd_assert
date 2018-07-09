@@ -112,7 +112,7 @@ struct alphanumeric : sor<
 > {};
 
 struct sign : one<'+','-'> {};
-struct hchar : one<'.','/'> {};
+struct hchar : sor<one<'.'>,one<'/'>> {};
 
 struct character;
 
