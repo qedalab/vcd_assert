@@ -15,3 +15,14 @@ VCD::Value ConditionalValuePointer::value() {
     }
   }, value_);
 }
+
+ConditionalValuePointer::ConditionalValuePointer(ConditionalValuePointer&& other) {
+  value_ = std::move(other.value_);
+}
+
+ConditionalValuePointer& ConditionalValuePointer::operator=(ConditionalValuePointer&& other) {
+  value_ = std::move(other.value_);
+  return *this;
+}
+
+ConditionalValuePointer::~ConditionalValuePointer() = default;

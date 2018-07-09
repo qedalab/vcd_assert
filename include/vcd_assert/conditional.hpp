@@ -1,10 +1,10 @@
 #ifndef VCD_ASSERT_CONDITIONAL_HPP
 #define VCD_ASSERT_CONDITIONAL_HPP
 
-#include <vcd/types/enums.hpp>
+#include <memory>
 #include <parse/util/dependent_value.hpp>
-
 #include <variant>
+#include <vcd/types/enums.hpp>
 
 namespace VCDAssert {
 
@@ -14,11 +14,14 @@ enum class EqualityOperator {
 
 template <EqualityOperator Op> class ConditionalOperator;
 
+template <EqualityOperator Op>
+using UniqueConditionalOperator = std::unique_ptr<ConditionalOperator<Op>>;
+
 using ConditionalValuePointerVariant = std::variant<
-  ConditionalOperator<EqualityOperator::logical_equal>*,
-  ConditionalOperator<EqualityOperator::logical_not_equal>*,
-  ConditionalOperator<EqualityOperator::case_equal>*,
-  ConditionalOperator<EqualityOperator::case_not_equal>*,
+  UniqueConditionalOperator<EqualityOperator::logical_equal>,
+  UniqueConditionalOperator<EqualityOperator::logical_not_equal>,
+  UniqueConditionalOperator<EqualityOperator::case_equal>,
+  UniqueConditionalOperator<EqualityOperator::case_not_equal>,
   VCD::Value*,
   VCD::Value
 >;
@@ -27,10 +30,26 @@ class ConditionalValuePointer {
   ConditionalValuePointerVariant value_;
 
 public:
-  template <typename T>
-  ConditionalValuePointer(T value) {
-    value_ = value;
+  template <typename Type>
+  ConditionalValuePointer(Type value)
+  {
+    using Decayed = typename std::decay<Type>::type;
+
+    if constexpr (std::is_same_v<Decayed, VCD::Value>) {
+      value_ = value;
+    } else if constexpr (std::is_same_v<Decayed, VCD::Value*>) {
+      value_ = value;
+    } else {
+      value_ = std::make_unique<Decayed>(std::move(value));
+    }
   }
+
+  ConditionalValuePointer(const ConditionalValuePointer&) = delete;
+  ConditionalValuePointer& operator=(const ConditionalValuePointer&) = delete;
+
+  ConditionalValuePointer(ConditionalValuePointer&& other);
+  ConditionalValuePointer& operator=(ConditionalValuePointer&& other);
+  ~ConditionalValuePointer();
 
   VCD::Value value();
 };
@@ -44,8 +63,8 @@ class ConditionalOperator {
 public:
   ConditionalOperator(ConditionalValuePointer left,
                       ConditionalValuePointer right) :
-      left_(left),
-      right_(right) {}
+      left_(std::move(left)),
+      right_(std::move(right)) {}
 
   VCD::Value call() {
     VCD::Value left = left_.value();

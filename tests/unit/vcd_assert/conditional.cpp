@@ -9,11 +9,11 @@ void test_op(VCD::Value left, VCD::Value right, VCD::Value result) {
   ConditionalValuePointer left_p = left;
   ConditionalValuePointer right_p = right;
 
-  auto op = ConditionalOperator<Op>(left_p, right_p);
+  auto op = ConditionalOperator<Op>(std::move(left_p), std::move(right_p));
 
   CHECK(op.call() == result);
 
-  auto value_ptr = ConditionalValuePointer(&op);
+  auto value_ptr = ConditionalValuePointer(std::move(op));
 
   CHECK(value_ptr.value() == result);
 }
@@ -40,11 +40,11 @@ TEST_CASE("VCDAssert.Conditional") {
     }
 
     SECTION("Value") {
-      auto value_ptr = ConditionalValuePointer(one);
-      CHECK(value_ptr.value() == one);
+      auto value_ptr_1 = ConditionalValuePointer(one);
+      CHECK(value_ptr_1.value() == one);
 
-      value_ptr = ConditionalValuePointer(zero);
-      CHECK(value_ptr.value() == zero);
+      auto value_ptr_2 = ConditionalValuePointer(zero);
+      CHECK(value_ptr_2.value() == zero);
     }
   }
 
