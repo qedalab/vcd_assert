@@ -12,7 +12,7 @@
 #include <catch2/catch.hpp>
 #include <fmt/format.h>
 
-#include <parse/util/static_string.hpp>
+// #include <parse/util/static_string.hpp>
 
 
 namespace SDF::Test {
@@ -20,7 +20,7 @@ namespace SDF::Test {
 using namespace SDF;
 
 using namespace Parse::Util;
-namespace sstr = ak_toolkit::static_str;
+// namespace sstr = ak_toolkit::static_str;
 
 
 

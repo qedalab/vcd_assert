@@ -23,7 +23,7 @@ void serialize_timing_spec(OutputIterator oi, int indent,
   using std::literals::string_view_literals::operator""sv;
 
   //only timing checks supported at the moment.
-  assert(ts.type == TimingSpecType::timing_check);
+  assert(ts.get_enum_type() == TimingSpecType::timing_check);
   serialize_indent(oi, indent);
 
   switch (ts.get_enum_type()) {

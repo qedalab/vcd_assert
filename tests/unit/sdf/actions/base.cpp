@@ -10,7 +10,7 @@
 using namespace SDF;
 using Parse::Test::require_parse;
 
-constexpr char hchar_str[] = ".";
+static auto constexpr hchar_str = ".";
 constexpr char hierarchicalidentifier_str[] = "root/DUT/test/DFF";
 constexpr char identifier_str[] = "DFF";
 constexpr char qstring_str[] = "\"This is a test qstring\"";
