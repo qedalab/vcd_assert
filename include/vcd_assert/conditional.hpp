@@ -51,7 +51,7 @@ public:
   ConditionalValuePointer& operator=(ConditionalValuePointer&& other);
   ~ConditionalValuePointer();
 
-  VCD::Value value();
+  VCD::Value value() const noexcept;
 };
 
 

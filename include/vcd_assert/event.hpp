@@ -2,6 +2,9 @@
 #define VCD_ASSERT_EVENT_HPP
 
 #include "./conditional.hpp"
+#include "./edge_type.hpp"
+
+#include <range/v3/span.hpp>
 
 #include <cstdint>
 #include <optional>
@@ -41,7 +44,10 @@ using Event = std::variant<
 // clang-format on
 
 struct EventList {
-  std::vector<Event> events;
+  std::vector<Event> pos_edge;
+  std::vector<Event> neg_edge;
+
+  ranges::span<Event> get_event_list(EdgeType type);
 };
 
 } // namespace VCDAssert

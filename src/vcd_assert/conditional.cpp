@@ -2,7 +2,7 @@
 
 using namespace VCDAssert;
 
-VCD::Value ConditionalValuePointer::value() {
+VCD::Value ConditionalValuePointer::value() const noexcept {
   return std::visit([](auto&& value) -> VCD::Value {
     using T = typename std::decay<decltype(value)>::type;
 

@@ -4,6 +4,7 @@ target_sources(libvcd_assert PRIVATE
   ${DIR}/basic_timing_checker.cpp
   ${DIR}/conditional.cpp
   ${DIR}/edge_type.cpp
+  ${DIR}/event.cpp
   ${DIR}/state.cpp
   ${DIR}/timing_checker.cpp
   )

@@ -18,18 +18,35 @@ class TimingChecker {
     std::size_t to;
   };
 
-  BasicTimingChecker checker_;
+  // Order is important
+  std::shared_ptr<VCD::Header> header_;
   State state_;
+  BasicTimingChecker checker_;
+
   std::vector<IndexLookup> index_lookup_;
-  std::vector<Event> events_;
+  std::vector<EventList> event_lists_;
 
   size_t sim_time_ = 0;
-public:
-  TimingChecker(const VCD::Header& header);
 
-  [[nodiscard]] bool event(std::size_t index, VCD::Value value);
-  [[nodiscard]] bool event(std::size_t index, ranges::span<VCD::Value> values);
-  [[nodiscard]] bool event(std::size_t index, double value);
+  [[nodiscard]] bool handle_event(const Event& event);
+
+public:
+  // Claims ownership of the header
+  TimingChecker(std::shared_ptr<VCD::Header> header);
+
+  // TODO apply SDF to node in VCD
+  void apply_sdf(struct SDFFileTODO&, std::size_t vcd_scope_node);
+
+  // Trigger event and return true if event was triggered
+  [[nodiscard]] bool event(std::size_t time, std::size_t index,
+                           VCD::Value value);
+
+  [[nodiscard]] bool event(std::size_t time, std::size_t index,
+                           ranges::span<VCD::Value> values);
+
+  void update_sim_time(std::size_t sim_time_);
+  // Don't handle doubles for now
+  // [[nodiscard]] bool event(std::size_t index, double value);
 };
 
 } // namespace VCDAssert
