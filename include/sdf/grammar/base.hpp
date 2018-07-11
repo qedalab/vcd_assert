@@ -111,7 +111,7 @@ struct alphanumeric : sor<
   decimal_digit
 > {};
 
-struct sign : one<'+','-'> {};
+struct sign : sor<one<'+'>,one<'-'>> {};
 struct hchar : sor<one<'.'>,one<'/'>> {};
 
 struct character;

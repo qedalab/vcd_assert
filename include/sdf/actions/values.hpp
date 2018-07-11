@@ -82,18 +82,22 @@ struct TripleAction : multi_dispatch<
 };
 
 struct ValueAction : multi_dispatch<
-    Grammar::rtriple, inner_action<
-      TripleAction<Grammar::signed_real_number>, 
-      PassThroughStorage>,
-    Grammar::triple, inner_action<
-      TripleAction<Grammar::real_number>,
-      PassThroughStorage>,
-    Grammar::signed_real_number, inner_action<
-      NumberAction, 
-      PassThroughStorage>,
-    Grammar::real_number, inner_action<
-      NumberAction, 
-      PassThroughStorage>
+    Grammar::rtriple, 
+      inner_action_passthrough<
+        TripleAction<Grammar::signed_real_number>
+      >, 
+    Grammar::triple, 
+      inner_action_passthrough<
+        TripleAction<Grammar::real_number>
+      >,
+    Grammar::signed_real_number, 
+      inner_action_passthrough<
+        NumberAction
+      >, 
+    Grammar::real_number, 
+      inner_action_passthrough<
+        NumberAction
+      >
 > {
   using state = Value;
 };

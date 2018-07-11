@@ -21,25 +21,23 @@ struct triple_max : Number{};
 
 template <class Number>
 struct define_triple : op_sep_seq<
-  // not_at<opt<sps>,string<':',':'>,sor<not_at<Number>, sps, eof, eol>>,
-  not_at<string<':',':'>, not_at<Number> >,
-  op_sep_seq<
-    opt<triple_min<Number>>,
-    one<':'>,
-    opt<triple_typ<Number>>,
-    one<':'>,
-    opt<triple_max<Number>>
-  >
+  // not_at<string<':',':'>, not_at<Number> >,
+  opt<triple_min<Number>>,
+  one<':'>,
+  opt<triple_typ<Number>>,
+  one<':'>,
+  opt<triple_max<Number>>
 > {};
 
 struct triple : define_triple<real_number> {};
 struct rtriple : define_triple<signed_real_number> {};
 
+
 template <class Number, class Triple>
 struct define_value : must<
     one<'('>,
     star<blank>,    
-    opt<sor<pegtl::try_catch<Triple>,Number>>,
+    opt<sor<Triple,Number>>,
     star<blank>,
     one<')'>
 > {};
