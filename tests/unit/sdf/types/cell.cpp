@@ -6,13 +6,15 @@ using namespace SDF::Test;
 
 using namespace std::literals::string_literals;
 
+
+
 void SDF::Test::catch_test_port_tchk(PortTimingCheck &pt, PortTimingCheck &test)
 {
   REQUIRE(pt.port == test.port);
 
-  if(test.edge.has_value()){
-    REQUIRE(pt.edge.has_value());
-    REQUIRE(test.edge == pt.edge) ;
+  if(test.port.edge.has_value()){
+    REQUIRE(pt.port.edge.has_value());
+    REQUIRE(test.port.edge == pt.port.edge) ;
   }
   if(test.timing_check_condition.has_value()){
     REQUIRE(pt.timing_check_condition.has_value());

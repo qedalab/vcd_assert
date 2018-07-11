@@ -4,6 +4,7 @@
 #include <sdf/serialize/base.hpp>
 #include <sdf/serialize/values.hpp>
 #include <sdf/serialize/enum/base.hpp>
+#include <sdf/serialize/timing.hpp>
 #include <sdf/types/timing_check.hpp>
 #include <sdf/types/enums.hpp>
 
@@ -12,38 +13,6 @@
 
 namespace SDF {
 
-
-/// Serialize node definition
-/// \tparam OutputIterator must meet the requirements of OutputIterator
-/// \param oi The OutputIterator being written to
-/// \param pt The HOLD check definition to write
-/// \exception Throws if writing to the OutputIterator throws otherwise noexcept
-template <class OutputIterator>
-void serialize_node(
-    OutputIterator oi, int indent,
-    Node node) noexcept(noexcept(*oi++ = '!')) {
-  using std::literals::string_view_literals::operator""sv;
-
-  serialize_indent(oi, indent);
-
-  // auto hi = static_cast<Port>(node).hierarchical_identifier;
-  auto hi = node.hierarchical_identifier;
-  if(hi.has_value()){
-    serialize_hierarchical_identifier(oi,indent,hi.value());
-  }
-
-  ranges::copy(node.basename_identifier, oi);
-
-  if(node.start.has_value()){
-    ranges::copy("["sv, oi);
-    if(node.end.has_value()){
-      ranges::copy(std::to_string(node.end.value()), oi);
-      ranges::copy(":"sv, oi);
-    }
-    ranges::copy(std::to_string(node.start.value()), oi);
-    ranges::copy("]"sv, oi);
-  }
-}
 
 
 /// Serialize timing check conditional content
@@ -112,15 +81,15 @@ void serialize_port_tchk(
       ranges::copy(" "sv, oi);
     }
 
-    if (port_tchk.edge.has_value()) {
+    if (port_tchk.port.edge.has_value()) {
       ranges::copy("("sv, oi);
-      ranges::copy(edgetype_to_string(port_tchk.edge.value()), oi);
+      ranges::copy(edgetype_to_string(port_tchk.port.edge.value()), oi);
       ranges::copy(" "sv, oi);
     }
 
     serialize_node(oi, 0, port_tchk.port);
 
-    if (port_tchk.edge.has_value()) {
+    if (port_tchk.port.edge.has_value()) {
       ranges::copy(")"sv, oi);
     }
   }

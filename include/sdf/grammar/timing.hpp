@@ -40,14 +40,16 @@ struct bus_range : op_sep_seq<
 >{};
 
 struct bus_net : op_sep_seq< 
-  hierarchical_identifier,
+  identifier,
+  // hierarchical_identifier, /* CCM assumption 001 */
   opt<
     bus_range
   >
 >{};
 
 struct scalar_net : op_sep_seq< 
-  hierarchical_identifier,
+  identifier,
+  // hierarchical_identifier, /* CCM assumption 001 */
   opt<
     bus_index
   >
@@ -58,10 +60,9 @@ struct net : sor<
   bus_net
 >{};
 
-
 struct net_instance : sor< 
   net,
-  must<
+  op_sep_seq< 
     hierarchical_identifier,
     hchar,
     net
@@ -73,16 +74,23 @@ struct net_spec : sor<
   net_instance
 >{};
 
-
 struct bus_port : op_sep_seq< 
-  hierarchical_identifier,
+  identifier,
+  // hierarchical_identifier, /* CCM assumption 001 */
   opt<
     bus_range
   >
 >{};
 
+//I made this up.
+struct bus_node : sor<
+  bus_port,
+  bus_net
+>{};
+
 struct scalar_port : op_sep_seq< 
-  hierarchical_identifier,
+  identifier,
+  // hierarchical_identifier, /* CCM assumption 001 */
   opt<
     bus_index
   >
@@ -102,15 +110,37 @@ struct port_instance : sor<
   >
 >{};
 
+struct scalar_node : sor<
+  scalar_port,
+  scalar_net
+>{};
+
+struct edge_identifier_posedge : 
+  TAO_PEGTL_STRING( "posedge" ) {};
+struct edge_identifier_negedge : 
+  TAO_PEGTL_STRING( "negedge" ) {};
+struct edge_identifier_01 : 
+  TAO_PEGTL_STRING( "01" ) {};
+struct edge_identifier_10 : 
+  TAO_PEGTL_STRING( "10" ) {};
+struct edge_identifier_0z : 
+  TAO_PEGTL_STRING( "0z" ) {};
+struct edge_identifier_z1 : 
+  TAO_PEGTL_STRING( "z1" ) {};
+struct edge_identifier_1z : 
+  TAO_PEGTL_STRING( "1z" ) {};
+struct edge_identifier_z0 : 
+  TAO_PEGTL_STRING( "z0" ) {};
+
 struct edge_identifier : sor<
-  TAO_PEGTL_STRING( "posedge" ),
-  TAO_PEGTL_STRING( "negedge" ),
-  TAO_PEGTL_STRING( "01" ),
-  TAO_PEGTL_STRING( "10" ),
-  TAO_PEGTL_STRING( "0z" ),
-  TAO_PEGTL_STRING( "z1" ),
-  TAO_PEGTL_STRING( "1z" ),
-  TAO_PEGTL_STRING( "z0" )
+  edge_identifier_posedge,
+  edge_identifier_negedge,
+  edge_identifier_01,
+  edge_identifier_10,
+  edge_identifier_0z,
+  edge_identifier_z1,
+  edge_identifier_1z,
+  edge_identifier_z0
 > {};
 
 struct port_edge : op_sep_seq< 
@@ -120,12 +150,10 @@ struct port_edge : op_sep_seq<
   one< ')' >
 >{};
 
-
 struct port_spec : sor< 
   port_instance,
   port_edge
 >{};
-
 
 struct lbl_def : op_sep_seq< 
   one< '(' >,

@@ -6,9 +6,6 @@
 #include <variant>
 
 namespace SDF {
- 
-
-
 
 // struct Number {
 //   double value;
@@ -31,30 +28,29 @@ struct Triple {
   Number min;
   Number typ;
   Number max;
-  bool operator==(const Triple& t) const noexcept{
+
+  bool operator==(const Triple &t) const noexcept {
     return ((min == t.min) && (typ == t.typ) && (max == t.max));
   }
 };
-using ValueVariant = std::variant<
-  Triple,
-  Number
->;
+using ValueVariant = std::variant<Triple, Number>;
 
 struct Value : public ValueVariant {
   using ValueVariant::ValueVariant;
-  bool operator==(const Value& other) const noexcept{
-    if(std::holds_alternative<Triple>(*this) && std::holds_alternative<Triple>(other)){
+
+  bool operator==(const Value &other) const noexcept {
+    if (std::holds_alternative<Triple>(*this) &&
+        std::holds_alternative<Triple>(other)) {
       return (std::get<Triple>(*this) == std::get<Triple>(other));
-    } 
-    else if(std::holds_alternative<Number>(*this) && std::holds_alternative<Number>(other)){
+    } else if (std::holds_alternative<Number>(*this) &&
+               std::holds_alternative<Number>(other)) {
       return (std::get<Number>(*this) == std::get<Number>(other));
-    }else{
+    } else {
       return false;
     }
   }
 };
- 
- 
+
 } // namespace SDF
 
 #endif // LIBSDF_TYPES_VALUES_HPP

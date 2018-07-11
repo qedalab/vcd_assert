@@ -71,10 +71,7 @@ struct timing_check_condition : sor<
   seq< scalar_node, equality_operator, scalar_constant >,
   scalar_node
 >{};
-struct scalar_node : sor<
-  scalar_port,
-  scalar_net
->{};
+
 
 // clang-format on
 } // namespace Grammar

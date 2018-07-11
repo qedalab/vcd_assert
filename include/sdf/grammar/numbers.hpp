@@ -10,9 +10,10 @@ namespace Grammar {
 struct integer : plus<decimal_digit> {};
 
 struct real_number : must<
+  not_at<one<'-'>>,
   opt<integer>,
-  opt<seq<one<'.'>, integer>>,
-  opt<seq<one<'e'>, opt<sign>, integer>>
+  pegtl::opt_must<seq<one<'.'>, integer>>,
+  pegtl::opt_must<seq<one<'e'>, opt<sign>, integer>>
 > {};
 
 struct signed_real_number : must<

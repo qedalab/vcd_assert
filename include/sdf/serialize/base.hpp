@@ -8,6 +8,7 @@
 
 namespace SDF {
 
+
 template <class OutputIterator>
 void serialize_indent(OutputIterator oi,
                       int indent) noexcept(noexcept(*oi++ = '!')) {

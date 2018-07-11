@@ -19,9 +19,11 @@ namespace Unsupported {} // namespace Unsupported
 //   Net
 // >;
 
+// Technically a node is a net_instance or port_instance as they are interchangeable
 struct Node {
-  NodeType type;
+  NodeType type; //could make ScalarNet, ScalarPort, BusNet, BusPort
   std::string basename_identifier;
+  std::optional<EdgeType> edge; //only allowed if node is port spec
   std::optional<HierarchicalIdentifier> hierarchical_identifier;
   std::optional<std::size_t> start;
   std::optional<std::size_t> end;
@@ -37,6 +39,54 @@ struct Node {
   }
 
 };
+
+// //FOR DELAY
+// //port_spec shall be an input or a bidirectional port and can have an edge identifier.
+// //port_instance shall be an output or a bidirectional port.
+// struct Bussed {
+//   std::size_t start;
+//   std::size_t end;
+// }
+
+// struct Indexed {
+//   std::size_t index;
+// }
+
+// struct PortInstance : Node{};
+// struct NetInstance : Node{};
+
+// struct BusPort : PortInstance + Bussed{};
+// struct ScalarPort : PortInstance + Indexed{};
+
+// struct BusNet : NetInstance + Bussed{};
+// struct ScalarNet : NetInstance + Indexed{};
+
+// using ScalarNode = std::variant<
+//   ScalarPort,
+//   ScalarNet
+// >;
+// using BusNode = std::variant<
+//   BusPort,
+//   BusNet
+// >;
+// using VectorNode = BusNode; 
+
+// using Port = std::variant<
+//   ScalarPort,
+//   BusPort
+// >;
+
+// using Net = std::variant<
+//   ScalarNet,
+//   BusNet
+// >;
+
+// struct PortSpec : Port{
+//   using Port::Port
+//   std::optional<EdgeType> edge;
+// };
+
+// struct NetSpec : NetInstance{};
 
 } // namespace SDF
 

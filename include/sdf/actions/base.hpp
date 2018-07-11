@@ -8,6 +8,7 @@
 #include "parse/actions/apply/rule_value.hpp"
 #include "parse/actions/apply/string.hpp"
 #include "parse/actions/apply/integer.hpp"
+#include "parse/actions/apply/float.hpp"
 
 #include "parse/actions/command/inner_action.hpp"
 #include "parse/actions/command/apply0.hpp"

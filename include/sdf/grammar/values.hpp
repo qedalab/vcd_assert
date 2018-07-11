@@ -13,27 +13,35 @@ template<class Rule, int N>
 struct triple_number : Rule {};
 
 template <class Number>
-struct define_triple : 
-  op_sep_must<
-    must<not_at<string<':',':'>, not_at<Number>>>,
-    opt<triple_number<opt<Number>, 0>>,
+struct triple_min : Number{};
+template <class Number>
+struct triple_typ : Number{};
+template <class Number>
+struct triple_max : Number{};
+
+template <class Number>
+struct define_triple : op_sep_seq<
+  // not_at<opt<sps>,string<':',':'>,sor<not_at<Number>, sps, eof, eol>>,
+  not_at<string<':',':'>, not_at<Number> >,
+  op_sep_seq<
+    opt<triple_min<Number>>,
     one<':'>,
-    opt<triple_number<opt<Number>, 1>>,
+    opt<triple_typ<Number>>,
     one<':'>,
-    opt<triple_number<opt<Number>, 2>>
+    opt<triple_max<Number>>
+  >
 > {};
 
 struct triple : define_triple<real_number> {};
 struct rtriple : define_triple<signed_real_number> {};
 
 template <class Number, class Triple>
-struct define_value : sor<
-  seq<
+struct define_value : must<
     one<'('>,
-    Triple,
+    star<blank>,    
+    opt<sor<pegtl::try_catch<Triple>,Number>>,
+    star<blank>,
     one<')'>
-  >,
-  seq<Number>
 > {};
 
 struct value : define_value<real_number, triple> {};

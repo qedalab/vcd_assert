@@ -64,6 +64,7 @@ enum class EdgeType {
 };
 
 enum class NodeType{
+  unspecified,
   port,
   net
 };
