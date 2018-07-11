@@ -6,8 +6,8 @@
 namespace Parse::Apply {
 
 struct rule_value {
-  template <typename Rule, typename State>
-  static bool apply0(State &state) {
+  template <typename Rule, typename... Stack, typename State>
+  static bool apply0(State& state, const Stack&... /*unused*/) {
     if constexpr (Concepts::ValueRule<Rule>)
       state = Rule::value;
 

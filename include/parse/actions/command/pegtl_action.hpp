@@ -15,12 +15,13 @@ struct pegtl_action {
   using apply_mode = tao::pegtl::apply_mode;
 
   template <class Rule, rewind_mode M, template <typename...> class Action,
-            template <typename...> class Control, class Input, typename State>
-  static bool command(Input &input, State &state) {
+            template <typename...> class Control, class Input,
+            typename... States>
+  static bool command(Input &input, States &... states) {
     using normal = tao::pegtl::normal<Rule>;
 
     return normal::template match<apply_mode::ACTION, M, PEGTLAction, Control>(
-        input, state);
+        input, states...);
   }
 };
 

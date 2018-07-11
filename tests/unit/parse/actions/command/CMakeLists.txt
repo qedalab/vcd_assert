@@ -5,4 +5,5 @@ target_sources(unit_parse PRIVATE
   ${DIR}/apply0.cpp
   ${DIR}/inner_action.cpp
   ${DIR}/pegtl_action.cpp
+  ${DIR}/push_action.cpp
   )

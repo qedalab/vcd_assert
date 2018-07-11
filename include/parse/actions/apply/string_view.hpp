@@ -6,8 +6,9 @@
 namespace Parse::Apply {
 
 struct string_view {
-  template<class Rule, class ActionInput, class State>
-  static bool apply(const ActionInput& input, State& state) {
+  template <class Rule, class ActionInput, class State, class... Stack>
+  static bool apply(const ActionInput &input, State &state,
+                    const Stack &... /*unused*/) {
     state = std::string_view(input.begin(), input.size());
     return true;
   }

@@ -1,5 +1,5 @@
-#ifndef LIBPARSE_ACTIONS_COMMAND_INNER_ACTION_HPP
-#define LIBPARSE_ACTIONS_COMMAND_INNER_ACTION_HPP
+#ifndef LIBPARSE_ACTIONS_COMMAND_PUSH_ACTION_HPP
+#define LIBPARSE_ACTIONS_COMMAND_PUSH_ACTION_HPP
 
 #include "../make_pegtl_template.hpp"
 
@@ -13,7 +13,7 @@
 namespace Parse {
 
 template <typename InnerAction, typename Storage>
-struct inner_action {
+struct push_action {
   using rewind_mode = tao::pegtl::rewind_mode;
   using apply_mode = tao::pegtl::apply_mode;
 
@@ -26,7 +26,7 @@ struct inner_action {
     if (Control<Rule>::template match<
             apply_mode::NOTHING, M,
             make_pegtl_template<InnerAction>::template type, Control>(
-            input, inner_state, stack...)) {
+            input, inner_state, state, stack...)) {
       return Storage::store(state, std::move(inner_state));
     }
 
@@ -36,4 +36,4 @@ struct inner_action {
 
 } // namespace Parse
 
-#endif // LIBPARSE_ACTIONS_COMMAND_INNER_ACTION_HPP
+#endif // LIBPARSE_ACTIONS_COMMAND_PUSH_ACTION_HPP
