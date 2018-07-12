@@ -8,8 +8,10 @@ option(BUILD_DOCS "Build documentation [unused]" FALSE)
 include(cmake/warnings.cmake)
 
 #Include dependencies
+find_package(fmt REQUIRED)
 find_package(pegtl REQUIRED)
 find_package(range-v3 0.3.6 REQUIRED)
+find_package(CLI11 REQUIRED)
 
 #Ensure C++17
 set(CMAKE_CXX_STANDARD 17)
@@ -37,7 +39,6 @@ add_subdirectory(src)
 
 if(${BUILD_TESTS})
   find_package(Catch2 2.2.3 REQUIRED)
-  find_package(CLI11 REQUIRED)
   include(CTest)
   add_subdirectory(tests)
 endif()
