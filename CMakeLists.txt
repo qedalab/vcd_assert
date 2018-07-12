@@ -12,6 +12,13 @@ find_package(pegtl REQUIRED)
 find_package(range-v3 0.3.6 REQUIRED)
 find_package(fmt 5.0.0 REQUIRED)
 
+#Set flag for static_string
+set(AK_TOOLKIT_CONFIG_USING_STRING_VIEW 1)
+if(${AK_TOOLKIT_CONFIG_USING_STRING_VIEW})
+  add_library(static_string INTERFACE)  
+  target_include_directories(static_string INTERFACE "${PROJECT_SOURCE_DIR}/external/static_string/include")
+endif()
+
 #Ensure C++17
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -31,7 +38,10 @@ target_add_warnings(libvcd)
 #Add libsdf library
 add_library(libsdf "src/sdf")
 target_include_directories(libsdf PUBLIC "${PROJECT_SOURCE_DIR}/include/")
-target_link_libraries(libsdf PUBLIC libparse fmt::fmt)
+if(${AK_TOOLKIT_CONFIG_USING_STRING_VIEW})
+  target_compile_definitions(libsdf PUBLIC AK_TOOLKIT_CONFIG_USING_STRING_VIEW=1)
+endif()
+target_link_libraries(libsdf PUBLIC libparse fmt::fmt static_string )
 
 #Add vcd_assert library
 add_library(libvcd_assert "src/vcd_assert")

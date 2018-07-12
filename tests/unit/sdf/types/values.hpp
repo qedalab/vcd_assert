@@ -6,7 +6,7 @@
 #include <sdf/types/values.hpp>
 #include <fmt/format.h>
 
-#include <parse/util/static_string.hpp>
+#include <ak_toolkit/static_string.hpp>
 namespace sstr = ak_toolkit::static_str;
 
 namespace SDF::Test {

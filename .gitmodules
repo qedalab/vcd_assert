@@ -1,0 +1,3 @@
+[submodule "external/static_string"]
+	path = external/static_string
+	url = https://github.com/akrzemi1/static_string.git
