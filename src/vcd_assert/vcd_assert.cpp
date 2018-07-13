@@ -12,7 +12,7 @@ struct NodeApply {
 
 int main(int argc, char **argv) {
   CLI::App cli("VCDAssert: Post processing VCD files for timing violations");
-  cli.set_failure_message(CLI::FailureMessage::help);
+  cli.failure_message(CLI::FailureMessage::help);
 
   std::string vcd_file;
   auto vcd_file_option = cli.add_option("file", vcd_file, "VCD file");
