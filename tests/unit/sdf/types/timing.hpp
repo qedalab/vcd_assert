@@ -6,7 +6,6 @@
 #include <sdf/types/base.hpp>
 #include <sdf/types/enums.hpp>
 #include <sdf/types/timing.hpp>
-
 #include <sdf/serialize/base.hpp>
 #include <sdf/serialize/enum/base.hpp>
 #include <sdf/serialize/enum/timing.hpp>
@@ -15,9 +14,7 @@
 #include <range/v3/utility/iterator.hpp>
 
 #include <fmt/format.h>
-
 #include <string>
-
 #include <string_view>
 using std::literals::string_view_literals::operator""sv;
 
@@ -26,31 +23,6 @@ namespace sstr = ak_toolkit::static_str;
 
 
 namespace SDF::Test {
-
-// using namespace Parse::Util;
-// namespace sstr = ak_toolkit::static_str;
-// static const NodeType node_type_test_1{
-//   "test"
-// };
-
-// static const NodeType node_type_test_2{
-//   "test",
-//   HierarchicalIdentifier{
-//     HChar::slash,
-//     {"root","design"}
-//   }
-// };
-
-// static const NodeType node_type_test_3{
-//   "test",
-//   HierarchicalIdentifier{
-//     HChar::dot,
-//     {"root","design"}
-//   },
-//   2
-// };
-
-// using namespace std::string_literals;
 
 constexpr auto port_1_str = sstr::literal("CP");
 constexpr std::string_view port_1_sv(port_1_str, std::size(port_1_str));

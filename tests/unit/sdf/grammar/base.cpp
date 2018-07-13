@@ -3,7 +3,13 @@
 using namespace SDF::Grammar;
 using namespace Test::SDF::Grammar;
 
-TEST_CASE("SDF.Grammar.Base", "[SDF][Grammar][Base]") {
+
+#include <range/v3/algorithm/copy.hpp>
+#include <string_view>
+
+using std::literals::string_view_literals::operator""sv;
+
+TEST_CASE("SDF.Grammar.Base", "[!hide][SDF][Grammar][Base]") {
 
   SECTION("Blank Space") {
 
@@ -52,56 +58,64 @@ TEST_CASE("SDF.Grammar.Base", "[SDF][Grammar][Base]") {
 
   SECTION("Decimals") {
     for(auto&& a : decimal_range_str){ 
-      SECTION(fmt::format("Checking : {}",a)){
-        CHECK(match_exactly<decimal_digit>(fmt::format("{}",a)));
+      SECTION(a){
+        INFO("Checking : " << a); 
+        CHECK(match_exactly<decimal_digit>(a));
       }
     }
   }
 
   SECTION("Alphanumeric Characters") {
     for(auto&& a : alphanumeric_str){ 
-      SECTION(fmt::format("Checking : {}",a)){
-        CHECK(match_exactly<alphanumeric>(fmt::format("{}",a)));
+      SECTION(a){
+        INFO("Checking : " << a); 
+        CHECK(match_exactly<alphanumeric>(a));
       }
     }
   }
 
   SECTION("Escaped Alphanumerics Characters") {
     for(auto&& a : escaped_alphanumeric_str){ 
-      SECTION(fmt::format("Checking : {}",a)){
-        CHECK(match_exactly<escaped_character>(fmt::format("{}",a)));
+      SECTION(a){
+        INFO("Checking : " << a); 
+        CHECK(match_exactly<escaped_character>(a));
       }
     }
   }
 
   SECTION("Special Characters") {
     for(auto&& a : special_character_str){ 
-      SECTION(fmt::format("Checking : {}",a)){
-        CHECK(match_exactly<special_character>(fmt::format("{}",a)));
+      SECTION(a){
+        INFO("Checking : " << a);
+        CHECK(match_exactly<special_character>(a));
       }
     }
   }
 
   SECTION("Escaped Special Characters") {
     for(auto&& a : escaped_special_character_str){ 
-      SECTION(fmt::format("Checking : {}",a)){
-        CHECK(match_exactly<escaped_character>(fmt::format("{}",a)));
+      SECTION(a){
+        INFO("Checking : " << a); 
+        CHECK(match_exactly<escaped_character>(a));
       }
     }
   }
   
   SECTION("Normal Characters") {
     for(auto&& a : character_str){ 
-      SECTION(fmt::format("Checking : {}",a)){
-        CHECK(match_exactly<character>(fmt::format("{}",a)));
+      SECTION(a){
+        INFO("Checking : " << a); 
+        CHECK(match_exactly<character>(a));
       }
     }
   }
 
   SECTION("All Characters") {
     for(auto&& a : any_character_str){ 
-      SECTION(fmt::format("Checking : {}",a)){
-        CHECK(match_exactly<any_character>(fmt::format("{}",a)));
+      
+      SECTION(a){
+        INFO("Checking : " << a); 
+        CHECK(match_exactly<any_character>(a));
       }
     }
   }
@@ -116,94 +130,98 @@ TEST_CASE("SDF.Grammar.Base", "[SDF][Grammar][Base]") {
 
   SECTION("Quoted Characters") {
 
-    SECTION(fmt::format("Checking : \"\\\"")){
+    SECTION("Double Backslash") {
+      INFO("Checking : \"\\\"");
       CHECK_THROWS(match_exactly<qstring>(fmt::format(R"("\")")));
     }
+    
     for(auto&& a : any_character_str){ 
-      SECTION(fmt::format("Checking : \"{}\"",a)){
-        CHECK(match_exactly<qstring>(fmt::format(R"("{}")",a)));
-      }
+      std::string test;
+      ranges::copy("\""sv, ranges::back_inserter(test));
+      ranges::copy(std::string(a), ranges::back_inserter(test));
+      ranges::copy("\""sv, ranges::back_inserter(test));
+
+      INFO("Checking : "<< test);
+      CHECK(match_exactly<qstring>(test));
     }
   }
 
   SECTION("Quoted Strings") {
     CHECK(match_exactly<qstring>(qstring_str));
     CHECK(match_exactly<qstring>(qstring_str_2));
-    CHECK(match_exactly<qstring>(fmt::format(R"("4.0")")));
+    CHECK(match_exactly<qstring>("\"4.0\""));
   }
 
   SECTION("General Identifier") {
-    SECTION(fmt::format("Checking : {}",ident_str)){      
-      CHECK(match_exactly<identifier>(fmt::format("{}",ident_str)));
-    }
+    INFO("Checking : " << ident_str); 
+    CHECK(match_exactly<identifier>(ident_str));
   }
   SECTION("Hierarchical Identifier") {
     using hi =  hierarchical_identifier;
-    SECTION(fmt::format("Checking : {}",hident_str)){  
-      CHECK(match_exactly<hi>(fmt::format("{}",hident_str)));
-    }
+    INFO("Checking : " << hident_str); 
+    CHECK(match_exactly<hi>(hident_str));
   }
 }
 
-TEST_CASE("SDF.Grammar.Base.Extra", "[SDF][Grammar][Base][Extra]") {
+TEST_CASE("SDF.Grammar.Base.Extra", "[!hide][SDF][Grammar][Base][Extra]") {
 
   SECTION("Bracket Matching -- Correct Cases") {
-    CHECK(match_exactly<bracket_pairs>(fmt::format("()")));
-    CHECK(match_exactly<bracket_pairs>(fmt::format("(())")));
-    CHECK(match_exactly<bracket_pairs>(fmt::format("((()))")));
-    CHECK(match_exactly<bracket_pairs>(fmt::format("( (()))")));
-    CHECK(match_exactly<bracket_pairs>(fmt::format("(( ()))")));
-    CHECK(match_exactly<bracket_pairs>(fmt::format("((( )))")));
-    CHECK(match_exactly<bracket_pairs>(fmt::format("((() ))")));
-    CHECK(match_exactly<bracket_pairs>(fmt::format("((()) )")));
-    CHECK(match_exactly<bracket_pairs>(fmt::format("((()) )")));
-    CHECK(match_exactly<bracket_pairs>(fmt::format("( ( ( ) ) )")));
-    CHECK(match_exactly<bracket_pairs>(fmt::format("()()")));     
-    CHECK(match_exactly<bracket_pairs>(fmt::format("(()())")));    
-    CHECK(match_exactly<bracket_pairs>(fmt::format("(())()")));    
-    CHECK(match_exactly<bracket_pairs>(fmt::format("(())(())")));    
-    CHECK(match_exactly<bracket_pairs>(fmt::format("((()()))")));
-    CHECK(match_exactly<bracket_pairs>(fmt::format("( (()()))")));
-    CHECK(match_exactly<bracket_pairs>(fmt::format("(( ()()))")));
-    CHECK(match_exactly<bracket_pairs>(fmt::format("((( )()))")));
-    CHECK(match_exactly<bracket_pairs>(fmt::format("((() ()))")));
-    CHECK(match_exactly<bracket_pairs>(fmt::format("((() ( )))")));
-    CHECK(match_exactly<bracket_pairs>(fmt::format("((() () ))")));
-    CHECK(match_exactly<bracket_pairs>(fmt::format("((() () ) )")));
-    CHECK(match_exactly<bracket_pairs>(fmt::format("()()()")));    
-    CHECK(match_exactly<bracket_pairs>(fmt::format("( )()()")));    
-    CHECK(match_exactly<bracket_pairs>(fmt::format("() ()()")));    
-    CHECK(match_exactly<bracket_pairs>(fmt::format("() () ()")));    
-    CHECK(match_exactly<bracket_pairs>(fmt::format("( ) ( ) ( )")));   
+    CHECK(match_exactly<bracket_pairs>("()"));
+    CHECK(match_exactly<bracket_pairs>("(())"));
+    CHECK(match_exactly<bracket_pairs>("((()))"));
+    CHECK(match_exactly<bracket_pairs>("( (()))"));
+    CHECK(match_exactly<bracket_pairs>("(( ()))"));
+    CHECK(match_exactly<bracket_pairs>("((( )))"));
+    CHECK(match_exactly<bracket_pairs>("((() ))"));
+    CHECK(match_exactly<bracket_pairs>("((()) )"));
+    CHECK(match_exactly<bracket_pairs>("((()) )"));
+    CHECK(match_exactly<bracket_pairs>("( ( ( ) ) )"));
+    CHECK(match_exactly<bracket_pairs>("()()"));
+    CHECK(match_exactly<bracket_pairs>("(()())"));
+    CHECK(match_exactly<bracket_pairs>("(())()"));
+    CHECK(match_exactly<bracket_pairs>("(())(())"));
+    CHECK(match_exactly<bracket_pairs>("((()()))"));
+    CHECK(match_exactly<bracket_pairs>("( (()()))"));
+    CHECK(match_exactly<bracket_pairs>("(( ()()))"));
+    CHECK(match_exactly<bracket_pairs>("((( )()))"));
+    CHECK(match_exactly<bracket_pairs>("((() ()))"));
+    CHECK(match_exactly<bracket_pairs>("((() ( )))"));
+    CHECK(match_exactly<bracket_pairs>("((() () ))"));
+    CHECK(match_exactly<bracket_pairs>("((() () ) )"));
+    CHECK(match_exactly<bracket_pairs>("()()()"));
+    CHECK(match_exactly<bracket_pairs>("( )()()"));
+    CHECK(match_exactly<bracket_pairs>("() ()()"));
+    CHECK(match_exactly<bracket_pairs>("() () ()"));
+    CHECK(match_exactly<bracket_pairs>("( ) ( ) ( )"));
   }
 
   SECTION("Bracket Matching -- Incorrect Cases (Unbalanced LHS)") {
 
-    CHECK_FALSE(match_exactly<bracket_pair>(fmt::format("(()")));    
-    CHECK_FALSE(match_exactly<bracket_pair>(fmt::format("((())")));    
-    CHECK_FALSE(match_exactly<bracket_pair>(fmt::format("((()())")));    
-    CHECK_FALSE(match_exactly<bracket_pair>(fmt::format("(()(()())")));   
-    CHECK_FALSE(match_exactly<bracket_pair>(fmt::format("(()(()()())")));   
-    CHECK_FALSE(match_exactly<bracket_pair>(fmt::format("((((() () ) ))")));
-    CHECK_FALSE(match_exactly<bracket_pair>(fmt::format("((((((() () ) ))")));
-    CHECK_FALSE(match_exactly<bracket_pair>(fmt::format("(()) (((((( ()() )))")));
+    CHECK_FALSE(match_exactly<bracket_pair>("(()")); 
+    CHECK_FALSE(match_exactly<bracket_pair>("((())")); 
+    CHECK_FALSE(match_exactly<bracket_pair>("((()())")); 
+    CHECK_FALSE(match_exactly<bracket_pair>("(()(()())")); 
+    CHECK_FALSE(match_exactly<bracket_pair>("(()(()()())")); 
+    CHECK_FALSE(match_exactly<bracket_pair>("((((() () ) ))")); 
+    CHECK_FALSE(match_exactly<bracket_pair>("((((((() () ) ))")); 
+    CHECK_FALSE(match_exactly<bracket_pair>("(()) (((((( ()() )))")); 
 
-    CHECK_FALSE(match_exactly<bracket_pairs>(fmt::format("(()")));    
-    CHECK_FALSE(match_exactly<bracket_pairs>(fmt::format("((())")));    
-    CHECK_FALSE(match_exactly<bracket_pairs>(fmt::format("((()())")));    
-    CHECK_FALSE(match_exactly<bracket_pairs>(fmt::format("(()(()())")));   
-    CHECK_FALSE(match_exactly<bracket_pairs>(fmt::format("(()(()()())")));   
-    CHECK_FALSE(match_exactly<bracket_pairs>(fmt::format("((((() () ) ))")));
-    CHECK_FALSE(match_exactly<bracket_pairs>(fmt::format("((((((() () ) ))")));
-    CHECK_FALSE(match_exactly<bracket_pairs>(fmt::format("(()) (((((( ()() )))")));
+    CHECK_FALSE(match_exactly<bracket_pairs>("(()")); 
+    CHECK_FALSE(match_exactly<bracket_pairs>("((())")); 
+    CHECK_FALSE(match_exactly<bracket_pairs>("((()())")); 
+    CHECK_FALSE(match_exactly<bracket_pairs>("(()(()())")); 
+    CHECK_FALSE(match_exactly<bracket_pairs>("(()(()()())")); 
+    CHECK_FALSE(match_exactly<bracket_pairs>("((((() () ) ))")); 
+    CHECK_FALSE(match_exactly<bracket_pairs>("((((((() () ) ))")); 
+    CHECK_FALSE(match_exactly<bracket_pairs>("(()) (((((( ()() )))")); 
   }
   SECTION("Bracket Matching -- Incorrect Cases (Unbalanced RHS)") { 
-    CHECK_FALSE(match_exactly<bracket_pairs>(fmt::format("())")));    
-    CHECK_FALSE(match_exactly<bracket_pairs>(fmt::format("()())")));    
-    CHECK_FALSE(match_exactly<bracket_pairs>(fmt::format("(()()))")));    
-    CHECK_FALSE(match_exactly<bracket_pairs>(fmt::format("()()())")));    
-    CHECK_FALSE(match_exactly<bracket_pairs>(fmt::format("((() () ) ))")));
-    CHECK_FALSE(match_exactly<bracket_pairs>(fmt::format("((() () )) ))")));
-    CHECK_FALSE(match_exactly<bracket_pairs>(fmt::format("((()) () ) ))")));
+    CHECK_FALSE(match_exactly<bracket_pairs>("())")); 
+    CHECK_FALSE(match_exactly<bracket_pairs>("()())")); 
+    CHECK_FALSE(match_exactly<bracket_pairs>("(()()))")); 
+    CHECK_FALSE(match_exactly<bracket_pairs>("()()())")); 
+    CHECK_FALSE(match_exactly<bracket_pairs>("((() () ) ))")); 
+    CHECK_FALSE(match_exactly<bracket_pairs>("((() () )) ))")); 
+    CHECK_FALSE(match_exactly<bracket_pairs>("((()) () ) ))")); 
   }
 }

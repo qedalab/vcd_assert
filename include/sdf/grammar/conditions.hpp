@@ -66,9 +66,18 @@ struct concat_expression : op_sep_seq<
   simple_expression
 >{};
 
+struct inversion_condition : seq< 
+  inversion_operator, 
+  scalar_node
+>{};
+
+struct node_constant_equality_condition : seq< 
+  scalar_node, equality_operator, scalar_constant
+>{};
+
 struct timing_check_condition : sor<
-  seq< inversion_operator, scalar_node >,
-  seq< scalar_node, equality_operator, scalar_constant >,
+  inversion_condition,
+  node_constant_equality_condition,
   scalar_node
 >{};
 

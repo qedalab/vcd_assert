@@ -1,7 +1,7 @@
 #include "./timing.hpp"
 
-using namespace SDF::Test;
 using namespace SDF;
+using namespace SDF::Test;
 
 
 void SDF::Test::catch_test_node(SDF::Node wanted, SDF::Node test)

@@ -7,57 +7,12 @@
 #include <sdf/types/values.hpp>
 #include <sdf/grammar/values.hpp>
 
-#include <variant>
 
 namespace SDF {
 namespace Actions {
 
-// triple_number
-// define_triple
-// triple
-// rtriple
-// define_value
-// value
-// rvalue
-// delval
-// retval_list
-// delval_list
-
-struct PassThroughStorage{
-  template<typename T>
-  static bool store(T &v, T t) {
-    v = t;
-    return true;
-  }
-};
-
-// struct SignedNumberStorage {
-//   static bool store(Number &parent, bool sign) {
-//     if(!sign){
-//       parent = -parent;
-//     }
-//     return true;
-//   }
-// };
-
-// struct SignAction :  multi_dispatch<
-//     Grammar::one<'+'>, apply<Apply::value<true>>,
-//     Grammar::one<'-'>, apply<Apply::value<false>>
-// > {
-//   using state = bool;
-// };
-
-// struct SignedNumberAction : multi_dispatch<
-//     Grammar::sign, inner_action<SignAction,SignedNumberStorage>,
-//     Grammar::real_number, apply<Apply::float_value>
-// > {
-//   using state = Number;
-// };
-
 struct NumberAction : multi_dispatch<
-    // Grammar::sign, inner_action<SignAction,SignedNumberStorage>,
     Grammar::signed_real_number, apply<Apply::float_value>,
-    // Grammar::signed_real_number, inner_action_passthrough<SignedNumberAction>,
     Grammar::real_number, apply<Apply::float_value>
 > {
   using state = Number;

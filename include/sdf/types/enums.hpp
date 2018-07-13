@@ -7,11 +7,17 @@ enum class HChar {
   dot, slash
 };
 
+enum class ConditionalType {
+  none,
+  inverted,
+  equality
+};
+
 enum class EqualityOperator {
-  logic_equal,
-  logic_inv,
+  case_inv,
   case_equal,
-  case_inv
+  logic_inv,
+  logic_equal
 };
 
 enum class TimeScaleUnit {

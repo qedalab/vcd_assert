@@ -37,20 +37,18 @@ void SDF::Test::catch_test_delayfile(SDF::DelayFile &delayfile, const SDF::Delay
 
   SECTION("SDF File Header"){
 
-    // SECTION("SDF Version"){
-    //   auto t_sdf_version = test.sdf_version.value();
-    //   CHECK(delayfile.has_sdf_version());
-    //   auto sdf_version = delayfile.get_sdf_version();
-    //   REQUIRE(sdf_version);
-    //   CHECK(t_sdf_version == sdf_version.value());
-    // }
+    SECTION("SDF Version"){
+      auto t_sdf_version = test.sdf_version;
+      auto sdf_version = delayfile.get_sdf_version();
+      CHECK(t_sdf_version == sdf_version);
+    }
 
     SECTION("Design name"){
       if(test.design_name) {
         auto t_design_name = test.design_name.value();
         CHECK(delayfile.has_design_name());
         auto design_name = delayfile.get_design_name();
-        REQUIRE(design_name);
+        REQUIRE(design_name.has_value());
         CHECK(t_design_name == design_name.value());
       }else{
         CHECK_FALSE(delayfile.has_design_name());
@@ -63,7 +61,7 @@ void SDF::Test::catch_test_delayfile(SDF::DelayFile &delayfile, const SDF::Delay
         auto t_date = test.date.value();
         CHECK(delayfile.has_date());
         auto date = delayfile.get_date();
-        REQUIRE(date);
+        REQUIRE(date.has_value());
         CHECK(t_date == date.value());
       }else{
         CHECK_FALSE(delayfile.has_date());

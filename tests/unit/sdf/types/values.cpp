@@ -7,10 +7,10 @@ void SDF::Test::catch_test_triple(SDF::Triple wanted, SDF::Triple test)
 
   SECTION("SDF Triple"){
 
-      REQUIRE(test.min == wanted.min); 
+      REQUIRE(test.min == Approx(wanted.min)); 
 
-      REQUIRE(test.typ == wanted.typ); 
+      REQUIRE(test.typ == Approx(wanted.typ)); 
 
-      REQUIRE(test.max == wanted.max);
+      REQUIRE(test.max == Approx(wanted.max));
   }
 }

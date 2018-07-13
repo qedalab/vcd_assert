@@ -12,7 +12,6 @@
 // using namespace SDF;
 
 namespace SDF::Test{
-  
 void read_in_test_delayfile_w_reader(SDF::DelayFileReader &reader, SDF::DelayFileView &test);
 }
 

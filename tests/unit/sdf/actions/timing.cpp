@@ -1,13 +1,16 @@
+
 #include "../types/timing.hpp"
 #include <parse/test/parse.hpp>
 
 #include <sdf/actions/timing.hpp>
-
 #include <sdf/grammar/timing.hpp>
+
+#include <variant>
+#include <catch2/catch.hpp>
+#include <fmt/format.h>
 
 using namespace SDF;
 using namespace SDF::Test;
-
 using Parse::Test::require_parse;
 
 /* TODO
@@ -25,25 +28,26 @@ struct TimingCheckArrayAction : single_dispatch<
 
 TEST_CASE("SDF.Actions.Node", "[SDF][Actions][Node]") {
 
-  SECTION(fmt::format("ScalarNode : \"{}\"", port_1_sv)) {
+  SECTION(fmt::format("ScalarPort : \"{}\"", port_1_sv)) {
 
     Node test{};
-    // Node wanted{NodeType::port, std::string(port_1_str)};
-    Node wanted = port_1;
+    Node wanted{NodeType::port, std::string(port_1_str)};
     INFO("Parsing " << port_1_sv);
     require_parse<Grammar::port_instance, Actions::PortInstanceAction>(port_1_sv, test);
     CAPTURE(test.basename_identifier);
     catch_test_node(wanted,test);
-    // REQUIRE_FALSE(1);
   }
 
-  // SECTION(fmt::format("BusNode \"{}\"",  std::string(port_1_str))){
-  // //unimplemented
-  //   Node test{};
-  //   Node wanted{NodeType::port, std::string(port_1_str)};
-  //   require_parse<Grammar::bus_node,
-  //   Actions::NodeAction>(test_vector_port_str, test); REQUIRE(test ==
-  //   wanted);
-  // }
-  
+
+  SECTION(fmt::format("BusPort : \"{}\"", port_1_sv)) {
+
+    Node test{};
+    Node wanted{NodeType::port, std::string(port_1_str)};
+    INFO("Parsing " << port_1_sv);
+    require_parse<Grammar::port_instance, Actions::PortInstanceAction>(port_1_sv, test);
+    CAPTURE(test.basename_identifier);
+    catch_test_node(wanted,test);
+  }
 }
+
+

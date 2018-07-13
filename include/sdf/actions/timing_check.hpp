@@ -16,31 +16,54 @@ namespace Actions{
 
 using namespace Parse;  
 
-struct NodeScalarEqualityAction : single_dispatch<
+struct EqualityOperatorAction : multi_dispatch<
+  Grammar::case_inequality, apply0<Apply::value<EqualityOperator::case_inv>>,
+  Grammar::case_equality, apply0<Apply::value<EqualityOperator::case_equal>>,
+  Grammar::logical_inequality, apply0<Apply::value<EqualityOperator::logic_inv>>,
+  Grammar::logical_equality, apply0<Apply::value<EqualityOperator::logic_equal>>
+>{
+  using state = EqualityOperator;
+};
+
+struct NodeConstantEqualityAction : multi_dispatch<
   Grammar::scalar_node, inner_action<
-    PortInstanceAction, Storage::push_back
+    PortInstanceAction, Storage::member<&NodeConstantEquality::left>
+  >,
+  Grammar::equality_operator, inner_action<
+    EqualityOperatorAction, Storage::member<&NodeConstantEquality::op>
+  >,
+  Grammar::scalar_constant, inner_action<
+    NumberAction, Storage::member<&NodeConstantEquality::right>
   >
 >{
-  using state = Node;
+  using state = NodeConstantEquality;
+};
+
+struct InvertedNodeStorage{
+  static bool store(InvertedNode &in, Node n) {
+    in = InvertedNode{n};
+    return true;
+  }
 };
 
 struct InvertedNodeAction : single_dispatch<
   Grammar::scalar_node, inner_action<
-    PortInstanceAction, Storage::push_back
+    PortInstanceAction,
+    InvertedNodeStorage
   >
 >{
-  using state = Node;
+  using state = InvertedNode;
 };
 
-struct TimingCheckCondAction : multi_dispatch<
+struct TimingCheckConditionAction : multi_dispatch<
+  Grammar::inversion_condition, inner_action<
+    InvertedNodeAction, Storage::member<&TimingCheckCondition::value>
+  >,
+  Grammar::node_constant_equality_condition, inner_action<
+    NodeConstantEqualityAction, Storage::member<&TimingCheckCondition::value>
+  >,
   Grammar::scalar_node, inner_action<
-    NodeAction, Storage::push_back
-  >,
-  Grammar::inversion_operator, inner_action<
-    InvertedNodeAction, Storage::push_back
-  >,
-  Grammar::equality_operator, inner_action<
-    NodeScalarEqualityAction, Storage::push_back
+    NodeAction, Storage::member<&TimingCheckCondition::value>
   >
 >{
   using state = TimingCheckCondition;
@@ -61,7 +84,8 @@ struct PortCheckAction : multi_dispatch<
     QStringAction, Storage::member<&PortTimingCheck::symbolic_name>
   >,
   Grammar::timing_check_condition, inner_action<
-   TimingCheckCondAction, Storage::member<&PortTimingCheck::timing_check_condition>
+   TimingCheckConditionAction, 
+   Storage::member<&PortTimingCheck::timing_check_condition>
   >,
   Grammar::port_spec, inner_action<
     PortSpecAction, Storage::member<&PortTimingCheck::port>
@@ -103,7 +127,7 @@ struct TimingCheckAction : single_dispatch<
   // Grammar::setup_timing_check, inner_action<
   //   SetupTimingCheckAction, SetupTimingCheckStorage >,
   Grammar::hold_timing_check, inner_action<
-    HoldTimingCheckAction, Storage::push_back > // HoldTimingCheckStorage >
+    HoldTimingCheckAction, Storage::member<&TimingCheck::value> > // HoldTimingCheckStorage >
   // Grammar::setuphold_timing_check, inner_action<
   //   SetupholdTimingCheckAction, SetupholdTimingCheckStorage >,
   // Grammar::recovery_timing_check, inner_action<
@@ -123,7 +147,7 @@ struct TimingCheckAction : single_dispatch<
   // Grammar::nochange_timing_check, inner_action<
   //   NochangeTimingCheckAction, NochangeTimingCheckStorage >
 > {
-  using state = std::vector<TimingCheck>;
+  using state = TimingCheck;
 };
 
 struct TimingCheckArrayAction : single_dispatch<

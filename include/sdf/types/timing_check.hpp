@@ -4,6 +4,7 @@
 
 #include <sdf/types/timing.hpp>
 #include <sdf/types/values.hpp>
+#include <sdf/types/enums.hpp>
 #include <parse/util/dependant_value.hpp>
 
 #include <variant>
@@ -29,11 +30,12 @@ struct InvertedNode : public Node {};
 
 using NodeEqualityTuple = std::tuple<Node,Node>;
 
-struct NodeScalarEquality {
+struct NodeConstantEquality {
   Node left;
   EqualityOperator op;
   bool right;
-  bool operator==(const NodeScalarEquality& other) const noexcept{
+
+  bool operator==(const NodeConstantEquality& other) const noexcept{
     if((left == other.left)
         && (op == other.op) 
         && (right == other.right)){
@@ -47,49 +49,58 @@ struct NodeScalarEquality {
 using TimingCheckConditionVariant = std::variant<
   Node,
   InvertedNode,
-  NodeScalarEquality
+  NodeConstantEquality
 >;
 
-struct TimingCheckCondition : public TimingCheckConditionVariant {
-  using TimingCheckConditionVariant::TimingCheckConditionVariant;
-//   bool operator==(const TimingCheckCondition& other) const noexcept{
-//     if(std::holds_alternative<Node>(*this) && std::holds_alternative<Node>(other)){
-//       return std::get<Node>(*this) == std::get<Node>(other);
-//     }else if(std::holds_alternative<Number>(*this) && std::holds_alternative<Number>(other)){
-//       return std::get<InvertedNode>(*this) == std::get<InvertedNode>(other);
-//     }else if(std::holds_alternative<Number>(*this) && std::holds_alternative<Number>(other)){
-//       return std::get<NodeScalarEquality>(*this) == std::get<NodeScalarEquality>(other);
-//     }else{
-//       return false;
-//     }
-//   }
-//     bool operator==(const TimingCheckCondition& other) const noexcept{
-//     if(std::holds_alternative<Node>(*this) && std::holds_alternative<Node>(other)){
-//       return std::get<Node>(*this) == std::get<Node>(other);
-//     }else if(std::holds_alternative<Number>(*this) && std::holds_alternative<Number>(other)){
-//       return std::get<InvertedNode>(*this) == std::get<InvertedNode>(other);
-//     }else if(std::holds_alternative<Number>(*this) && std::holds_alternative<Number>(other)){
-//       return std::get<NodeScalarEquality>(*this) == std::get<NodeScalarEquality>(other);
-//     }else{
-//       return false;
-//     }
-//   }
+//   using TimingCheckConditionVariant::TimingCheckConditionVariant;
+struct TimingCheckCondition  {
+  TimingCheckConditionVariant value;
+
+  ConditionalType get_enum_type() const {
+
+    return std::visit([](auto&& param) 
+                        -> ConditionalType {
+      using T = typename std::decay<decltype(param)>::type;
+      if constexpr (std::is_same_v<T,Node>) {
+          return ConditionalType::none;
+      } else if constexpr (std::is_same_v<T,InvertedNode>) {
+          return ConditionalType::inverted;
+      } else if constexpr (std::is_same_v<T,NodeConstantEquality>) {
+          return ConditionalType::equality;
+      } else {
+          static_assert(Parse::Util::dependant_value<false, T>);
+      }
+    }, value);
+  }
+
+  bool operator==(const TimingCheckCondition& other) const {
+    if (get_enum_type() == other.get_enum_type()) {
+      return (value==other.value);
+    }else{
+      return false;
+    }
+  }
+    // return std::visit([][](auto&& t, auto&&  o) -> bool {
+    //   using This = typename std::decay<decltype(t)>::type;
+    //   using Other = typename std::decay<decltype(o)>::type;
+    //   if constexpr (std::is_same_v<This,Other>) {
+    //       return t==o;
+    //   } else {
+    //       return false;
+    //   }
+    // }, value, other);
 };
+
 
 struct PortTimingCheck{
   Node port; //Todo make Port and remove edge
-//   std::optional<EdgeType> edge;
   std::optional<TimingCheckCondition> timing_check_condition;
-  std::optional<std::string> symbolic_name;
-    
-//   bool operator==(const TimingCheckCondition& other) const noexcept{
-  
-//   }
+  std::optional<std::string> symbolic_name;    
 };
 
 struct Hold {
-  PortTimingCheck input; //subject
-  PortTimingCheck output; //stimili //change
+  PortTimingCheck input;
+  PortTimingCheck output;
   Value value;
 };
 
@@ -145,7 +156,6 @@ struct TimingCheck {
       }
     }, value);
   }
-
 };
 
 using TimingCheckVector = std::vector<TimingCheck>;

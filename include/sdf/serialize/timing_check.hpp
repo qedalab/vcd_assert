@@ -27,11 +27,11 @@ void serialize_timing_check_condition_inner(
   using std::literals::string_view_literals::operator""sv;
 
   Node node;
-  if(std::holds_alternative<InvertedNode>(cond)){
-    node = std::get<InvertedNode>(cond);
+  if(std::holds_alternative<InvertedNode>(cond.value)){
+    node = std::get<InvertedNode>(cond.value);
     ranges::copy("~"sv, oi);
-  }else if(std::holds_alternative<NodeScalarEquality>(cond)){
-    auto eq = std::get<NodeScalarEquality>(cond);
+  }else if(std::holds_alternative<NodeConstantEquality>(cond.value)){
+    auto eq = std::get<NodeConstantEquality>(cond.value);
     node = eq.left;
     serialize_node(oi, indent, eq.left);
     if(eq.op == EqualityOperator::logic_equal){
@@ -49,7 +49,7 @@ void serialize_timing_check_condition_inner(
       ranges::copy("0"sv, oi);    
     }
   }else{
-    node = std::get<Node>(cond);
+    node = std::get<Node>(cond.value);
   }
   serialize_node(oi, indent, node);
 }

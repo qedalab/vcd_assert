@@ -1,5 +1,5 @@
-#ifndef LIBSDF_ACTIONS_TIMINGSPEC_HPP
-#define LIBSDF_ACTIONS_TIMINGSPEC_HPP
+#ifndef LIBSDF_ACTIONS_TIMING_SPEC_HPP
+#define LIBSDF_ACTIONS_TIMING_SPEC_HPP
 
 #include <sdf/actions/base.hpp>
 #include <sdf/actions/timing_check.hpp>
@@ -22,7 +22,6 @@ struct TimingSpecArrayAction : single_dispatch<
 };
 
 }
-
 }
 
-#endif // LIBSDF_ACTIONS_TIMINGSPEC_HPP
+#endif // LIBSDF_ACTIONS_TIMING_SPEC_HPP

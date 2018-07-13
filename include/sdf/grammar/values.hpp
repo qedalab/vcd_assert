@@ -13,11 +13,11 @@ template<class Rule, int N>
 struct triple_number : Rule {};
 
 template <class Number>
-struct triple_min : Number{};
+struct triple_min : alias<Number>{};
 template <class Number>
-struct triple_typ : Number{};
+struct triple_typ : alias<Number>{};
 template <class Number>
-struct triple_max : Number{};
+struct triple_max : alias<Number>{};
 
 template <class Number>
 struct define_triple : op_sep_seq<

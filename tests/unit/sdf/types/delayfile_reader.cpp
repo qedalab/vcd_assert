@@ -63,7 +63,7 @@ void SDF::Test::read_in_test_delayfile_w_reader(SDF::DelayFileReader &reader, SD
 }
 
 
-TEST_CASE("SDF.Types.SDFDelayFileReader") {
+TEST_CASE("SDF.Types.SDFDelayFileReader", "[SDF].[Types].[SDFDelayFileReader]") {
 
 // void catch_test_delayfile(SDF::DelayFile &delayfile, TestDelayFile &test);
 

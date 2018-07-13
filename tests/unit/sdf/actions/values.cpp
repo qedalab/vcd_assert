@@ -1,12 +1,11 @@
 
 #include "../types/values.hpp"
+#include <parse/test/parse.hpp>
+
 #include <sdf/actions/values.hpp>
 #include <sdf/grammar/values.hpp>
 
-#include <parse/test/parse.hpp>
-
 #include <variant>
-
 #include <catch2/catch.hpp>
 #include <fmt/format.h>
 
@@ -63,9 +62,9 @@ TEST_CASE("SDF.Actions.Triple", "[SDF][Actions][Triple]") {
     CAPTURE(test.typ);
     CAPTURE(test.max);
 
-    REQUIRE(test.min == wanted.min); 
-    REQUIRE(test.typ == wanted.typ); 
-    REQUIRE(test.max == wanted.max);
+    REQUIRE( test.min == Approx(wanted.min)); 
+    REQUIRE( test.typ == Approx(wanted.typ)); 
+    REQUIRE( test.max == Approx(wanted.max));
 
     // catch_test_triple(wanted, test);
   }
@@ -83,9 +82,9 @@ TEST_CASE("SDF.Actions.Triple", "[SDF][Actions][Triple]") {
     CAPTURE(test.typ);
     CAPTURE(test.max);
     
-    REQUIRE(test.min == wanted.min); 
-    REQUIRE(test.typ == wanted.typ); 
-    REQUIRE(test.max == wanted.max);
+    REQUIRE(test.min == Approx(wanted.min) ); 
+    REQUIRE(test.typ == Approx(wanted.typ) ); 
+    REQUIRE(test.max == Approx(wanted.max) );
     // catch_test_triple(wanted, test);
   }
 
@@ -145,9 +144,9 @@ TEST_CASE("SDF.Actions.Value", "[SDF][Actions][Value]") {
     CAPTURE(result.typ);
     CAPTURE(result.max);
     
-    REQUIRE(result.min == wanted.min); 
-    REQUIRE(result.typ == wanted.typ); 
-    REQUIRE(result.max == wanted.max);
+    REQUIRE(result.min == Approx(wanted.min)); 
+    REQUIRE(result.typ == Approx(wanted.typ)); 
+    REQUIRE(result.max == Approx(wanted.max));
     // catch_test_triple(wanted, test);
   }
 
@@ -168,9 +167,9 @@ TEST_CASE("SDF.Actions.Value", "[SDF][Actions][Value]") {
     CAPTURE(result.typ);
     CAPTURE(result.max);
     
-    REQUIRE(result.min == wanted.min); 
-    REQUIRE(result.typ == wanted.typ); 
-    REQUIRE(result.max == wanted.max);
+    REQUIRE(result.min == Approx(wanted.min)); 
+    REQUIRE(result.typ == Approx(wanted.typ)); 
+    REQUIRE(result.max == Approx(wanted.max));
     // catch_test_triple(wanted, test);
   }
 

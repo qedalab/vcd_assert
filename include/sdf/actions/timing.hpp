@@ -147,18 +147,11 @@ struct PortEdgeAction : multi_dispatch<
 };
 
 struct PortSpecAction : multi_dispatch<
-    Grammar::port_instance, inner_action<PortInstanceAction, Storage::member<&Node::type>>,
-    Grammar::port_edge, inner_action<PortEdgeAction, Storage::member<&Node::type>>
+    Grammar::port_instance, inner_action_passthrough<PortInstanceAction>,
+    Grammar::port_edge, inner_action_passthrough<PortEdgeAction>
 >{
   using state = Node;
 };
-
-// struct NetAction : single_dispatch<
-//   Grammar::scalar_port, inner_action<ScalarNodeAction, Storage::member<&Node::type>>,
-// >{
-//   using state = Node;
-// };
-
 
 
 }

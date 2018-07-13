@@ -4,12 +4,20 @@
 #include "./timing.hpp"
 #include "./values.hpp"
 
+#include <catch2/catch.hpp>
 
 #include <sdf/types/timing_check.hpp>
-#include <ak_toolkit/static_string.hpp>
-#include <catch2/catch.hpp>
-#include <fmt/format.h>
 
+#include <range/v3/algorithm/copy.hpp>
+#include <range/v3/utility/iterator.hpp>
+
+#include <variant>
+#include <fmt/format.h>
+#include <string>
+#include <string_view>
+using std::literals::string_view_literals::operator""sv;
+
+#include <ak_toolkit/static_string.hpp>
 namespace sstr = ak_toolkit::static_str;
 
 namespace SDF::Test {
@@ -24,10 +32,10 @@ static const InvertedNode test_invertednode_1{
   port_1
 };
 
-constexpr auto test_nodescalarequality_1_str =  port_1_str + "==1";
-constexpr std::string_view test_nodescalarequality_1_sv(
-  test_nodescalarequality_1_str, std::size(test_nodescalarequality_1_str));
-static const NodeScalarEquality test_nodescalarequality_1{
+constexpr auto test_NodeConstantEquality_1_str =  port_1_str + "==1";
+constexpr std::string_view test_NodeConstantEquality_1_sv(
+  test_NodeConstantEquality_1_str, std::size(test_NodeConstantEquality_1_str));
+static const NodeConstantEquality test_NodeConstantEquality_1{
   port_1,
   EqualityOperator::logic_equal,
   true
@@ -40,10 +48,10 @@ static const InvertedNode test_invertednode_2{
   port_3
 };
 
-constexpr auto test_nodescalarequality_2_str = port_3_str + "===1";
-constexpr std::string_view test_nodescalarequality_2_sv(
-  test_nodescalarequality_2_str, std::size(test_nodescalarequality_2_str));
-static const NodeScalarEquality test_nodescalarequality_2{
+constexpr auto test_NodeConstantEquality_2_str = port_3_str + "===1";
+constexpr std::string_view test_NodeConstantEquality_2_sv(
+  test_NodeConstantEquality_2_str, std::size(test_NodeConstantEquality_2_str));
+static const NodeConstantEquality test_NodeConstantEquality_2{
   port_3,
   EqualityOperator::case_equal,
   true
@@ -56,10 +64,10 @@ static const InvertedNode test_invertednode_3{
   node_3
 };
 
-constexpr auto test_nodescalarequality_3_str = port_4_str + "!==1";
-constexpr std::string_view test_nodescalarequality_3_sv(
-  test_nodescalarequality_3_str, std::size(test_nodescalarequality_3_str));
-static const NodeScalarEquality test_nodescalarequality_3{
+constexpr auto test_NodeConstantEquality_3_str = port_4_str + "!==1";
+constexpr std::string_view test_NodeConstantEquality_3_sv(
+  test_NodeConstantEquality_3_str, std::size(test_NodeConstantEquality_3_str));
+static const NodeConstantEquality test_NodeConstantEquality_3{
   port_4,
   EqualityOperator::case_inv,
   true
@@ -74,11 +82,11 @@ static const TimingCheckCondition test_timingcheckcondition_1{
 };
 
 constexpr auto test_timingcheckcondition_2_str = 
-  test_nodescalarequality_1_str;
+  test_NodeConstantEquality_1_str;
 constexpr std::string_view test_timingcheckcondition_2_sv(
   test_timingcheckcondition_2_str, std::size(test_timingcheckcondition_2_str));
 static const TimingCheckCondition test_timingcheckcondition_2{
-  test_nodescalarequality_1 
+  test_NodeConstantEquality_1 
 };
 
 constexpr auto test_timingcheckcondition_3_str = 
@@ -90,11 +98,11 @@ static const TimingCheckCondition test_timingcheckcondition_3{
 };
 
 constexpr auto test_timingcheckcondition_4_str = 
-  test_nodescalarequality_2_str;
+  test_NodeConstantEquality_2_str;
 constexpr std::string_view test_timingcheckcondition_4_sv(
   test_timingcheckcondition_4_str, std::size(test_timingcheckcondition_4_str));
 static const TimingCheckCondition test_timingcheckcondition_4{
-  test_nodescalarequality_2 
+  test_NodeConstantEquality_2 
 };
 
 constexpr auto test_porttimingcheck_1_str = 
@@ -103,7 +111,7 @@ constexpr std::string_view test_porttimingcheck_1_sv(
   test_porttimingcheck_1_str, std::size(test_porttimingcheck_1_str));
 static const PortTimingCheck test_porttimingcheck_1{
   port_1_posedge,
-  node_1
+  TimingCheckCondition{node_1}
 };
 
 constexpr auto test_porttimingcheck_2_str = 
@@ -120,7 +128,7 @@ constexpr std::string_view test_porttimingcheck_3_sv(
   test_porttimingcheck_3_str, std::size(test_porttimingcheck_3_str));
 static const PortTimingCheck test_porttimingcheck_3{
   port_1_negedge,
-  test_invertednode_3
+  TimingCheckCondition{test_invertednode_3}
 };
 
 constexpr auto test_porttimingcheck_4_str = 
@@ -207,9 +215,17 @@ static const TimingCheckSpec test_timingcheckspec_1{
   test_timingcheck_3
 };
 
-// void read_in_test_timing(SDF::DelayFileReader &reader, TestCell &test);
-// void catch_test_timing(SDF::DelayFile &header, SDF::Cell &scope, TestCell &test);
-
+void catch_test_invertednode(InvertedNode wanted, InvertedNode test);
+void catch_test_nodeconstantequality(NodeConstantEquality wanted, 
+                                    NodeConstantEquality test);
+void catch_test_timingcheckcondition(TimingCheckCondition wanted, 
+                                    TimingCheckCondition test);
+void catch_test_porttimingcheck(PortTimingCheck wanted, 
+                                PortTimingCheck test);
+void catch_test_hold(Hold wanted, Hold test);
+void catch_test_timingcheck(TimingCheck wanted, TimingCheck test);
+void catch_test_timingcheckspec(TimingCheckSpec wanted, 
+                                TimingCheckSpec test);
 } // SDF::Test
 
 #endif // TEST_SDF_TYPES_TIMINGCHECK_HPP
