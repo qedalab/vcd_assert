@@ -15,7 +15,6 @@ struct TestScope {
 };
 
 void read_in_test_scope(VCD::HeaderReader &reader, TestScope &test);
-void catch_test_scope(VCD::Header &header, VCD::Scope &scope, TestScope &test);
 
 } // namespace VCD::Test
 

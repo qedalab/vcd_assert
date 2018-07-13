@@ -14,12 +14,17 @@ int main(int argc, char **argv) {
   CLI::App cli("VCDAssert: Post processing VCD files for timing violations");
   cli.set_failure_message(CLI::FailureMessage::help);
 
+  std::string vcd_file;
+  auto vcd_file_option = cli.add_option("file", vcd_file, "VCD file");
+  vcd_file_option->required();
+  vcd_file_option->check(CLI::ExistingFile);
+
   std::vector<std::string> vcd_nodes;
   auto node_option = cli.add_option("--node,-n", vcd_nodes, "VCD Node");
 
   std::vector<std::string> sdf_files;
-  auto sdf_option = cli.add_option("--sdf,-s", sdf_files, "SDF File to apply")
-                        ->check(CLI::ExistingFile);
+  auto sdf_option = cli.add_option("--sdf,-s", sdf_files, "SDF File to apply");
+  sdf_option->check(CLI::ExistingFile);
 
   CLI11_PARSE(cli, argc, argv);
 

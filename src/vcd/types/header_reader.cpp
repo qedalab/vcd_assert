@@ -4,17 +4,14 @@
 
 using namespace VCD;
 
-HeaderReader::HeaderReader()
-{
-  header_ = std::make_unique<Header>();
-}
+HeaderReader::HeaderReader() { header_ = std::make_unique<Header>(); }
 
 void HeaderReader::scope(ScopeType type, std::string name)
 {
-  auto& scopes_ref = header_->scopes_;
+  auto &scopes_ref = header_->scopes_;
 
-  if(scope_stack_.empty()) {
-    if(header_->num_scopes() > 0)
+  if (scope_stack_.empty()) {
+    if (header_->num_scopes() > 0)
       throw std::runtime_error("Cannot have more than one base scope");
 
     // Create root scope
@@ -44,15 +41,16 @@ void HeaderReader::scope(VCD::ScopeDataView scope)
 
 void HeaderReader::upscope()
 {
-  if(scope_stack_.empty())
+  if (scope_stack_.empty())
     throw std::runtime_error("Cannot upscope if there is no scope!");
 
   scope_stack_.pop_back();
 }
 
-void HeaderReader::var(VarType type, std::size_t size, std::string identifier_code, std::string reference)
+void HeaderReader::var(VarType type, std::size_t size,
+                       std::string identifier_code, std::string reference)
 {
-  if(scope_stack_.empty())
+  if (scope_stack_.empty())
     throw std::runtime_error("Variable must have scope");
 
   // Grab references for convenience
@@ -62,22 +60,22 @@ void HeaderReader::var(VarType type, std::size_t size, std::string identifier_co
 
   auto &id_code_map_ref = header_->var_id_code_map_;
 
-  if(current_scope_ref.contains_variable(reference))
+  if (current_scope_ref.contains_variable(reference))
     throw std::runtime_error("Duplicate variable reference");
 
   std::size_t id_code_index;
 
-  if(id_code_map_ref.has_name(identifier_code)) {
+  if (id_code_map_ref.has_name(identifier_code)) {
     // Check that existing identifier_code has the same type
     id_code_index = id_code_map_ref.get_index(identifier_code);
 
-    auto& id_code_ref = id_codes_ref.at(id_code_index);
+    auto &id_code_ref = id_codes_ref.at(id_code_index);
     assert(id_code_ref.get_id_code() == identifier_code);
 
-    bool same = id_code_ref.get_size() == size &&
-                id_code_ref.get_type() == type;
+    bool same =
+        id_code_ref.get_size() == size && id_code_ref.get_type() == type;
 
-    if(!same)
+    if (!same)
       throw std::runtime_error("Same identifier code with different types");
   } else {
     // Add new identifier_code
@@ -100,7 +98,7 @@ void HeaderReader::var(VCD::VariableView variable)
 
 void HeaderReader::version(std::string version_string)
 {
-  if(has_version())
+  if (has_version())
     throw std::runtime_error("Header already has version property");
 
   header_->version_ = std::move(version_string);
@@ -118,7 +116,7 @@ bool HeaderReader::has_version() const noexcept
 
 void HeaderReader::date(std::string date_string)
 {
-  if(has_date())
+  if (has_date())
     throw std::runtime_error("Header already has date property");
 
   header_->date_ = std::move(date_string);
@@ -129,14 +127,11 @@ void HeaderReader::overwrite_date(std::string date_string) noexcept
   header_->date_ = std::move(date_string);
 }
 
-bool HeaderReader::has_date() const noexcept
-{
-  return header_->has_date();
-}
+bool HeaderReader::has_date() const noexcept { return header_->has_date(); }
 
 void HeaderReader::timescale(TimeNumber number, TimeUnit unit)
 {
-  if(has_timescale())
+  if (has_timescale())
     throw std::runtime_error("Header already has version property");
 
   header_->time_scale_ = TimeScale{number, unit};
@@ -147,7 +142,8 @@ void HeaderReader::timescale(TimeScaleView time_scale)
   timescale(time_scale.number, time_scale.unit);
 }
 
-void HeaderReader::overwrite_timescale(TimeNumber number, TimeUnit unit) noexcept
+void HeaderReader::overwrite_timescale(TimeNumber number,
+                                       TimeUnit unit) noexcept
 {
   header_->time_scale_ = TimeScale{number, unit};
 }
@@ -159,8 +155,9 @@ bool HeaderReader::has_timescale() const noexcept
 
 std::unique_ptr<Header> HeaderReader::release()
 {
-  if(!scope_stack_.empty())
-    throw std::runtime_error("Cannot release Header while there is still scope");
+  if (!scope_stack_.empty())
+    throw std::runtime_error(
+        "Cannot release Header while there is still scope");
 
   return std::move(header_);
 }
