@@ -8,8 +8,10 @@ option(BUILD_DOCS "Build documentation [unused]" FALSE)
 include(cmake/warnings.cmake)
 
 #Include dependencies
+find_package(fmt REQUIRED)
 find_package(pegtl REQUIRED)
 find_package(range-v3 0.3.6 REQUIRED)
+find_package(CLI11 REQUIRED)
 
 #Ensure C++17
 set(CMAKE_CXX_STANDARD 17)
@@ -33,19 +35,10 @@ target_include_directories(libvcd PUBLIC "${PROJECT_SOURCE_DIR}/include/")
 target_link_libraries(libvcd_assert PUBLIC libvcd)
 target_add_warnings(libvcd_assert)
 
-#Enable warnings
-if ( CMAKE_COMPILER_IS_GNUCC )
-  set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Wall")
-endif()
-if ( MSVC )
-  set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} /W4")
-endif()
-
 add_subdirectory(src)
 
 if(${BUILD_TESTS})
   find_package(Catch2 2.2.3 REQUIRED)
-  find_package(CLI11 REQUIRED)
   include(CTest)
   add_subdirectory(tests)
 endif()

@@ -17,7 +17,6 @@ struct TestHeader {
 };
 
 void read_in_test_header(VCD::HeaderReader &reader, TestHeader &test);
-void catch_test_header(VCD::Header &header, TestHeader &test);
 
 } // namespace VCD::Test
 

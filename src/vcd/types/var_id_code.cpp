@@ -11,17 +11,8 @@ VarIdCode::VarIdCode(VarType type, std::size_t size,
   // Empty
 }
 
-std::string_view VarIdCode::get_id_code() const noexcept
-{
-  return id_code_;
-}
+std::string_view VarIdCode::get_id_code() const noexcept { return id_code_; }
 
-VarType VarIdCode::get_type() const noexcept
-{
-  return type_;
-}
+VarType VarIdCode::get_type() const noexcept { return type_; }
 
-std::size_t VarIdCode::get_size() const noexcept
-{
-  return size_;
-}
+std::size_t VarIdCode::get_size() const noexcept { return size_; }

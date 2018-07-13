@@ -42,6 +42,8 @@ public:
 
   // Size
   std::size_t num_values();
+  std::size_t num_packed_vector_values();
+  std::size_t num_total_values();
 };
 
 } // namespace VCDAssert

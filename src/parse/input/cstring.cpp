@@ -5,7 +5,8 @@
 
 using namespace Parse;
 
-CStringInput::CStringInput(const char *str) {
+CStringInput::CStringInput(const char *str)
+{
   size_ = std::strlen(str);
   data_ = std::make_unique<char[]>(size_);
   std::copy_n(str, size_, data_.get());
