@@ -5,7 +5,7 @@
 #include <sdf/types/timing.hpp>
 #include <sdf/types/values.hpp>
 #include <sdf/types/enums.hpp>
-#include <parse/util/dependant_value.hpp>
+#include <parse/util/dependent_value.hpp>
 
 #include <variant>
 #include <tuple>
@@ -68,7 +68,7 @@ struct TimingCheckCondition  {
       } else if constexpr (std::is_same_v<T,NodeConstantEquality>) {
           return ConditionalType::equality;
       } else {
-          static_assert(Parse::Util::dependant_value<false, T>);
+          static_assert(Parse::Util::dependent_value<false, T>);
       }
     }, value);
   }
@@ -152,7 +152,7 @@ struct TimingCheck {
       } else if constexpr (std::is_same_v<T, Unsupported::Nochange>) {
           return TimingCheckType::nochange;
       } else {
-          static_assert(Parse::Util::dependant_value<false, T>);
+          static_assert(Parse::Util::dependent_value<false, T>);
       }
     }, value);
   }

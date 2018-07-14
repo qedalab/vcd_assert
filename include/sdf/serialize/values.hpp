@@ -47,7 +47,7 @@ TimingCheckType get_enum_type() const {
       } else if constexpr (std::is_same_v<T, Unsupported::Nochange>) {
           return TimingCheckType::nochange;
       } else {
-          static_assert(Parse::Util::dependant_value<false, T>);
+          static_assert(Parse::Util::dependent_value<false, T>);
       }
     }, value);
   }

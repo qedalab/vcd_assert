@@ -3,7 +3,7 @@
 
 #include <sdf/types/timing_check.hpp>
 #include <sdf/types/enums.hpp>
-#include <parse/util/dependant_value.hpp>
+#include <parse/util/dependent_value.hpp>
 #include <type_traits>
 
 namespace SDF {
@@ -38,7 +38,7 @@ struct TimingSpec {
       } else if constexpr (std::is_same_v<T, Unsupported::TimingLabelSpec>) {
           return TimingSpecType::label;
       } else {
-          static_assert(Parse::Util::dependant_value<false, T>);
+          static_assert(Parse::Util::dependent_value<false, T>);
       }
     }, value);
   }
