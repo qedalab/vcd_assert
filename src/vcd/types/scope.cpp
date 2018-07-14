@@ -6,7 +6,10 @@ using namespace VCD;
 
 Scope::Scope(VCD::ScopeType type, std::string identifier) noexcept :
     type_(type),
-    identifier_(std::move(identifier)) {}
+    identifier_(std::move(identifier))
+{
+  // Empty
+}
 
 bool Scope::contains_variable(std::string &reference) const noexcept
 {
@@ -35,24 +38,10 @@ std::size_t Scope::get_scope_index(std::string &identifier) const
   return child_scopes_.at(identifier);
 }
 
-std::size_t Scope::num_scopes() const noexcept
-{
-  return child_scopes_.size();
-}
+std::size_t Scope::num_scopes() const noexcept { return child_scopes_.size(); }
 
-std::string_view Scope::get_identifier() const noexcept
-{
-  return identifier_;
-}
+std::string_view Scope::get_identifier() const noexcept { return identifier_; }
 
-ScopeType Scope::get_scope_type() const noexcept
-{
-  return type_;
-}
+ScopeType Scope::get_scope_type() const noexcept { return type_; }
 
-Scope::operator ScopeDataView() const noexcept {
-  return {
-    type_,
-    identifier_
-  };
-}
+Scope::operator ScopeDataView() const noexcept { return {type_, identifier_}; }

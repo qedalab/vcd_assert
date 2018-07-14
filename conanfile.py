@@ -30,6 +30,6 @@ class VCDAssertConan(ConanFile):
     def build_requirements(self):
         self.build_requires("pegtl/2.6.0@taocpp/stable")
         self.build_requires("range-v3/0.3.6@pleroux0/stable")
-        self.build_requires("fmt/5.0.0@bincrafters/stable")
+        self.build_requires("fmt/5.1.0@bincrafters/stable")
         self.build_requires("Catch/2.2.3@pleroux0/stable")
-        self.build_requires("CLI11/1.5.4@CLIUtils/stable")
+        self.build_requires("CLI11/1.6.0@cliutils/stable")

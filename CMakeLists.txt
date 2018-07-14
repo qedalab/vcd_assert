@@ -8,11 +8,13 @@ option(BUILD_DOCS "Build documentation [unused]" FALSE)
 include(cmake/warnings.cmake)
 
 #Include dependencies
+find_package(fmt REQUIRED)
 find_package(pegtl REQUIRED)
 find_package(range-v3 0.3.6 REQUIRED)
+find_package(CLI11 REQUIRED)
 find_package(fmt 5.0.0 REQUIRED)
 
-#Set flag for static_string
+#Set static_string's string_view flag
 set(AK_TOOLKIT_CONFIG_USING_STRING_VIEW 1)
 if(${AK_TOOLKIT_CONFIG_USING_STRING_VIEW})
   add_library(static_string INTERFACE)  
@@ -49,19 +51,10 @@ target_include_directories(libvcd PUBLIC "${PROJECT_SOURCE_DIR}/include/")
 target_link_libraries(libvcd_assert PUBLIC libvcd)
 target_add_warnings(libvcd_assert)
 
-#Enable warnings
-if ( CMAKE_COMPILER_IS_GNUCC )
-  set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Wall")
-endif()
-if ( MSVC )
-  set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} /W4")
-endif()
-
 add_subdirectory(src)
 
 if(${BUILD_TESTS})
   find_package(Catch2 2.2.3 REQUIRED)
-  find_package(CLI11 REQUIRED)
   include(CTest)
   add_subdirectory(tests)
 endif()

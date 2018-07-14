@@ -10,7 +10,7 @@ int main(int argc, char** argv) {
   using tao::pegtl::parse;
 
   CLI::App cli("LibVCD Grammar benchmark");
-  cli.set_failure_message(CLI::FailureMessage::help);
+  cli.failure_message(CLI::FailureMessage::help);
 
   std::string file_path;
   cli.add_option("file", file_path, "File to do a grammar parse on")

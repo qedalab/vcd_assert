@@ -16,8 +16,6 @@ struct TestVar {
 };
 
 void read_in_test_var(VCD::HeaderReader &reader, TestVar &test);
-void catch_test_var(VCD::Header &header,
-                    VCD::Variable &variable, TestVar test);
 
 } // namespace VCD::Test
 

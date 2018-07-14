@@ -6,8 +6,10 @@
 namespace Parse::Apply {
 
 struct float_value {
-  template <class Rule, class ActionInput, class State>
-  static bool apply(const ActionInput &input, State &state) {
+  template <class Rule, class ActionInput, class... Stack, class State>
+  static bool apply(const ActionInput &input, State &state,
+                    const Stack &... /*unused*/
+  ) {
     state = std::stod(input.string());
     return true;
   }

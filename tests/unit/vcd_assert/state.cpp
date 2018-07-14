@@ -3,9 +3,9 @@
 #include "vcd/test/header.hpp"
 
 #include <catch2/catch.hpp>
-#include <range/v3/view/indices.hpp>
 #include <range/v3/algorithm/copy.hpp>
 #include <range/v3/algorithm/equal.hpp>
+#include <range/v3/view/indices.hpp>
 
 using namespace VCD;
 using namespace VCDAssert;

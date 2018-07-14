@@ -6,7 +6,7 @@ using namespace Parse::Concepts;
 
 struct FooSimpleRule {
   template <class Input, class... States>
-  static bool match(Input&, States&&...) {return true;}
+  static bool match(Input& /*unused*/, States&&... /*unused*/) {return true;}
 };
 
 struct FooErrorRule : FooSimpleRule {

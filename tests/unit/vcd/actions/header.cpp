@@ -1,5 +1,7 @@
 #include "vcd/actions/header.hpp"
 
+#include "../test/header.hpp"
+
 #include "parse/test/parse.hpp"
 #include "vcd/grammar/grammar.hpp"
 #include "vcd/test/header.hpp"

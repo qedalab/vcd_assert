@@ -4,7 +4,7 @@
 
 using namespace VCDAssert;
 
-TEST_CASE("VCDAssert.TimingChecker")
+TEST_CASE("VCDAssert.BasicTimingChecker")
 {
 
   constexpr std::size_t hold_port = 0;

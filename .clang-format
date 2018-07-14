@@ -4,6 +4,7 @@ BreakBeforeBraces: Custom
 BraceWrapping:
   AfterStruct: false
   AfterClass: true
+  AfterFunction: true
 BreakConstructorInitializers: AfterColon
 ConstructorInitializerAllOnOneLineOrOnePerLine: true
 FixNamespaceComments: true
