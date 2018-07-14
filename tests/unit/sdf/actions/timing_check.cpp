@@ -43,9 +43,10 @@ TEST_CASE("SDF.Actions.NodeConstantEqualityAction", "[SDF][Actions][NodeConstant
   require_parse<Grammar::node_constant_equality_condition, 
                 Actions::NodeConstantEqualityAction>(test_nodeconstantequality_1_sv, test);
   CAPTURE(test);
-  REQUIRE(wanted.left == test.left);
-  // REQUIRE(wanted.op == test.op);
+  REQUIRE(wanted.op == test.op);
   REQUIRE(wanted.right == test.right);
+  catch_test_node(static_cast<Node>(wanted.left),static_cast<Node>(test.left));     
+
 }
 
 TEST_CASE("SDF.Actions.TimingCheckCondAction", "[SDF][Actions][TimingCheckCondAction]") {

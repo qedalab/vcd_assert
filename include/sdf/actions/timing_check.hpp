@@ -2,6 +2,7 @@
 #define LIBSDF_ACTIONS_TIMINGCHECK_HPP
 
 #include <sdf/actions/base.hpp>
+#include <sdf/actions/constants.hpp>
 #include <sdf/actions/values.hpp>
 #include <sdf/actions/timing.hpp>
 
@@ -36,7 +37,7 @@ struct NodeConstantEqualityAction : multi_dispatch<
     EqualityOperatorAction, Storage::member<&NodeConstantEquality::op>
   >,
   Grammar::scalar_constant, inner_action<
-    NumberAction, Storage::member<&NodeConstantEquality::right>
+    BinaryAction, Storage::member<&NodeConstantEquality::right>
   >
 >{
   using state = NodeConstantEquality;
