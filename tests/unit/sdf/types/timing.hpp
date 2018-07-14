@@ -24,6 +24,16 @@ namespace sstr = ak_toolkit::static_str;
 
 namespace SDF::Test {
 
+
+// constexpr auto posedge_prepend(const sstr::string input){
+// }
+
+// constexpr auto negedge_prepend(const sstr::string input){
+// }
+
+// constexpr auto enable_append(const sstr::string input){
+// }
+
 constexpr auto port_1_str = sstr::literal("CP");
 constexpr std::string_view port_1_sv(port_1_str, std::size(port_1_str));
 static const Node port_1{NodeType::port, "CP"};
@@ -48,7 +58,7 @@ constexpr auto node_2_str = sstr::literal("E_ENABLE");
 constexpr std::string_view node_2_sv(node_2_str, std::size(node_2_str));
 static const Node node_2{NodeType::port, "E_ENABLE"};
 
-constexpr auto node_3_str = sstr::literal("E_ENABLE");
+constexpr auto node_3_str = sstr::literal("F_ENABLE");
 constexpr std::string_view node_3_sv(node_3_str, std::size(node_3_str));
 static const Node node_3{NodeType::port, "F_ENABLE"};
 
@@ -85,7 +95,7 @@ static const Node node_2_posedge{NodeType::port, "E_ENABLE", EdgeType::posedge};
 constexpr auto node_3_posedge_str = sstr::literal("(posedge E_ENABLE)");
 constexpr std::string_view node_3_posedge_sv(node_3_posedge_str,
                                              std::size(node_3_posedge_str));
-static const Node node_3_posedge{NodeType::port, "F_ENABLE", EdgeType::posedge};
+static const Node node_3_posedge{NodeType::port, "E_ENABLE", EdgeType::posedge};
 
 constexpr auto port_1_negedge_str = sstr::literal("(negedge CP)");
 constexpr std::string_view port_1_negedge_sv(port_1_negedge_str,
@@ -107,44 +117,48 @@ constexpr std::string_view port_4_negedge_sv(port_4_negedge_str,
                                              std::size(port_4_negedge_str));
 static const Node port_4_negedge{NodeType::port, "F", EdgeType::negedge};
 
-constexpr auto node_1_negedge_str = sstr::literal("(negedge D_ENABLE)");
-constexpr std::string_view node_1_negedge_sv(node_1_negedge_str,
-                                             std::size(node_1_negedge_str));
-static const Node node_1_negedge{NodeType::port, "D_ENABLE", EdgeType::negedge};
 
-constexpr auto node_2_negedge_str = sstr::literal("(negedge E_ENABLE)");
-constexpr std::string_view node_2_negedge_sv(node_2_negedge_str,
-                                             std::size(node_2_negedge_str));
-static const Node node_2_negedge{NodeType::port, "E_ENABLE", EdgeType::negedge};
-
-constexpr auto node_3_negedge_str = sstr::literal("(negedge E_ENABLE)");
-constexpr std::string_view node_3_negedge_sv(node_3_negedge_str,
-                                             std::size(node_3_negedge_str));
-static const Node node_3_negedge{NodeType::port, "F_ENABLE", EdgeType::negedge};
 
 static const Node node_complex_1{
-    NodeType::port,
-    port_1.basename_identifier,
-    {},
-    HierarchicalIdentifier{HChar::slash, {"root"}}};
+  NodeType::port,
+  port_1.basename_identifier,
+  {},
+  HierarchicalIdentifier{
+    HChar::slash, 
+    {"root"}
+  }
+};
+
 static const Node node_complex_2{
-    NodeType::port,
-    "D_ENABLE",
-    {},
-    HierarchicalIdentifier{HChar::slash, {"root", "scope"}}};
+  NodeType::port,
+  "D_ENABLE",
+  {},
+  HierarchicalIdentifier{
+    HChar::slash, 
+    {"root", "scope"}
+  }
+};
 
 static const Node node_complex_3{
-    NodeType::port,
-    port_3.basename_identifier,
-    {},
-    HierarchicalIdentifier{HChar::dot, {"root", "scope"}}};
+  NodeType::port,
+  port_3.basename_identifier,
+  {},
+  HierarchicalIdentifier{
+    HChar::dot,
+    {"root", "scope"}
+  }
+};
 
 static const Node node_complex_4{
-    NodeType::port,
-    port_4.basename_identifier,
-    {},
-    HierarchicalIdentifier{HChar::slash, {"root", "scope", "counter"}},
-    4};
+  NodeType::port,
+  port_4.basename_identifier,
+  {},
+  HierarchicalIdentifier{
+    HChar::slash, 
+    {"root", "scope", "counter"}
+  },
+  4
+};
 
 // void read_in_test_timing(SDF::DelayFileReader &reader, TestCell &test);
 // void catch_test_timing(SDF::DelayFile &header, SDF::Cell &scope, TestCell &test);

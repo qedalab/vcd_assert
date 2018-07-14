@@ -32,10 +32,10 @@ static const InvertedNode test_invertednode_1{
   port_1
 };
 
-constexpr auto test_NodeConstantEquality_1_str =  port_1_str + "==1";
-constexpr std::string_view test_NodeConstantEquality_1_sv(
-  test_NodeConstantEquality_1_str, std::size(test_NodeConstantEquality_1_str));
-static const NodeConstantEquality test_NodeConstantEquality_1{
+constexpr auto test_nodeconstantequality_1_str =  port_1_str + "==1";
+constexpr std::string_view test_nodeconstantequality_1_sv(
+  test_nodeconstantequality_1_str, std::size(test_nodeconstantequality_1_str));
+static const NodeConstantEquality test_nodeconstantequality_1{
   port_1,
   EqualityOperator::logic_equal,
   true
@@ -48,10 +48,10 @@ static const InvertedNode test_invertednode_2{
   port_3
 };
 
-constexpr auto test_NodeConstantEquality_2_str = port_3_str + "===1";
-constexpr std::string_view test_NodeConstantEquality_2_sv(
-  test_NodeConstantEquality_2_str, std::size(test_NodeConstantEquality_2_str));
-static const NodeConstantEquality test_NodeConstantEquality_2{
+constexpr auto test_nodeconstantequality_2_str = port_3_str + "===1";
+constexpr std::string_view test_nodeconstantequality_2_sv(
+  test_nodeconstantequality_2_str, std::size(test_nodeconstantequality_2_str));
+static const NodeConstantEquality test_nodeconstantequality_2{
   port_3,
   EqualityOperator::case_equal,
   true
@@ -64,10 +64,10 @@ static const InvertedNode test_invertednode_3{
   node_3
 };
 
-constexpr auto test_NodeConstantEquality_3_str = port_4_str + "!==1";
-constexpr std::string_view test_NodeConstantEquality_3_sv(
-  test_NodeConstantEquality_3_str, std::size(test_NodeConstantEquality_3_str));
-static const NodeConstantEquality test_NodeConstantEquality_3{
+constexpr auto test_nodeconstantequality_3_str = port_4_str + "!==1";
+constexpr std::string_view test_nodeconstantequality_3_sv(
+  test_nodeconstantequality_3_str, std::size(test_nodeconstantequality_3_str));
+static const NodeConstantEquality test_nodeconstantequality_3{
   port_4,
   EqualityOperator::case_inv,
   true
@@ -82,11 +82,11 @@ static const TimingCheckCondition test_timingcheckcondition_1{
 };
 
 constexpr auto test_timingcheckcondition_2_str = 
-  test_NodeConstantEquality_1_str;
+  test_nodeconstantequality_1_str;
 constexpr std::string_view test_timingcheckcondition_2_sv(
   test_timingcheckcondition_2_str, std::size(test_timingcheckcondition_2_str));
 static const TimingCheckCondition test_timingcheckcondition_2{
-  test_NodeConstantEquality_1 
+  test_nodeconstantequality_1 
 };
 
 constexpr auto test_timingcheckcondition_3_str = 
@@ -98,15 +98,15 @@ static const TimingCheckCondition test_timingcheckcondition_3{
 };
 
 constexpr auto test_timingcheckcondition_4_str = 
-  test_NodeConstantEquality_2_str;
+  test_nodeconstantequality_2_str;
 constexpr std::string_view test_timingcheckcondition_4_sv(
   test_timingcheckcondition_4_str, std::size(test_timingcheckcondition_4_str));
 static const TimingCheckCondition test_timingcheckcondition_4{
-  test_NodeConstantEquality_2 
+  test_nodeconstantequality_2 
 };
 
 constexpr auto test_porttimingcheck_1_str = 
-  "(COND " + node_1_str + " " + port_1_str + ")";
+  "(COND " + node_1_str + " " + port_1_posedge_str + ")";
 constexpr std::string_view test_porttimingcheck_1_sv(
   test_porttimingcheck_1_str, std::size(test_porttimingcheck_1_str));
 static const PortTimingCheck test_porttimingcheck_1{

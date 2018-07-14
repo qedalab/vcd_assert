@@ -17,11 +17,10 @@ struct cell_type : block<
   qstring
 >{};
 
-// struct cell_instance : unimplemented< key_instance >{}; 
 struct cell_instance : block< 
   key_instance,
   sor<
-    opt<hierarchical_identifier>, one< '*' > 
+     one< '*' >, opt<hierarchical_identifier>   /*order*/
   >
 >{};
 

@@ -10,29 +10,22 @@ void SDF::Test::catch_test_node(SDF::Node wanted, SDF::Node test)
   SECTION("SDF Node"){
 
     SECTION("Member : \"type\"") {
-      std::string output;
-      ranges::copy("Testing \""sv, ranges::back_inserter(output));
-      ranges::copy(nodetype_to_string(test.type),
-                   ranges::back_inserter(output));
-      ranges::copy("\" and \""sv, ranges::back_inserter(output));
-      ranges::copy(nodetype_to_string(wanted.type),
-                   ranges::back_inserter(output));
-      ranges::copy("\""sv, ranges::back_inserter(output));
-
-      INFO("Wanted");
       CAPTURE(test.type);
-      SECTION(output) { 
-        REQUIRE(test.type == wanted.type); 
-      }
+      REQUIRE(wanted.type == test.type); 
     }
 
     SECTION("Member : \"basename_identifier\"") {
-      REQUIRE(test.basename_identifier == wanted.basename_identifier);
+      CAPTURE(test.basename_identifier);
+      REQUIRE(wanted.basename_identifier == test.basename_identifier);
+    }
+
+    if(wanted.edge.has_value()){
+      CAPTURE(test.edge.value());
+      REQUIRE(wanted.edge.value() == test.edge.value());
     }
 
     SECTION("Member : \"hierarchical_identifier\" : \n") {
-      std::string output;
-      
+      std::string output;     
       ranges::copy("\fWanted : "sv, ranges::back_inserter(output));
       if(wanted.hierarchical_identifier.has_value()){
         ranges::copy("\""sv, ranges::back_inserter(output));
@@ -59,25 +52,33 @@ void SDF::Test::catch_test_node(SDF::Node wanted, SDF::Node test)
       SECTION(output){
         if(wanted.hierarchical_identifier.has_value()){
             REQUIRE(test.hierarchical_identifier.has_value());
-            REQUIRE(test.hierarchical_identifier ==
-                          wanted.hierarchical_identifier);          
+            REQUIRE(test.hierarchical_identifier.value() ==
+                          wanted.hierarchical_identifier.value());          
         }else{
-          REQUIRE_FALSE(test.hierarchical_identifier.has_value());
+          REQUIRE_FALSE(test.hierarchical_identifier);
         }
       }
     }
 
     SECTION("Member : \"start\"") { 
-      REQUIRE(test.start == wanted.start); 
+      if(wanted.start.has_value()){
+        CAPTURE(wanted.start.value());
+        REQUIRE(test.start.has_value());
+        CAPTURE(test.start.value());
+        REQUIRE(wanted.start.value() == test.start.value()); 
+      }
     }
-
     SECTION("Member : \"end\"") { 
-      REQUIRE(test.end == wanted.end); 
+      if(wanted.end.has_value()){
+        CAPTURE(wanted.end.value());
+        REQUIRE(test.end.has_value());
+        CAPTURE(test.end.value());
+        REQUIRE(wanted.end.value() == test.end.value()); 
+      }
     }
-
-    SECTION("Overall : \"end\"") { 
-      REQUIRE(test == wanted);
-    }
+    CAPTURE(wanted);
+    CAPTURE(test);
+    // REQUIRE(wanted == test);
   }
 }
 

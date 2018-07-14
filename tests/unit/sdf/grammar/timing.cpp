@@ -58,5 +58,28 @@ TEST_CASE("SDF.Grammar.Timing", "[SDF][Grammar][Timing]") {
           
       REQUIRE(match_exactly<port_tchk>(port_tchk_str));
   }
-
+  SECTION(fmt::format(
+      "Testing bus_port_str  : \n{}\n",
+        bus_port_str)) {
+          
+      REQUIRE(match_exactly<bus_port>(bus_port_str));
+  }
+  SECTION(fmt::format(
+      "Testing port_instance_str  : \n{}\n",
+        port_instance_str)) {
+          
+      REQUIRE(match_exactly<port_instance>(port_instance_str));
+  }
+  SECTION(fmt::format(
+      "Testing port_str  : \n{}\n",
+        port_str)) {
+          
+      REQUIRE(match_exactly<port>(port_str));
+  }
+  SECTION(fmt::format(
+      "Testing bus_port_str  : \n{}\n",
+        bus_port_str)) {
+          
+      REQUIRE(match_exactly<bus_port>(bus_port_str));
+  }
 }

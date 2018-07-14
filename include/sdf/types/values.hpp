@@ -28,6 +28,7 @@ struct Triple {
   Number min;
   Number typ;
   Number max;
+  int places = 0;
 
   bool operator==(const Triple &t) const noexcept {
     return ((min == t.min) && (typ == t.typ) && (max == t.max));

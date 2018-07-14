@@ -31,15 +31,18 @@ struct bus_index :  op_sep_seq<
   one< ']' >
 >{};
 
-struct bus_range : op_sep_seq<
+struct bus_start_index : seq<integer>{};
+struct bus_end_index : seq<integer>{};
+
+struct bus_range : seq<
   one< '[' >,
-  integer,
+  bus_end_index,
   one< ':' >,
-  integer,
+  bus_start_index,
   one< ']' >
 >{};
 
-struct bus_net : op_sep_seq< 
+struct bus_net : seq< 
   identifier,
   // hierarchical_identifier, /* CCM assumption 001 */
   opt<
@@ -74,12 +77,12 @@ struct net_spec : sor<
   net_instance
 >{};
 
-struct bus_port : op_sep_seq< 
+struct bus_port : seq< 
   identifier,
   // hierarchical_identifier, /* CCM assumption 001 */
-  opt<
+  // opt<
     bus_range
-  >
+  // >
 >{};
 
 //I made this up.
@@ -97,8 +100,8 @@ struct scalar_port : op_sep_seq<
 >{};
 
 struct port : sor< 
-  scalar_port,
-  bus_port
+  bus_port,
+  scalar_port
 >{};
 
 struct port_instance : sor< 
@@ -336,6 +339,8 @@ struct port_tchk : sor<
   port_spec
 >{};
 
+struct port_tchk_0 : alias<port_tchk>{};
+struct port_tchk_1 : alias<port_tchk>{};
 
 // struct nochange_timing_check : block<
 //   key_nochange,
@@ -403,8 +408,8 @@ struct port_tchk : sor<
 
 struct hold_timing_check : block<
   key_hold,
-  port_tchk,
-  port_tchk,
+  port_tchk_0,
+  port_tchk_1,
   value
 >{};
 

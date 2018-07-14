@@ -24,7 +24,7 @@ void SDF::Test::catch_test_timingspec(TimingSpec wanted, TimingSpec test) {
     FAIL("Timing Spec of type 'label' is not supported");
     break;
   default:
-    FAIL("InternalError");
+    FAIL("InternalError : Timing Spec Type Error");
   }
   
 }

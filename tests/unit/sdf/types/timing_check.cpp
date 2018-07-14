@@ -2,49 +2,66 @@
 
 using namespace SDF;
 using namespace SDF::Test;
-using namespace ranges;
 
 void SDF::Test::catch_test_invertednode(InvertedNode wanted,
                                         InvertedNode test) {
-
+  Node new_wanted_node{wanted};                                          
+  Node new_test_node{test};                                          
+  catch_test_node(new_wanted_node, test);
 }
 
 void SDF::Test::catch_test_nodeconstantequality(NodeConstantEquality wanted,
                                                 NodeConstantEquality test) {
 
-
+   SECTION("Nodes must be equivalent") {
+    CAPTURE(wanted.left);      
+    CAPTURE(test.left);      
+    REQUIRE(wanted.left == test.left); 
+  }
+  SECTION("Equality operators must be equivalent") {
+    CAPTURE(wanted.op);      
+    CAPTURE(test.op);      
+    REQUIRE(wanted.op == test.op); 
+  }
+  SECTION("Scalars must be equivalent") {
+    CAPTURE(wanted.right);      
+    CAPTURE(test.right);      
+    REQUIRE(wanted.right == test.right); 
+  }
 }
 
 void SDF::Test::catch_test_timingcheckcondition(TimingCheckCondition wanted,
                                                 TimingCheckCondition test) {
-  SECTION("Conditionals should be equal") {
-    SECTION("Should be of the same type") {
-      CAPTURE(test.get_enum_type());      
-      REQUIRE(wanted.get_enum_type() == test.get_enum_type()); 
-    }
-    SECTION("Should be equal") {
-      CAPTURE(test.value);
-      CHECK(wanted.value == test.value);   
-    }
+  SECTION("Timing Check Condition TYPE") {
+    CAPTURE(test.get_enum_type());      
+    REQUIRE(wanted.get_enum_type() == test.get_enum_type()); 
   }
-  // if(!(wanted.value == test.value) && 
-  //     (wanted.get_enum_type() == test.get_enum_type()))
-  // {   
-  //   switch (wanted.get_enum_type()) {
-  //   case ConditionalType::none:
-  //     catch_test_node(std::get<Node>(wanted.value), std::get<Node>(test.value));
-  //     break; 
-  //   case ConditionalType::inverted:
-  //     catch_test_invertednode(std::get<InvertedNode>(wanted.value), std::get<InvertedNode>(test.value));
-  //     break; 
-  //   case ConditionalType::equality:
-  //     catch_test_nodeconstantequality(std::get<NodeConstantEquality>(wanted.value),
-  //                                     std::get<NodeConstantEquality>(test.value));
-  //     break; 
-  //   default:
-  //     FAIL("InternalError");
-  //   }
-  // }
+  SECTION("Timing Check Condition Value") {
+    CAPTURE(test.value);
+    // REQUIRE(wanted.value == test.value);   
+  
+  if(!(wanted.value == test.value) && 
+      (wanted.get_enum_type() == test.get_enum_type()))
+  {   
+    CAPTURE(wanted.get_enum_type());
+    CAPTURE(test.get_enum_type());      
+    switch (wanted.get_enum_type()) {
+    case ConditionalType::none:
+      catch_test_node(std::get<Node>(wanted.value), std::get<Node>(test.value));
+      break; 
+    case ConditionalType::inverted:
+      catch_test_invertednode(std::get<InvertedNode>(wanted.value), std::get<InvertedNode>(test.value));
+      break; 
+    case ConditionalType::equality:
+      catch_test_nodeconstantequality(std::get<NodeConstantEquality>(wanted.value),
+                                      std::get<NodeConstantEquality>(test.value));
+      break; 
+    default:
+      FAIL("ConditionalType Not Found");
+    }
+    
+  }
+  }
 
 }
 //   if(test.port.edge.has_value()){
@@ -68,8 +85,9 @@ void SDF::Test::catch_test_porttimingcheck(PortTimingCheck wanted,
       REQUIRE(test.timing_check_condition.has_value());
     }
     if (test.timing_check_condition.has_value()) {
-        catch_test_timingcheckcondition(wanted.timing_check_condition.value(),
-                                        test.timing_check_condition.value());
+      INFO("Conditionals should be equal");
+      catch_test_timingcheckcondition(wanted.timing_check_condition.value(),
+                                      test.timing_check_condition.value());
     }
   }
 
@@ -106,9 +124,6 @@ void SDF::Test::catch_test_timingcheck(TimingCheck wanted, TimingCheck test) {
   case TimingCheckType::hold:
     catch_test_hold(std::get<Hold>(wanted.value), std::get<Hold>(test.value));
     break;
-  case TimingCheckType::setup:
-    FAIL("Only Hold Timing Checks are supported");
-    break; 
   default:
     FAIL("Only Hold Timing Checks are supported");
   }
@@ -121,6 +136,6 @@ void SDF::Test::catch_test_timingcheckspec(TimingCheckSpec wanted,
     REQUIRE(wanted.size() == test.size()); 
   }
 
-  for (auto &&[w_tcheck, t_tcheck] : view::zip(wanted, test))
+  for (auto &&[w_tcheck, t_tcheck] : ranges::view::zip(wanted, test))
     catch_test_timingcheck(w_tcheck, t_tcheck);
 }

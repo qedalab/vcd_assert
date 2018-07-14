@@ -116,7 +116,7 @@ public:
   /// Set delayfile timescale
   /// \param timescale The timescale
   /// \exception Throws if and only if timescale is already set
-  void timescale(TimeScaleView timescale);
+  void timescaleview(TimeScaleView timescale);
 
   /// True if the current delayfile contains a timescale
   /// \returns Whether the current delayfile contains a timescale
@@ -131,9 +131,9 @@ public:
   /// \returns Whether the current delayfile contains a cells
   bool has_cells() const noexcept;
 
-  /// Add delayfile cell
-  /// \param cell The delayfile cell
-  void add_cell(Cell cell) const noexcept; //todo remove
+  // /// Add delayfile cell
+  // /// \param cell The delayfile cell
+  // void add_cell(Cell cell) const noexcept; //todo remove
 
   /// Releases the delayfile file that was read in.
   /// Essentially finalizing the data within the delayfile file.

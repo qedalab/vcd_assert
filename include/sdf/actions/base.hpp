@@ -27,8 +27,14 @@ namespace Actions {
 
 using namespace Parse;  
 
+struct StringAction : single_dispatch<
+    Grammar::qstring_content, apply<Apply::string>
+> {
+  using state = std::string;
+};
+
 struct QStringAction : single_dispatch<
-    Grammar::qstring, apply<Apply::string>
+    Grammar::qstring, inner_action_passthrough<StringAction>
 > {
   using state = std::string;
 };

@@ -130,9 +130,9 @@ void DelayFileReader::timescale(TimeScaleNumber number, TimeScaleUnit unit)
   delayfile_->timescale_ = TimeScale{number, unit};
 }
 
-void DelayFileReader::timescale(TimeScaleView timescale)
+void DelayFileReader::timescaleview(TimeScaleView timescale)
 {
-  delayfile_->timescale_= TimeScale{timescale.number, timescale.unit};
+  delayfile_->timescale_ = TimeScale{timescale.number, timescale.unit};
 }
 
 bool DelayFileReader::has_timescale() const noexcept
@@ -148,10 +148,10 @@ void DelayFileReader::cells(std::vector<Cell> cells)
   delayfile_->cells_ = std::move(cells);
 }
 
-void DelayFileReader::add_cell(Cell cell) const noexcept
-{
-  delayfile_->cells_.emplace_back(std::move(cell));
-}
+// void DelayFileReader::add_cell(Cell cell) const noexcept
+// {
+//   delayfile_->cells_.emplace_back(std::move(cell));
+// }
 
 bool DelayFileReader::has_cells() const noexcept
 {

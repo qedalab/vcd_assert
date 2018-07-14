@@ -8,12 +8,14 @@ namespace Grammar {
 // clang-format off
 
 struct integer : plus<decimal_digit> {};
+struct fractional : alias<integer> {};
+struct exponent : alias<integer> {};
 
 struct real_number : must<
   not_at<one<'-'>>,
   opt<integer>,
-  pegtl::opt_must<seq<one<'.'>, integer>>,
-  pegtl::opt_must<seq<one<'e'>, opt<sign>, integer>>
+  pegtl::opt_must<seq<one<'.'>, fractional>>,
+  pegtl::opt_must<seq<one<'e'>, opt<sign>, exponent>>
 > {};
 
 struct signed_real_number : must<

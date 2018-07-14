@@ -39,9 +39,9 @@ void serialize_cell_instance(OutputIterator oi, int indent,
   using std::literals::string_view_literals::operator""sv;
 
   serialize_indent(oi, indent);
-  ranges::copy("(CELLINSTANCE "sv, oi);
+  ranges::copy("(INSTANCE "sv, oi);
   if(std::holds_alternative<Star>(cell_instance)){
-    ranges::copy("*");
+    ranges::copy("*"sv, oi);
   }else{
     serialize_hierarchical_identifier(oi, indent, std::get<HierarchicalIdentifier>(cell_instance));
   }
@@ -70,7 +70,6 @@ void serialize_cell(OutputIterator oi, int indent,
   serialize_indent(oi, indent);
   ranges::copy(")\n"sv, oi);
 }
-
 
 /// Serialize SDF cells
 /// \tparam OutputIterator must meet the requirements of OutputIterator

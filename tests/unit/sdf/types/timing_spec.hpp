@@ -13,11 +13,22 @@
 #include <string_view>
 using std::literals::string_view_literals::operator""sv;
 
-// #include <ak_toolkit/static_string.hpp>
-// namespace sstr = ak_toolkit::static_str;
-
-
 namespace SDF::Test {
+
+constexpr auto test_timingspec_1_str = test_timingcheckspec_1_str;
+constexpr std::string_view test_timingspec_1_sv(
+  test_timingspec_1_str, std::size(test_timingspec_1_str));
+static const TimingSpec test_timingspec_1{
+  {test_timingcheckspec_1}
+};
+
+constexpr auto test_timingspec_array_1_str = 
+  test_timingcheckspec_1_str;
+constexpr std::string_view test_timingspec_array_1_sv(
+  test_timingspec_array_1_str, std::size(test_timingspec_array_1_str));
+static const std::vector<TimingSpec> test_timingspec_array_1{
+  {test_timingcheckspec_1}
+};
 
 void catch_test_timingspec(TimingSpec wanted,TimingSpec test);
 

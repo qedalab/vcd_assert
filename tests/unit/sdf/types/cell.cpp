@@ -12,7 +12,7 @@ void SDF::Test::catch_test_timing_specs(std::vector<TimingSpec> specs, std::vect
   SECTION("Timing Spec Size"){
     REQUIRE(specs.size() == tests.size());
   }
-  for(auto && [spec,test] : view::zip(specs,tests))
+  for(auto && [spec,test] : ranges::view::zip(specs,tests))
     catch_test_timingspec(spec,test); 
 }
 
@@ -30,6 +30,6 @@ void SDF::Test::catch_test_cells(std::vector<Cell> cells, std::vector<Cell> test
 {
   REQUIRE(cells.size() == tests.size());
 
-  for(auto&& [cell,test] : view::zip(cells, tests))
+  for(auto&& [cell,test] : ranges::view::zip(cells, tests))
     catch_test_cell(cell,test);    
 }

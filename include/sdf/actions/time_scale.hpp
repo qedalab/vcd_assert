@@ -15,29 +15,10 @@ namespace Actions{
 
 using namespace Parse;  
 
-struct TimeScaleNumberApply {
-  template <class Rule, class ActionInput>
-  static bool apply(const ActionInput &input, TimeScaleNumber &tn) {
-    switch (input.size()) {
-    case 1:
-      tn = TimeScaleNumber::_1;
-      break;
-    case 2:
-      tn = TimeScaleNumber::_10;
-      break;
-    case 3:
-      tn = TimeScaleNumber::_100;
-      break;
-    default:
-      throw std::runtime_error("InternalError");
-    }
-
-    return true;
-  }
-};
-
-struct TimeScaleNumberAction : single_dispatch<
-  Grammar::timescale_number, apply<TimeScaleNumberApply>
+struct TimeScaleNumberAction : multi_dispatch<
+  Grammar::timescale_number_1, apply0<Apply::value<TimeScaleNumber::_1>>,
+  Grammar::timescale_number_10, apply0<Apply::value<TimeScaleNumber::_10>>,
+  Grammar::timescale_number_100, apply0<Apply::value<TimeScaleNumber::_100>>
 > {
   using state = TimeScaleNumber;
 };

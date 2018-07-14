@@ -3,7 +3,7 @@
 
 #include <sdf/types/cell.hpp>
 
-#include "./timing_check.hpp"
+#include "./timing_spec.hpp"
 
 #include <catch2/catch.hpp>
 
@@ -12,7 +12,11 @@
 #include <vector>
 #include <range/v3/view/zip.hpp>
 
-using namespace ranges;
+#include <string_view>
+using std::literals::string_view_literals::operator""sv;
+
+#include <ak_toolkit/static_string.hpp>
+namespace sstr = ak_toolkit::static_str;
 
 namespace SDF::Test {
 using namespace SDF;
@@ -26,14 +30,15 @@ using namespace SDF;
 
 struct TestCell : public Cell{};
 
-static const std::string test_celltype_1{
-  "DFF"
-};
+constexpr auto test_celltype_1_str = sstr::literal("(CELLTYPE \"DFF\")");
+static const std::string test_celltype_1{"DFF"};
 
+constexpr auto test_cellinstance_1_str = sstr::literal("(INSTANCE *)");
 static const CellInstance test_cellinstance_1{
   Star{}
 };
 
+constexpr auto test_cellinstance_2_str = "path";
 static const CellInstance test_cellinstance_2{
   HierarchicalIdentifier{
     HChar::dot,
@@ -41,20 +46,21 @@ static const CellInstance test_cellinstance_2{
   }
 };
 
-static const std::vector<TimingSpec> test_timingspec_array_1{
-  {test_timingcheckspec_1}
-};
+constexpr auto test_cell_1_str = 
+  "(CELL \n  " + test_celltype_1_str + "\n  " +
+  test_cellinstance_1_str + "\n    " +
+  test_timingspec_array_1_str + "\n)";
 
-static const Cell test_testcell_1{
+static const Cell test_cell_1{
   test_celltype_1,
   test_cellinstance_1,
   test_timingspec_array_1
 };
 
-// void SDF::Test::read_in_test_cell(SDF::DelayFileReader &reader, TestCell &test)
-void catch_test_port_tchk(PortTimingCheck &pt, PortTimingCheck &test);
-void catch_test_hold_check(Hold &hold, Hold &test);
-void catch_test_timing_checks(std::vector<TimingCheck> &checks, std::vector<TimingCheck> &tests);
+// // void SDF::Test::read_in_test_cell(SDF::DelayFileReader &reader, TestCell &test)
+// void catch_test_port_tchk(PortTimingCheck &pt, PortTimingCheck &test);
+// void catch_test_hold_check(Hold &hold, Hold &test);
+// void catch_test_timing_checks(std::vector<TimingCheck> &checks, std::vector<TimingCheck> &tests);
 // void catch_test_timing_checks(TimingCheckSpec &check, TimingCheckSpec &test);
 void catch_test_timing_specs(std::vector<TimingSpec> specs, std::vector<TimingSpec> tests);
 void catch_test_cell(Cell cell, Cell test);

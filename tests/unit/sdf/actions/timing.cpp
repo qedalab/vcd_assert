@@ -13,20 +13,76 @@ using namespace SDF;
 using namespace SDF::Test;
 using Parse::Test::require_parse;
 
-/* TODO
-struct ScalarNodeAction : multi_dispatch<
-struct TimingCheckCondAction : multi_dispatch<
-struct PortSpecAction : single_dispatch<
-struct PortCheckAction : single_dispatch<
-struct HoldPortStorage  {
-struct HoldPortTupleAction : single_dispatch<
-struct HoldPortAction : single_dispatch<
-struct HoldTimingCheckAction : multi_dispatch<
-struct TimingCheckAction : single_dispatch<
-struct TimingCheckArrayAction : single_dispatch<
-*/
+TEST_CASE("SDF.Actions.NodeAction", "[SDF][Actions][NodeAction]") {
 
-TEST_CASE("SDF.Actions.Node", "[SDF][Actions][Node]") {
+  SECTION(fmt::format("ScalarPort : \"{}\"", port_1_sv)) {
+
+    Node test{};
+    Node wanted{NodeType::unspecified, std::string(port_1_str)};
+    INFO("Parsing " << port_1_sv);
+    require_parse<Grammar::scalar_port, Actions::NodeAction>(port_1_sv, test);
+    CAPTURE(test.type);
+    CAPTURE(test.basename_identifier);
+    catch_test_node(wanted,test);
+  }
+
+
+  SECTION(fmt::format("BusPort : \"{}[3:0]\"", port_1_sv)) {
+
+    std::string test_str = fmt::format("{}[3:0]",port_1_sv);
+    Node test{};
+    Node wanted{NodeType::unspecified,  std::string(port_1_str), {}, {}, 0, 3};
+    INFO("Parsing " << test_str);
+    require_parse<Grammar::bus_port, Actions::NodeAction>(test_str, test);
+    CAPTURE(test.type);
+    CAPTURE(test.basename_identifier);
+    if(test.start.has_value())
+      CAPTURE(test.start.value());
+    if(test.end.has_value())
+      CAPTURE(test.end.value());
+    catch_test_node(wanted,test);
+  }
+}
+
+TEST_CASE("SDF.Actions.PortAction", "[SDF][Actions][PortAction") {
+
+  SECTION(fmt::format("ScalarPort : \"{}\"", port_1_sv)) {
+
+    Node test{};
+    Node wanted{NodeType::port, std::string(port_1_str)};
+    INFO("Parsing " << port_1_sv);
+    require_parse<Grammar::port, Actions::PortAction>(port_1_sv, test);
+    CAPTURE(test.type);
+    CAPTURE(test.basename_identifier);
+    CAPTURE(test.hierarchical_identifier);
+    CAPTURE(test.start);
+    CAPTURE(test.end);
+    REQUIRE(wanted.start == test.start);
+    REQUIRE(wanted.end == test.end);
+    // catch_test_node(wanted,test);
+  }
+
+
+  SECTION(fmt::format("BusPort : \"{}[3:0]\"", port_1_sv)) {
+
+    std::string test_str = fmt::format("{}[3:0]",port_1_sv);
+    Node test{};
+    Node wanted{NodeType::port,  std::string(port_1_str), {}, {}, 0, 3};
+    INFO("Parsing " << test_str);
+    require_parse<Grammar::port, Actions::PortAction>(test_str, test);
+    CAPTURE(test.type);
+    CAPTURE(test.basename_identifier);
+    CAPTURE(test.hierarchical_identifier);
+    if(test.start.has_value())
+      CAPTURE(test.start.value());
+    if(test.end.has_value())
+      CAPTURE(test.end.value());
+    catch_test_node(wanted,test);
+    // catch_test_node(wanted,test);
+  }
+}
+
+TEST_CASE("SDF.Actions.PortInstanceAction", "[SDF][Actions][PortInstance]") {
 
   SECTION(fmt::format("ScalarPort : \"{}\"", port_1_sv)) {
 
@@ -34,20 +90,52 @@ TEST_CASE("SDF.Actions.Node", "[SDF][Actions][Node]") {
     Node wanted{NodeType::port, std::string(port_1_str)};
     INFO("Parsing " << port_1_sv);
     require_parse<Grammar::port_instance, Actions::PortInstanceAction>(port_1_sv, test);
+    CAPTURE(test.type);
     CAPTURE(test.basename_identifier);
+    CAPTURE(test.hierarchical_identifier);
     catch_test_node(wanted,test);
   }
 
 
-  SECTION(fmt::format("BusPort : \"{}\"", port_1_sv)) {
+  SECTION(fmt::format("BusPort : \"{}[3:0]\"", port_1_sv)) {
 
     Node test{};
-    Node wanted{NodeType::port, std::string(port_1_str)};
-    INFO("Parsing " << port_1_sv);
-    require_parse<Grammar::port_instance, Actions::PortInstanceAction>(port_1_sv, test);
+    Node wanted{NodeType::port, std::string(port_1_str), {}, {}, 0, 3};
+    INFO("Parsing " << fmt::format("{}[3:0]",port_1_str));
+    require_parse<Grammar::port_instance, Actions::PortInstanceAction>(fmt::format("{}[3:0]",port_1_str), test);
+    CAPTURE(test.type);
     CAPTURE(test.basename_identifier);
+    CAPTURE(test.hierarchical_identifier);
     catch_test_node(wanted,test);
   }
 }
 
 
+
+TEST_CASE("SDF.Actions.PortSpecAction", "[SDF][Actions][PortSpec]") {
+
+  SECTION(fmt::format("ScalarPort : \"{}\"", port_1_sv)) {
+
+    Node test{};
+    Node wanted{NodeType::port, std::string(port_1_str)};
+    INFO("Parsing " << port_1_sv);
+    require_parse<Grammar::port_spec, Actions::PortSpecAction>(port_1_sv, test);
+    CAPTURE(test.type);
+    CAPTURE(test.basename_identifier);
+    CAPTURE(test.hierarchical_identifier);
+    catch_test_node(wanted,test);
+  }
+
+
+  SECTION(fmt::format("BusPort : \"{}[3:0]\"", port_1_sv)) {
+
+    Node test{};
+    Node wanted{NodeType::port, std::string(port_1_str), {}, {}, 0, 3};
+    INFO("Parsing " << fmt::format("{}[3:0]",port_1_str));
+    require_parse<Grammar::port_instance, Actions::PortInstanceAction>(fmt::format("{}[3:0]",port_1_str), test);
+    CAPTURE(test.type);
+    CAPTURE(test.basename_identifier);
+    CAPTURE(test.hierarchical_identifier);
+    catch_test_node(wanted,test);
+  }
+}

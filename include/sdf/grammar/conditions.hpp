@@ -72,7 +72,9 @@ struct inversion_condition : seq<
 >{};
 
 struct node_constant_equality_condition : seq< 
-  scalar_node, equality_operator, scalar_constant
+  scalar_node, 
+  equality_operator, 
+  scalar_constant
 >{};
 
 struct timing_check_condition : sor<

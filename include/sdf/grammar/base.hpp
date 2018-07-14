@@ -138,8 +138,12 @@ struct any_character : sor<
   seq<one<'\\'>,one<'"'>>
 > {};
 
+struct qstring_content : star<
+  sor< blank, any_character> 
+>{};
+
 struct qstring_cont : seq<
-  star<sor< blank, any_character> >,
+  qstring_content,
   one<'"'>
 >{
   static constexpr auto error() { return "quoted string does not terminate."; }

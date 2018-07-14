@@ -13,14 +13,15 @@ using Parse::Test::require_parse;
 static auto constexpr hchar_str = ".";
 constexpr char hierarchicalidentifier_str[] = "root/DUT/test/DFF";
 constexpr char identifier_str[] = "DFF";
-constexpr char qstring_str[] = "\"This is a test qstring\"";
+constexpr char qstring_str_content[] = "quoted string content";
 
 TEST_CASE("SDF.Actions.QString", "[SDF][Actions][QString]")
 {
   std::string test{};
-  std::string wanted{qstring_str};
-  require_parse<Grammar::qstring, Actions::QStringAction>(qstring_str,
-  test);
+  std::string wanted{qstring_str_content};
+  require_parse<Grammar::qstring, 
+                Actions::QStringAction>(fmt::format("\"{}\"", 
+                                        qstring_str_content), test);
 
   SECTION("QStringAction"){
     REQUIRE(test == wanted);

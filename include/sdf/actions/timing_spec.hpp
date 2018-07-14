@@ -12,9 +12,18 @@ namespace Actions{
 
 using namespace Parse;  
 
+struct TimingSpecAction : single_dispatch<
+  Grammar::timing_spec, inner_action<
+    TimingCheckArrayAction,
+    Storage::member<&TimingSpec::value>
+  >
+> {
+  using state = TimingSpec;
+};
+
 struct TimingSpecArrayAction : single_dispatch<
-  Grammar::tc_spec, inner_action<
-    TimingCheckAction,
+  Grammar::timing_spec, inner_action<
+    TimingSpecAction,
     Storage::push_back
   >
 > {

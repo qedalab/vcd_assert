@@ -11,6 +11,9 @@
 #include <string_view>
 #include <variant>
 #include <fmt/printf.h>
+using namespace fmt::literals;
+
+#include <math.h>       /* modf */
 
 namespace SDF {
 
@@ -58,12 +61,8 @@ TimingCheckType get_enum_type() const {
 template <class OutputIterator>
 void serialize_number(OutputIterator oi, int indent,
                       Number n) noexcept(noexcept(*oi++ = '!')) {
-  using std::literals::string_view_literals::operator""sv;
-  // std::setprecision(std::numeric_limits<double>::digits10)
-  // std::to_string
-  ranges::copy(fmt::sprintf("%g", n), oi);
+  ranges::copy(fmt::sprintf(" %.g",n), oi);
 }
-
 
 /// Serialize SDF timing spec
 /// \tparam OutputIterator must meet the requirements of OutputIterator
@@ -72,15 +71,38 @@ void serialize_number(OutputIterator oi, int indent,
 /// \exception Throws if writing to the OutputIterator throws otherwise noexcept
 template <class OutputIterator>
 void serialize_triple(OutputIterator oi, int indent,
-                      Triple t) noexcept(noexcept(*oi++ = '!')) {
+                      Triple t, int places = -1) noexcept(noexcept(*oi++ = '!')) {
   using std::literals::string_view_literals::operator""sv;
+  if(places == -1){
+    double intpart;
+    double fracpart_min = std::modf(t.min, &intpart);
+    double fracpart_typ = std::modf(t.typ, &intpart);
+    double fracpart_max = std::modf(t.max, &intpart);
+    auto s_min = fmt::sprintf("%.g",fracpart_min);
+    auto s_typ = fmt::sprintf("%.g",fracpart_typ);
+    auto s_max = fmt::sprintf("%.g",fracpart_max);
+    // throw std::runtime_error(fmt::format("({})\n({})\n({})\n", s_min.size(),s_typ.size(),s_max.size()));
+    for(auto&& i : {s_min,s_typ,s_max})
+    {
+      if(static_cast<int>(i.size()) > places){
+        places = static_cast<int>(i.size());
+      }
+    }
+    if(places<0)
+      throw std::runtime_error(fmt::format("InternalError decimal places negative ({})",places));
 
-  serialize_indent(oi, indent);
-  serialize_number(oi,0, t.min);
+    if(places >1){
+      places = places-2;
+    }else{
+      places = places-1;
+    }
+  }  
+  // serialize_indent(oi, indent);
+  ranges::copy(fmt::sprintf("%.*f",places,t.min), oi);
   ranges::copy(":"sv, oi);
-  serialize_number(oi,0,t.typ);
+  ranges::copy(fmt::sprintf("%.*f",places,t.typ), oi);
   ranges::copy(":"sv, oi);
-  serialize_number(oi,0,t.max);
+  ranges::copy(fmt::sprintf("%.*f",places,t.max), oi);
 }
 
 // /// Serialize SDF timing spec
@@ -108,7 +130,7 @@ template <class OutputIterator>
 void serialize_value(OutputIterator oi, int indent,
                                Value v) noexcept(noexcept(*oi++ = '!')) {
   using std::literals::string_view_literals::operator""sv;
-
+  
   ranges::copy("("sv, oi);
   if (std::holds_alternative<Number>(v)) {
     // Number x = std::get<Number>(v);

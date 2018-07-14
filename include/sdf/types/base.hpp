@@ -33,12 +33,11 @@ struct HierarchicalIdentifier {
   std::vector<Identifier> value; //should make this contiguous?
   
   bool operator==(const HierarchicalIdentifier& other) const noexcept{
-    using namespace ranges;
     if(value.size() == other.value.size()){
       if(value.size() == 0){
         return true;
       }else{
-        for(auto&& [s0,s1] : view::zip( value, other.value)){
+        for(auto&& [s0,s1] : ranges::view::zip( value, other.value)){
           if(!s0.compare(s1)) {
               return false;
           };

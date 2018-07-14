@@ -28,7 +28,7 @@ void serialize_timing_spec(OutputIterator oi, int indent,
 
   switch (ts.get_enum_type()) {
     case TimingSpecType::delay:
-      throw std::runtime_error("InternalError");  
+      throw std::runtime_error("InternalError : Delays Unimplemented");  
       ranges::copy("(DELAY \n"sv, oi);
       // serialize_delay_spec(oi, indent + 1, ts);
       break;
@@ -37,12 +37,12 @@ void serialize_timing_spec(OutputIterator oi, int indent,
       serialize_timing_check_spec(oi, indent + 1, std::get<TimingCheckSpec>(ts.value));
       break;
     case TimingSpecType::timing_env:
-      throw std::runtime_error("InternalError");  
+      throw std::runtime_error("InternalError : TimingEnvs Unimplemented");  
       ranges::copy("(TIMINGENV \n"sv, oi);
       // serialize_timing_env_spec(oi, indent + 1, ts);
       break;
     case TimingSpecType::label:
-      throw std::runtime_error("InternalError");  
+      throw std::runtime_error("InternalError : Labels Unimplemented");  
       ranges::copy("(LABEL \n"sv, oi);
       // serialize_timing_label_spec(oi, indent + 1, ts);
       break;

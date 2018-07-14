@@ -10,6 +10,9 @@
 #include <sdf/types/timing_check.hpp>
 #include <sdf/types/timing.hpp>
 
+#include <fmt/format.h>
+
+using namespace fmt::literals;
 
 namespace SDF{
 namespace Actions{
@@ -27,7 +30,7 @@ struct EqualityOperatorAction : multi_dispatch<
 
 struct NodeConstantEqualityAction : multi_dispatch<
   Grammar::scalar_node, inner_action<
-    PortInstanceAction, Storage::member<&NodeConstantEquality::left>
+    ScalarNodeAction, Storage::member<&NodeConstantEquality::left>
   >,
   Grammar::equality_operator, inner_action<
     EqualityOperatorAction, Storage::member<&NodeConstantEquality::op>
@@ -41,15 +44,28 @@ struct NodeConstantEqualityAction : multi_dispatch<
 
 struct InvertedNodeStorage{
   static bool store(InvertedNode &in, Node n) {
-    in = InvertedNode{n};
+    in.type = std::move(n.type);
+    in.basename_identifier = std::move(n.basename_identifier);
+    
+    if(n.edge.has_value()){
+      in.edge = std::move(n.edge);
+    }
+    if(n.hierarchical_identifier.has_value()){
+      in.hierarchical_identifier = std::move(n.hierarchical_identifier);
+    }
+    if(n.start.has_value()){
+      in.start = std::move(n.start);
+    }
+    if(n.end.has_value()){
+      in.end = std::move(n.end);
+    }
     return true;
   }
 };
 
 struct InvertedNodeAction : single_dispatch<
   Grammar::scalar_node, inner_action<
-    PortInstanceAction,
-    InvertedNodeStorage
+    ScalarNodeAction, InvertedNodeStorage
   >
 >{
   using state = InvertedNode;
@@ -63,7 +79,7 @@ struct TimingCheckConditionAction : multi_dispatch<
     NodeConstantEqualityAction, Storage::member<&TimingCheckCondition::value>
   >,
   Grammar::scalar_node, inner_action<
-    NodeAction, Storage::member<&TimingCheckCondition::value>
+    ScalarNodeAction, Storage::member<&TimingCheckCondition::value>
   >
 >{
   using state = TimingCheckCondition;
@@ -94,58 +110,22 @@ struct PortCheckAction : multi_dispatch<
   using state = PortTimingCheck;
 };
 
-struct HoldPortTchkStorage  {
-  static bool store(Hold &h, std::vector<PortTimingCheck> ps) {
-    
-    h.input = std::move(ps[0]);
-    h.output = std::move(ps[1]);
-      // throw std::runtime_error("InternalError");      
-    return true;
-  }
-};
-
-struct HoldPortTchkArrayAction : single_dispatch<
-  Grammar::port_tchk, inner_action<
-    PortCheckAction, Storage::push_back
-  >
->{
-  using state = std::vector<PortTimingCheck>;
-};
-
 struct HoldTimingCheckAction : multi_dispatch<
-  Grammar::port_tchk, inner_action<
-    HoldPortTchkArrayAction, HoldPortTchkStorage>,
+  Grammar::port_tchk_0, inner_action<
+    PortCheckAction, Storage::member<&Hold::input>>,
+  Grammar::port_tchk_1, inner_action<
+    PortCheckAction, Storage::member<&Hold::output>>,
   Grammar::value, inner_action<
     ValueAction, Storage::member<&Hold::value>>
 >{
   using state = Hold;
 };
 
-// struct HoldTimingCheckStorage : 
-
 struct TimingCheckAction : single_dispatch<
   // Grammar::setup_timing_check, inner_action<
   //   SetupTimingCheckAction, SetupTimingCheckStorage >,
   Grammar::hold_timing_check, inner_action<
-    HoldTimingCheckAction, Storage::member<&TimingCheck::value> > // HoldTimingCheckStorage >
-  // Grammar::setuphold_timing_check, inner_action<
-  //   SetupholdTimingCheckAction, SetupholdTimingCheckStorage >,
-  // Grammar::recovery_timing_check, inner_action<
-  //   RecoveryTimingCheckAction, RecoveryTimingCheckStorage >,
-  // Grammar::removal_timing_check, inner_action<
-  //   RemovalTimingCheckAction, RemovalTimingCheckStorage >,
-  // Grammar::recrem_timing_check, inner_action<
-  //   RecremTimingCheckAction, RecremTimingCheckStorage >,
-  // Grammar::skew_timing_check, inner_action<
-  //   SkewTimingCheckAction, SkewTimingCheckStorage >,
-  // Grammar::bidirectskew_timing_check, inner_action<
-  //   BidirectskewTimingCheckAction, BidirectskewTimingCheckStorage >,
-  // Grammar::width_timing_check, inner_action<
-  //   WidthTimingCheckAction, WidthTimingCheckStorage >,
-  // Grammar::period_timing_check, inner_action<
-  //   PeriodTimingCheckAction, PeriodTimingCheckStorage >,
-  // Grammar::nochange_timing_check, inner_action<
-  //   NochangeTimingCheckAction, NochangeTimingCheckStorage >
+    HoldTimingCheckAction, Storage::member<&TimingCheck::value> > 
 > {
   using state = TimingCheck;
 };
@@ -156,7 +136,7 @@ struct TimingCheckArrayAction : single_dispatch<
     Storage::push_back
   >
 > {
-  using state = std::vector<TimingCheck>;
+  using state = TimingCheckSpec;
 };
 
 }
