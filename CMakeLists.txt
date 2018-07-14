@@ -12,7 +12,6 @@ find_package(fmt REQUIRED)
 find_package(pegtl REQUIRED)
 find_package(range-v3 0.3.6 REQUIRED)
 find_package(CLI11 REQUIRED)
-find_package(fmt 5.0.0 REQUIRED)
 
 #Set static_string's string_view flag
 set(AK_TOOLKIT_CONFIG_USING_STRING_VIEW 1)
