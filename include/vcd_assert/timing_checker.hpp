@@ -35,7 +35,7 @@ public:
   TimingChecker(std::shared_ptr<VCD::Header> header);
 
   // TODO apply SDF to node in VCD
-  void apply_sdf(struct SDFFileTODO&, std::size_t vcd_scope_node);
+  void apply_sdf(std::shared_ptr<SDF::DelayFile> delayfile);
 
   // Trigger event and return true if event was triggered
   [[nodiscard]] bool event(std::size_t time, std::size_t index,

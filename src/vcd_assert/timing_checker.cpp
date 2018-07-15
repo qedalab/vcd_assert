@@ -35,6 +35,23 @@ TimingChecker::TimingChecker(std::shared_ptr<VCD::Header> header) :
   };
 }
 
+//Assuming the scope node is the header (as in the LRM), I dont see 
+//what the "std::size_t vcd_scope_node" was meant for.
+void TimingChecker::apply_sdf(std::shared_ptr<SDF::DelayFile> delayfile)
+{
+  //Timing checker should consolodate that all sdf files contain the same :
+  //    sdf_version
+  //    design_name
+  //    [process]
+  //    [voltage]
+  //    [temperature]
+
+  // Should always match the SDF file timescale with that of the VCD.
+  // ..which could require conversion of the value.
+   
+
+}
+
 [[nodiscard]] bool TimingChecker::handle_event(const Event &event)
 {
   return std::visit(
