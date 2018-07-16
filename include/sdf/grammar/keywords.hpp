@@ -1,7 +1,10 @@
 #ifndef LIBSDF_GRAMMAR_KEYWORDS_HPP 
 #define LIBSDF_GRAMMAR_KEYWORDS_HPP 
 
-#include <sdf/grammar/base.hpp>
+#include <parse/grammar/base.h>
+#include <parse/grammar/part.h>
+
+#include "./character.hpp"
 
 namespace SDF {
 namespace Grammar {
@@ -134,8 +137,7 @@ struct str_keyword : sor<
 > {};
 
 template< typename Key >
-struct key : seq< Key, not_at< identifier > > {};
-
+struct key : seq< Key, not_at< character > > {};
 
 struct key_absolute : key< str_absolute > {};
 struct key_arrival : key< str_arrival > {};

@@ -2,6 +2,12 @@
 #define LIBSDF_GRAMMAR_BASE_HPP 
 
 #include <parse/grammar/base.h>
+#include <parse/grammar/part.h>
+
+#include "./comment.hpp"
+#include "./block.hpp"
+#include "./character.hpp"
+
 #include <tao/pegtl.hpp>
 
 namespace SDF {
@@ -10,33 +16,9 @@ namespace Grammar {
 // clang-format off
 
 using namespace Parse::Grammar::Base;
+using namespace Parse::Grammar::Part;
 
-using namespace tao;
-
-using tao::pegtl::seq;
-
-struct blank : one<' ','\n','\t','\r'> {};
-struct plus_blank : plus<blank> {};
-
-struct comment_single_line : seq< 
-    two< '/' >, until< eolf > 
->{};
-
-struct comment_multi_line_cont : until< 
-  sor< eof, TAO_PEGTL_STRING( "*/" ) > 
->{};
-
-struct comment_multi_line : if_must<
-  TAO_PEGTL_STRING( "/*" ), 
-  comment_multi_line_cont
->{};
-
-struct comment : sor <
-  comment_single_line,
-  comment_multi_line
->{};
-
-struct sp : sor< plus<blank>, comment > {};
+struct sp : sor< plus_blank, comment > {};
 struct sps : plus< sp > {};
 
 template<typename T, typename... P>
@@ -64,79 +46,6 @@ struct op_sep_must: must<
   opt<sps>,  
   seq<P,opt<sps>>...
 >{};
-
-struct open : seq <
-  opt<sps>,
-  one< '(' >,
-  opt<sps>
->{};
-
-struct close : seq <
-  opt<sps>,
-  one< ')' >,
-  opt<sps>
->{};
-
-template<typename T, typename... P>
-struct block: if_must<
-  seq< open, T >,
-  seq< opt< sps >, P >...,
-  close
->{};
-
-//removed '«' temporarily due to char overflow will need utf8?
-struct special_character_without_brackets : one<
-  '!','#','%','&','*','+',',','-','.',
-  '/',':',';','<','=','>','?','@','[','\\',']','^',
-  '\'','{','|','}','~' 
->{};
-struct special_character_without_backslash : one<
-  '!','#','%','&','*','+',',','-','.',
-  '/',':',';','<','=','>','?','@','[',']','^',
-  '\'','{','|','}','~','(',')'
->{};
-
-/* '«', and '\\' fails testing*/
-struct special_character : sor<
-  special_character_without_brackets,
-  one<'(',')'>
->{};
-
-struct decimal_digit : range<'0','9'> {};
-
-struct alphanumeric : sor<
-  range<'a','z'>,
-  range<'A','Z'>,
-  one<'_','$'>,
-  decimal_digit
-> {};
-
-struct sign : sor<one<'+'>,one<'-'>> {};
-struct hchar : sor<one<'.'>,one<'/'>> {};
-
-struct character;
-
-struct escaped_character : seq<
-  one<'\\'>,
-  sor<
-    character,
-    special_character,
-    one<'"'>
-  >
-> {};
-
-struct character : sor<
-  escaped_character,
-  alphanumeric
-> {};
-
-//fails to match \\ in qstring without the first line.
-struct any_character : sor<
-  seq<one<'\\'>,one<'\\'>>,
-  character, 
-  special_character_without_backslash,
-  seq<one<'\\'>,one<'"'>>
-> {};
 
 struct qstring_content : star<
   sor< blank, any_character> 
@@ -184,7 +93,7 @@ struct bracket_pair : seq<
 
 struct bracket_pairs : plus<
   opt<sps>,
-  pegtl::list<bracket_pair,opt<sps>>
+  tao::pegtl::list<bracket_pair,opt<sps>>
 >{};
 
 template<typename T>

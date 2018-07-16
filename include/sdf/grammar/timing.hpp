@@ -411,7 +411,7 @@ struct hold_timing_check : block<
   port_tchk_0,
   port_tchk_1,
   value
->{};
+> {};
 
 
 // struct setuphold_timing_check : sor<

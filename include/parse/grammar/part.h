@@ -6,6 +6,8 @@
 namespace Parse {
 namespace Grammar {
 
+inline namespace Part {
+
 struct sign : one<'-', '+'> {
   static constexpr auto error() { return "Expected sign value"; }
 };
@@ -26,7 +28,15 @@ struct whitespace : one<' ', '\t'> {
   static constexpr auto error() { return "Expected whitespace"; }
 };
 
+struct blank : one<' ', '\t', '\r', '\n'> {
+  static constexpr auto error() { return "Expected whitespace"; }
+};
+
 struct plus_whitespace : plus<whitespace> {
+  static constexpr auto error() { return "Expected at least one whitespace"; }
+};
+
+struct plus_blank : plus<blank> {
   static constexpr auto error() { return "Expected at least one whitespace"; }
 };
 
@@ -45,6 +55,8 @@ struct imaginary_unit : one<'i', 'j'> {
     return R"(Expected imaginary unit: 'i' or 'j')";
   }
 };
+
+} // namespace Part
 
 } // namespace Grammar
 } // namespace Parse
