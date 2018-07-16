@@ -18,7 +18,7 @@ TEST_CASE("SDF.Actions.NodeAction", "[SDF][Actions][NodeAction]") {
   SECTION(fmt::format("ScalarPort : \"{}\"", port_1_sv)) {
 
     Node test{};
-    Node wanted{NodeType::unspecified, std::string(port_1_str)};
+    Node wanted{NodeType::unspecified, std::string(port_1_str.c_str())};
     INFO("Parsing " << port_1_sv);
     require_parse<Grammar::scalar_port, Actions::NodeAction>(port_1_sv, test);
     CAPTURE(test.type);
@@ -31,7 +31,7 @@ TEST_CASE("SDF.Actions.NodeAction", "[SDF][Actions][NodeAction]") {
 
     std::string test_str = fmt::format("{}[3:0]",port_1_sv);
     Node test{};
-    Node wanted{NodeType::unspecified,  std::string(port_1_str), {}, {}, 0, 3};
+    Node wanted{NodeType::unspecified,  std::string(port_1_str.c_str()), {}, {}, 0, 3};
     INFO("Parsing " << test_str);
     require_parse<Grammar::bus_port, Actions::NodeAction>(test_str, test);
     CAPTURE(test.type);
@@ -49,7 +49,7 @@ TEST_CASE("SDF.Actions.PortAction", "[SDF][Actions][PortAction") {
   SECTION(fmt::format("ScalarPort : \"{}\"", port_1_sv)) {
 
     Node test{};
-    Node wanted{NodeType::port, std::string(port_1_str)};
+    Node wanted{NodeType::port, std::string(port_1_str.c_str())};
     INFO("Parsing " << port_1_sv);
     require_parse<Grammar::port, Actions::PortAction>(port_1_sv, test);
     CAPTURE(test.type);
@@ -67,7 +67,7 @@ TEST_CASE("SDF.Actions.PortAction", "[SDF][Actions][PortAction") {
 
     std::string test_str = fmt::format("{}[3:0]",port_1_sv);
     Node test{};
-    Node wanted{NodeType::port,  std::string(port_1_str), {}, {}, 0, 3};
+    Node wanted{NodeType::port,  std::string(port_1_str.c_str()), {}, {}, 0, 3};
     INFO("Parsing " << test_str);
     require_parse<Grammar::port, Actions::PortAction>(test_str, test);
     CAPTURE(test.type);
@@ -87,7 +87,7 @@ TEST_CASE("SDF.Actions.PortInstanceAction", "[SDF][Actions][PortInstance]") {
   SECTION(fmt::format("ScalarPort : \"{}\"", port_1_sv)) {
 
     Node test{};
-    Node wanted{NodeType::port, std::string(port_1_str)};
+    Node wanted{NodeType::port, std::string(port_1_str.c_str())};
     INFO("Parsing " << port_1_sv);
     require_parse<Grammar::port_instance, Actions::PortInstanceAction>(port_1_sv, test);
     CAPTURE(test.type);
@@ -100,7 +100,7 @@ TEST_CASE("SDF.Actions.PortInstanceAction", "[SDF][Actions][PortInstance]") {
   SECTION(fmt::format("BusPort : \"{}[3:0]\"", port_1_sv)) {
 
     Node test{};
-    Node wanted{NodeType::port, std::string(port_1_str), {}, {}, 0, 3};
+    Node wanted{NodeType::port, std::string(port_1_str.c_str()), {}, {}, 0, 3};
     INFO("Parsing " << fmt::format("{}[3:0]",port_1_str));
     require_parse<Grammar::port_instance, Actions::PortInstanceAction>(fmt::format("{}[3:0]",port_1_str), test);
     CAPTURE(test.type);
@@ -130,7 +130,7 @@ TEST_CASE("SDF.Actions.PortSpecAction", "[SDF][Actions][PortSpec]") {
   SECTION(fmt::format("BusPort : \"{}[3:0]\"", port_1_sv)) {
 
     Node test{};
-    Node wanted{NodeType::port, std::string(port_1_str), {}, {}, 0, 3};
+    Node wanted{NodeType::port, std::string(port_1_str.c_str()), {}, {}, 0, 3};
     INFO("Parsing " << fmt::format("{}[3:0]",port_1_str));
     require_parse<Grammar::port_instance, Actions::PortInstanceAction>(fmt::format("{}[3:0]",port_1_str), test);
     CAPTURE(test.type);
