@@ -85,6 +85,22 @@ int main(int argc, char **argv) {
   
   size_t applied_ = 0;
 
+
+  verilog_parser_init();
+
+  for (auto&& verilog_file : verilog_file_array) {
+    // Open A File handle to read data in.
+    FILE * fh = fopen("my_verilog_file.v", "r");
+  }
+  // Parse the file and store the result.
+  int result = verilog_parse_file(fh);
+
+  if(result == 1)
+    fmt::print(FMT_STRING("ERROR: Verilog parse unsuccessful.\n"));
+
+  fclose(fh);
+
+
   VCD::HeaderReader vcd_reader;
   tao::pegtl::file_input<> input(vcd_file);
   tao::pegtl::parse<VCD::Grammar::grammar, VCD::Actions::HeaderAction,

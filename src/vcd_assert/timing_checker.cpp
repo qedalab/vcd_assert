@@ -50,15 +50,46 @@ void TimingChecker::apply_sdf(std::shared_ptr<SDF::DelayFile> delayfile, std::si
   // ..which could require conversion of the value.
   SDF::TimeScale delayfile.get_timescale();
   std::vector<Cell> cells = delayfile.get_cells();
+
   for(auto&& cell : cells) {
-    // IF *, apply to all 
-    // IF , apply to only in THIS level. 
-    // IF h.i.-instance , apply to specific instance. 
+
+    // IF the cell instance is blank or *, then look for 
+    //   verilog scopes of 'cell_type' among the available VCD scopes.
+
+ 
+
+    if(std::holds_alternative<SDF::Star>(cell.cell_instance)){
+      for(auto&& scope : header_.get_scopes) {
+      // For the given scopes found, apply the specs.      
+        for all scopes.
+    }else{
+      /*IF a specific scope is specified, check if the scope is available 
+        from the current root scope. */
+      auto hi = std::get<SDF::HierarchicalIdentifier>(cell.cell_instance);
+      only for scope hi.
+    }
+  }
+}
+
+void TimingChecker::match_scope(){
+    /* 
+      for all timing specs, 
+        considering only timing checks 
+          for all hold timing checks
+            create hold or conditional hold for the 
+  */ 
+
     for(auto&& spec : cell.timing_specs) {
       switch(spec.get_enum_type()) {
       case TimingSpecType::TimingCheck:
         for(auto&& check : std::get<TimingCheckSpec>) {
-
+          switch(check.get_enum_type()) {
+          case TimingCheckType::Hold:
+            
+          default:
+            assert(false && "Invalid enum state");
+            abort();
+          }
         }
       default:
         assert(false && "Invalid enum state");
@@ -66,15 +97,6 @@ void TimingChecker::apply_sdf(std::shared_ptr<SDF::DelayFile> delayfile, std::si
       }
     }
   }
-  /* 
-    for all cells, 
-      for all timing specs, 
-        considering only timing checks 
-          for all hold timing checks
-            create hold or conditional hold for the 
-
-
-  */ 
 
 }
 

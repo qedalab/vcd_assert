@@ -30,12 +30,14 @@ class TimingChecker {
 
   [[nodiscard]] bool handle_event(const Event& event);
 
+private:
+  bool match_scope(std::shared_ptr<SDF::DelayFile> delayfile std::size_t vcd_scope_node);
+
 public:
   // Claims ownership of the header
   TimingChecker(std::shared_ptr<VCD::Header> header);
 
-  // TODO apply SDF to node in VCD
-  void apply_sdf(std::shared_ptr<SDF::DelayFile> delayfile);
+  void apply_sdf(std::shared_ptr<SDF::DelayFile> delayfile std::size_t vcd_scope_node);
 
   // Trigger event and return true if event was triggered
   [[nodiscard]] bool event(std::size_t time, std::size_t index,
