@@ -1,0 +1,20 @@
+language: generic
+dist: trusty
+
+matrix:
+  include:
+    - compiler: gcc
+      addons:
+        apt:
+          sources: ['ubuntu-toolchain-r-test']
+          packages: ['g++-7']
+      env:
+        - CXX=g++-7
+      script:
+        conan install ..
+        conan build ..
+
+before_script:
+  - pip install --user conan
+  - mkdir build
+  - cd build

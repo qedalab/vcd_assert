@@ -8,7 +8,6 @@ external
 *old*
 *extra*
 .idea
-.*
 match_all_exactly.cpp
 test.sdf
 empty.sdf
