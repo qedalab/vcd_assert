@@ -117,7 +117,7 @@ TEST_CASE("SDF.Actions.PortSpecAction", "[SDF][Actions][PortSpec]") {
   SECTION(fmt::format("ScalarPort : \"{}\"", port_1_sv)) {
 
     Node test{};
-    Node wanted{NodeType::port, std::string(port_1_str)};
+    Node wanted{NodeType::port, std::string(port_1_str.c_str())};
     INFO("Parsing " << port_1_sv);
     require_parse<Grammar::port_spec, Actions::PortSpecAction>(port_1_sv, test);
     CAPTURE(test.type);
