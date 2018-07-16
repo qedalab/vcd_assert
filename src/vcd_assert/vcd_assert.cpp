@@ -5,6 +5,7 @@
 #include "../actions/control.hpp"
 #include "../actions/make_pegtl_template.hpp"
 #include <tao/pegtl/memory_input.hpp>
+#include <tao/pegtl/file_input.hpp>
 #include <tao/pegtl/parse.hpp>
 
 #include <CLI/CLI.hpp>
@@ -82,35 +83,32 @@ int main(int argc, char **argv) {
   assert(sdf_files.empty());
   assert(vcd_nodes.empty());
   
-  size_t count = 0;
+  size_t applied_ = 0;
+
+  VCD::HeaderReader vcd_reader;
+  tao::pegtl::file_input<> input(vcd_file);
+  tao::pegtl::parse<VCD::Grammar::grammar, VCD::Actions::HeaderAction,
+                Parse::capture_control>(input, vcd_reader);
+
+  auto header_p = reader.release();
+  assert(header_p.operator bool());
+  auto timing_checker = VCDAssert::TimingChecker(header_p);
+  
   for (auto&& [node,sdf_file_array] : apply_nodes) {
-
-    count++;
-
-    VCD::HeaderReader vcd_reader;
-    tao::pegtl::memory_input<> input(node.begin(), node.end(), node);
-    tao::pegtl::parse<VCD::Grammar::grammar, VCD::Actions::HeaderAction,
-                  Parse::capture_control>(input, vcd_reader);
-
-    auto header_p = reader.release();
-    assert(header_p.operator bool());
-    auto timing_checker = VCDAssert::TimingChecker(header_p);
-
+    size_t scope_index = header_p->.get
     for(auto&& sdf_file : sdf_file_array){
 
       DelayFileReader sdf_reader;
 
-      tao::pegtl::memory_input<> input(sdf_file.begin(), sdf_file.end(), sdf_file);
+      tao::pegtl::file_input<> input(sdf_file);
       tao::pegtl::parse<SDF::Grammar::grammar, SDF::Actions::DelayFileAction,
                         Parse::capture_control>(input, sdf_reader);
       
       auto delayfile_p = sdf_reader.release();
       assert(delayfile_p.operator bool());
 
-      timing_checker.apply_sdf(delayfile_p,count);
+      timing_checker.apply_sdf(delayfile_p, node);
     }    
-
-
   }
 
   return 0;

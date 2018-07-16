@@ -37,7 +37,7 @@ TimingChecker::TimingChecker(std::shared_ptr<VCD::Header> header) :
 
 //Assuming the scope node is the header (as in the LRM), I dont see 
 //what the "std::size_t vcd_scope_node" was meant for.
-void TimingChecker::apply_sdf(std::shared_ptr<SDF::DelayFile> delayfile)
+void TimingChecker::apply_sdf(std::shared_ptr<SDF::DelayFile> delayfile, std::size_t vcd_scope_node)
 {
   //Timing checker should consolodate that all sdf files contain the same :
   //    sdf_version
@@ -48,7 +48,33 @@ void TimingChecker::apply_sdf(std::shared_ptr<SDF::DelayFile> delayfile)
 
   // Should always match the SDF file timescale with that of the VCD.
   // ..which could require conversion of the value.
-   
+  SDF::TimeScale delayfile.get_timescale();
+  std::vector<Cell> cells = delayfile.get_cells();
+  for(auto&& cell : cells) {
+    // IF *, apply to all 
+    // IF , apply to only in THIS level. 
+    // IF h.i.-instance , apply to specific instance. 
+    for(auto&& spec : cell.timing_specs) {
+      switch(spec.get_enum_type()) {
+      case TimingSpecType::TimingCheck:
+        for(auto&& check : std::get<TimingCheckSpec>) {
+
+        }
+      default:
+        assert(false && "Invalid enum state");
+        abort();
+      }
+    }
+  }
+  /* 
+    for all cells, 
+      for all timing specs, 
+        considering only timing checks 
+          for all hold timing checks
+            create hold or conditional hold for the 
+
+
+  */ 
 
 }
 
