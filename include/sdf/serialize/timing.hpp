@@ -20,7 +20,6 @@ template <class OutputIterator>
 void serialize_node(
     OutputIterator oi, int indent,
     Node node) noexcept(noexcept(*oi++ = '!')) {
-  using std::literals::string_view_literals::operator""sv;
 
   serialize_indent(oi, indent);
 
@@ -33,13 +32,13 @@ void serialize_node(
   ranges::copy(node.basename_identifier, oi);
 
   if(node.start.has_value()){
-    ranges::copy("["sv, oi);
+    ranges::copy(std::string_view("["), oi);
     if(node.end.has_value()){
       ranges::copy(std::to_string(node.end.value()), oi);
-      ranges::copy(":"sv, oi);
+      ranges::copy(std::string_view(":"), oi);
     }
     ranges::copy(std::to_string(node.start.value()), oi);
-    ranges::copy("]"sv, oi);
+    ranges::copy(std::string_view("]"), oi);
   }
 }
 
@@ -52,8 +51,6 @@ template <class OutputIterator>
 void serialize_port_edge(
     OutputIterator oi, int indent,
     EdgeType edge) noexcept(noexcept(*oi++ = '!')) {
-  using std::literals::string_view_literals::operator""sv;
-
     serialize_indent(oi, indent);
     ranges::copy(edgetype_to_string(edge), oi);
 
@@ -68,18 +65,16 @@ template <class OutputIterator>
 void serialize_port(
     OutputIterator oi, int indent,
     Node port) noexcept(noexcept(*oi++ = '!')) {
-  using std::literals::string_view_literals::operator""sv;
-
   auto edge = port.edge;
   if(edge.has_value()){
-    ranges::copy("( "sv, oi);
+    ranges::copy(std::string_view("( "), oi);
     serialize_indent(oi, indent);
     serialize_port_edge(oi, indent, edge.value());
   }
   serialize_node(oi, 0, port);
 
   if(edge.has_value()){
-    ranges::copy(")"sv, oi);
+    ranges::copy(std::string_view(")"), oi);
   }
 
 }

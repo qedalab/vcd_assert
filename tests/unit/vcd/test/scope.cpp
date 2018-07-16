@@ -7,8 +7,6 @@
 void VCD::Test::catch_test_scope(VCD::Header &header, VCD::Scope &scope,
                                  TestScope &test)
 {
-  using std::string_literals::operator""s;
-
   CHECK(scope.get_scope_type() == test.type);
   CHECK(scope.get_identifier() == test.identifier);
 
@@ -16,7 +14,7 @@ void VCD::Test::catch_test_scope(VCD::Header &header, VCD::Scope &scope,
   CHECK(scope.num_scopes() == test.scopes.size());
 
   for (auto &inner_test_scope : test.scopes) {
-    SECTION("Scope: "s + inner_test_scope.identifier) {
+    SECTION(std::string("Scope: ") + inner_test_scope.identifier) {
       REQUIRE(scope.contains_scope(inner_test_scope.identifier));
       auto scope_index = scope.get_scope_index(inner_test_scope.identifier);
       REQUIRE(scope_index < header.num_scopes());
@@ -26,7 +24,7 @@ void VCD::Test::catch_test_scope(VCD::Header &header, VCD::Scope &scope,
   }
 
   for (auto &test_var : test.variables) {
-    SECTION("Var: "s + test_var.ref) {
+    SECTION(std::string("Var: ") + test_var.ref) {
       REQUIRE(scope.contains_variable(test_var.ref));
       auto var_index = scope.get_variable_index(test_var.ref);
       REQUIRE(var_index < header.num_variables());

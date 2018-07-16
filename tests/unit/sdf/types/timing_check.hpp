@@ -15,7 +15,6 @@
 #include <fmt/format.h>
 #include <string>
 #include <string_view>
-using std::literals::string_view_literals::operator""sv;
 
 #include <ak_toolkit/static_string.hpp>
 namespace sstr = ak_toolkit::static_str;

@@ -13,7 +13,6 @@
 #include <range/v3/view/zip.hpp>
 
 #include <string_view>
-using std::literals::string_view_literals::operator""sv;
 
 #include <ak_toolkit/static_string.hpp>
 namespace sstr = ak_toolkit::static_str;

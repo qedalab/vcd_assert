@@ -14,11 +14,9 @@ namespace VCD {
 template <class OutputIterator>
 void serialize_date(OutputIterator oi,
                     std::string_view date) noexcept(noexcept(*oi++ = '!')) {
-  using std::literals::string_view_literals::operator""sv;
-
-  ranges::copy("$date "sv, oi);
+  ranges::copy(std::string_view("$date "), oi);
   ranges::copy(date, oi);
-  ranges::copy(" $end\n"sv, oi);
+  ranges::copy(std::string_view(" $end\n"), oi);
 }
 
 } // namespace VCD

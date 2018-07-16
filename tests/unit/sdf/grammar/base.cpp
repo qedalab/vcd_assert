@@ -7,8 +7,6 @@ using namespace Test::SDF::Grammar;
 #include <range/v3/algorithm/copy.hpp>
 #include <string_view>
 
-using std::literals::string_view_literals::operator""sv;
-
 TEST_CASE("SDF.Grammar.Base", "[!hide][SDF][Grammar][Base]") {
 
   SECTION("Blank Space") {
@@ -137,9 +135,9 @@ TEST_CASE("SDF.Grammar.Base", "[!hide][SDF][Grammar][Base]") {
     
     for(auto&& a : any_character_str){ 
       std::string test;
-      ranges::copy("\""sv, ranges::back_inserter(test));
+      ranges::copy(std::string_view("\""), ranges::back_inserter(test));
       ranges::copy(std::string(a), ranges::back_inserter(test));
-      ranges::copy("\""sv, ranges::back_inserter(test));
+      ranges::copy(std::string_view("\""), ranges::back_inserter(test));
 
       INFO("Checking : "<< test);
       CHECK(match_exactly<qstring>(test));

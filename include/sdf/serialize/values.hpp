@@ -72,7 +72,6 @@ void serialize_number(OutputIterator oi, int indent,
 template <class OutputIterator>
 void serialize_triple(OutputIterator oi, int indent,
                       Triple t, int places = -1) noexcept(noexcept(*oi++ = '!')) {
-  using std::literals::string_view_literals::operator""sv;
   if(places == -1){
     double intpart;
     double fracpart_min = std::modf(t.min, &intpart);
@@ -99,9 +98,9 @@ void serialize_triple(OutputIterator oi, int indent,
   }  
   // serialize_indent(oi, indent);
   ranges::copy(fmt::sprintf("%.*f",places,t.min), oi);
-  ranges::copy(":"sv, oi);
+  ranges::copy(std::string_view(":"), oi);
   ranges::copy(fmt::sprintf("%.*f",places,t.typ), oi);
-  ranges::copy(":"sv, oi);
+  ranges::copy(std::string_view(":"), oi);
   ranges::copy(fmt::sprintf("%.*f",places,t.max), oi);
 }
 
@@ -113,7 +112,6 @@ void serialize_triple(OutputIterator oi, int indent,
 // template <class OutputIterator>
 // void serialize_number(OutputIterator oi, int indent,
 //                       Number n) noexcept(noexcept(*oi++ = '!')) {
-//   using std::literals::string_view_literals::operator""sv;
 //   // std::setprecision(std::numeric_limits<double>::digits10)
 //   // std::to_string
 //   ranges::copy(std::to_string(n), oi);
@@ -129,9 +127,7 @@ void serialize_triple(OutputIterator oi, int indent,
 template <class OutputIterator>
 void serialize_value(OutputIterator oi, int indent,
                                Value v) noexcept(noexcept(*oi++ = '!')) {
-  using std::literals::string_view_literals::operator""sv;
-  
-  ranges::copy("("sv, oi);
+  ranges::copy(std::string_view("("), oi);
   if (std::holds_alternative<Number>(v)) {
     // Number x = std::get<Number>(v);
     serialize_number(oi, indent, std::get<Number>(v));
@@ -141,7 +137,7 @@ void serialize_value(OutputIterator oi, int indent,
   } else {
     throw std::runtime_error("InternalError");
   }
-  ranges::copy(")"sv, oi);
+  ranges::copy(std::string_view(")"), oi);
 }
 
 } // namespace SDF

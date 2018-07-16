@@ -14,11 +14,10 @@ namespace VCD {
 template <class OutputIterator>
 void serialize_comment(OutputIterator oi, std::string_view comment) noexcept(
     noexcept(*oi++ = '!')) {
-  using std::literals::string_view_literals::operator""sv;
 
-  ranges::copy("$comment "sv, oi);
+  ranges::copy(std::string_view("$comment "), oi);
   ranges::copy(comment, oi);
-  ranges::copy(" $end\n"sv, oi);
+  ranges::copy(std::string_view(" $end\n"), oi);
 }
 
 } // namespace VCD

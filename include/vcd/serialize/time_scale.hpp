@@ -17,12 +17,10 @@ namespace VCD {
 template <class OutputIterator>
 void serialize_time_scale(OutputIterator oi,
                           TimeScale ts) noexcept(noexcept(*oi++ = '!')) {
-  using std::literals::string_view_literals::operator""sv;
-
-  ranges::copy("$timescale "sv, oi);
+  ranges::copy(std::string_view("$timescale "), oi);
   ranges::copy(time_number_to_string(ts.get_number()), oi);
   ranges::copy(time_unit_to_string(ts.get_unit()), oi);
-  ranges::copy(" $end\n"sv, oi);
+  ranges::copy(std::string_view(" $end\n"), oi);
 }
 
 } // namespace VCD

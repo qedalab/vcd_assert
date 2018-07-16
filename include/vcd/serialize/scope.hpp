@@ -17,13 +17,11 @@ namespace VCD {
 template <class OutputIterator>
 void serialize_scope(OutputIterator oi,
                      ScopeDataView ts) noexcept(noexcept(*oi++ = '!')) {
-  using std::literals::string_view_literals::operator""sv;
-
-  ranges::copy("$scope "sv, oi);
+  ranges::copy(std::string_view("$scope "), oi);
   ranges::copy(scope_type_to_string(ts.type), oi);
-  ranges::copy(" "sv, oi);
+  ranges::copy(std::string_view(" "), oi);
   ranges::copy(ts.identifier, oi);
-  ranges::copy(" $end\n"sv, oi);
+  ranges::copy(std::string_view(" $end\n"), oi);
 }
 
 /// Serialize VCD upscope
@@ -32,8 +30,7 @@ void serialize_scope(OutputIterator oi,
 /// \exception Throws if writing to the OutputIterator throws otherwise noexcept
 template <class OutputIterator>
 void serialize_upscope(OutputIterator oi) noexcept(noexcept(*oi++ = '!')) {
-  using std::literals::string_view_literals::operator""sv;
-  ranges::copy("$upscope $end\n"sv, oi);
+  ranges::copy(std::string_view("$upscope $end\n"), oi);
 }
 
 } // namespace VCD

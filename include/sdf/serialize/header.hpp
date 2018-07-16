@@ -23,12 +23,10 @@ namespace SDF {
 template <class OutputIterator>
 void serialize_sdf_version(OutputIterator oi, int indent, std::string_view sdf_version) noexcept(
     noexcept(*oi++ = '!')) {
-  using std::literals::string_view_literals::operator""sv;
-
   serialize_indent(oi, indent);
-  ranges::copy("(SDFVERSION "sv, oi);
+  ranges::copy(std::string_view("(SDFVERSION "), oi);
   serialize_quoted(oi, sdf_version);
-  ranges::copy(")\n"sv, oi);
+  ranges::copy(std::string_view(")\n"), oi);
 }
 
 /// Serialize SDF design_name
@@ -39,12 +37,10 @@ void serialize_sdf_version(OutputIterator oi, int indent, std::string_view sdf_v
 template <class OutputIterator>
 void serialize_design_name(OutputIterator oi, int indent, std::string_view design_name) noexcept(
     noexcept(*oi++ = '!')) {
-  using std::literals::string_view_literals::operator""sv;
-
   serialize_indent(oi, indent);
-  ranges::copy("(DESIGN "sv, oi);
+  ranges::copy(std::string_view("(DESIGN "), oi);
   serialize_quoted(oi, design_name);
-  ranges::copy(")\n"sv, oi);
+  ranges::copy(std::string_view(")\n"), oi);
 }
 
 /// Serialize SDF date
@@ -55,12 +51,10 @@ void serialize_design_name(OutputIterator oi, int indent, std::string_view desig
 template <class OutputIterator>
 void serialize_date(OutputIterator oi, int indent, std::string_view date) noexcept(
     noexcept(*oi++ = '!')) {
-  using std::literals::string_view_literals::operator""sv;
-
   serialize_indent(oi, indent);
-  ranges::copy("(DATE "sv, oi);
+  ranges::copy(std::string_view("(DATE "), oi);
   serialize_quoted(oi, date);
-  ranges::copy(")\n"sv, oi);
+  ranges::copy(std::string_view(")\n"), oi);
 }
 
 /// Serialize SDF vendor
@@ -71,12 +65,10 @@ void serialize_date(OutputIterator oi, int indent, std::string_view date) noexce
 template <class OutputIterator>
 void serialize_vendor(OutputIterator oi, int indent, std::string_view vendor) noexcept(
     noexcept(*oi++ = '!')) {
-  using std::literals::string_view_literals::operator""sv;
-
   serialize_indent(oi, indent);
-  ranges::copy("(VENDOR "sv, oi);
+  ranges::copy(std::string_view("(VENDOR "), oi);
   serialize_quoted(oi, vendor);
-  ranges::copy(")\n"sv, oi);
+  ranges::copy(std::string_view(")\n"), oi);
 }
 
 /// Serialize SDF program_name
@@ -87,12 +79,10 @@ void serialize_vendor(OutputIterator oi, int indent, std::string_view vendor) no
 template <class OutputIterator>
 void serialize_program_name(OutputIterator oi, int indent, std::string_view program_name) noexcept(
     noexcept(*oi++ = '!')) {
-  using std::literals::string_view_literals::operator""sv;
-
   serialize_indent(oi, indent);
-  ranges::copy("(PROGRAM "sv, oi);
+  ranges::copy(std::string_view("(PROGRAM "), oi);
   serialize_quoted(oi, program_name);
-  ranges::copy(")\n"sv, oi);
+  ranges::copy(std::string_view(")\n"), oi);
 }
 
 /// Serialize SDF program_version
@@ -103,12 +93,10 @@ void serialize_program_name(OutputIterator oi, int indent, std::string_view prog
 template <class OutputIterator>
 void serialize_program_version(OutputIterator oi, int indent, std::string_view program_version) noexcept(
     noexcept(*oi++ = '!')) {
-  using std::literals::string_view_literals::operator""sv;
-
   serialize_indent(oi, indent);
-  ranges::copy("(VERSION "sv, oi);
+  ranges::copy(std::string_view("(VERSION "), oi);
   serialize_quoted(oi, program_version);
-  ranges::copy(")\n"sv, oi);
+  ranges::copy(std::string_view(")\n"), oi);
 }
 
 /// Serialize SDF hierarchy_divider
@@ -119,12 +107,10 @@ void serialize_program_version(OutputIterator oi, int indent, std::string_view p
 template <class OutputIterator>
 void serialize_hierarchy_divider(OutputIterator oi, int indent, HChar hierarchy_divider) noexcept(
     noexcept(*oi++ = '!')) {
-  using std::literals::string_view_literals::operator""sv;
-
   serialize_indent(oi, indent);
-  ranges::copy("(DIVIDER "sv, oi);
+  ranges::copy(std::string_view("(DIVIDER "), oi);
   ranges::copy(hierarchy_divider_to_string(hierarchy_divider),oi);
-  ranges::copy(")\n"sv, oi);
+  ranges::copy(std::string_view(")\n"), oi);
 }
 
 /// Serialize SDF voltage
@@ -135,12 +121,10 @@ void serialize_hierarchy_divider(OutputIterator oi, int indent, HChar hierarchy_
 template <class OutputIterator>
 void serialize_voltage(OutputIterator oi, int indent, Triple voltage) noexcept(
     noexcept(*oi++ = '!')) {
-  using std::literals::string_view_literals::operator""sv;
-
   serialize_indent(oi, indent);
-  ranges::copy("(VOLTAGE "sv, oi);
+  ranges::copy(std::string_view("(VOLTAGE "), oi);
   serialize_triple(oi, indent, voltage);
-  ranges::copy(")\n"sv, oi);
+  ranges::copy(std::string_view(")\n"), oi);
 }
 
 /// Serialize SDF process
@@ -151,12 +135,10 @@ void serialize_voltage(OutputIterator oi, int indent, Triple voltage) noexcept(
 template <class OutputIterator>
 void serialize_process(OutputIterator oi, int indent, std::string_view process) noexcept(
     noexcept(*oi++ = '!')) {
-  using std::literals::string_view_literals::operator""sv;
-
   serialize_indent(oi, indent);
-  ranges::copy("(PROCESS "sv, oi);
+  ranges::copy(std::string_view("(PROCESS "), oi);
   serialize_quoted(oi, process);
-  ranges::copy(")\n"sv, oi);
+  ranges::copy(std::string_view(")\n"), oi);
 }
 
 /// Serialize SDF temperature
@@ -167,12 +149,10 @@ void serialize_process(OutputIterator oi, int indent, std::string_view process) 
 template <class OutputIterator>
 void serialize_temperature(OutputIterator oi, int indent, Triple temperature) noexcept(
     noexcept(*oi++ = '!')) {
-  using std::literals::string_view_literals::operator""sv;
-
   serialize_indent(oi, indent);
-  ranges::copy("(TEMPERATURE "sv, oi);
+  ranges::copy(std::string_view("(TEMPERATURE "), oi);
   serialize_triple(oi, 0, temperature);
-  ranges::copy(")\n"sv, oi);
+  ranges::copy(std::string_view(")\n"), oi);
 }
 
 /// Serialize SDF timescale
@@ -183,13 +163,11 @@ void serialize_temperature(OutputIterator oi, int indent, Triple temperature) no
 template <class OutputIterator>
 void serialize_timescale(OutputIterator oi, int indent, TimeScale timescale) noexcept(
     noexcept(*oi++ = '!')) {
-  using std::literals::string_view_literals::operator""sv;
-
   serialize_indent(oi, indent);
-  ranges::copy("(TIMESCALE "sv, oi);
+  ranges::copy(std::string_view("(TIMESCALE "), oi);
   ranges::copy(timescale_number_to_string(timescale.get_number()), oi);
   ranges::copy(timescale_unit_to_string(timescale.get_unit()), oi);
-  ranges::copy(")\n"sv, oi);
+  ranges::copy(std::string_view(")\n"), oi);
 }
 
 
