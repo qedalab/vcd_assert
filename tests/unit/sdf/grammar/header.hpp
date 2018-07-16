@@ -30,7 +30,7 @@ constexpr auto timescale_ex1_str        = R"((TIMESCALE     1ns))";
 constexpr auto temperature_ex1_str       = R"((TEMPERATURE :25:))";
 
 
-auto constexpr sdf_header_str_ex_arr = std::array{
+auto constexpr sdf_header_str_ex_arr = std::array<std::string_view, 4> {
 R"###(
   (SDFVERSION "4.0")
   (DESIGN "system")

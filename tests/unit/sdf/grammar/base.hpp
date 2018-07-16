@@ -42,7 +42,7 @@ constexpr char negative_sign_str[] = "-";
 constexpr char separator_0[] = ".";
 constexpr char separator_1[] = "/";
 
-constexpr std::array special_character_without_bslash_str {
+constexpr std::array<std::string_view, 27> special_character_without_bslash_str {
        "!","#","%","&","(",")", //removed ,"«"
        "*","+",",","-",".","/",":",
        ";","<","=",">","?","@","[",
@@ -51,33 +51,33 @@ constexpr std::array special_character_without_bslash_str {
 constexpr std::array special_character_str = 
   array_append(
     special_character_without_bslash_str,
-    std::array{"\\"}
+    std::array<std::string_view, 1> {"\\"}
   );
 
-constexpr std::array escaped_special_character_str = 
-  std::array{
+constexpr auto escaped_special_character_str = 
+  std::array<std::string_view, 28> {
   "\\!","\\#","\\%","\\&","\\(","\\)", // removed ,"\\«"
   "\\*","\\+","\\,","\\-","\\.","\\/","\\:",
   "\\;","\\<","\\=","\\>","\\?","\\@","\\[",
   "\\\\","\\]","\\^","\\'","\\{","\\|","\\}","\\~"};
 
-constexpr std::array decimal_range_str = 
-  std::array{
+constexpr auto decimal_range_str = 
+  std::array<std::string_view, 10> {
     "0","1","2","3","4","5","6","7","8","9"
   };
 
-constexpr std::array escaped_decimal_range_str = 
-  std::array{
+constexpr auto escaped_decimal_range_str = 
+  std::array<std::string_view, 28> {
     "\\0","\\1","\\2","\\3","\\4","\\5","\\6","\\7","\\8","\\9"
   };
 
-constexpr std::array alphanumeric_str = 
+constexpr auto alphanumeric_str = 
   array_append(
     array_append(
-      std::array{"_","$"},
+      std::array<std::string_view, 2> {"_","$"},
       decimal_range_str
     ),
-    std::array{
+    std::array<std::string_view, 52> {
       "a","b","c","d","e","f","g",
       "h","i","j","k","l","m","n",
       "o","p","q","r","s","t","u",
@@ -92,10 +92,10 @@ constexpr std::array alphanumeric_str =
 constexpr std::array escaped_alphanumeric_str = 
   array_append(
     array_append(
-      std::array{"\\_","\\$"},
+      std::array<std::string_view, 2> {"\\_","\\$"},
       escaped_decimal_range_str
     ),
-    std::array{
+    std::array<std::string_view, 52> {
       "\\a","\\b","\\c","\\d","\\e","\\f","\\g",
       "\\h","\\i","\\j","\\k","\\l","\\m","\\n",
       "\\o","\\p","\\q","\\r","\\s","\\t","\\u",
@@ -107,19 +107,19 @@ constexpr std::array escaped_alphanumeric_str =
     }
   );
 
-constexpr std::array escaped_character_str = 
+constexpr auto escaped_character_str = 
   array_append(
     escaped_special_character_str,
     escaped_alphanumeric_str
   );
 
-constexpr std::array character_str = 
+constexpr auto character_str = 
   array_append(
     alphanumeric_str,
     escaped_character_str
   );
 
-constexpr std::array any_character_str = 
+constexpr auto any_character_str = 
   array_append(
     special_character_without_bslash_str,
     character_str

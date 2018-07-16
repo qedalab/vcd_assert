@@ -56,7 +56,7 @@ TEST_CASE("SDF.Grammar.Base", "[!hide][SDF][Grammar][Base]") {
 
   SECTION("Decimals") {
     for(auto&& a : decimal_range_str){ 
-      SECTION(a){
+      SECTION(std::string(a)) {
         INFO("Checking : " << a); 
         CHECK(match_exactly<decimal_digit>(a));
       }
@@ -65,7 +65,7 @@ TEST_CASE("SDF.Grammar.Base", "[!hide][SDF][Grammar][Base]") {
 
   SECTION("Alphanumeric Characters") {
     for(auto&& a : alphanumeric_str){ 
-      SECTION(a){
+      SECTION(std::string(a)){
         INFO("Checking : " << a); 
         CHECK(match_exactly<alphanumeric>(a));
       }
@@ -74,7 +74,7 @@ TEST_CASE("SDF.Grammar.Base", "[!hide][SDF][Grammar][Base]") {
 
   SECTION("Escaped Alphanumerics Characters") {
     for(auto&& a : escaped_alphanumeric_str){ 
-      SECTION(a){
+      SECTION(std::string(a)){
         INFO("Checking : " << a); 
         CHECK(match_exactly<escaped_character>(a));
       }
@@ -83,7 +83,7 @@ TEST_CASE("SDF.Grammar.Base", "[!hide][SDF][Grammar][Base]") {
 
   SECTION("Special Characters") {
     for(auto&& a : special_character_str){ 
-      SECTION(a){
+      SECTION(std::string(a)){
         INFO("Checking : " << a);
         CHECK(match_exactly<special_character>(a));
       }
@@ -92,7 +92,7 @@ TEST_CASE("SDF.Grammar.Base", "[!hide][SDF][Grammar][Base]") {
 
   SECTION("Escaped Special Characters") {
     for(auto&& a : escaped_special_character_str){ 
-      SECTION(a){
+      SECTION(std::string(a)){
         INFO("Checking : " << a); 
         CHECK(match_exactly<escaped_character>(a));
       }
@@ -101,7 +101,7 @@ TEST_CASE("SDF.Grammar.Base", "[!hide][SDF][Grammar][Base]") {
   
   SECTION("Normal Characters") {
     for(auto&& a : character_str){ 
-      SECTION(a){
+      SECTION(std::string(a)){
         INFO("Checking : " << a); 
         CHECK(match_exactly<character>(a));
       }
@@ -111,7 +111,7 @@ TEST_CASE("SDF.Grammar.Base", "[!hide][SDF][Grammar][Base]") {
   SECTION("All Characters") {
     for(auto&& a : any_character_str){ 
       
-      SECTION(a){
+      SECTION(std::string(a)){
         INFO("Checking : " << a); 
         CHECK(match_exactly<any_character>(a));
       }

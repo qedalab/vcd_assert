@@ -5,6 +5,7 @@
 #include <sdf/types/values.hpp>
 
 #include <variant>
+#include <optional>
 
 namespace SDF {
 
