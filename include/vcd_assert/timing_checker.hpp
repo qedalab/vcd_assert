@@ -37,7 +37,7 @@ public:
   // Claims ownership of the header
   TimingChecker(std::shared_ptr<VCD::Header> header);
 
-  void apply_sdf(std::shared_ptr<SDF::DelayFile> delayfile std::size_t vcd_scope_node);
+  void apply_sdf(std::shared_ptr<SDF::DelayFile> delayfile, std::size_t vcd_scope_node);
 
   // Trigger event and return true if event was triggered
   [[nodiscard]] bool event(std::size_t time, std::size_t index,

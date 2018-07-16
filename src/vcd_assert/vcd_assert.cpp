@@ -26,6 +26,10 @@ int main(int argc, char **argv) {
   vcd_file_option->required();
   vcd_file_option->check(CLI::ExistingFile);
 
+  auto vcd_file_option = cli.add_option("file", verilog_files, "Verilog file(s)");
+  vcd_file_option->required();
+  vcd_file_option->check(CLI::ExistingFile);
+
   std::vector<std::string> vcd_nodes;
   auto node_option = cli.add_option("--node,-n", vcd_nodes, "VCD Node");
 
@@ -85,20 +89,41 @@ int main(int argc, char **argv) {
   
   size_t applied_ = 0;
 
-
+  // Initialise the parser.
   verilog_parser_init();
 
-  for (auto&& verilog_file : verilog_file_array) {
+  // Parse the Verilog files
+  for (auto&& verilog_file : verilog_files) {
+
     // Open A File handle to read data in.
-    FILE * fh = fopen("my_verilog_file.v", "r");
+    FILE * input_file = fopen(verilog_file,"r");
+    if(input_file){
+    
+      // Parse our input file.
+      int result = verilog_parse_file(input_file);
+
+      // If the parse didn't work, print an error message and quit.
+      if(result != 0){
+        fmt::print(FMT_STRING("ERROR: Failed to parse Verilog file:\n"));
+        fmt::print(sptrinf("\t%s\n",verilog_file));
+      }
+      else if(args -> verbose){
+        fmt::print(FMT_STRING("INFO: Parsing Verilog file: "));
+        fmt::print(sptrinf("%s\n",verilog_file));
+      }
+    }else{
+      printf("ERROR Could not open file for reading: %s\n", argv[F]);
+      free(args);
+      return 1;
+    }
+    fclose(input_file);
   }
-  // Parse the file and store the result.
-  int result = verilog_parse_file(fh);
 
-  if(result == 1)
-    fmt::print(FMT_STRING("ERROR: Verilog parse unsuccessful.\n"));
+  // This is how we access the parsed source tree.
+  verilog_source_tree * ast = yy_verilog_source_tree;
 
-  fclose(fh);
+  // Resolve all of the names in the syntax tree.
+  verilog_resolve_modules(ast);
 
 
   VCD::HeaderReader vcd_reader;
@@ -110,9 +135,9 @@ int main(int argc, char **argv) {
   assert(header_p.operator bool());
   auto timing_checker = VCDAssert::TimingChecker(header_p);
   
-  for (auto&& [node,sdf_file_array] : apply_nodes) {
+  for (auto&& [node,sdf_files] : apply_nodes) {
     size_t scope_index = header_p->.get
-    for(auto&& sdf_file : sdf_file_array){
+    for(auto&& sdf_file : sdf_files){
 
       DelayFileReader sdf_reader;
 
