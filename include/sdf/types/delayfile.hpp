@@ -29,7 +29,7 @@ struct DelayFileView
 };
 
 namespace Test {
-  class DelayFileTester;
+  struct DelayFileTester;
 }
 
 /// Stores the SDF data.
@@ -51,7 +51,7 @@ class DelayFile
   std::vector<Cell> cells_;                   /// Cells of the SDF file
 
   friend class DelayFileReader;
-  friend class Test::DelayFileTester;
+  friend struct Test::DelayFileTester;
 private: 
   DelayFile(DelayFileView dfw) 
   : sdf_version_(dfw.sdf_version),
