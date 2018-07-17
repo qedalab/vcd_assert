@@ -3,6 +3,8 @@
 
 #include "./enums.hpp"
 
+#include <range/v3/view/all.hpp>
+
 #include <string>
 #include <unordered_map>
 
@@ -65,6 +67,16 @@ public:
   /// Returns the number of direct scopes within this scope
   /// \returns The number of direct scopes within this scope
   std::size_t num_scopes() const noexcept;
+
+  /// Returns a range of identifier-index pairs of the scopes
+  /// \returns identifier-index pairs range
+  /// \TODO Make and use identifier-index range
+  auto get_scopes() -> decltype(ranges::view::all(this->child_scopes_));
+
+  /// Returns a range of identifier-index pairs of the variables
+  /// \returns identifier-index pairs range
+  /// \TODO Make and use identifier-index range
+  auto get_variables() -> decltype(ranges::view::all(this->child_variables_));
 
   /// Get scope identifier
   /// \returns View of identifier string
