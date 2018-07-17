@@ -27,7 +27,7 @@ matrix:
       script:
       - docker exec runner scl enable devtoolset-7 -- bash -c "cd repo/travis-build && conan install .. --build=missing -s build_type=Debug"
       - docker exec runner scl enable devtoolset-7 -- bash -c "cd repo/travis-build && conan build .."
-      - docker exec runner scl enable devtoolset-7 -- bash -c "cd repo/travis-build && coveralls --gcov-options '\-lp' --repo-token {COVERALLS_TOKEN}"
+      - docker exec runner scl enable devtoolset-7 -- bash -c "cd repo/travis-build && coveralls --gcov-options '\-lp' --repo-token ${COVERALLS_TOKEN}"
 
     # Valgrind
     - env:
