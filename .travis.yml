@@ -5,7 +5,7 @@ language: generic
 services:
   - docker
 
-before:
+before_script:
   - docker run --name runner -t -d pleroux0/centos7-devel
   - docker exec runner git clone -b "${TRAVIS_BRANCH}" --recurse-submodules --depth=1 "https://github.com/${TRAVIS_REPO_SLUG}.git" "repo"
   - docker exec runner mkdir "repo/travis-build"
