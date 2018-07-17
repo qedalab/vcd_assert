@@ -158,17 +158,6 @@ struct PortEdgeStorage {
   }
 };
 
-// TODO: The following are pos/neg edges, but are more specific than posedge
-//
-// TODO HERE THERE BE BUGS: EdgeType is never set when one of the other edge
-// identifers matches and will be used unitialized!!!
-//
-// Grammar::edge_identifier_01, apply0<Apply::value<EdgeType::posedge>>,
-// Grammar::edge_identifier_10, apply0<Apply::value<EdgeType::negedge>>,
-// Grammar::edge_identifier_0z, apply0<Apply::value<EdgeType::posedge>>,
-// Grammar::edge_identifier_z1, apply0<Apply::value<EdgeType::posedge>>,
-// Grammar::edge_identifier_1z, apply0<Apply::value<EdgeType::negedge>>,
-// Grammar::edge_identifier_z0, apply0<Apply::value<EdgeType::posedge>>,
 struct EdgeTypeAction : all_dispatch<apply0<Apply::rule_value>> {
   using state = EdgeType;
 };
