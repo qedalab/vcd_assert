@@ -18,11 +18,9 @@ template <class OutputIterator>
 void serialize_value_change(
     OutputIterator oi,
     ScalarValueChangeView svcv) noexcept(noexcept(*oi++ = '!')) {
-  using std::literals::string_view_literals::operator""sv;
-
   *oi++ = value_to_char(svcv.value);
   ranges::copy(svcv.identifier_code, oi);
-  ranges::copy("\n"sv, oi);
+  ranges::copy(std::string_view("\n"), oi);
 }
 
 /// Serialize VCD vector value change
@@ -33,14 +31,12 @@ void serialize_value_change(
 template <class OutputItertator>
 void serialize_value_change(OutputItertator oi,
                             VectorValueChangeView vvcv) noexcept(noexcept(*oi++ = '!')) {
-  using std::literals::string_view_literals::operator""sv;
-
-  ranges::copy("b"sv, oi);
+  ranges::copy(std::string_view("b"), oi);
   for (auto value : vvcv.values)
     *oi++ = value_to_char(value);
-  ranges::copy(" "sv, oi);
+  ranges::copy(std::string_view(" "), oi);
   ranges::copy(vvcv.identifier_code, oi);
-  ranges::copy("\n"sv, oi);
+  ranges::copy(std::string_view("\n"), oi);
 }
 
 /// Serialize VCD real value change
@@ -51,13 +47,11 @@ void serialize_value_change(OutputItertator oi,
 template <class OutputIterator>
 void serialize_value_change(OutputIterator oi,
                             RealValueChangeView rvcv) noexcept(noexcept(*oi++ = '!')) {
-  using std::literals::string_view_literals::operator""sv;
-
-  ranges::copy("r"sv, oi);
+  ranges::copy(std::string_view("r"), oi);
   ranges::copy(std::to_string(rvcv.value), oi);
-  ranges::copy(" "sv, oi);
+  ranges::copy(std::string_view(" "), oi);
   ranges::copy(rvcv.identifier_code, oi);
-  ranges::copy("\n"sv, oi);
+  ranges::copy(std::string_view("\n"), oi);
 }
 
 } // namespace VCD

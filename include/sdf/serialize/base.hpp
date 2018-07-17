@@ -12,10 +12,8 @@ namespace SDF {
 template <class OutputIterator>
 void serialize_indent(OutputIterator oi,
                       int indent) noexcept(noexcept(*oi++ = '!')) {
-  using std::literals::string_view_literals::operator""sv;
-
   for (int i = 0; i < indent; i++) {
-    ranges::copy("  "sv, oi);
+    ranges::copy(std::string_view("  "), oi);
   }
 }
 
@@ -23,21 +21,17 @@ void serialize_indent(OutputIterator oi,
 template <class OutputIterator>
 void serialize_quoted(OutputIterator oi,
                       std::string_view input) noexcept(noexcept(*oi++ = '!')) {
-  using std::literals::string_view_literals::operator""sv;
-
-  ranges::copy("\""sv, oi);
+  ranges::copy(std::string_view("\""), oi);
   ranges::copy(input, oi);
-  ranges::copy("\""sv, oi);
+  ranges::copy(std::string_view("\""), oi);
 }
 
 template <class OutputIterator, typename T, typename... Ts>
 void serialize_quoted_alt(OutputIterator oi, T (*inner)(Ts...),
                           Ts &&... args) noexcept(noexcept(*oi++ = '!')) {
-  using std::literals::string_view_literals::operator""sv;
-
-  ranges::copy("\""sv, oi);
+  ranges::copy(std::string_view("\""), oi);
   inner(oi, std::forward<Ts>(args)...);
-  ranges::copy("\""sv, oi);
+  ranges::copy(std::string_view("\""), oi);
 }
 
 /// Serialize hierarchical identifier 
@@ -49,9 +43,7 @@ template <class OutputIterator>
 void serialize_hierarchical_identifier(
     OutputIterator oi, int indent,
     HierarchicalIdentifier hi) noexcept(noexcept(*oi++ = '!')) {
-  using std::literals::string_view_literals::operator""sv;
-
-  auto sep = hi.sep == HChar::dot ? "."sv : "/"sv;
+  auto sep = hi.sep == HChar::dot ? std::string_view(".") : std::string_view("/");
   for(auto&& str : hi.value){
     ranges::copy(str, oi);
     ranges::copy(sep, oi);    
@@ -66,7 +58,6 @@ void serialize_hierarchical_identifier(
 // template <class OutputIterator>
 // void serialize_hierarchical_identifier(
 //     OutputIterator oi, int indent, std::string_view hi) noexcept(noexcept(*oi++ = '!')) {
-//   using std::literals::string_view_literals::operator""sv;
 
 //   for
 //   ranges::copy(hi, oi);
@@ -81,11 +72,9 @@ void serialize_hierarchical_identifier(
 template <class OutputIterator>
 void serialize_comment_ml(OutputIterator oi, std::string_view comment) noexcept(
     noexcept(*oi++ = '!')) {
-  using std::literals::string_view_literals::operator""sv;
-
-  ranges::copy("/*"sv, oi);
+  ranges::copy(std::string_view("/*"), oi);
   ranges::copy(comment, oi);
-  ranges::copy("*/"sv, oi);
+  ranges::copy(std::string_view("*/"), oi);
 }
 
 /// Serialize SDF comment
@@ -96,11 +85,9 @@ void serialize_comment_ml(OutputIterator oi, std::string_view comment) noexcept(
 template <class OutputIterator>
 void serialize_comment_sl(OutputIterator oi, std::string_view comment) noexcept(
     noexcept(*oi++ = '!')) {
-  using std::literals::string_view_literals::operator""sv;
-
-  ranges::copy("//"sv, oi);
+  ranges::copy(std::string_view("//"), oi);
   ranges::copy(comment, oi);
-  ranges::copy("\n"sv, oi);
+  ranges::copy(std::string_view("\n"), oi);
 }
 
 } // namespace SDF

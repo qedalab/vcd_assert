@@ -11,7 +11,6 @@
 #include <variant>
 
 #include <string_view>
-using std::literals::string_view_literals::operator""sv;
 
 namespace SDF::Test {
 

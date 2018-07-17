@@ -6,8 +6,6 @@
 using namespace VCD;
 
 TEST_CASE("VCD.Serialize.ValueChange", "[Serialize]") {
-  using std::literals::string_literals::operator""s;
-
   SECTION("Scalar") {
     std::string output;
     VCD::serialize_value_change(ranges::back_inserter(output),
@@ -26,7 +24,7 @@ TEST_CASE("VCD.Serialize.ValueChange", "[Serialize]") {
   SECTION("Real") {
     std::string output;
     double value = 3.14;
-    std::string expected = "r"s + std::to_string(value) + " my_id_code\n";
+    std::string expected = std::string("r") + std::to_string(value) + std::string(" my_id_code\n");
 
     VCD::serialize_value_change(ranges::back_inserter(output),
                                 {value, "my_id_code"} );

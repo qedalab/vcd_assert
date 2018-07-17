@@ -24,29 +24,27 @@ template <class OutputIterator>
 void serialize_timing_check_condition_inner(
     OutputIterator oi, int indent,
     TimingCheckCondition cond) noexcept(noexcept(*oi++ = '!')) {
-  using std::literals::string_view_literals::operator""sv;
-
   Node node;
   if(std::holds_alternative<InvertedNode>(cond.value)){
     node = std::get<InvertedNode>(cond.value);
-    ranges::copy("~"sv, oi);
+    ranges::copy(std::string_view("~"), oi);
   }else if(std::holds_alternative<NodeConstantEquality>(cond.value)){
     auto eq = std::get<NodeConstantEquality>(cond.value);
     node = eq.left;
     serialize_node(oi, indent, eq.left);
     if(eq.op == EqualityOperator::logic_equal){
-      ranges::copy("=="sv, oi);
+      ranges::copy(std::string_view("=="), oi);
     }else if(eq.op == EqualityOperator::logic_inv){
-      ranges::copy("!="sv, oi);
+      ranges::copy(std::string_view("!="), oi);
     }else if(eq.op == EqualityOperator::case_equal){
-      ranges::copy("==="sv, oi);
+      ranges::copy(std::string_view("==="), oi);
     }else{
-      ranges::copy("!=="sv, oi);
+      ranges::copy(std::string_view("!=="), oi);
     }
     if(eq.right){
-      ranges::copy("1"sv, oi);     
+      ranges::copy(std::string_view("1"), oi);     
     }else{
-      ranges::copy("0"sv, oi);    
+      ranges::copy(std::string_view("0"), oi);    
     }
   }else{
     node = std::get<Node>(cond.value);
@@ -63,39 +61,37 @@ template <class OutputIterator>
 void serialize_port_tchk(
     OutputIterator oi, int indent,
     PortTimingCheck port_tchk) noexcept(noexcept(*oi++ = '!')) {
-  using std::literals::string_view_literals::operator""sv;
-
   if (port_tchk.timing_check_condition.has_value()) {
     serialize_indent(oi, indent);
-    ranges::copy("(COND "sv, oi);
+    ranges::copy(std::string_view("(COND "), oi);
   }
 
   {
     if (port_tchk.symbolic_name.has_value()) {
       ranges::copy(port_tchk.symbolic_name.value(), oi);
-      ranges::copy(" "sv, oi);
+      ranges::copy(std::string_view(" "), oi);
     }
 
     if (port_tchk.timing_check_condition.has_value()) {
       serialize_timing_check_condition_inner(oi, indent, port_tchk.timing_check_condition.value());
-      ranges::copy(" "sv, oi);
+      ranges::copy(std::string_view(" "), oi);
     }
 
     if (port_tchk.port.edge.has_value()) {
-      ranges::copy("("sv, oi);
+      ranges::copy(std::string_view("("), oi);
       ranges::copy(edgetype_to_string(port_tchk.port.edge.value()), oi);
-      ranges::copy(" "sv, oi);
+      ranges::copy(std::string_view(" "), oi);
     }
 
     serialize_node(oi, 0, port_tchk.port);
 
     if (port_tchk.port.edge.has_value()) {
-      ranges::copy(")"sv, oi);
+      ranges::copy(std::string_view(")"), oi);
     }
   }
 
   if (port_tchk.timing_check_condition.has_value()) {
-    ranges::copy(")"sv, oi);
+    ranges::copy(std::string_view(")"), oi);
   }
 }
 /// Serialize HOLD timing check
@@ -106,16 +102,14 @@ void serialize_port_tchk(
 template <class OutputIterator>
 void serialize_hold_check(OutputIterator oi, int indent,
                           Hold hold) noexcept(noexcept(*oi++ = '!')) {
-  using std::literals::string_view_literals::operator""sv;
-
   serialize_indent(oi, indent);
-  ranges::copy("(HOLD "sv, oi);
+  ranges::copy(std::string_view("(HOLD "), oi);
   serialize_port_tchk(oi, 0, hold.input);
-  ranges::copy(" "sv, oi);
+  ranges::copy(std::string_view(" "), oi);
   serialize_port_tchk(oi, 0, hold.output);
-  ranges::copy(" "sv, oi);
+  ranges::copy(std::string_view(" "), oi);
   serialize_value(oi, 0, hold.value);
-  ranges::copy(")\n"sv, oi);
+  ranges::copy(std::string_view(")\n"), oi);
 }
 
 /// Serialize SDF timing check definition
@@ -126,8 +120,6 @@ void serialize_hold_check(OutputIterator oi, int indent,
 template <class OutputIterator>
 void serialize_timing_check(OutputIterator oi, int indent,
                             TimingCheck tc) noexcept(noexcept(*oi++ = '!')) {
-  using std::literals::string_view_literals::operator""sv;
-
   // only HOLD timing checks supported at the moment.
   assert(tc.get_enum_type() == TimingCheckType::hold);
 
@@ -158,8 +150,6 @@ template <class OutputIterator>
 void serialize_timing_check_spec(
     OutputIterator oi, int indent,
     TimingCheckSpec tcs) noexcept(noexcept(*oi++ = '!')) {
-  using std::literals::string_view_literals::operator""sv;
-
   for (auto &&tc : tcs) {
     serialize_timing_check(oi, indent, tc);
   }

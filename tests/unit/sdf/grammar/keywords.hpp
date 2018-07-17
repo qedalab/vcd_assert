@@ -185,7 +185,7 @@ constexpr auto k_width_str_u            = R"(WIDTH)";
 
 
 auto constexpr sdf_keywords = 
-  std::array{
+  std::array<std::string_view, 57> {
     k_absolute_str_u,          k_absolute_str_c,         k_absolute_str_l,
     k_arrival_str_u,          // k_arrival_str_c,          k_arrival_str_l,
     k_bidirectskew_str_u,     // k_bidirectskew_str_c,     k_bidirectskew_str_l,

@@ -26,27 +26,27 @@ void SDF::Test::catch_test_node(SDF::Node wanted, SDF::Node test)
 
     SECTION("Member : \"hierarchical_identifier\" : \n") {
       std::string output;     
-      ranges::copy("\fWanted : "sv, ranges::back_inserter(output));
+      ranges::copy(std::string_view("\fWanted : "), ranges::back_inserter(output));
       if(wanted.hierarchical_identifier.has_value()){
-        ranges::copy("\""sv, ranges::back_inserter(output));
+        ranges::copy(std::string_view("\""), ranges::back_inserter(output));
         serialize_hierarchical_identifier(ranges::back_inserter(output), 0,
                                           wanted.hierarchical_identifier.value());
-        ranges::copy("\""sv, ranges::back_inserter(output));
+        ranges::copy(std::string_view("\""), ranges::back_inserter(output));
       }else{
-         ranges::copy("NULL"sv, ranges::back_inserter(output));      
+         ranges::copy(std::string_view("NULL"), ranges::back_inserter(output));      
       }
 
-      ranges::copy("\f\r     Got : "sv, ranges::back_inserter(output));
+      ranges::copy(std::string_view("\f\r     Got : "), ranges::back_inserter(output));
       
       if(test.hierarchical_identifier.has_value()){
 
-        ranges::copy("\""sv, ranges::back_inserter(output));
+        ranges::copy(std::string_view("\""), ranges::back_inserter(output));
         serialize_hierarchical_identifier(ranges::back_inserter(output), 0,
                                           test.hierarchical_identifier.value());
-        ranges::copy("\""sv, ranges::back_inserter(output));
+        ranges::copy(std::string_view("\""), ranges::back_inserter(output));
 
       }else{
-         ranges::copy("NULL"sv, ranges::back_inserter(output));      
+         ranges::copy(std::string_view("NULL"), ranges::back_inserter(output));      
       }
         
       SECTION(output){

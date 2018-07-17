@@ -14,11 +14,9 @@ namespace VCD {
 template <class OutputIterator>
 void serialize_version(OutputIterator oi, std::string_view version) noexcept(
     noexcept(*oi++ = '!')) {
-  using std::literals::string_view_literals::operator""sv;
-
-  ranges::copy("$version "sv, oi);
+  ranges::copy(std::string_view("$version "), oi);
   ranges::copy(version, oi);
-  ranges::copy(" $end\n"sv, oi);
+  ranges::copy(std::string_view(" $end\n"), oi);
 }
 
 } // namespace VCD

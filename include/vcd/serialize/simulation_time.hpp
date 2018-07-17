@@ -16,11 +16,9 @@ namespace VCD {
 template <class OutputIterator>
 void serialize_simulation_time(OutputIterator oi, std::size_t time) noexcept(
     noexcept(*oi++ = '!')) {
-  using std::literals::string_view_literals::operator""sv;
-
-  ranges::copy("#"sv, oi);
+  ranges::copy(std::string_view("#"), oi);
   ranges::copy(std::to_string(time), oi);
-  ranges::copy("\n"sv, oi);
+  ranges::copy(std::string_view("\n"), oi);
 }
 
 } // namespace VCD
