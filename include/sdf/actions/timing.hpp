@@ -158,9 +158,11 @@ struct PortEdgeStorage {
   }
 };
 
-// TODO: The following are posedges, but are more specific than posedge
-// is this included in the SDF grammar?
-// 
+// TODO: The following are pos/neg edges, but are more specific than posedge
+//
+// TODO HERE THERE BE BUGS: EdgeType is never set when one of the other edge
+// identifers matches and will be used unitialized!!!
+//
 // Grammar::edge_identifier_01, apply0<Apply::value<EdgeType::posedge>>,
 // Grammar::edge_identifier_10, apply0<Apply::value<EdgeType::negedge>>,
 // Grammar::edge_identifier_0z, apply0<Apply::value<EdgeType::posedge>>,
