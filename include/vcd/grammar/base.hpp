@@ -39,7 +39,6 @@ struct escaped_identifier : seq<
   must<blank>
 > {};
 
-
 struct identifier : sor<
   escaped_identifier,
   simple_identifier

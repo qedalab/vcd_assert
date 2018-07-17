@@ -33,7 +33,12 @@ struct alphanumeric : sor<
   decimal_digit
 > {};
 
-struct hchar : sor<one<'.'>,one<'/'>> {};
+// TODO use these instead
+struct hchar_dot : one<'.'> {};
+struct hchar_slash : one<'.'> {};
+
+struct hchar : sor<one<'.'>,one<'/'>> {
+};
 
 struct character;
 
