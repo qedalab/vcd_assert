@@ -35,9 +35,62 @@ TimingChecker::TimingChecker(std::shared_ptr<VCD::Header> header) :
   };
 }
 
-//Assuming the scope node is the header (as in the LRM), I dont see 
-//what the "std::size_t vcd_scope_node" was meant for.
-void TimingChecker::apply_sdf(std::shared_ptr<SDF::DelayFile> delayfile, std::size_t vcd_scope_node)
+
+/*
+
+For every application scope(appscope), find its node in the verilog ast.
+Create the path to the appscope in therms of instance names(not module/type names)
+Then go through
+
+For every scope in the vcd, check whether the given node falls within the scope. If not, increment the index and check its inner scopes(could record the indexes that are checked so they can be skipped). Once the the application scope is found, it becomes the SDF's root. 
+
+The cells with explicit instances are incrementally matched via scope walking to 
+  get to the "leaf" scope. Once the leaf scope is found, check its type in the verilog
+  to make sure it matches the type (optional).
+
+The cells with no instances given only applicable at the current scope to cells of the given type.  
+  In this case, get the scope type and go through the top level scopes checking each's type.
+  When scopes are found that match, go through the assertions in the cell and map each to the variables.
+
+*/
+void TimingChecker::match_scope_helper(){
+  // for (auto &inner_test_scope : test.scopes) {
+  //   auto scope_index = scope.get_scope_index(inner_test_scope.identifier);
+  //   auto &inner_scope = get_scope(scope_index);
+  //   recursive(inner_scope, inner_test_scope);
+  // }
+}
+
+bool TimingChecker::match_scope(SDF::Cell cell, std::size_t scope_index) {
+    /* 
+      for all timing specs, 
+        considering only timing checks 
+          for all hold timing checks
+            create hold or conditional hold for the 
+  */
+  // for(auto&& spec : cell.timing_specs) {
+  //   switch(spec.get_enum_type()) {
+  //   case TimingSpecType::TimingCheck:
+  //     for(auto&& check : std::get<TimingCheckSpec>) {
+  //       switch(check.get_enum_type()) {
+  //       case TimingCheckType::Hold:
+  //         break;
+  //       default:
+  //         assert(false && "Invalid enum state");
+  //         abort();
+  //       }
+  //     }
+  //   default:
+  //     assert(false && "Invalid enum state");
+  //     abort();
+  //   }
+  // }
+  return 0;
+}
+
+void TimingChecker::apply_sdf(VerilogSourceTree *ast, 
+                              std::shared_ptr<SDF::DelayFile> delayfile, 
+                              std::vector<std::string> vcd_node_path)
 {
   //Timing checker should consolodate that all sdf files contain the same :
   //    sdf_version
@@ -46,58 +99,84 @@ void TimingChecker::apply_sdf(std::shared_ptr<SDF::DelayFile> delayfile, std::si
   //    [voltage]
   //    [temperature]
 
-  // Should always match the SDF file timescale with that of the VCD.
-  // ..which could require conversion of the value.
-  SDF::TimeScale delayfile.get_timescale();
-  std::vector<Cell> cells = delayfile.get_cells();
-
-  for(auto&& cell : cells) {
-
-    // IF the cell instance is blank or *, then look for 
-    //   verilog scopes of 'cell_type' among the available VCD scopes.
-
- 
-
-    if(std::holds_alternative<SDF::Star>(cell.cell_instance)){
-      for(auto&& scope : header_.get_scopes) {
-      // For the given scopes found, apply the specs.      
-        for all scopes.
+  std::optional<size_t> apply_at_index;
+  VCD::Scope cur_scope = header_->get_root_scope(); //TODO node->scope not root.
+  auto& root_identifier = cur_scope.get_identifier();
+  // std::vector<std::string> path{root_identifier};
+  if(vcd_node_path.size() == 0){
+    apply_at_index = 0;
+  }else if(vcd_node_path.size() == 1){
+    /*ASSUMPTION: single node ident must be root..*/
+    if(vcd_node_path[0].compare(root_identifier) ){
+      apply_at_index = 0;
     }else{
-      /*IF a specific scope is specified, check if the scope is available 
-        from the current root scope. */
-      auto hi = std::get<SDF::HierarchicalIdentifier>(cell.cell_instance);
-      only for scope hi.
+      //path specified not applicable/valid.
     }
-  }
-}
-
-void TimingChecker::match_scope(){
-    /* 
-      for all timing specs, 
-        considering only timing checks 
-          for all hold timing checks
-            create hold or conditional hold for the 
-  */ 
-
-    for(auto&& spec : cell.timing_specs) {
-      switch(spec.get_enum_type()) {
-      case TimingSpecType::TimingCheck:
-        for(auto&& check : std::get<TimingCheckSpec>) {
-          switch(check.get_enum_type()) {
-          case TimingCheckType::Hold:
-            
-          default:
-            assert(false && "Invalid enum state");
-            abort();
-          }
+  }else{
+    //Iterate over all scopes. Every part of path must match a (instance) scope.
+    size_t path_index = 0;
+    // size_t scope_index = 0;
+    for (auto&& i : ranges::view::indices(header_->num_scopes()) {
+      cur_scope = header_->get_scope(i);
+      
+      if(vcd_node_path[path_index].compare(scope.get_identifier())){
+        path_index++;
+        scope_index++;
+        if(vcd_node_path.size() == path_index){
+          //successfully found the last identifier in path.
+          break;
         }
-      default:
-        assert(false && "Invalid enum state");
-        abort();
+        if(scope.contains_scope(node)){
+        apply_at_index = i;
+        /*OR
+          scope_index = cur_scope.get_scope_index(node);
+        */
       }
-    }
+      }else{
+
+      }
+      
+    }//hence the sdf file was applied at node with index i.
+    if(scope_index)
+    apply_at_index = scope_index
+
   }
 
+  // Find the scope as supplied on cmd line. if possible.
+  if(apply_at_index.has_value(){
+    //Not applied at root, try to find where it is applied:
+
+
+  }else{
+    //could not find the supplied scope.
+  }
+  
+
+
+
+  // // Should always match the SDF file timescale with that of the VCD.
+  // // ..which could require conversion of the value.
+  // SDF::TimeScale delayfile.get_timescale();
+  // std::vector<Cell> cells = delayfile.get_cells();
+  // /*etc*/
+
+  // for(auto&& cell : cells) {
+
+  //   // IF the cell instance is blank or *, then look for 
+  //   //   verilog scopes of 'cell_type' among the available VCD scopes.
+
+  //   if(std::holds_alternative<SDF::Star>(cell.cell_instance)){
+  //     for(auto&& scope : header_.get_scopes) {
+  //     // For the given scopes found, apply the specs.      
+  //       for all scopes.
+  //   }else{
+  //     /*IF a specific scope is specified, check if the scope is available 
+  //       from the current root scope. */
+  //     auto hi = std::get<SDF::HierarchicalIdentifier>(cell.cell_instance);
+  //     only for scope hi.
+  //   }
+  // }
+  
 }
 
 [[nodiscard]] bool TimingChecker::handle_event(const Event &event)

@@ -6,8 +6,19 @@
 #include "./event.hpp"
 #include "./state.hpp"
 
+#include "sdf/actions/delayfile.hpp"
+#include "sdf/grammar/grammar.hpp"
+
+
+#include <verilog_ast.h>
+#include <verilog_ast_util.h>
+#include <verilog_parser.h>
+
 #include "vcd/types/header.hpp"
 #include <range/v3/span.hpp>
+#include <range/v3/view/indices.hpp>
+
+using VerilogSourceTree = verilog_source_tree;
 
 namespace VCDAssert {
 
@@ -31,13 +42,17 @@ class TimingChecker {
   [[nodiscard]] bool handle_event(const Event& event);
 
 private:
-  bool match_scope(std::shared_ptr<SDF::DelayFile> delayfile std::size_t vcd_scope_node);
+  void match_scope_helper();
+  bool match_scope(SDF::Cell cell, 
+                   std::size_t scope_index);
 
 public:
   // Claims ownership of the header
   TimingChecker(std::shared_ptr<VCD::Header> header);
 
-  void apply_sdf(std::shared_ptr<SDF::DelayFile> delayfile, std::size_t vcd_scope_node);
+  void apply_sdf(VerilogSourceTree *ast, 
+                 std::shared_ptr<SDF::DelayFile> delayfile, 
+                 std::vector<std::string> vcd_node_path);
 
   // Trigger event and return true if event was triggered
   [[nodiscard]] bool event(std::size_t time, std::size_t index,

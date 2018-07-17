@@ -1,16 +1,33 @@
-#include "vcd/types/header_reader.hpp"
 #include "vcd_assert/timing_checker.hpp"
+
+#include "parse/actions/control.hpp"
+#include "parse/actions/make_pegtl_template.hpp"
+
+#include "vcd/grammar/grammar.hpp"
+#include "vcd/types/header_reader.hpp"
 #include "vcd/actions/header.hpp"
 
-#include "../actions/control.hpp"
-#include "../actions/make_pegtl_template.hpp"
+#include "sdf/actions/base.hpp"
+#include "sdf/actions/delayfile.hpp"
+#include "sdf/grammar/base.hpp"
+#include "sdf/grammar/grammar.hpp"
+#include "sdf/types/delayfile_reader.hpp"
+
 #include <tao/pegtl/memory_input.hpp>
 #include <tao/pegtl/file_input.hpp>
 #include <tao/pegtl/parse.hpp>
 
+#include <verilog_ast.h>
+#include <verilog_ast_util.h>
+#include <verilog_parser.h>
+
 #include <CLI/CLI.hpp>
 #include <fmt/format.h>
+#include <fmt/printf.h>
+#include <iostream>
 #include <range/v3/algorithm/reverse.hpp>
+#include <range/v3/view/indices.hpp>
+
 
 struct NodeApply {
   std::string node;
@@ -26,16 +43,20 @@ int main(int argc, char **argv) {
   vcd_file_option->required();
   vcd_file_option->check(CLI::ExistingFile);
 
-  auto vcd_file_option = cli.add_option("file", verilog_files, "Verilog file(s)");
-  vcd_file_option->required();
-  vcd_file_option->check(CLI::ExistingFile);
+  std::vector<std::string> verilog_files;
+  auto verilog_file_option = cli.add_option("file", verilog_files, "Verilog file(s)");
+  verilog_file_option->required();
+  verilog_file_option->check(CLI::ExistingFile);
 
   std::vector<std::string> vcd_nodes;
   auto node_option = cli.add_option("--node,-n", vcd_nodes, "VCD Node");
 
   std::vector<std::string> sdf_files;
   auto sdf_option = cli.add_option("--sdf,-s", sdf_files, "SDF File to apply");
-  sdf_option->check(CLI::ExistingFile);
+  
+  int verbose;
+  /*CLI::Option *v_option = */cli.add_flag("--verbose,-v", verbose, "Verbosity level [1-3]");
+
 
   CLI11_PARSE(cli, argc, argv);
 
@@ -96,7 +117,7 @@ int main(int argc, char **argv) {
   for (auto&& verilog_file : verilog_files) {
 
     // Open A File handle to read data in.
-    FILE * input_file = fopen(verilog_file,"r");
+    FILE * input_file = fopen(verilog_file.c_str(),"r");
     if(input_file){
     
       // Parse our input file.
@@ -105,16 +126,16 @@ int main(int argc, char **argv) {
       // If the parse didn't work, print an error message and quit.
       if(result != 0){
         fmt::print(FMT_STRING("ERROR: Failed to parse Verilog file:\n"));
-        fmt::print(sptrinf("\t%s\n",verilog_file));
+        fmt::print(fmt::sprintf("\t%s\n",verilog_file));
       }
-      else if(args -> verbose){
+      else if(verbose){
         fmt::print(FMT_STRING("INFO: Parsing Verilog file: "));
-        fmt::print(sptrinf("%s\n",verilog_file));
+        fmt::print(fmt::sprintf("%s\n",verilog_file));
       }
     }else{
-      printf("ERROR Could not open file for reading: %s\n", argv[F]);
-      free(args);
-      return 1;
+      fmt::print(FMT_STRING("ERROR: Failed to parse Verilog file:\n"));
+      fmt::printf("ERROR Could not open file for reading: %s\n", verilog_file);//test
+         
     }
     fclose(input_file);
   }
@@ -125,30 +146,42 @@ int main(int argc, char **argv) {
   // Resolve all of the names in the syntax tree.
   verilog_resolve_modules(ast);
 
-
+  // Read in the VCD file
   VCD::HeaderReader vcd_reader;
-  tao::pegtl::file_input<> input(vcd_file);
-  tao::pegtl::parse<VCD::Grammar::grammar, VCD::Actions::HeaderAction,
-                Parse::capture_control>(input, vcd_reader);
+  tao::pegtl::file_input<> vcd_input(vcd_file);
+  tao::pegtl::parse<VCD::Grammar::header_commands,
+                    Parse::make_pegtl_template<VCD::Actions::HeaderAction>::type,
+                    Parse::capture_control>(vcd_input, vcd_reader);
 
-  auto header_p = reader.release();
+  auto header_p = vcd_reader.release();
   assert(header_p.operator bool());
-  auto timing_checker = VCDAssert::TimingChecker(header_p);
+  auto timing_checker = VCDAssert::TimingChecker(std::move(header_p));
   
-  for (auto&& [node,sdf_files] : apply_nodes) {
-    size_t scope_index = header_p->.get
+  // Read in corresponding SDF files
+  for (auto&& [node,sdf_file_array] : apply_nodes) {
+
+    std::vector<std::string> path;
+    //if the node specifed on CMD is a path, parse it, even if single identifier.
+    tao::pegtl::memory_input<> path_input(node.begin(), node.end(), fmt::format("{}",node));
+    tao::pegtl::parse<
+        SDF::Grammar::hierarchical_identifier, 
+        Parse::make_pegtl_template<SDF::Actions::HierarchicalIdentifierAction>::type,
+        Parse::capture_control
+      >(path_input, path);
+    
     for(auto&& sdf_file : sdf_files){
 
-      DelayFileReader sdf_reader;
+      SDF::DelayFileReader sdf_reader;
 
-      tao::pegtl::file_input<> input(sdf_file);
-      tao::pegtl::parse<SDF::Grammar::grammar, SDF::Actions::DelayFileAction,
-                        Parse::capture_control>(input, sdf_reader);
+      tao::pegtl::file_input<> sdf_input(sdf_file);
+      tao::pegtl::parse<SDF::Grammar::grammar, 
+                        Parse::make_pegtl_template<SDF::Actions::DelayFileAction>::type,
+                        Parse::capture_control>(sdf_input, sdf_reader);
       
       auto delayfile_p = sdf_reader.release();
       assert(delayfile_p.operator bool());
 
-      timing_checker.apply_sdf(delayfile_p, node);
+      timing_checker.apply_sdf(std::move(delayfile_p), node);
     }    
   }
 
