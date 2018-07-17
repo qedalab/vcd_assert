@@ -1,16 +1,30 @@
 #ifndef LIBSDF_GRAMMAR_OPERATORS_HPP 
 #define LIBSDF_GRAMMAR_OPERATORS_HPP 
 
-#include <sdf/grammar/base.hpp>
+#include "../types/enums.hpp"
+#include "parse/grammar/base.h"
 
 namespace SDF {
 namespace Grammar {
+
+using namespace Parse::Grammar::Base;
 // clang-format off
 
-struct case_inequality : string<'!','=','='> {};
-struct case_equality : string<'=','=','='> {};
-struct logical_inequality : string<'!','='> {};
-struct logical_equality : string<'=','='> {};
+struct case_inequality : string<'!','=','='> {
+  static constexpr auto value = EqualityOperator::case_inv;
+};
+
+struct case_equality : string<'=','=','='> {
+  static constexpr auto value = EqualityOperator::case_equal;
+};
+
+struct logical_inequality : string<'!','='> {
+  static constexpr auto value = EqualityOperator::logic_inv;
+};
+
+struct logical_equality : string<'=','='> {
+  static constexpr auto value = EqualityOperator::logic_equal;
+};
 
 struct equality_operator : sor<
   case_inequality,

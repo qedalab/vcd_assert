@@ -18,9 +18,6 @@ namespace SDF::Actions {
 
 using namespace Parse;
 
-// =======================================================
-// Commenting this back in causes compilation failure WTF!
-// =======================================================
 struct TimeScaleNumberAction : all_dispatch<apply0<Apply::rule_value>>
 {
   using state = TimeScaleNumber;

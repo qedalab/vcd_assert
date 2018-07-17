@@ -2,6 +2,7 @@
 #define LIBSDF_GRAMMAR_CHARACTER_HPP
 
 #include "parse/grammar/base.h"
+#include "../types/enums.hpp"
 
 namespace SDF::Grammar {
   using namespace Parse::Grammar::Base;
@@ -34,11 +35,15 @@ struct alphanumeric : sor<
 > {};
 
 // TODO use these instead
-struct hchar_dot : one<'.'> {};
-struct hchar_slash : one<'.'> {};
-
-struct hchar : sor<one<'.'>,one<'/'>> {
+struct hchar_dot : one<'.'> {
+  static constexpr auto value = HChar::dot;
 };
+
+struct hchar_slash : one<'/'> {
+  static constexpr auto value = HChar::slash;
+};
+
+struct hchar : sor<hchar_dot, hchar_slash> {};
 
 struct character;
 
