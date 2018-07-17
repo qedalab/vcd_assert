@@ -127,3 +127,6 @@ void State::set_value(std::size_t index, ranges::span<VCD::Value> values)
 }
 
 std::size_t State::num_values() { return values_.size(); }
+
+//TODO
+std::size_t State::num_total_values() { return values_.size(); }

@@ -10,15 +10,15 @@
 #include "sdf/grammar/grammar.hpp"
 
 
-#include <verilog_ast.h>
-#include <verilog_ast_util.h>
-#include <verilog_parser.h>
+// #include <verilog_ast.h>
+// #include <verilog_ast_util.h>
+// #include <verilog_parser.h>
 
 #include "vcd/types/header.hpp"
 #include <range/v3/span.hpp>
 #include <range/v3/view/indices.hpp>
 
-using VerilogSourceTree = verilog_source_tree;
+// using VerilogSourceTree = verilog_source_tree;
 
 namespace VCDAssert {
 
@@ -50,7 +50,7 @@ public:
   // Claims ownership of the header
   TimingChecker(std::shared_ptr<VCD::Header> header);
 
-  void apply_sdf(VerilogSourceTree *ast, 
+  void apply_sdf(/*VerilogSourceTree *ast, */
                  std::shared_ptr<SDF::DelayFile> delayfile, 
                  std::vector<std::string> vcd_node_path);
 

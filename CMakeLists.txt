@@ -20,13 +20,11 @@ if(${AK_TOOLKIT_CONFIG_USING_STRING_VIEW})
   target_include_directories(static_string INTERFACE "${PROJECT_SOURCE_DIR}/external/static_string/include")
 endif()
 
-add_library(verilog_parser INTERFACE)  
-# add_directory(verilog_parser INTERFACE)  
-target_include_directories(verilog_parser INTERFACE "${PROJECT_SOURCE_DIR}/external/verilog-parser/src")
-# add_library(verilog_parser "${PROJECT_SOURCE_DIR}/external/verilog-parser/src")
-# target_include_directories(verilog_parser "${PROJECT_SOURCE_DIR}/external/verilog-parser/src")
+# add_library(verilog_parser INTERFACE)  
+# target_include_directories(verilog_parser INTERFACE "${PROJECT_SOURCE_DIR}/external/verilog-parser/src")
+
 # add_subdirectory("${PROJECT_SOURCE_DIR}/external/verilog-parser/src")
-# target_compile_definitions(verilog_parser INTERFACE fms-extensions)
+# # target_compile_definitions(verilog_parser INTERFACE fms-extensions)
 
 #Ensure C++17
 set(CMAKE_CXX_STANDARD 17)
@@ -56,7 +54,8 @@ target_link_libraries(libsdf PUBLIC libparse fmt::fmt static_string )
 #Add vcd_assert library
 add_library(libvcd_assert "src/vcd_assert")
 target_include_directories(libvcd PUBLIC "${PROJECT_SOURCE_DIR}/include/")
-target_link_libraries(libvcd_assert PUBLIC libvcd verilog_parser)
+# target_link_libraries(libvcd_assert PUBLIC libvcd verilog_parser)
+target_link_libraries(libvcd_assert PUBLIC libvcd libsdf libparse)
 # target_add_warnings(libvcd_assert)
 
 add_subdirectory(src)

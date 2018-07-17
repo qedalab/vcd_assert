@@ -1,30 +1,34 @@
 #include "vcd_assert/timing_checker.hpp"
 
-#include "parse/actions/control.hpp"
-#include "parse/actions/make_pegtl_template.hpp"
-
 #include "vcd/grammar/grammar.hpp"
 #include "vcd/types/header_reader.hpp"
 #include "vcd/actions/header.hpp"
 
-#include "sdf/actions/base.hpp"
-#include "sdf/actions/delayfile.hpp"
-#include "sdf/grammar/base.hpp"
-#include "sdf/grammar/grammar.hpp"
-#include "sdf/types/delayfile_reader.hpp"
+#include <sdf/actions/base.hpp>
+#include <sdf/actions/delayfile.hpp>
+#include <sdf/grammar/base.hpp>
+#include <sdf/grammar/grammar.hpp>
+#include <sdf/grammar/delayfile.hpp>
+#include <sdf/types/base.hpp>
+#include <sdf/types/delayfile.hpp>
+#include <sdf/types/delayfile_reader.hpp>
+
+#include <parse/actions/control.hpp>
+#include <parse/actions/make_pegtl_template.hpp>
 
 #include <tao/pegtl/memory_input.hpp>
 #include <tao/pegtl/file_input.hpp>
 #include <tao/pegtl/parse.hpp>
 
-#include <verilog_ast.h>
-#include <verilog_ast_util.h>
-#include <verilog_parser.h>
+// #include <verilog_ast.h>
+// #include <verilog_ast_util.h>
+// #include <verilog_parser.h>
 
 #include <CLI/CLI.hpp>
 #include <fmt/format.h>
 #include <fmt/printf.h>
 #include <iostream>
+#include <string_view>
 #include <range/v3/algorithm/reverse.hpp>
 #include <range/v3/view/indices.hpp>
 
@@ -46,7 +50,7 @@ int main(int argc, char **argv) {
   std::vector<std::string> verilog_files;
   auto verilog_file_option = cli.add_option("file", verilog_files, "Verilog file(s)");
   verilog_file_option->required();
-  verilog_file_option->check(CLI::ExistingFile);
+  verilog_file_option->check(CLI::ExistingFile); //TODO : is this necessary?
 
   std::vector<std::string> vcd_nodes;
   auto node_option = cli.add_option("--node,-n", vcd_nodes, "VCD Node");
@@ -108,9 +112,8 @@ int main(int argc, char **argv) {
   assert(sdf_files.empty());
   assert(vcd_nodes.empty());
   
-  size_t applied_ = 0;
-
-  // Initialise the parser.
+  /*
+  // Initialise the Verilog parser.
   verilog_parser_init();
 
   // Parse the Verilog files
@@ -145,9 +148,10 @@ int main(int argc, char **argv) {
 
   // Resolve all of the names in the syntax tree.
   verilog_resolve_modules(ast);
+  */
 
   // Read in the VCD file
-  VCD::HeaderReader vcd_reader;
+  VCD::HeaderReader vcd_reader{};
   tao::pegtl::file_input<> vcd_input(vcd_file);
   tao::pegtl::parse<VCD::Grammar::header_commands,
                     Parse::make_pegtl_template<VCD::Actions::HeaderAction>::type,
@@ -159,10 +163,12 @@ int main(int argc, char **argv) {
   
   // Read in corresponding SDF files
   for (auto&& [node,sdf_file_array] : apply_nodes) {
+    
+    // std::string_view node_view(std::begin(node), std::size(node));
 
-    std::vector<std::string> path;
+    SDF::HierarchicalIdentifier path{};
     //if the node specifed on CMD is a path, parse it, even if single identifier.
-    tao::pegtl::memory_input<> path_input(node.begin(), node.end(), fmt::format("{}",node));
+    tao::pegtl::memory_input<> path_input(node, "node");
     tao::pegtl::parse<
         SDF::Grammar::hierarchical_identifier, 
         Parse::make_pegtl_template<SDF::Actions::HierarchicalIdentifierAction>::type,
@@ -170,18 +176,19 @@ int main(int argc, char **argv) {
       >(path_input, path);
     
     for(auto&& sdf_file : sdf_files){
-
-      SDF::DelayFileReader sdf_reader;
+      // (void)sdf_file;
+      SDF::DelayFileReader sdf_reader{};
 
       tao::pegtl::file_input<> sdf_input(sdf_file);
-      tao::pegtl::parse<SDF::Grammar::grammar, 
+      tao::pegtl::parse<SDF::Grammar::delay_file, 
                         Parse::make_pegtl_template<SDF::Actions::DelayFileAction>::type,
+                        // SDF::Actions::DelayFileAction,
                         Parse::capture_control>(sdf_input, sdf_reader);
       
       auto delayfile_p = sdf_reader.release();
       assert(delayfile_p.operator bool());
 
-      timing_checker.apply_sdf(std::move(delayfile_p), node);
+      timing_checker.apply_sdf(/*ast,*/ std::move(delayfile_p), path.value);
     }    
   }
 

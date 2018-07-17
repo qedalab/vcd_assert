@@ -32,7 +32,7 @@ using namespace Parse;
 // };
 
 struct StarStorage {
-  static bool store( __attribute__((unused)) Star &s, bool found) {
+  static bool store( Star& /* unused */, bool found) {
     if(found){
       return true;
     }else{

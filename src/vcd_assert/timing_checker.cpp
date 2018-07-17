@@ -39,7 +39,7 @@ TimingChecker::TimingChecker(std::shared_ptr<VCD::Header> header) :
 /*
 
 For every application scope(appscope), find its node in the verilog ast.
-Create the path to the appscope in therms of instance names(not module/type names)
+Create the path to the appscope in terms of instance names(not module/type names)
 Then go through
 
 For every scope in the vcd, check whether the given node falls within the scope. If not, increment the index and check its inner scopes(could record the indexes that are checked so they can be skipped). Once the the application scope is found, it becomes the SDF's root. 
@@ -53,130 +53,193 @@ The cells with no instances given only applicable at the current scope to cells 
   When scopes are found that match, go through the assertions in the cell and map each to the variables.
 
 */
-void TimingChecker::match_scope_helper(){
-  // for (auto &inner_test_scope : test.scopes) {
-  //   auto scope_index = scope.get_scope_index(inner_test_scope.identifier);
-  //   auto &inner_scope = get_scope(scope_index);
-  //   recursive(inner_scope, inner_test_scope);
-  // }
+std::optional<std::size_t> TimingChecker::match_scope_helper(size_t path_index, size_t scope_index){
+  //Iterate over all scopes. Every part of path must match a scope (instance).
+    /*
+      Assuming breath first indexing. 
+      If the current scope does not contain the next path segment, 
+          and it is not the last segment, NO match..
+      If it does contain the next segment, get the index of that scope, 
+        set i to the index and check if it is NOW at the end of the path,
+        repeat..
+    */
+    cur_scope = header_->get_scope(scope_index);
+  
+    if(path[path_index].compare(cur_scope.get_identifier())){
+      size_t new_path_index = path_index+1;
+      if(path.size() == new_path_index){
+        return scope_index;//successfully found the last identifier in path. 
+      }else{
+        if(cur_scope.contains_scope(path[new_path_index])){
+          return match_scope_helper(
+                    new_path_index, 
+                    get_scope_index(path[new_path_index])
+                    ); 
+        }else{
+          return NULL;
+        }
+      }
+    }else{
+      //no match, exit.
+      return NULL;      
+    }
 }
 
-bool TimingChecker::match_scope(SDF::Cell cell, std::size_t scope_index) {
+// Starting from index 'scope_index' it tries to match 'path' to a branch of the scope tree and if successful, returns the index to the scope the path leads to.
+std::optional<std::size_t> TimingChecker::match_scope(std::vector<std::string> path, std::size_t scope_index) {
+
+  auto base_scope_identifier = header_->get_scope(scope_index).get_identifier();
+
+  // Find index of application scope as supplied on cmd line. if possible.
+  if(path.size() == 0){
+    
+    return 0; //Implicitly applied at root.
+
+  }else if(path.size() == 1){
+
+    if(path[0].compare(root_identifier) ){
+      return 0;  //Explicitly applied at root.
+    }else{
+      return NULL; //Path specified not applicable/valid.
+    }
+
+  }else{ 
+    //Not applied at root, try to find where it is applied:
+    if(!path[0].compare(root_identifier)){
+      return NULL;  //path specified not applicable/valid.     
+    }else{
+      return match_scope_helper(0,0);
+    }
+
+  }
+}
+
+//Timing checker should also consolodate that all sdf files contain the same :
+//    sdf_version
+//    design_name
+//    [process]
+//    [voltage]
+//    [temperature]
+void TimingChecker::apply_sdf(/*VerilogSourceTree *ast, */
+                              std::shared_ptr<SDF::DelayFile> delayfile, 
+                              std::vector<std::string> vcd_node_path)
+{
+  std::optional<std::size_t> apply_at_index = match_scope(vcd_node_path,0);
+
+  // Should always match the SDF file timescale with that of the VCD.
+  // ..which could require conversion of the value.
+  SDF::TimeScale delayfile.get_timescale();
+  std::vector<Cell> cells = delayfile.get_cells();
+  /*etc*/
+  
+  if(apply_at_index.has_value()){
+
+    for(auto&& cell : cells) {
+      apply_sdf_cell(cell, apply_at_index.value());
+    }
+  }else{
+    //could not find the supplied scope.
+  }
+}
+
+void TimingChecker::apply_sdf_timing_specs_helper(SDF::Cell cell, std::size_t scope_index){
+
+
+}
+
+void TimingChecker::apply_sdf_timing_specs(SDF::Cell cell, std::size_t scope_index){ //, 
+  //                                          std::vector<std::string> path) {
+
+  // if(path.size() == 0){
+  //   // - recursive apply
+  // }else if(path.size() == 1){
+  //   // - single apply  
+  // }else{
+  //   //apply single after/if scope_match
+  //   //OR fail
+  // }    
+
     /* 
       for all timing specs, 
         considering only timing checks 
           for all hold timing checks
             create hold or conditional hold for the 
   */
-  // for(auto&& spec : cell.timing_specs) {
-  //   switch(spec.get_enum_type()) {
-  //   case TimingSpecType::TimingCheck:
-  //     for(auto&& check : std::get<TimingCheckSpec>) {
-  //       switch(check.get_enum_type()) {
-  //       case TimingCheckType::Hold:
-  //         break;
-  //       default:
-  //         assert(false && "Invalid enum state");
-  //         abort();
-  //       }
-  //     }
-  //   default:
-  //     assert(false && "Invalid enum state");
-  //     abort();
-  //   }
-  // }
-  return 0;
+  for(auto&& spec : cell.timing_specs) {
+    switch(spec.get_enum_type()) {
+    case TimingSpecType::TimingCheck:
+      for(auto&& check : std::get<TimingCheckSpec>) {
+        switch(check.get_enum_type()) {
+        case TimingCheckType::Hold:
+          break;
+        default:
+          assert(false && "Invalid enum state");
+          abort();
+        }
+      }
+    default:
+      assert(false && "Invalid enum state");
+      abort();
+    }
+  }
 }
 
-void TimingChecker::apply_sdf(VerilogSourceTree *ast, 
-                              std::shared_ptr<SDF::DelayFile> delayfile, 
-                              std::vector<std::string> vcd_node_path)
-{
-  //Timing checker should consolodate that all sdf files contain the same :
-  //    sdf_version
-  //    design_name
-  //    [process]
-  //    [voltage]
-  //    [temperature]
+//This is called when * instances are supplied. Which wont work without Verilog.
+void TimingChecker::apply_sdf_cell_helper(SDF::Cell cell, std::size_t scope_index) {
+  std::size_t scope_count = header_.get_scope(scope_index).num_scopes();
+  
+  // bool contains_module = false;
 
-  std::optional<size_t> apply_at_index;
-  VCD::Scope cur_scope = header_->get_root_scope(); //TODO node->scope not root.
-  auto& root_identifier = cur_scope.get_identifier();
-  // std::vector<std::string> path{root_identifier};
-  if(vcd_node_path.size() == 0){
-    apply_at_index = 0;
-  }else if(vcd_node_path.size() == 1){
-    /*ASSUMPTION: single node ident must be root..*/
-    if(vcd_node_path[0].compare(root_identifier) ){
-      apply_at_index = 0;
-    }else{
-      //path specified not applicable/valid.
+  for(auto&& i : indices(scope_count)){
+    VCD::Scope scope_i = header_.get_scope(scope_index+i); //assuming breadth first
+
+    if(scope_i.get_scope_type() == VCD::ScopeType::module){
+      std::string module_name = ast->get_instance_type_name(scope_i.get_identifier());
+
+      if(cell.cell_type.compare(module_name)){
+        apply_sdf_timing_specs(cell, scope_index+i);
+      }
     }
+
+    apply_sdf_cell_helper(cell, scope_index+i)
+  }
+}
+
+void TimingChecker::apply_sdf_cell(SDF::Cell cell, std::size_t scope_index) {
+
+  /* IF the cell instance is blank or *, then look for 
+      verilog scopes of 'cell_type' among the available VCD scopes. */
+  if(std::holds_alternative<SDF::Star>(cell.cell_instance)){
+    //for module/instance scopes FROM applied scope DOWN:
+    apply_sdf_cell_helper(cell, scope_index);
   }else{
-    //Iterate over all scopes. Every part of path must match a (instance) scope.
-    size_t path_index = 0;
-    // size_t scope_index = 0;
-    for (auto&& i : ranges::view::indices(header_->num_scopes()) {
-      cur_scope = header_->get_scope(i);
-      
-      if(vcd_node_path[path_index].compare(scope.get_identifier())){
-        path_index++;
-        scope_index++;
-        if(vcd_node_path.size() == path_index){
-          //successfully found the last identifier in path.
-          break;
+    /*If a specific scope is specified, check if the scope is available 
+      from the current root scope. */
+    auto hi = std::get<SDF::HierarchicalIdentifier>(cell.cell_instance);
+    if(hi.empty()){
+      //for module/instance scopes in CURRENT scope ONLY:
+      std::size_t scope_count = header_.get_scope(scope_index).num_scopes();
+      for(auto&& i : indices(scope_count)){
+        VCD::Scope scope_i = header_.get_scope(scope_index+i); //assuming breadth first
+
+        if(scope_i.get_scope_type() == VCD::ScopeType::module){
+          std::string module_name = ast->get_instance_type_name(scope_i.get_identifier());
+
+          if(cell.cell_type.compare(module_name)){
+            apply_sdf_timing_specs(cell, scope_index+i);
+          }
         }
-        if(scope.contains_scope(node)){
-        apply_at_index = i;
-        /*OR
-          scope_index = cur_scope.get_scope_index(node);
-        */
       }
+    }else{
+      //ONLY the module/instance scope supplied:
+      if(instance_index == match_scope(hi.value, scope_index)){
+        apply_sdf_timing_specs(cell, instance_index);      
       }else{
-
+        //cell instance was not found.
       }
-      
-    }//hence the sdf file was applied at node with index i.
-    if(scope_index)
-    apply_at_index = scope_index
 
+    }
   }
-
-  // Find the scope as supplied on cmd line. if possible.
-  if(apply_at_index.has_value(){
-    //Not applied at root, try to find where it is applied:
-
-
-  }else{
-    //could not find the supplied scope.
-  }
-  
-
-
-
-  // // Should always match the SDF file timescale with that of the VCD.
-  // // ..which could require conversion of the value.
-  // SDF::TimeScale delayfile.get_timescale();
-  // std::vector<Cell> cells = delayfile.get_cells();
-  // /*etc*/
-
-  // for(auto&& cell : cells) {
-
-  //   // IF the cell instance is blank or *, then look for 
-  //   //   verilog scopes of 'cell_type' among the available VCD scopes.
-
-  //   if(std::holds_alternative<SDF::Star>(cell.cell_instance)){
-  //     for(auto&& scope : header_.get_scopes) {
-  //     // For the given scopes found, apply the specs.      
-  //       for all scopes.
-  //   }else{
-  //     /*IF a specific scope is specified, check if the scope is available 
-  //       from the current root scope. */
-  //     auto hi = std::get<SDF::HierarchicalIdentifier>(cell.cell_instance);
-  //     only for scope hi.
-  //   }
-  // }
-  
 }
 
 [[nodiscard]] bool TimingChecker::handle_event(const Event &event)
@@ -209,7 +272,7 @@ void TimingChecker::apply_sdf(VerilogSourceTree *ast,
 
           auto e = typed_event.event;
           checker_.hold(sim_time_, e.index, e.hold_time);
-          return false;
+          return false;base_scope_identifier
         } else {
           // Did not handle type
           static_assert(Parse::Util::dependent_value<false, T>);
@@ -228,7 +291,7 @@ void TimingChecker::apply_sdf(VerilogSourceTree *ast,
 
   auto events = event_lists_.at(index).get_event_list(edge_type);
 
-  // Check for timing violation
+  // Check for timing violationbase_scope_identifier
   bool timing_violation = false;
   for (const auto &event : events)
     timing_violation |= handle_event(event);
@@ -271,4 +334,8 @@ void TimingChecker::apply_sdf(VerilogSourceTree *ast,
   state_.set_value(index, values);
 
   return timing_violation;
+}
+
+void TimingChecker::update_sim_time(std::size_t sim_time_){
+
 }

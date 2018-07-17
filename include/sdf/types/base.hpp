@@ -13,7 +13,7 @@
 namespace SDF {
 
 struct Star{
-  bool operator==( __attribute__((unused)) const Star& s) const noexcept{
+  bool operator==(const Star& /*unused */) const noexcept{
     return true;
   }
 };

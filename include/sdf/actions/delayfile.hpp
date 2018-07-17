@@ -12,7 +12,7 @@
 #include <sdf/grammar/header.hpp>
 
 #include <sdf/types/base.hpp>
-// #include <sdf/types/delayfile.hpp>
+#include <sdf/types/delayfile.hpp>
 #include <sdf/types/delayfile_reader.hpp>
 
 
@@ -21,6 +21,7 @@ namespace Actions {
 
 using namespace Parse;  
 
+using TimeScaleFunctionType = void (DelayFileReader::*)(TimeScaleView);
 
 // clang-format off
 struct DelayFileAction : multi_dispatch<
@@ -66,14 +67,16 @@ struct DelayFileAction : multi_dispatch<
   >,
   Grammar::timescale, inner_action<
       TimeScaleAction, 
-      Storage::function<&DelayFileReader::timescaleview>
+      Storage::function<
+        static_cast<TimeScaleFunctionType>(&DelayFileReader::timescaleview)
+      >
   >,
   Grammar::cell, inner_action<
       CellArrayAction, 
       Storage::function<&DelayFileReader::cells>
   >
 > {
-  using state = DelayFile;
+  using state = DelayFileReader;
 };
 // clang-format on
 
