@@ -14,12 +14,15 @@ before_script:
 matrix:
   include:
     # CentOS Release build
-    - script:
+    - env:
+      - TEST_NAME="Centos Release"
+      script:
         - docker exec runner scl enable devtoolset-7 -- bash -c "cd repo/travis-build && conan install .. --build=missing -s build_type=Release"
         - docker exec runner scl enable devtoolset-7 -- bash -c "cd repo/travis-build && conan build .."
 
     # Coverage report
     - env:
+      - TEST_NAME="Coverage report"
       - CXXFLAGS="--coverage"
       script:
       - docker exec runner scl enable devtoolset-7 -- bash -c "cd repo/travis-build && conan install .. --build=missing -s build_type=Debug"
@@ -27,9 +30,14 @@ matrix:
       - docker exec runner scl enable devtoolset-7 -- bash -c "cd repo/travis-build && coveralls --gcov-options '\-lp'"
 
     # Valgrind
-    - script:
+    - env:
+      - TEST_NAME="Valgrind"
+      script:
       - docker exec runner scl enable devtoolset-7 -- bash -c "cd repo/travis-build && conan install .. --build=missing -s build_type=Debug"
       - docker exec runner scl enable devtoolset-7 -- bash -c "cd repo/travis-build && conan build .."
       - docker exec runner scl enable devtoolset-7 -- bash -c "cd repo/travis-build && ctest -T memcheck"
       - docker exec runner bash -c "cat repo/travis-build/Testing/Temporary/MemoryChecker.*.log"
-      - docker exec runner bash -c "if [ -s repo/travis-build/Testing/Temporary/MemoryChecker.*.log ]; then false; fi"
+      - docker exec runner bash -c "if [ -s repo/travis-build/Testing/Temporary/MemoryChecker.0.log ]; then false; fi"
+      - docker exec runner bash -c "if [ -s repo/travis-build/Testing/Temporary/MemoryChecker.1.log ]; then false; fi"
+      - docker exec runner bash -c "if [ -s repo/travis-build/Testing/Temporary/MemoryChecker.2.log ]; then false; fi"
+      - docker exec runner bash -c "if [ -s repo/travis-build/Testing/Temporary/MemoryChecker.3.log ]; then false; fi"
