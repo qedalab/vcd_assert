@@ -31,8 +31,9 @@ using namespace Parse;
 //   using state = HierarchicalIdentifier;
 // };
 
+// TODO: Is this really neccesary?
 struct StarStorage {
-  static bool store(Star &s, bool found) {
+  static bool store(Star & /*unused*/, bool found) {
     if(found){
       return true;
     }else{

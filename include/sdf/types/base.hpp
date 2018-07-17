@@ -12,8 +12,8 @@
 
 namespace SDF {
  
-struct Star{
-  bool operator==(const Star& s) const noexcept{
+struct Star {
+  bool operator==(const Star& /*unused*/) const noexcept{
     return true;
   }
 };

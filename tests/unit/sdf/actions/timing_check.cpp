@@ -52,10 +52,11 @@ TEST_CASE("SDF.Actions.NodeConstantEqualityAction", "[SDF][Actions][NodeConstant
 TEST_CASE("SDF.Actions.TimingCheckCondAction", "[SDF][Actions][TimingCheckCondAction]") {
 
   TimingCheckCondition test{};
+  TimingCheckCondition wanted {};
   
     SECTION("TimingCheckCondAction with condition"){
       // INFO("port_1 " << port_1_sv);
-      TimingCheckCondition wanted = {Node{port_1}};
+      wanted = {Node{port_1}};
       CAPTURE(wanted);
       require_parse<Grammar::timing_check_condition, 
                     Actions::TimingCheckConditionAction>(port_1_sv, test);
@@ -63,7 +64,7 @@ TEST_CASE("SDF.Actions.TimingCheckCondAction", "[SDF][Actions][TimingCheckCondAc
 
     SECTION("InvertedNode"){
       // INFO("test_timingcheckcondition_1_str : " << test_timingcheckcondition_1_sv);
-      TimingCheckCondition wanted = test_timingcheckcondition_1;
+      wanted = test_timingcheckcondition_1;
       CAPTURE(wanted);
       require_parse<Grammar::timing_check_condition, 
                     Actions::TimingCheckConditionAction>(test_timingcheckcondition_1_sv, test);
@@ -71,7 +72,7 @@ TEST_CASE("SDF.Actions.TimingCheckCondAction", "[SDF][Actions][TimingCheckCondAc
     }
     SECTION("NodeConstantEquality"){
       // INFO("test_timingcheckcondition_2_str : " << test_timingcheckcondition_2_sv);
-      TimingCheckCondition wanted = test_timingcheckcondition_2;
+      wanted = test_timingcheckcondition_2;
       CAPTURE(wanted);
       require_parse<Grammar::timing_check_condition, 
                     Actions::TimingCheckConditionAction>(test_timingcheckcondition_2_sv, test);
@@ -79,7 +80,7 @@ TEST_CASE("SDF.Actions.TimingCheckCondAction", "[SDF][Actions][TimingCheckCondAc
     }
     SECTION("InvertedNode"){
       // INFO("test_timingcheckcondition_3_str : " << test_timingcheckcondition_3_sv);
-      TimingCheckCondition wanted = test_timingcheckcondition_3;
+      wanted = test_timingcheckcondition_3;
       CAPTURE(wanted);
       require_parse<Grammar::timing_check_condition, 
                     Actions::TimingCheckConditionAction>(test_timingcheckcondition_3_sv, test);
@@ -87,7 +88,7 @@ TEST_CASE("SDF.Actions.TimingCheckCondAction", "[SDF][Actions][TimingCheckCondAc
     }
     SECTION("NodeConstantEquality"){
       // INFO("test_timingcheckcondition_4_str : " << test_timingcheckcondition_4_sv);
-      TimingCheckCondition wanted = test_timingcheckcondition_4;
+      wanted = test_timingcheckcondition_4;
       CAPTURE(wanted);
       require_parse<Grammar::timing_check_condition, 
                     Actions::TimingCheckConditionAction>(test_timingcheckcondition_4_sv, test);

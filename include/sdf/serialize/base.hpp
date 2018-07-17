@@ -41,7 +41,7 @@ void serialize_quoted_alt(OutputIterator oi, T (*inner)(Ts...),
 /// \exception Throws if writing to the OutputIterator throws otherwise noexcept
 template <class OutputIterator>
 void serialize_hierarchical_identifier(
-    OutputIterator oi, int indent,
+    OutputIterator oi, int /*unused*/,
     HierarchicalIdentifier hi) noexcept(noexcept(*oi++ = '!')) {
   auto sep = hi.sep == HChar::dot ? std::string_view(".") : std::string_view("/");
   for(auto&& str : hi.value){

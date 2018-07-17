@@ -94,8 +94,8 @@ struct TimingCheckCondition  {
 
 struct PortTimingCheck{
   Node port; //Todo make Port and remove edge
-  std::optional<TimingCheckCondition> timing_check_condition;
-  std::optional<std::string> symbolic_name;    
+  std::optional<TimingCheckCondition> timing_check_condition {};
+  std::optional<std::string> symbolic_name {};
 };
 
 struct Hold {
