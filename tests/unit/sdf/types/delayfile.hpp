@@ -16,7 +16,7 @@ namespace SDF::Test {
 
 using namespace SDF;
 
-static const DelayFileView sdf_empty_delayfile {};
+inline const DelayFileView sdf_empty_delayfile {};
 
 auto constexpr basic_example_delayfile = 
 R"####((DELAYFILE 
@@ -43,7 +43,7 @@ R"####((DELAYFILE
 )
 )####";
 
-static const DelayFileView test_delayfile_1 {
+inline const DelayFileView test_delayfile_1 {
   "4.0",                                             //std::string sdf_version;
   "system",                                          //std::optional<std::string> design_name;
   "Saturday September 30 08:30:33 PST 1990",         //std::optional<std::string> date;

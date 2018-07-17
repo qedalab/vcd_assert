@@ -59,7 +59,7 @@ if(${BUILD_TESTS})
   add_subdirectory(tests)
 
   set_target_properties(unit_parse unit_parse unit_vcd unit_vcd_assert
-                        libvcd_bench_grammar
+                        unit_sdf libvcd_bench_grammar
     PROPERTIES
     ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
     LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
@@ -67,7 +67,7 @@ if(${BUILD_TESTS})
 )
 endif()
 
-set_target_properties(libparse libvcd libvcd_assert vcd_assert
+set_target_properties(libparse libvcd libvcd_assert vcd_assert libsdf
   PROPERTIES
   ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
   LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"

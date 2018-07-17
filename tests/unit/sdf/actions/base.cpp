@@ -10,7 +10,7 @@
 using namespace SDF;
 using Parse::Test::require_parse;
 
-static auto constexpr hchar_str = ".";
+inline auto constexpr hchar_str = ".";
 constexpr char hierarchicalidentifier_str[] = "root/DUT/test/DFF";
 constexpr char identifier_str[] = "DFF";
 constexpr char qstring_str_content[] = "quoted string content";
