@@ -25,3 +25,11 @@ matrix:
       - docker exec runner scl enable devtoolset-7 -- bash -c "cd repo/travis-build && conan install .. --build=missing -s build_type=Debug"
       - docker exec runner scl enable devtoolset-7 -- bash -c "cd repo/travis-build && conan build .."
       - docker exec runner scl enable devtoolset-7 -- bash -c "cd repo/travis-build && coveralls --gcov-options '\-lp'"
+
+    # Valgrind
+    - script:
+      - docker exec runner scl enable devtoolset-7 -- bash -c "cd repo/travis-build && conan install .. --build=missing -s build_type=Debug"
+      - docker exec runner scl enable devtoolset-7 -- bash -c "cd repo/travis-build && conan build .."
+      - docker exec runner scl enable devtoolset-7 -- bash -c "cd repo/travis-build && ctest -T memcheck"
+      - docker exec runner bash -c "cat repo/travis-build/Testing/Temporary/MemoryChecker.*.log"
+      - docker exec runner bash -c "if [ -s repo/travis-build/Testing/Temporary/MemoryChecker.*.log ]; then false; fi"
