@@ -32,12 +32,7 @@ public:
     return data_;
   }
 
-  std::string to_string() const { return {data_}; }
-
-  [[nodiscard]] constexpr bool is_empty() const noexcept
-  {
-    return std::begin(data_) == std::end(data_);
-  };
+  std::string to_string() const { return {data_, data_ + Size}; }
 
   [[nodiscard]] constexpr std::size_t get_size() const noexcept
   {
