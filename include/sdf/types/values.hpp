@@ -1,9 +1,11 @@
 #ifndef LIBSDF_TYPES_VALUES_HPP
 #define LIBSDF_TYPES_VALUES_HPP
 
+#include <sdf/types/enums.hpp>
 // #include <sdf/types/base.hpp>
 #include <array>
 #include <variant>
+#include <optional>
 
 namespace SDF {
 
@@ -15,7 +17,7 @@ namespace SDF {
 // };
 
 // using NumberValue = double;
-using Number = double;
+using Number = std::optional<double>;
 
 // struct Number : NumberValue{
 //   bool operator==(const Number& t) const noexcept{
@@ -50,6 +52,9 @@ struct Value : public ValueVariant {
       return false;
     }
   }
+
+  std::optional<double> content(MinTypMax proc = MinTypMax::unspecified) const noexcept;
+
 };
 
 } // namespace SDF

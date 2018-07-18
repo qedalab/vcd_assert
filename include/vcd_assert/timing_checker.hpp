@@ -10,6 +10,9 @@
 #include "sdf/grammar/grammar.hpp"
 #include "sdf/types/delayfile.hpp"
 #include "sdf/types/enums.hpp"
+#include "sdf/types/values.hpp"
+#include "sdf/types/timing_spec.hpp"
+#include "sdf/types/timing_check.hpp"
 
 
 // #include <verilog_ast.h>
@@ -19,6 +22,7 @@
 #include "vcd/types/header.hpp"
 #include <range/v3/span.hpp>
 #include <range/v3/view/indices.hpp>
+#include <variant>
 
 // using VerilogSourceTree = verilog_source_tree;
 
@@ -38,8 +42,16 @@ class TimingChecker {
 
   std::vector<IndexLookup> index_lookup_;
   std::vector<EventList> event_lists_;
-
+  
   size_t sim_time_ = 0;
+
+  enum class MinTypeMax{
+    min,
+    typ,
+    max
+  };
+
+  MinTypeMax min_typ_max_ = MinTypeMax::typ;
 
   [[nodiscard]] bool handle_event(const Event& event);
 
@@ -52,7 +64,7 @@ private:
                                          std::size_t scope_index);
 
   void apply_sdf_hold(std::shared_ptr<SDF::DelayFile> sc, 
-                      std::string process, SDF::Hold hold);
+                      SDF::Hold hold);
 
   void apply_sdf_timing_specs(std::shared_ptr<SDF::DelayFile> sc, 
                               SDF::Cell cell, 

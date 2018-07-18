@@ -72,11 +72,11 @@ public:
   //   assert(sdf_version_.has_value());
   // };
 
-  std::string_view get_sdf_version();
+  std::string_view get_sdf_version() const noexcept;
 
   /// Get the design_name if present
   /// \returns The design_name if present
-  std::optional<std::string_view> get_design_name();
+  std::optional<std::string_view> get_design_name() const noexcept;
   
   /// True if the delayfile header contains a design_name
   /// \returns Whether the delayfile contains a design_name
@@ -84,7 +84,7 @@ public:
 
   /// Get the date if present
   /// \returns The date if present
-  std::optional<std::string_view> get_date();
+  std::optional<std::string_view> get_date() const noexcept;
   
   /// True if the delayfile header contains a date
   /// \returns Whether the delayfile contains a date
@@ -92,7 +92,7 @@ public:
 
   /// Get the vendor if present
   /// \returns The vendor if present
-  std::optional<std::string_view> get_vendor();
+  std::optional<std::string_view> get_vendor() const noexcept;
   
   /// True if the delayfile header contains a vendor
   /// \returns Whether the delayfile contains a vendor
@@ -100,7 +100,7 @@ public:
 
   /// Get the program_name if present
   /// \returns The program_name if present
-  std::optional<std::string_view> get_program_name();
+  std::optional<std::string_view> get_program_name() const noexcept;
   
   /// True if the delayfile header contains a program_name
   /// \returns Whether the delayfile contains a program_name
@@ -108,7 +108,7 @@ public:
 
   /// Get the program_version if present
   /// \returns The program_version if present
-  std::optional<std::string_view> get_program_version();
+  std::optional<std::string_view> get_program_version() const noexcept;
   
   /// True if the delayfile header contains a program_version
   /// \returns Whether the delayfile contains a program_version
@@ -116,7 +116,7 @@ public:
 
   /// Get the process if present
   /// \returns The process if present
-  std::optional<std::string_view> get_process();
+  std::optional<std::string_view> get_process() const noexcept;
   
   /// True if the delayfile header contains a process
   /// \returns Whether the delayfile contains a process
@@ -124,7 +124,7 @@ public:
 
   /// Get the hierarchy_divider if present
   /// \returns The hierarchy_divider if present
-  std::optional<HChar> get_hierarchy_divider();
+  std::optional<HChar> get_hierarchy_divider() const noexcept;
   
   /// True if the delayfile header contains a hierarchy_divider
   /// \returns Whether the delayfile contains a hierarchy_divider
@@ -132,7 +132,7 @@ public:
 
   /// Get the voltage if present
   /// \returns The voltage if present
-  std::optional<Triple> get_voltage();
+  std::optional<Triple> get_voltage() const noexcept;
   
   /// True if the delayfile header contains a voltage
   /// \returns Whether the delayfile contains a voltage
@@ -140,7 +140,7 @@ public:
 
   /// Get the temperature if present
   /// \returns The temperature if present
-  std::optional<Triple> get_temperature();
+  std::optional<Triple> get_temperature() const noexcept;
   
   /// True if the delayfile header contains a temperature
   /// \returns Whether the delayfile contains a temperature
@@ -148,7 +148,7 @@ public:
 
   /// Get the timescale if present
   /// \returns The timescale if present
-  std::optional<TimeScale> get_timescale();
+  std::optional<TimeScale> get_timescale() const noexcept;
   
   /// True if the delayfile header contains a timescale
   /// \returns Whether the delayfile contains a timescale
@@ -174,7 +174,7 @@ public:
   /// TEMPORORARY Get the double value of the input Value, based on mintypmax if Triple.
   /// \param value The sdf Value containing either Number or Triple
   /// \returns The double if there was one. 
-  std::optional<double> get_value_content(Value value) const noexcept;
+  std::optional<double> get_value_content(Value &value) const noexcept;
 
   /// \param type The cell type sting
   /// \returns The cell indices

@@ -104,9 +104,9 @@ void serialize_hold_check(OutputIterator oi, int indent,
                           Hold hold) noexcept(noexcept(*oi++ = '!')) {
   serialize_indent(oi, indent);
   ranges::copy(std::string_view("(HOLD "), oi);
-  serialize_port_tchk(oi, 0, hold.input);
+  serialize_port_tchk(oi, 0, hold.assert);
   ranges::copy(std::string_view(" "), oi);
-  serialize_port_tchk(oi, 0, hold.output);
+  serialize_port_tchk(oi, 0, hold.trigger);
   ranges::copy(std::string_view(" "), oi);
   serialize_value(oi, 0, hold.value);
   ranges::copy(std::string_view(")\n"), oi);
@@ -147,9 +147,8 @@ void serialize_timing_check(OutputIterator oi, int indent,
 /// \param tcs The SDF timing check specification to write
 /// \exception Throws if writing to the OutputIterator throws otherwise noexcept
 template <class OutputIterator>
-void serialize_timing_check_spec(
-    OutputIterator oi, int indent,
-    TimingCheckSpec tcs) noexcept(noexcept(*oi++ = '!')) {
+void serialize_timing_check_spec(OutputIterator oi, int indent,
+                                  TimingCheckSpec tcs) noexcept(noexcept(*oi++ = '!')) {
   for (auto &&tc : tcs) {
     serialize_timing_check(oi, indent, tc);
   }

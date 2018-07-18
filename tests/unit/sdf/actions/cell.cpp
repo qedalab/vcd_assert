@@ -23,17 +23,27 @@ using Parse::Test::require_parse;
 
 TEST_CASE("SDF.Actions.CellAction", "[SDF][Actions][CellAction]") {
   Cell test{}; 
-  SECTION("CellAction"){
-    Cell wanted = test_cell_1;
-    std::string serialized;
 
-    serialize_cell(ranges::back_inserter(serialized), 0,
-                                  test_cell_1);
-    CAPTURE(serialized);
+  SECTION("CellAction"){
+
+    Cell wanted = test_cell_1;
+
+    
+    std::string wanted_serialized;
+    serialize_cell(ranges::back_inserter(wanted_serialized), 0,
+                                  wanted);
+    CAPTURE(wanted_serialized);
+
     // CAPTURE(test_cell_1_str);
     require_parse<Grammar::cell,
-                  Actions::CellAction>(serialized, test);
-    CAPTURE(test);
+                  Actions::CellAction>(wanted_serialized, test);
+  
+    std::string test_serialized;
+    serialize_cell(ranges::back_inserter(test_serialized), 0,
+                                  test);
+    CAPTURE(test_serialized);
+  
+  
     catch_test_cell(wanted,test);
   }  
 }

@@ -108,14 +108,19 @@ TimingChecker::match_scope(std::vector<std::string> path,
 }
 
 void TimingChecker::apply_sdf_hold(std::shared_ptr<SDF::DelayFile> sc,
-                                   std::string process, SDF::Hold hold){
+                                   SDF::Hold hold){
 
     //should be able to spec edge on either port_tchk.
 
     //should be able to spec edge on either port_tchk.
 
-  double value = get_sdf_value(sdf,hold.value);
-  HoldEvent he{index, value};  
+  auto value = hold.value.content(); //chooses TYP for now.
+  if(value.has_value()){
+    // HoldEvent he{index, value};  
+    
+  }else{
+
+  }
 }
 
 void TimingChecker::apply_sdf_timing_specs(std::shared_ptr<SDF::DelayFile> sc,
@@ -132,17 +137,17 @@ void TimingChecker::apply_sdf_timing_specs(std::shared_ptr<SDF::DelayFile> sc,
     switch (spec.get_enum_type()) {
     case SDF::TimingSpecType::timing_check:
 
-      for(auto&& check : std::get<SDF::TimingCheckSpec>(spec.value) {
+      for(auto&& check : std::get<SDF::TimingCheckSpec>(spec.value)) {
         switch (check.get_enum_type()) {
         case SDF::TimingCheckType::hold:
-          SDF::Hold hold = std::get<SDF::Hold>(check);
-            apply_sdf_hold(hold);
+          SDF::Hold hold = std::get<SDF::Hold>(check.value);
+            apply_sdf_hold(sc, hold);
           break;
-        default:
+
         }
       }
       break;
-    default:
+
     }
   }
 }
@@ -156,8 +161,8 @@ void TimingChecker::apply_sdf_cell_helper(std::shared_ptr<SDF::DelayFile> sc,
 {
   VCD::Scope input_scope = header_->get_scope(scope_index);
 
-  for (auto &&[ident, index] : input_scope.get_scopes()) {
-
+  for (auto && [ident, index]  : input_scope.get_scopes()) {
+    // auto && = i.get(1);
     VCD::Scope scope_i = header_->get_scope(index);
 
     if (scope_i.get_scope_type() == VCD::ScopeType::module) {
@@ -165,11 +170,11 @@ void TimingChecker::apply_sdf_cell_helper(std::shared_ptr<SDF::DelayFile> sc,
       // ast->get_instance_type_name(ident);
 
       // if(cell.cell_type.compare(module_name)){
-      apply_sdf_timing_specs(cell, index);
+      apply_sdf_timing_specs(sc, cell, index);
       // }
     }
 
-    apply_sdf_cell_helper(cell, index);
+    apply_sdf_cell_helper(sc, cell, index);
   }
 }
 
@@ -183,7 +188,7 @@ void TimingChecker::apply_sdf_cell(std::shared_ptr<SDF::DelayFile> sc,
   if (std::holds_alternative<SDF::Star>(cell.cell_instance)) {
 
     // for module/instance scopes FROM applied scope DOWN:
-    apply_sdf_cell_helper(cell, scope_index);
+    apply_sdf_cell_helper(sc, cell, scope_index);
 
   } else {
 
@@ -205,7 +210,7 @@ void TimingChecker::apply_sdf_cell(std::shared_ptr<SDF::DelayFile> sc,
           // ast->get_instance_type_name(scope_i.get_identifier());
 
           // if(cell.cell_type.compare(module_name)){
-          apply_sdf_timing_specs(cell, index);
+          apply_sdf_timing_specs(sc, cell, index);
           // }
         }
       }
@@ -215,7 +220,7 @@ void TimingChecker::apply_sdf_cell(std::shared_ptr<SDF::DelayFile> sc,
       // ONLY the module/instance scope supplied:
       auto match_index = match_scope(hi.value, scope_index);
       if (match_index.has_value()) {
-        apply_sdf_timing_specs(cell, match_index.value());
+        apply_sdf_timing_specs(sc, cell, match_index.value());
       } else {
         // cell instance was not found.
       }
@@ -264,7 +269,7 @@ void TimingChecker::apply_sdf_file(/*VerilogSourceTree *ast, */
 
   if (apply_at_index.has_value()) {
     for (auto &cell : cells) {
-      apply_sdf_cell(cell, apply_at_index.value());
+      apply_sdf_cell(delayfile, cell, apply_at_index.value());
     }
   } else {
     // could not find the supplied scope.

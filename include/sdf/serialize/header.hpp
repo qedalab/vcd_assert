@@ -123,7 +123,7 @@ void serialize_voltage(OutputIterator oi, int indent, Triple voltage) noexcept(
     noexcept(*oi++ = '!')) {
   serialize_indent(oi, indent);
   ranges::copy(std::string_view("(VOLTAGE "), oi);
-  serialize_triple(oi, indent, voltage);
+  serialize_triple(oi, 0, voltage);
   ranges::copy(std::string_view(")\n"), oi);
 }
 

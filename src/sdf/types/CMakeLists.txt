@@ -5,5 +5,6 @@ target_sources(libsdf PRIVATE
   ${DIR}/cell.cpp
   ${DIR}/delayfile.cpp
   ${DIR}/delayfile_reader.cpp
+  ${DIR}/values.cpp
   ${DIR}/timing_check.cpp
   )

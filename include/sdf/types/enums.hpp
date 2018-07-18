@@ -76,15 +76,16 @@ enum class EdgeType {
 };
 
 enum class NodeType{
-  unspecified,
   port,
-  net
+  net,
+  unspecified
 };
 
 enum class MinTypMax{
   min,
   typ,
-  max
+  max,
+  unspecified
 };
 
 

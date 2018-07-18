@@ -25,9 +25,13 @@ TEST_CASE("SDF.Actions.Number", "[SDF][Actions][Number]") {
 
     require_parse<Grammar::real_number, Actions::NumberAction>(
         test_number_1_sv, test);
+    
     CAPTURE(wanted);
     CAPTURE(test);
-    REQUIRE(test == wanted);
+    if(wanted.has_value()){
+      REQUIRE(test.has_value());
+      REQUIRE(test.value() == wanted.value());
+    }
   }
 
 
@@ -42,7 +46,11 @@ TEST_CASE("SDF.Actions.Number", "[SDF][Actions][Number]") {
 
     CAPTURE(wanted);
     CAPTURE(test);
-    REQUIRE(test == wanted);
+    CAPTURE(test);
+    if(wanted.has_value()){
+      REQUIRE(test.has_value());
+      REQUIRE(test.value() == wanted.value());
+    }
 
   }
 }
@@ -62,11 +70,7 @@ TEST_CASE("SDF.Actions.Triple", "[SDF][Actions][Triple]") {
     CAPTURE(test.typ);
     CAPTURE(test.max);
 
-    REQUIRE( test.min == Approx(wanted.min)); 
-    REQUIRE( test.typ == Approx(wanted.typ)); 
-    REQUIRE( test.max == Approx(wanted.max));
-
-    // catch_test_triple(wanted, test);
+    catch_test_triple(wanted,test);
   }
   
   SECTION("Triple of signed numbers") {
@@ -82,10 +86,7 @@ TEST_CASE("SDF.Actions.Triple", "[SDF][Actions][Triple]") {
     CAPTURE(test.typ);
     CAPTURE(test.max);
     
-    REQUIRE(test.min == Approx(wanted.min) ); 
-    REQUIRE(test.typ == Approx(wanted.typ) ); 
-    REQUIRE(test.max == Approx(wanted.max) );
-    // catch_test_triple(wanted, test);
+    catch_test_triple(wanted,test);
   }
 
 }
@@ -106,7 +107,10 @@ TEST_CASE("SDF.Actions.Value", "[SDF][Actions][Value]") {
     Number result = std::get<Number>(test);
 
     CAPTURE(result);
-    REQUIRE(result == wanted); 
+    if(wanted.has_value()){
+      REQUIRE(result.has_value());
+      REQUIRE(result.value() == wanted.value());
+    }
   }
 
   SECTION("Value with signed single number") {
@@ -123,8 +127,10 @@ TEST_CASE("SDF.Actions.Value", "[SDF][Actions][Value]") {
     Number result = std::get<Number>(test);
 
     CAPTURE(result);
-    REQUIRE(result == wanted);
-    // catch_test_triple(wanted, test);
+    if(wanted.has_value()){
+      REQUIRE(result.has_value());
+      REQUIRE(result.value() == wanted.value());
+    }
   }
 
   SECTION("Value with unsigned triple numbers") {
@@ -144,10 +150,7 @@ TEST_CASE("SDF.Actions.Value", "[SDF][Actions][Value]") {
     CAPTURE(result.typ);
     CAPTURE(result.max);
     
-    REQUIRE(result.min == Approx(wanted.min)); 
-    REQUIRE(result.typ == Approx(wanted.typ)); 
-    REQUIRE(result.max == Approx(wanted.max));
-    // catch_test_triple(wanted, test);
+    catch_test_triple(wanted, result);
   }
 
   SECTION("Value triple with signed numbers") {
@@ -167,10 +170,7 @@ TEST_CASE("SDF.Actions.Value", "[SDF][Actions][Value]") {
     CAPTURE(result.typ);
     CAPTURE(result.max);
     
-    REQUIRE(result.min == Approx(wanted.min)); 
-    REQUIRE(result.typ == Approx(wanted.typ)); 
-    REQUIRE(result.max == Approx(wanted.max));
-    // catch_test_triple(wanted, test);
+    catch_test_triple(wanted, result);
   }
 
 }

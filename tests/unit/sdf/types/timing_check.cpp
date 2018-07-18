@@ -73,7 +73,7 @@ void SDF::Test::catch_test_porttimingcheck(PortTimingCheck wanted,
   INFO("PortCheck");
 
   SECTION("Port should be equal") { 
-    REQUIRE(wanted.port==test.port);
+    CHECK(wanted.port==test.port);
   }
 
   if(!(wanted.port ==test.port)){
@@ -103,11 +103,11 @@ void SDF::Test::catch_test_porttimingcheck(PortTimingCheck wanted,
 
 void SDF::Test::catch_test_hold(Hold wanted, Hold test) {
   INFO("Hold Timing Check");
-  INFO("Input should be equal");    
-  catch_test_porttimingcheck(wanted.input, test.input);
+  INFO("Trigger port_tchk should be equal");    
+  catch_test_porttimingcheck(wanted.trigger, test.trigger);
 
-  INFO("Output should be equal");
-  catch_test_porttimingcheck(wanted.output, test.output);
+  INFO("Assertion port_tchk should be equal");
+  catch_test_porttimingcheck(wanted.assert, test.assert);
 
   SECTION("Value should be equal") { 
     REQUIRE(wanted.value == test.value); 

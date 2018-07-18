@@ -21,6 +21,7 @@ namespace SDF {
 template <class OutputIterator>
 void serialize_delayfile(OutputIterator oi,
                          DelayFile df) noexcept(noexcept(*oi++ = '!')) {
+                           
   ranges::copy(std::string_view("(DELAYFILE \n"), oi);
   serialize_sdf_version(oi, 1, df.get_sdf_version());
 

@@ -61,7 +61,9 @@ TimingCheckType get_enum_type() const {
 template <class OutputIterator>
 void serialize_number(OutputIterator oi, int /*unused*/,
                       Number n) noexcept(noexcept(*oi++ = '!')) {
-  ranges::copy(fmt::sprintf(" %.g",n), oi);
+
+  if(n.has_value())
+    ranges::copy(fmt::sprintf("%.g",n.value()), oi);
 }
 
 /// Serialize SDF timing spec
@@ -74,9 +76,9 @@ void serialize_triple(OutputIterator oi, int /*indent*/,
                       Triple t, int places = -1) noexcept(noexcept(*oi++ = '!')) {
   if(places == -1){
     double intpart;
-    double fracpart_min = std::modf(t.min, &intpart);
-    double fracpart_typ = std::modf(t.typ, &intpart);
-    double fracpart_max = std::modf(t.max, &intpart);
+    double fracpart_min = std::modf(t.min.has_value() ? t.min.value() : 0.0, &intpart);
+    double fracpart_typ = std::modf(t.typ.has_value() ? t.typ.value() : 0.0, &intpart);
+    double fracpart_max = std::modf(t.max.has_value() ? t.max.value() : 0.0, &intpart);
     auto s_min = fmt::sprintf("%.g",fracpart_min);
     auto s_typ = fmt::sprintf("%.g",fracpart_typ);
     auto s_max = fmt::sprintf("%.g",fracpart_max);
@@ -96,12 +98,23 @@ void serialize_triple(OutputIterator oi, int /*indent*/,
       places = places-1;
     }
   }  
+
   // serialize_indent(oi, indent);
-  ranges::copy(fmt::sprintf("%.*f",places,t.min), oi);
+  if(t.min.has_value()){
+    ranges::copy(fmt::sprintf("%.*f",places,t.min.value()), oi);
+  }
+  
   ranges::copy(std::string_view(":"), oi);
-  ranges::copy(fmt::sprintf("%.*f",places,t.typ), oi);
+
+  if(t.typ.has_value()){
+    ranges::copy(fmt::sprintf("%.*f",places,t.typ.value()), oi);
+  }
+  
   ranges::copy(std::string_view(":"), oi);
-  ranges::copy(fmt::sprintf("%.*f",places,t.max), oi);
+  
+  if(t.max.has_value()){
+    ranges::copy(fmt::sprintf("%.*f",places,t.max.value()), oi);
+  }
 }
 
 // /// Serialize SDF timing spec

@@ -357,8 +357,8 @@ struct port_tchk : sor<
   port_spec
 >{};
 
-struct port_tchk_0 : alias<port_tchk>{};
 struct port_tchk_1 : alias<port_tchk>{};
+struct port_tchk_2 : alias<port_tchk>{};
 
 // struct nochange_timing_check : block<
 //   key_nochange,
@@ -426,8 +426,8 @@ struct port_tchk_1 : alias<port_tchk>{};
 
 struct hold_timing_check : block<
   key_hold,
-  port_tchk_0,
   port_tchk_1,
+  port_tchk_2,
   value
 > {};
 

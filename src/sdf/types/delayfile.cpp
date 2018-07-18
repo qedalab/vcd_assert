@@ -9,12 +9,12 @@ using namespace SDF;
 
 // }
 
-std::string_view DelayFile::get_sdf_version()
+std::string_view DelayFile::get_sdf_version() const noexcept
 {
   return sdf_version_; 
 }
 
-std::optional<std::string_view> DelayFile::get_design_name()
+std::optional<std::string_view> DelayFile::get_design_name() const noexcept
 {
   return design_name_; 
 }
@@ -24,7 +24,7 @@ bool DelayFile::has_design_name() const noexcept
   return design_name_.has_value();
 }
 
-std::optional<std::string_view> DelayFile::get_date()
+std::optional<std::string_view> DelayFile::get_date() const noexcept
 {
   return date_; 
 }
@@ -34,7 +34,7 @@ bool DelayFile::has_date() const noexcept
   return date_.has_value();
 }
 
-std::optional<std::string_view> DelayFile::get_vendor()
+std::optional<std::string_view> DelayFile::get_vendor() const noexcept
 {
   return vendor_; 
 }
@@ -44,7 +44,7 @@ bool DelayFile::has_vendor() const noexcept
   return vendor_.has_value();
 }
 
-std::optional<std::string_view> DelayFile::get_program_name()
+std::optional<std::string_view> DelayFile::get_program_name() const noexcept
 {
   return program_name_; 
 }
@@ -54,7 +54,7 @@ bool DelayFile::has_program_name() const noexcept
   return program_name_.has_value();
 }
 
-std::optional<std::string_view> DelayFile::get_program_version()
+std::optional<std::string_view> DelayFile::get_program_version() const noexcept
 {
   return program_version_; 
 }
@@ -64,7 +64,7 @@ bool DelayFile::has_program_version() const noexcept
   return program_version_.has_value();
 }
 
-std::optional<std::string_view> DelayFile::get_process()
+std::optional<std::string_view> DelayFile::get_process()  const noexcept
 {
   return process_; 
 }
@@ -74,7 +74,7 @@ bool DelayFile::has_process() const noexcept
   return process_.has_value();
 }
 
-std::optional<HChar> DelayFile::get_hierarchy_divider()
+std::optional<HChar> DelayFile::get_hierarchy_divider() const noexcept
 {
   return hierarchy_divider_; 
 }
@@ -84,7 +84,7 @@ bool DelayFile::has_hierarchy_divider() const noexcept
   return hierarchy_divider_.has_value();
 }
 
-std::optional<Triple> DelayFile::get_voltage()
+std::optional<Triple> DelayFile::get_voltage() const noexcept
 {
   return voltage_; 
 }
@@ -94,7 +94,7 @@ bool DelayFile::has_voltage() const noexcept
   return voltage_.has_value();
 }
 
-std::optional<Triple> DelayFile::get_temperature()
+std::optional<Triple> DelayFile::get_temperature() const noexcept
 {
   return temperature_; 
 }
@@ -104,7 +104,7 @@ bool DelayFile::has_temperature() const noexcept
   return temperature_.has_value();
 }
 
-std::optional<TimeScale> DelayFile::get_timescale()
+std::optional<TimeScale> DelayFile::get_timescale() const noexcept
 {
   return timescale_; 
 }
@@ -155,38 +155,4 @@ std::vector<std::size_t> DelayFile::get_cell_indices_by_instance(CellInstance &c
     i++; 
   }
   return result;
-}
-
-std::optional<double> DelayFile::get_value_content(Value value) const noexcept
-{
-  Number result;
-  
-  if(std::holds_alternative<Triple>(value)){
-    if(get_process().has_value()){
-      switch(get_process()){
-      case MinTypMax::min:
-        result =  std::get<Triple>(value).min;
-      break;
-      case MinTypMax::typ:
-        result =  std::get<Triple>(value).typ;
-      break;
-      case MinTypMax::max:
-        result =  std::get<Triple>(value).max;
-      break;
-      default:
-      result =  {};
-      }
-    }else{
-      result =  std::get<Triple>(value).typ;
-    }
-  }else{
-    result = std::get<Number>(value);
-  }
-
-  if(result){
-    return static_cast<double>(result);
-  }else{
-    return {};
-  }
-  
 }

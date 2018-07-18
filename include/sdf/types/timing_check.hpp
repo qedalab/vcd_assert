@@ -98,9 +98,10 @@ struct PortTimingCheck{
   std::optional<std::string> symbolic_name {};
 };
 
+//note input == port_tchk 2 ! 
 struct Hold {
-  PortTimingCheck input;
-  PortTimingCheck output;
+  PortTimingCheck trigger; //trigger event
+  PortTimingCheck assert; //subjective event
   Value value;
 };
 
