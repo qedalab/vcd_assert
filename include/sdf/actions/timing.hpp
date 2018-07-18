@@ -164,12 +164,14 @@ struct EdgeTypeAction : multi_dispatch<
     Grammar::edge_identifier_0z, apply0<Apply::value<EdgeType::posedge>>, //TODO
     Grammar::edge_identifier_z1, apply0<Apply::value<EdgeType::posedge>>, //TODO
     Grammar::edge_identifier_1z, apply0<Apply::value<EdgeType::negedge>>, //TODO
-    Grammar::edge_identifier_z0, apply0<Apply::value<EdgeType::posedge>>, //TODO
+    Grammar::edge_identifier_z0, apply0<Apply::value<EdgeType::negedge>>, //TODO
     Grammar::edge_identifier_posedge, apply0<Apply::value<EdgeType::posedge>>,
     Grammar::edge_identifier_negedge, apply0<Apply::value<EdgeType::negedge>>
 >{
-  using state = EdgeType;
-};
+
+// struct EdgeTypeAction : all_dispatch<apply0<Apply::rule_value>> {
+//   using state = EdgeType;
+// };
 
 struct PortEdgeAction : multi_dispatch<
     Grammar::edge_identifier, inner_action<EdgeTypeAction, PortEdgeStorage>,

@@ -24,10 +24,10 @@ namespace Unsupported {} // namespace Unsupported
 struct Node {
   NodeType type; //could make ScalarNet, ScalarPort, BusNet, BusPort
   std::string basename_identifier;
-  std::optional<EdgeType> edge; //only allowed if node is port spec
-  std::optional<HierarchicalIdentifier> hierarchical_identifier;
-  std::optional<std::size_t> start;
-  std::optional<std::size_t> end;
+  std::optional<EdgeType> edge = {}; //only allowed if node is port spec
+  std::optional<HierarchicalIdentifier> hierarchical_identifier = {};
+  std::optional<std::size_t> start {};
+  std::optional<std::size_t> end {};
 
   bool operator==(const Node &other) const noexcept {
     if ((basename_identifier == other.basename_identifier) &&

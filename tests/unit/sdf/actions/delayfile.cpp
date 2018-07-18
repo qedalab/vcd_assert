@@ -16,12 +16,12 @@ namespace SDF::Test{
 
 TEST_CASE("SDF.Actions.Delayfile", "[SDF][Actions][Delayfile]") {
 
-  static const DelayFileView wanted = test_delayfile_1;
-  
+  const DelayFileView wanted = test_delayfile_1;
+
   //Delayfile from test delayfile view 
   DelayFileTester dft = DelayFileTester();
   auto test_delayfile_p = dft.get_test_delayfile(wanted);
-  
+
   //serialize test delayfile
   std::string serialized;
   serialize_delayfile(ranges::back_inserter(serialized), test_delayfile_p);

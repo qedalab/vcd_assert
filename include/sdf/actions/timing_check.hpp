@@ -20,12 +20,7 @@ namespace Actions{
 
 using namespace Parse;  
 
-struct EqualityOperatorAction : multi_dispatch<
-  Grammar::case_inequality, apply0<Apply::value<EqualityOperator::case_inv>>,
-  Grammar::case_equality, apply0<Apply::value<EqualityOperator::case_equal>>,
-  Grammar::logical_inequality, apply0<Apply::value<EqualityOperator::logic_inv>>,
-  Grammar::logical_equality, apply0<Apply::value<EqualityOperator::logic_equal>>
->{
+struct EqualityOperatorAction : all_dispatch<apply0<Apply::rule_value>> {
   using state = EqualityOperator;
 };
 

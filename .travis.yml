@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 language: generic
 dist: trusty
 
@@ -18,3 +19,21 @@ before_script:
   - pip install --user conan
   - mkdir build
   - cd build
+=======
+sudo: required
+
+language: generic
+
+services:
+  - docker
+
+before_script:
+  - docker run --name runner -t -d pleroux0/centos7-devel
+  - docker exec runner git clone -b "${TRAVIS_BRANCH}" --recurse-submodules --depth=1 "https://github.com/${TRAVIS_REPO_SLUG}.git" "repo"
+  - docker exec runner mkdir "repo/travis-build"
+
+script:
+  - docker exec runner conan remote add pleroux0 "https://api.bintray.com/conan/pleroux0/pleroux0"
+  - docker exec runner scl enable devtoolset-7 -- bash -c "cd repo/travis-build && conan install .. --build=missing"
+  - docker exec runner scl enable devtoolset-7 -- bash -c "cd repo/travis-build && conan build .."
+>>>>>>> origin/master

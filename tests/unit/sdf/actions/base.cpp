@@ -1,6 +1,6 @@
-#include "parse/test/parse.hpp"
+#include "sdf/actions/base.hpp"
 
-#include "sdf/actions/time_scale.hpp"
+#include "parse/test/parse.hpp"
 
 #include "sdf/grammar/header.hpp"
 
@@ -10,7 +10,7 @@
 using namespace SDF;
 using Parse::Test::require_parse;
 
-static auto constexpr hchar_str = ".";
+inline auto constexpr hchar_str = ".";
 constexpr char hierarchicalidentifier_str[] = "root/DUT/test/DFF";
 constexpr char identifier_str[] = "DFF";
 constexpr char qstring_str_content[] = "quoted string content";

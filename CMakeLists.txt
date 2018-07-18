@@ -49,7 +49,7 @@ if(${AK_TOOLKIT_CONFIG_USING_STRING_VIEW})
   target_compile_definitions(libsdf PUBLIC AK_TOOLKIT_CONFIG_USING_STRING_VIEW=1)
 endif()
 target_link_libraries(libsdf PUBLIC libparse fmt::fmt static_string )
-# target_add_warnings(libsdf)
+target_add_warnings(libsdf)
 
 #Add vcd_assert library
 add_library(libvcd_assert "src/vcd_assert")
@@ -64,4 +64,19 @@ if(${BUILD_TESTS})
   find_package(Catch2 2.2.3 REQUIRED)
   include(CTest)
   add_subdirectory(tests)
+
+  set_target_properties(unit_parse unit_parse unit_vcd unit_vcd_assert
+                        unit_sdf libvcd_bench_grammar
+    PROPERTIES
+    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
+    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
+)
 endif()
+
+set_target_properties(libparse libvcd libvcd_assert vcd_assert libsdf
+  PROPERTIES
+  ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
+  LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
+  RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
+)

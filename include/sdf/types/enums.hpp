@@ -66,7 +66,13 @@ enum class DataType {
 
 enum class EdgeType {
   posedge,
-  negedge
+  negedge,
+  _01,
+  _10,
+  _0z,
+  _z1,
+  _1z,
+  _z0
 };
 
 enum class NodeType{

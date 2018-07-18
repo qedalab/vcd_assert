@@ -27,22 +27,13 @@ namespace Actions {
 
 using namespace Parse;  
 
-struct StringAction : single_dispatch<
+struct QStringAction : single_dispatch<
     Grammar::qstring_content, apply<Apply::string>
 > {
   using state = std::string;
 };
 
-struct QStringAction : single_dispatch<
-    Grammar::qstring, inner_action_passthrough<StringAction>
-> {
-  using state = std::string;
-};
-
-struct HCharAction : multi_dispatch<
-    Grammar::one<'.'>, apply0<Apply::value<HChar::dot>>,
-    Grammar::one<'/'>, apply0<Apply::value<HChar::slash>>
-> {
+struct HCharAction : all_dispatch<apply0<Apply::rule_value>> {
   using state = HChar;
 };
 

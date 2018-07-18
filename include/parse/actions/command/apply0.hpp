@@ -21,6 +21,7 @@ struct apply0 {
     using duseltronik =
         tao::pegtl::internal::duseltronik<Rule, tao::pegtl::apply_mode::NOTHING,
                                           M, Action, Control>;
+
     // If it matches call apply0
     if (duseltronik::match(input, states...)) {
       return Apply0::template apply0<Rule>(states...);

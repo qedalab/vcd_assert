@@ -11,9 +11,9 @@
 #include <fmt/printf.h>
 
 namespace SDF {
-
-struct Star{
-  bool operator==(const Star& /*unused */) const noexcept{
+ 
+struct Star {
+  bool operator==(const Star& /*unused*/) const noexcept{
     return true;
   }
 };

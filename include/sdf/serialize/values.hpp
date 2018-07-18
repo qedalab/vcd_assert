@@ -59,7 +59,7 @@ TimingCheckType get_enum_type() const {
 /// \param ts The SDF file timing specification to write
 /// \exception Throws if writing to the OutputIterator throws otherwise noexcept
 template <class OutputIterator>
-void serialize_number(OutputIterator oi, int indent,
+void serialize_number(OutputIterator oi, int /*unused*/,
                       Number n) noexcept(noexcept(*oi++ = '!')) {
   ranges::copy(fmt::sprintf(" %.g",n), oi);
 }
@@ -70,7 +70,7 @@ void serialize_number(OutputIterator oi, int indent,
 /// \param ts The SDF file timing specification to write
 /// \exception Throws if writing to the OutputIterator throws otherwise noexcept
 template <class OutputIterator>
-void serialize_triple(OutputIterator oi, int indent,
+void serialize_triple(OutputIterator oi, int /*indent*/,
                       Triple t, int places = -1) noexcept(noexcept(*oi++ = '!')) {
   if(places == -1){
     double intpart;

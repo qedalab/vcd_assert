@@ -30,15 +30,15 @@ using namespace SDF;
 struct TestCell : public Cell{};
 
 constexpr auto test_celltype_1_str = sstr::literal("(CELLTYPE \"DFF\")");
-static const std::string test_celltype_1{"DFF"};
+inline const std::string test_celltype_1{"DFF"};
 
 constexpr auto test_cellinstance_1_str = sstr::literal("(INSTANCE *)");
-static const CellInstance test_cellinstance_1{
+inline const CellInstance test_cellinstance_1{
   Star{}
 };
 
 constexpr auto test_cellinstance_2_str = "path";
-static const CellInstance test_cellinstance_2{
+inline const CellInstance test_cellinstance_2{
   HierarchicalIdentifier{
     HChar::dot,
     {"path"}
@@ -50,7 +50,7 @@ constexpr auto test_cell_1_str =
   test_cellinstance_1_str + "\n    " +
   test_timingspec_array_1_str + "\n)";
 
-static const Cell test_cell_1{
+inline const Cell test_cell_1{
   test_celltype_1,
   test_cellinstance_1,
   test_timingspec_array_1
