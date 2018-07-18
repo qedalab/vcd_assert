@@ -13,7 +13,7 @@
 #include <fmt/printf.h>
 using namespace fmt::literals;
 
-#include <math.h>       /* modf */
+#include <cmath>       /* modf */
 
 namespace SDF {
 
