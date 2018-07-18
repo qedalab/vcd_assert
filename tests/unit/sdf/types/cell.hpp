@@ -14,11 +14,11 @@
 
 #include <string_view>
 
-#include <ak_toolkit/static_string.hpp>
-namespace sstr = ak_toolkit::static_str;
+#include "parse/util/static_string.hpp"
 
 namespace SDF::Test {
 using namespace SDF;
+using namespace Parse::Util;
 
 // struct TestCell {
 //   std::string cell_type;
@@ -29,10 +29,10 @@ using namespace SDF;
 
 struct TestCell : public Cell{};
 
-constexpr auto test_celltype_1_str = sstr::literal("(CELLTYPE \"DFF\")");
+constexpr auto test_celltype_1_str = static_string("(CELLTYPE \"DFF\")");
 inline const std::string test_celltype_1{"DFF"};
 
-constexpr auto test_cellinstance_1_str = sstr::literal("(INSTANCE *)");
+constexpr auto test_cellinstance_1_str = static_string("(INSTANCE *)");
 inline const CellInstance test_cellinstance_1{
   Star{}
 };

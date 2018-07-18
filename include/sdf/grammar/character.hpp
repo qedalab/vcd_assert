@@ -1,8 +1,9 @@
 #ifndef LIBSDF_GRAMMAR_CHARACTER_HPP
 #define LIBSDF_GRAMMAR_CHARACTER_HPP
 
-#include "parse/grammar/base.h"
 #include "../types/enums.hpp"
+
+#include "parse/grammar/base.h"
 
 namespace SDF::Grammar {
   using namespace Parse::Grammar::Base;

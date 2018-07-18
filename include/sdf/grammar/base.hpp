@@ -1,12 +1,12 @@
 #ifndef LIBSDF_GRAMMAR_BASE_HPP 
-#define LIBSDF_GRAMMAR_BASE_HPP 
+#define LIBSDF_GRAMMAR_BASE_HPP
+
+#include "./block.hpp"
+#include "./character.hpp"
+#include "./comment.hpp"
 
 #include <parse/grammar/base.h>
 #include <parse/grammar/part.h>
-
-#include "./comment.hpp"
-#include "./block.hpp"
-#include "./character.hpp"
 
 #include <tao/pegtl.hpp>
 

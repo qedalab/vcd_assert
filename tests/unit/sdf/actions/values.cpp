@@ -21,10 +21,10 @@ TEST_CASE("SDF.Actions.Number", "[SDF][Actions][Number]") {
 
     Number test{};
     Number wanted{test_number_1};
-    INFO(fmt::format("Number {}", test_number_1_sv))
+    INFO(fmt::format("Number {}", test_number_1_str.to_string_view()))
 
     require_parse<Grammar::real_number, Actions::NumberAction>(
-        test_number_1_sv, test);
+        test_number_1_str.to_string_view(), test);
     CAPTURE(wanted);
     CAPTURE(test);
     REQUIRE(test == wanted);
@@ -35,10 +35,10 @@ TEST_CASE("SDF.Actions.Number", "[SDF][Actions][Number]") {
 
     Number test{};
     Number wanted{test_number_2};
-    INFO(fmt::format("Number {}", test_number_2_sv))
+    INFO(fmt::format("Number {}", test_number_2_str.to_string_view()))
       
     require_parse<Grammar::signed_real_number, Actions::NumberAction>(
-        fmt::format("{}", test_number_2_sv), test);
+        fmt::format("{}", test_number_2_str.to_string_view()), test);
 
     CAPTURE(wanted);
     CAPTURE(test);
@@ -53,10 +53,10 @@ TEST_CASE("SDF.Actions.Triple", "[SDF][Actions][Triple]") {
 
     Triple test{};
     Triple wanted = test_triple_1;
-    INFO(fmt::format("Triple {}", test_triple_1_sv))
+    INFO(fmt::format("Triple {}", test_triple_1_str.to_string_view()))
       
     require_parse<Grammar::triple, Actions::TripleAction<Grammar::real_number>>(
-        fmt::format("{}", test_triple_1_sv), test);
+        fmt::format("{}", test_triple_1_str.to_string_view()), test);
 
     CAPTURE(test.min);
     CAPTURE(test.typ);
@@ -73,10 +73,10 @@ TEST_CASE("SDF.Actions.Triple", "[SDF][Actions][Triple]") {
 
     Triple test{};
     Triple wanted{test_triple_4};
-    INFO(fmt::format("Triple {}", test_triple_4_sv))
+    INFO(fmt::format("Triple {}", test_triple_4_str.to_string_view()))
       
     require_parse<Grammar::rtriple, Actions::TripleAction<Grammar::signed_real_number>>(
-        fmt::format("{}", test_triple_4_sv), test);
+        fmt::format("{}", test_triple_4_str.to_string_view()), test);
     
     CAPTURE(test.min);
     CAPTURE(test.typ);
@@ -96,11 +96,11 @@ TEST_CASE("SDF.Actions.Value", "[SDF][Actions][Value]") {
 
     Value test{};
     Number wanted{test_number_1};
-    INFO(fmt::format("Value ({})", test_number_1_sv))
+    INFO(fmt::format("Value ({})", test_number_1_str.to_string_view()))
       
     // require_parse<Grammar::rvalue, Actions::ValueAction<Grammar::signed_real_number>>(
     require_parse<Grammar::value, Actions::ValueAction>(
-        fmt::format("({})", test_number_1_sv), test);
+        fmt::format("({})", test_number_1_str.to_string_view()), test);
     
     REQUIRE(std::holds_alternative<Number>(test)); 
     Number result = std::get<Number>(test);
@@ -113,11 +113,11 @@ TEST_CASE("SDF.Actions.Value", "[SDF][Actions][Value]") {
 
     Value test{};
     Number wanted{test_number_2};
-    INFO(fmt::format("Value ({})", test_number_2_sv))
+    INFO(fmt::format("Value ({})", test_number_2_str.to_string_view()))
       
     // require_parse<Grammar::rvalue, Actions::ValueAction<Grammar::signed_real_number>>(
     require_parse<Grammar::rvalue, Actions::ValueAction>(
-        fmt::format("({})", test_number_2_sv), test);
+        fmt::format("({})", test_number_2_str.to_string_view()), test);
     
     REQUIRE(std::holds_alternative<Number>(test)); 
     Number result = std::get<Number>(test);
@@ -131,11 +131,11 @@ TEST_CASE("SDF.Actions.Value", "[SDF][Actions][Value]") {
 
     Value test{};
     Triple wanted{test_triple_2};
-    INFO(fmt::format("Value ({})", test_triple_2_sv))
+    INFO(fmt::format("Value ({})", test_triple_2_str.to_string_view()))
       
     // require_parse<Grammar::rvalue, Actions::ValueAction<Grammar::signed_real_number>>(
     require_parse<Grammar::value, Actions::ValueAction>(
-        fmt::format("({})", test_triple_2_sv), test);
+        fmt::format("({})", test_triple_2_str.to_string_view()), test);
     
     REQUIRE(std::holds_alternative<Triple>(test)); 
     Triple result = std::get<Triple>(test);
@@ -154,11 +154,11 @@ TEST_CASE("SDF.Actions.Value", "[SDF][Actions][Value]") {
 
     Value test{};
     Triple wanted{test_triple_4};
-    INFO(fmt::format("Value ({})", test_triple_4_sv))
+    INFO(fmt::format("Value ({})", test_triple_4_str.to_string_view()))
       
     // require_parse<Grammar::rvalue, Actions::ValueAction<Grammar::signed_real_number>>(
     require_parse<Grammar::rvalue, Actions::ValueAction>(
-        fmt::format("({})", test_triple_4_sv), test);
+        fmt::format("({})", test_triple_4_str.to_string_view()), test);
     
     REQUIRE(std::holds_alternative<Triple>(test)); 
     Triple result = std::get<Triple>(test);

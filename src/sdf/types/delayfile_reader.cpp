@@ -9,16 +9,16 @@ DelayFileReader::DelayFileReader()
   delayfile_ = std::make_unique<DelayFile>();
 }
 
-void DelayFileReader::sdf_version(std::string sdf_version_string) noexcept
+void DelayFileReader::sdf_version(std::string sdf_version) noexcept
 {
-  delayfile_->sdf_version_ = std::move(sdf_version_string);
+  delayfile_->sdf_version_ = std::move(sdf_version);
 }
 
-void DelayFileReader::design_name(std::string design_name_string)
+void DelayFileReader::design_name(std::string design_name)
 {
   if(has_design_name())
     throw std::runtime_error("design_name has already been set");
-  delayfile_->design_name_ = std::move(design_name_string);
+  delayfile_->design_name_ = std::move(design_name);
 }
 
 bool DelayFileReader::has_design_name() const noexcept
@@ -26,11 +26,11 @@ bool DelayFileReader::has_design_name() const noexcept
   return delayfile_->has_design_name();
 }
 
-void DelayFileReader::date(std::string date_string)
+void DelayFileReader::date(std::string date)
 {
   if(has_date())
     throw std::runtime_error("date has already been set");
-  delayfile_->date_ = std::move(date_string);
+  delayfile_->date_ = std::move(date);
 }
 
 bool DelayFileReader::has_date() const noexcept
@@ -38,11 +38,11 @@ bool DelayFileReader::has_date() const noexcept
   return delayfile_->has_date();
 }
 
-void DelayFileReader::vendor(std::string vendor_string)
+void DelayFileReader::vendor(std::string vendor)
 {
   if(has_vendor())
     throw std::runtime_error("vendor has already been set");
-  delayfile_->vendor_ = std::move(vendor_string);
+  delayfile_->vendor_ = std::move(vendor);
 }
 
 bool DelayFileReader::has_vendor() const noexcept
@@ -50,11 +50,11 @@ bool DelayFileReader::has_vendor() const noexcept
   return delayfile_->has_vendor();
 }
 
-void DelayFileReader::program_name(std::string program_name_string)
+void DelayFileReader::program_name(std::string program_name)
 {
   if(has_program_name())
     throw std::runtime_error("program_name has already been set");
-  delayfile_->program_name_ = std::move(program_name_string);
+  delayfile_->program_name_ = std::move(program_name);
 }
 
 bool DelayFileReader::has_program_name() const noexcept
@@ -62,11 +62,11 @@ bool DelayFileReader::has_program_name() const noexcept
   return delayfile_->has_program_name();
 }
 
-void DelayFileReader::program_version(std::string program_version_string)
+void DelayFileReader::program_version(std::string program_version)
 {
   if(has_program_version())
     throw std::runtime_error("program_version has already been set");
-  delayfile_->program_version_ = std::move(program_version_string);
+  delayfile_->program_version_ = std::move(program_version);
 }
 
 bool DelayFileReader::has_program_version() const noexcept
@@ -74,11 +74,11 @@ bool DelayFileReader::has_program_version() const noexcept
   return delayfile_->has_program_version();
 }
 
-void DelayFileReader::process(std::string process_string)
+void DelayFileReader::process(std::string process)
 {
   if(has_process())
     throw std::runtime_error("process has already been set");
-  delayfile_->process_ = std::move(process_string);
+  delayfile_->process_ = std::move(process);
 }
 
 bool DelayFileReader::has_process() const noexcept
@@ -155,7 +155,7 @@ void DelayFileReader::cells(std::vector<Cell> cells)
 
 bool DelayFileReader::has_cells() const noexcept
 {
-  return delayfile_->cells_.size() > 0;
+  return !delayfile_->cells_.empty();
 }
 
 std::unique_ptr<DelayFile> DelayFileReader::release()

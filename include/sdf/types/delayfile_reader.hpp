@@ -1,14 +1,13 @@
 #ifndef LIBSDF_TYPES_DELAYFILE_READER_HPP
 #define LIBSDF_TYPES_DELAYFILE_READER_HPP
 
-#include <sdf/types/delayfile.hpp>
-#include <sdf/types/enums.hpp>
-#include <sdf/types/cell.hpp>
-#include <sdf/types/time_scale.hpp>
+#include "./cell.hpp"
+#include "./delayfile.hpp"
+#include "./enums.hpp"
+#include "./time_scale.hpp"
 
-#include <vector>
 #include <memory>
-
+#include <vector>
 
 namespace SDF {
 

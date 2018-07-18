@@ -4,23 +4,19 @@
 #include <sdf/grammar/base.hpp>
 #include <sdf/types/base.hpp>
 
-#include "parse/actions/apply/value.hpp"
+#include "parse/actions/apply/float.hpp"
+#include "parse/actions/apply/integer.hpp"
 #include "parse/actions/apply/rule_value.hpp"
 #include "parse/actions/apply/string.hpp"
-#include "parse/actions/apply/integer.hpp"
-#include "parse/actions/apply/float.hpp"
-
-#include "parse/actions/command/inner_action.hpp"
-#include "parse/actions/command/apply0.hpp"
+#include "parse/actions/apply/value.hpp"
 #include "parse/actions/command/apply.hpp"
+#include "parse/actions/command/apply0.hpp"
+#include "parse/actions/command/inner_action.hpp"
 #include "parse/actions/command/pegtl_action.hpp"
-
 #include "parse/actions/dispatch.hpp"
-
-#include "parse/actions/storage/member.hpp"
 #include "parse/actions/storage/function.hpp"
+#include "parse/actions/storage/member.hpp"
 #include "parse/actions/storage/push_back.hpp"
-
 
 namespace SDF {
 namespace Actions {

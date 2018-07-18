@@ -1,5 +1,7 @@
 #include "./timing_check.hpp"
 
+#include <range/v3/view/zip.hpp>
+
 using namespace SDF;
 using namespace SDF::Test;
 
