@@ -53,13 +53,14 @@ matrix:
         - pip install conan --user
         - mkdir build
         - cd build
-        - conan install .. --build=missing -s build_type=Debug -s compiler.libcxx=libc++
+        - conan remote add pleroux0 "https://api.bintray.com/conan/pleroux0/pleroux0"
       compiler: clang
       addons:
         apt:
           sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-trusty-6.0']
           packages: ['clang-6.0', 'clang-tidy-6.0']
       script:
+        - conan install .. --build=missing -s build_type=Debug -s compiler.libcxx=libc++ -e CC=${CC} -e CXX=${CXX}
         - cmake .. -DBUILD_TESTS="ON" -DCMAKE_TOOLCHAIN_FILE=conan_paths.cmake -DCMAKE_CXX_CLANG_TIDY=clang-tidy-6.0
         - cmake --build .
         - ctest
