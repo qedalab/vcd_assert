@@ -171,6 +171,10 @@ public:
   /// \returns The cell indices
   std::vector<std::size_t> get_cell_indices_by_instance(CellInstance &cell_instance) const noexcept;
 
+  /// TEMPORORARY Get the double value of the input Value, based on mintypmax if Triple.
+  /// \param value The sdf Value containing either Number or Triple
+  /// \returns The double if there was one. 
+  std::optional<double> get_value_content(Value value) const noexcept;
 
   /// \param type The cell type sting
   /// \returns The cell indices

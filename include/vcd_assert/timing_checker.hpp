@@ -8,6 +8,8 @@
 
 #include "sdf/actions/delayfile.hpp"
 #include "sdf/grammar/grammar.hpp"
+#include "sdf/types/delayfile.hpp"
+#include "sdf/types/enums.hpp"
 
 
 // #include <verilog_ast.h>
@@ -42,17 +44,34 @@ class TimingChecker {
   [[nodiscard]] bool handle_event(const Event& event);
 
 private:
-  void match_scope_helper();
-  bool match_scope(SDF::Cell cell, 
-                   std::size_t scope_index);
+  std::optional<std::size_t> match_scope_helper(std::vector<std::string> path, 
+                                                size_t path_index, 
+                                                size_t scope_index);
+                                                
+  std::optional<std::size_t> match_scope(std::vector<std::string> path, 
+                                         std::size_t scope_index);
+
+  void apply_sdf_hold(std::shared_ptr<SDF::DelayFile> sc, 
+                      std::string process, SDF::Hold hold);
+
+  void apply_sdf_timing_specs(std::shared_ptr<SDF::DelayFile> sc, 
+                              SDF::Cell cell, 
+                              std::size_t scope_index);
+  
+  void apply_sdf_cell_helper(std::shared_ptr<SDF::DelayFile> sc, 
+                             SDF::Cell cell, 
+                             std::size_t scope_index);
+  
+  void apply_sdf_cell(std::shared_ptr<SDF::DelayFile> sc, 
+                      SDF::Cell cell, std::size_t scope_index);
 
 public:
   // Claims ownership of the header
   TimingChecker(std::shared_ptr<VCD::Header> header);
 
-  void apply_sdf(/*VerilogSourceTree *ast, */
-                 std::shared_ptr<SDF::DelayFile> delayfile, 
-                 std::vector<std::string> vcd_node_path);
+  void apply_sdf_file(/*VerilogSourceTree *ast, */
+                      std::shared_ptr<SDF::DelayFile> delayfile, 
+                      std::vector<std::string> vcd_node_path);
 
   // Trigger event and return true if event was triggered
   [[nodiscard]] bool event(std::size_t time, std::size_t index,
@@ -69,3 +88,5 @@ public:
 } // namespace VCDAssert
 
 #endif // VCD_ASSERT_TIMING_CHECKER_HPP
+
+

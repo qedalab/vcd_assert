@@ -170,7 +170,7 @@ int main(int argc, char **argv) {
     //if the node specifed on CMD is a path, parse it, even if single identifier.
     tao::pegtl::memory_input<> path_input(node, "node");
     tao::pegtl::parse<
-        SDF::Grammar::hierarchical_identifier, 
+        SDF::Grammar::hierarchical_identifier,
         Parse::make_pegtl_template<SDF::Actions::HierarchicalIdentifierAction>::type,
         Parse::capture_control
       >(path_input, path);
@@ -188,7 +188,7 @@ int main(int argc, char **argv) {
       auto delayfile_p = sdf_reader.release();
       assert(delayfile_p.operator bool());
 
-      timing_checker.apply_sdf(/*ast,*/ std::move(delayfile_p), path.value);
+      timing_checker.apply_sdf_file(/*ast,*/ std::move(delayfile_p), path.value);
     }    
   }
 

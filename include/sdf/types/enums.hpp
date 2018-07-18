@@ -75,6 +75,12 @@ enum class NodeType{
   net
 };
 
+enum class MinTypMax{
+  min,
+  typ,
+  max
+};
+
 
 } // namespace SDF
 

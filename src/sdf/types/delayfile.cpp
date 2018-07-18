@@ -156,3 +156,37 @@ std::vector<std::size_t> DelayFile::get_cell_indices_by_instance(CellInstance &c
   }
   return result;
 }
+
+std::optional<double> DelayFile::get_value_content(Value value) const noexcept
+{
+  Number result;
+  
+  if(std::holds_alternative<Triple>(value)){
+    if(get_process().has_value()){
+      switch(get_process()){
+      case MinTypMax::min:
+        result =  std::get<Triple>(value).min;
+      break;
+      case MinTypMax::typ:
+        result =  std::get<Triple>(value).typ;
+      break;
+      case MinTypMax::max:
+        result =  std::get<Triple>(value).max;
+      break;
+      default:
+      result =  {};
+      }
+    }else{
+      result =  std::get<Triple>(value).typ;
+    }
+  }else{
+    result = std::get<Number>(value);
+  }
+
+  if(result){
+    return static_cast<double>(result);
+  }else{
+    return {};
+  }
+  
+}
