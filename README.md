@@ -1,5 +1,6 @@
 # VCD Assert
 [![Build Status](https://travis-ci.org/pleroux0/vcd_assert.svg?branch=master)](https://travis-ci.org/pleroux0/vcd_assert)
+[![codecov](https://codecov.io/gh/pleroux0/vcd_assert/branch/master/graph/badge.svg)](https://codecov.io/gh/pleroux0/vcd_assert)
 
 A external program that check for timing violations by looking at the VCD output.
 
