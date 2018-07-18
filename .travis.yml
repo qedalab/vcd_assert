@@ -50,6 +50,7 @@ matrix:
       - CC=clang-6.0
       - CXXFLAGS=-stdlib=libc++
       before_script:
+        - pip install conan --user
         - mkdir build
         - cd build
         - conan install .. --build=missing -s build_type=Debug -s compiler.libcxx=libc++
