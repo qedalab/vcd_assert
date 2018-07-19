@@ -35,11 +35,6 @@ TimingChecker::TimingChecker(std::shared_ptr<VCD::Header> header) :
   };
 }
 
-std::optional<std::size_t>
-TimingChecker::match_scope_helper(std::vector<std::string> path,
-                                  std::size_t path_index,
-                                  std::size_t scope_index)
-{
   // Iterate over all scopes. Every part of path must match a scope (instance).
   /*
     If the current scope does not contain the next path segment,
@@ -48,6 +43,11 @@ TimingChecker::match_scope_helper(std::vector<std::string> path,
       set i to the index and check if it is NOW at the end of the path,
       repeat..
   */
+std::optional<std::size_t>
+TimingChecker::match_scope_helper(std::vector<std::string> path,
+                                  std::size_t path_index,
+                                  std::size_t scope_index)
+{
   VCD::Scope cur_scope = header_->get_scope(scope_index);
 
   if (path[path_index].compare(cur_scope.get_identifier())) {
@@ -63,12 +63,12 @@ TimingChecker::match_scope_helper(std::vector<std::string> path,
             path, new_path_index,
             cur_scope.get_scope_index(path[new_path_index]));
       } else {
-        return {};
+        return {/*EMPTY*/};
       }
     }
   } else {
     // no match, exit.
-    return {};
+    return {/*EMPTY*/};
   }
 }
 
@@ -78,11 +78,11 @@ TimingChecker::match_scope_helper(std::vector<std::string> path,
 // scope tree and if successful, returns the index to the scope the path leads
 // to.
 std::optional<std::size_t>
-TimingChecker::match_scope(std::vector<std::string> path,
+TimingChecker::match_scope(std::vector<std::string> path, 
                            std::size_t scope_index)
 {
-
-  auto base_scope_identifier = header_->get_scope(scope_index).get_identifier();
+  auto starting_scope = header_->get_scope(scope_index);
+  auto base_scope_identifier = starting_scope.get_identifier();
 
   // Find index of application scope as supplied on cmd line. if possible.
   if (path.size() == 0) {
@@ -94,13 +94,13 @@ TimingChecker::match_scope(std::vector<std::string> path,
     if (path[0].compare(base_scope_identifier)) {
       return 0; // Explicitly applied at root.
     } else {
-      return {}; // Path specified not applicable/valid.
+      return {/*EMPTY*/}; // Path specified not applicable/valid.
     }
 
   } else {
     // Not applied at root, try to find where it is applied:
     if (!path[0].compare(base_scope_identifier)) {
-      return {}; // path specified not applicable/valid.
+      return {/*EMPTY*/}; // path specified not applicable/valid.
     } else {
       return match_scope_helper(path, 0, 0);
     }
@@ -108,27 +108,61 @@ TimingChecker::match_scope(std::vector<std::string> path,
 }
 
 void TimingChecker::apply_sdf_hold(std::shared_ptr<SDF::DelayFile> sc,
-                                   SDF::Hold hold){
+                                   SDF::Hold hold,
+                                  //  std::size_t apply_scope_index,
+                                   VCD::Scope &apply_scope)
+{
+  // auto value = hold.value.content(); //chooses TYP for now.
+  // auto trigger_port_tchk = hold.trigger; //chooses TYP for now.
+  // auto assert_port_tchk = hold.assert; //chooses TYP for now.
 
-    //should be able to spec edge on either port_tchk.
+  // if(value.has_value()){
+  //   // HoldEvent he{index, value};  
+  //   if(trigger_port_tchk.timing_check_condition.has_value()){
+  //     TimingCheckCondition cond = trigger_port_tchk.timing_check_condition.value()
+  //     //create conditional
+      
+  //     switch (cond.get_enum_type()){
+  //       case ConditionalType::none:
+  //         /* node==1 is condition */
+  //         auto port = std::get<Node>(cond.port);
+  //         auto node_val_p = ConditionalValuePointer(one);    
+  //         auto node_id_p = ConditionalValuePointer(cond.node);    
+          
+  //         break;
+  //       case ConditionalType::inverted:
+  //         /* ~node or node~=1 is condition */
+  //         break;
+  //       case ConditionalType::equality:
+  //         /* node=constant is condition */
+  //         break;
+  //       default:
+  //         break;
+  //     }
+  //     switch(cond.get_enum_type()){
+      
+  //     }
+  //   }
+  //   //in both cases : 
+  //   apply(trigger_port_tchk.port)
 
-    //should be able to spec edge on either port_tchk.
+  //   if(violation_port_tchk.timing_check_condition.has_value()){
+  //     //create conditional
+  //   }
+  //   apply(violation_port_tchk.port)
 
-  auto value = hold.value.content(); //chooses TYP for now.
-  if(value.has_value()){
-    // HoldEvent he{index, value};  
-    
-  }else{
+  // }else{
 
-  }
+  // }
 }
 
 void TimingChecker::apply_sdf_timing_specs(std::shared_ptr<SDF::DelayFile> sc,
                                            SDF::Cell cell,
-                                           std::size_t scope_index)
+                                          //  std::size_t instance_index, //remove
+                                           VCD::Scope &instance_scope)
 {
   /*
-    for all timing specs,
+    for all timing specifications
       considering only timing checks
         for all hold timing checks
           create hold or conditional hold for the port/values/events involved.
@@ -139,14 +173,19 @@ void TimingChecker::apply_sdf_timing_specs(std::shared_ptr<SDF::DelayFile> sc,
 
       for(auto&& check : std::get<SDF::TimingCheckSpec>(spec.value)) {
         switch (check.get_enum_type()) {
-        case SDF::TimingCheckType::hold:
-          SDF::Hold hold = std::get<SDF::Hold>(check.value);
-            apply_sdf_hold(sc, hold);
-          break;
-
-        }
+        case SDF::TimingCheckType::hold: 
+            apply_sdf_hold(sc, std::get<SDF::Hold>(check.value), 
+                          // instance_index, 
+                          instance_scope);
+        break;
+        default:
+          throw std::runtime_error("InternalError");
+        }  
       }
       break;
+
+    default:
+      throw std::runtime_error("InternalError");
 
     }
   }
@@ -157,38 +196,38 @@ void TimingChecker::apply_sdf_timing_specs(std::shared_ptr<SDF::DelayFile> sc,
 // module-name.
 void TimingChecker::apply_sdf_cell_helper(std::shared_ptr<SDF::DelayFile> sc,
                                           SDF::Cell cell,
-                                          std::size_t scope_index)
+                                          VCD::Scope &apply_scope)
 {
-  VCD::Scope input_scope = header_->get_scope(scope_index);
+  for (auto && [ident, index]  : apply_scope.get_scopes()) {
 
-  for (auto && [ident, index]  : input_scope.get_scopes()) {
-    // auto && = i.get(1);
-    VCD::Scope scope_i = header_->get_scope(index);
+    VCD::Scope scope = header_->get_scope(index);
 
-    if (scope_i.get_scope_type() == VCD::ScopeType::module) {
+    if (scope.get_scope_type() == VCD::ScopeType::module) {
       // std::string module_name =
       // ast->get_instance_type_name(ident);
 
       // if(cell.cell_type.compare(module_name)){
-      apply_sdf_timing_specs(sc, cell, index);
+      apply_sdf_timing_specs(sc, cell, scope);
       // }
     }
 
-    apply_sdf_cell_helper(sc, cell, index);
+    apply_sdf_cell_helper(sc, cell, scope);
   }
 }
 
 void TimingChecker::apply_sdf_cell(std::shared_ptr<SDF::DelayFile> sc,
                                    SDF::Cell cell, 
-                                   std::size_t scope_index)
+                                   std::size_t apply_scope_index)
 {
 
+  VCD::Scope apply_scope = header_->get_scope(apply_scope_index);
+  
   /* IF the cell instance is blank or *, then look for
       verilog scopes of 'cell_type' among the available VCD scopes. */
   if (std::holds_alternative<SDF::Star>(cell.cell_instance)) {
 
     // for module/instance scopes FROM applied scope DOWN:
-    apply_sdf_cell_helper(sc, cell, scope_index);
+    apply_sdf_cell_helper(sc, cell, apply_scope);
 
   } else {
 
@@ -199,18 +238,16 @@ void TimingChecker::apply_sdf_cell(std::shared_ptr<SDF::DelayFile> sc,
     if (hi.value.size() == 0) {
       /* for module/instance scopes in CURRENT scope ONLY: */
 
-      VCD::Scope input_scope = header_->get_scope(scope_index);
+      for (auto &&[ident, index] : apply_scope.get_scopes()) {
 
-      for (auto &&[ident, index] : input_scope.get_scopes()) {
+        VCD::Scope scope = header_->get_scope(index);
 
-        VCD::Scope scope_i = header_->get_scope(index);
-
-        if (scope_i.get_scope_type() == VCD::ScopeType::module) {
+        if (scope.get_scope_type() == VCD::ScopeType::module) {
           // std::string module_name =
-          // ast->get_instance_type_name(scope_i.get_identifier());
+          // ast->get_instance_type_name(scope.get_identifier());
 
           // if(cell.cell_type.compare(module_name)){
-          apply_sdf_timing_specs(sc, cell, index);
+          apply_sdf_timing_specs(sc, cell, scope);
           // }
         }
       }
@@ -218,9 +255,11 @@ void TimingChecker::apply_sdf_cell(std::shared_ptr<SDF::DelayFile> sc,
     } else {
 
       // ONLY the module/instance scope supplied:
-      auto match_index = match_scope(hi.value, scope_index);
-      if (match_index.has_value()) {
-        apply_sdf_timing_specs(sc, cell, match_index.value());
+      auto index = match_scope(hi.value, apply_scope_index);
+      if (index.has_value()) {
+        VCD::Scope scope = header_->get_scope(index.value());
+        
+        apply_sdf_timing_specs(sc, cell, scope);
       } else {
         // cell instance was not found.
       }

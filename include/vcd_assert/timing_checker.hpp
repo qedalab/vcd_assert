@@ -63,19 +63,21 @@ private:
   std::optional<std::size_t> match_scope(std::vector<std::string> path, 
                                          std::size_t scope_index);
 
-  void apply_sdf_hold(std::shared_ptr<SDF::DelayFile> sc, 
-                      SDF::Hold hold);
+  void apply_sdf_hold(std::shared_ptr<SDF::DelayFile> sc, SDF::Hold hold,
+                      // std::size_t apply_scope_index, 
+                      VCD::Scope &apply_scope);
 
   void apply_sdf_timing_specs(std::shared_ptr<SDF::DelayFile> sc, 
                               SDF::Cell cell, 
-                              std::size_t scope_index);
+                              // std::size_t apply_scope_index, 
+                              VCD::Scope &apply_scope);
   
-  void apply_sdf_cell_helper(std::shared_ptr<SDF::DelayFile> sc, 
-                             SDF::Cell cell, 
-                             std::size_t scope_index);
+  void apply_sdf_cell_helper(std::shared_ptr<SDF::DelayFile> sc, SDF::Cell cell, 
+                            //  std::size_t apply_scope_index, 
+                             VCD::Scope &apply_scope);
   
-  void apply_sdf_cell(std::shared_ptr<SDF::DelayFile> sc, 
-                      SDF::Cell cell, std::size_t scope_index);
+  void apply_sdf_cell(std::shared_ptr<SDF::DelayFile> sc, SDF::Cell cell, 
+                      std::size_t apply_scope_index);
 
 public:
   // Claims ownership of the header
