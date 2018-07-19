@@ -158,21 +158,21 @@ struct PortEdgeStorage {
   }
 };
 
-struct EdgeTypeAction : multi_dispatch<
-    Grammar::edge_identifier_01, apply0<Apply::value<EdgeType::posedge>>,
-    Grammar::edge_identifier_10, apply0<Apply::value<EdgeType::negedge>>,
-    Grammar::edge_identifier_0z, apply0<Apply::value<EdgeType::posedge>>, //TODO verify
-    Grammar::edge_identifier_z1, apply0<Apply::value<EdgeType::posedge>>, //TODO verify
-    Grammar::edge_identifier_1z, apply0<Apply::value<EdgeType::negedge>>, //TODO verify
-    Grammar::edge_identifier_z0, apply0<Apply::value<EdgeType::negedge>>, //TODO verify
-    Grammar::edge_identifier_posedge, apply0<Apply::value<EdgeType::posedge>>,
-    Grammar::edge_identifier_negedge, apply0<Apply::value<EdgeType::negedge>>
->{
-  using state = EdgeType;
-};
-// struct EdgeTypeAction : all_dispatch<apply0<Apply::rule_value>> {
+// struct EdgeTypeAction : multi_dispatch<
+//     Grammar::edge_identifier_01, apply0<Apply::rule_value<>>,//value<EdgeType::_01>>,
+//     Grammar::edge_identifier_10, apply0<Apply::rule_value<>>,//value<EdgeType::_10>>,
+//     Grammar::edge_identifier_0z, apply0<Apply::rule_value<>>,//value<EdgeType::_0z>>,
+//     Grammar::edge_identifier_z1, apply0<Apply::rule_value<>>,//value<EdgeType::_z1>>,
+//     Grammar::edge_identifier_1z, apply0<Apply::rule_value<>>,//value<EdgeType::_1z>>,
+//     Grammar::edge_identifier_z0, apply0<Apply::rule_value<>>,//value<EdgeType::_z0>>,
+//     Grammar::edge_identifier_posedge, apply0<Apply::rule_value<>>,//value<EdgeType::posedge>>,
+//     Grammar::edge_identifier_negedge, apply0<Apply::rule_value<>>,//value<EdgeType::negedge>>
+// >{
 //   using state = EdgeType;
 // };
+struct EdgeTypeAction : all_dispatch<apply0<Apply::rule_value>> {
+  using state = EdgeType;
+};
 
 struct PortEdgeAction : multi_dispatch<
     Grammar::edge_identifier, inner_action<EdgeTypeAction, PortEdgeStorage>,
@@ -182,8 +182,8 @@ struct PortEdgeAction : multi_dispatch<
 };
 
 struct PortSpecAction : multi_dispatch<
-    Grammar::port_instance, inner_action_passthrough<PortInstanceAction>,
-    Grammar::port_edge, inner_action_passthrough<PortEdgeAction>
+    Grammar::port_edge, inner_action_passthrough<PortEdgeAction>,
+    Grammar::port_instance, inner_action_passthrough<PortInstanceAction>
 >{
   using state = Node;
 };

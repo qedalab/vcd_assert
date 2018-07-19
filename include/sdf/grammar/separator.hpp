@@ -15,7 +15,7 @@ using namespace Parse::Grammar::Part;
 struct separator : plus<
   sor<
     comment,
-    blank
+    plus<blank>
   >
 > {};
 

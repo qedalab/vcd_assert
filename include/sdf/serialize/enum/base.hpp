@@ -34,6 +34,18 @@ constexpr std::string_view edgetype_to_string(EdgeType e) noexcept {
     return "posedge";
   case EdgeType::negedge:
     return "negedge";
+  case EdgeType::_01:
+      return "01";
+  case EdgeType::_10:
+      return "10";
+  case EdgeType::_0z:
+      return "0z";
+  case EdgeType::_z1:
+      return "z1";
+  case EdgeType::_1z:
+      return "1z";
+  case EdgeType::_z0:
+      return "z0";
   default:
     assert(false && "Invalid enum state");
     abort();

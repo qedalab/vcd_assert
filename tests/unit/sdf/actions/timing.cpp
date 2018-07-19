@@ -13,14 +13,25 @@ using namespace SDF;
 using namespace SDF::Test;
 using Parse::Test::require_parse;
 
+TEST_CASE("SDF.Actions.EdgeTypeAction", "[SDF][Actions][EdgeTypeAction]") {
+  SECTION("posedge"){
+    EdgeType test{};
+    EdgeType wanted{EdgeType::posedge};
+    require_parse<Grammar::edge_identifier, Actions::EdgeTypeAction>("posedge", test);
+    CAPTURE(test);
+    REQUIRE(wanted == test);
+
+  }  
+}
+
 TEST_CASE("SDF.Actions.NodeAction", "[SDF][Actions][NodeAction]") {
 
-  SECTION(fmt::format("ScalarPort : \"{}\"", port_1_sv)) {
+  SECTION(fmt::format("ScalarPort : \"{}\"", node_1_sv)) {
 
     Node test{};
-    Node wanted{NodeType::unspecified, std::string(port_1_str.c_str())};
-    INFO("Parsing " << port_1_sv);
-    require_parse<Grammar::scalar_port, Actions::NodeAction>(port_1_sv, test);
+    Node wanted{NodeType::unspecified, std::string(node_1_str.c_str())};
+    INFO("Parsing " << node_1_sv);
+    require_parse<Grammar::scalar_node, Actions::NodeAction>(node_1_sv, test);
     CAPTURE(test.type);
     CAPTURE(test.basename_identifier);
     catch_test_node(wanted,test);
@@ -29,11 +40,11 @@ TEST_CASE("SDF.Actions.NodeAction", "[SDF][Actions][NodeAction]") {
 
   SECTION(fmt::format("BusPort : \"{}[3:0]\"", port_1_sv)) {
 
-    std::string test_str = fmt::format("{}[3:0]",port_1_sv);
+    std::string test_str = fmt::format("{}[3:0]",node_1_sv);
     Node test{};
-    Node wanted{NodeType::unspecified,  std::string(port_1_str.c_str()), {}, {}, 0, 3};
+    Node wanted{NodeType::unspecified,  std::string(node_1_str.c_str()), {}, {}, 0, 3};
     INFO("Parsing " << test_str);
-    require_parse<Grammar::bus_port, Actions::NodeAction>(test_str, test);
+    require_parse<Grammar::bus_node, Actions::NodeAction>(test_str, test);
     CAPTURE(test.type);
     CAPTURE(test.basename_identifier);
     if(test.start.has_value())

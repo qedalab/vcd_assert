@@ -99,9 +99,10 @@ struct PortTimingCheck{
 };
 
 //note input == port_tchk 2 ! 
+//note : order is important.
 struct Hold {
+  PortTimingCheck assert;  //subjective event
   PortTimingCheck trigger; //trigger event
-  PortTimingCheck assert; //subjective event
   Value value;
 };
 

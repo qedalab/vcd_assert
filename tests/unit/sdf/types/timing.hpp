@@ -33,6 +33,10 @@ namespace SDF::Test {
 // constexpr auto enable_append(const sstr::string input){
 // }
 
+constexpr auto node_1_str = sstr::literal("CP");
+constexpr std::string_view node_1_sv(node_1_str, std::size(node_1_str));
+inline const Node node_1{NodeType::unspecified, "CP"};
+
 constexpr auto port_1_str = sstr::literal("CP");
 constexpr std::string_view port_1_sv(port_1_str, std::size(port_1_str));
 inline const Node port_1{NodeType::port, "CP"};
@@ -49,17 +53,17 @@ constexpr auto port_4_str = sstr::literal("F");
 constexpr std::string_view port_4_sv(port_4_str, std::size(port_4_str));
 inline const Node port_4{NodeType::port, "F"};
 
-constexpr auto node_1_str = sstr::literal("D_ENABLE");
-constexpr std::string_view node_1_sv(node_1_str, std::size(node_1_str));
-inline const Node node_1{NodeType::port, "D_ENABLE"};
+constexpr auto port_5_str = sstr::literal("D_ENABLE");
+constexpr std::string_view port_5_sv(port_5_str, std::size(port_5_str));
+inline const Node port_5{NodeType::port, "D_ENABLE"};
 
-constexpr auto node_2_str = sstr::literal("E_ENABLE");
-constexpr std::string_view node_2_sv(node_2_str, std::size(node_2_str));
-inline const Node node_2{NodeType::port, "E_ENABLE"};
+constexpr auto port_6_str = sstr::literal("E_ENABLE");
+constexpr std::string_view port_6_sv(port_6_str, std::size(port_6_str));
+inline const Node port_6{NodeType::port, "E_ENABLE"};
 
-constexpr auto node_3_str = sstr::literal("F_ENABLE");
-constexpr std::string_view node_3_sv(node_3_str, std::size(node_3_str));
-inline const Node node_3{NodeType::port, "F_ENABLE"};
+constexpr auto port_7_str = sstr::literal("F_ENABLE");
+constexpr std::string_view port_7_sv(port_7_str, std::size(port_7_str));
+inline const Node port_7{NodeType::port, "F_ENABLE"};
 
 constexpr auto port_1_posedge_str = sstr::literal("(posedge CP)");
 constexpr std::string_view port_1_posedge_sv(port_1_posedge_str,
@@ -81,20 +85,20 @@ constexpr std::string_view port_4_posedge_sv(port_4_posedge_str,
                                              std::size(port_4_posedge_str));
 inline const Node port_4_posedge{NodeType::port, "F", EdgeType::posedge};
 
-constexpr auto node_1_posedge_str = sstr::literal("(posedge D_ENABLE)");
-constexpr std::string_view node_1_posedge_sv(node_1_posedge_str,
-                                             std::size(node_1_posedge_str));
-inline const Node node_1_posedge{NodeType::port, "D_ENABLE", EdgeType::posedge};
+constexpr auto port_5_posedge_str = sstr::literal("(posedge D_ENABLE)");
+constexpr std::string_view port_5_posedge_sv(port_5_posedge_str,
+                                             std::size(port_5_posedge_str));
+inline const Node port_5_posedge{NodeType::port, "D_ENABLE", EdgeType::posedge};
 
-constexpr auto node_2_posedge_str = sstr::literal("(posedge E_ENABLE)");
-constexpr std::string_view node_2_posedge_sv(node_2_posedge_str,
-                                             std::size(node_2_posedge_str));
-inline const Node node_2_posedge{NodeType::port, "E_ENABLE", EdgeType::posedge};
+constexpr auto port_6_posedge_str = sstr::literal("(posedge E_ENABLE)");
+constexpr std::string_view port_6_posedge_sv(port_6_posedge_str,
+                                             std::size(port_6_posedge_str));
+inline const Node port_6_posedge{NodeType::port, "E_ENABLE", EdgeType::posedge};
 
-constexpr auto node_3_posedge_str = sstr::literal("(posedge E_ENABLE)");
-constexpr std::string_view node_3_posedge_sv(node_3_posedge_str,
-                                             std::size(node_3_posedge_str));
-inline const Node node_3_posedge{NodeType::port, "E_ENABLE", EdgeType::posedge};
+constexpr auto port_7_posedge_str = sstr::literal("(posedge E_ENABLE)");
+constexpr std::string_view port_7_posedge_sv(port_7_posedge_str,
+                                             std::size(port_7_posedge_str));
+inline const Node port_7_posedge{NodeType::port, "E_ENABLE", EdgeType::posedge};
 
 constexpr auto port_1_negedge_str = sstr::literal("(negedge CP)");
 constexpr std::string_view port_1_negedge_sv(port_1_negedge_str,

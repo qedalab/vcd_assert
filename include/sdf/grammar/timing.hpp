@@ -121,36 +121,32 @@ struct scalar_node : sor<
   scalar_net
 >{};
 
+// static constexpr auto value = EdgeType::posedge;
+// static constexpr auto value = EdgeType::negedge;
+
 struct edge_identifier_posedge : TAO_PEGTL_STRING( "posedge" ) {
-  // static constexpr auto value = EdgeType::posedge;
+  static constexpr auto value = EdgeType::posedge;
 };
-
 struct edge_identifier_negedge : TAO_PEGTL_STRING( "negedge" ) {
-  // static constexpr auto value = EdgeType::negedge;
+  static constexpr auto value = EdgeType::negedge;
 };
-
 struct edge_identifier_01 : TAO_PEGTL_STRING( "01" ) {
-  // static constexpr auto value = EdgeType::_01;
+  static constexpr auto value = EdgeType::_01;
 };
-
 struct edge_identifier_10 : TAO_PEGTL_STRING( "10" ) {
-  // static constexpr auto value = EdgeType::_10;
+  static constexpr auto value = EdgeType::_10;
 };
-
 struct edge_identifier_0z : TAO_PEGTL_STRING( "0z" ) {
-  // static constexpr auto value = EdgeType::_0z;
+  static constexpr auto value = EdgeType::_0z;
 };
-
 struct edge_identifier_z1 : TAO_PEGTL_STRING( "z1" ) {
-  // static constexpr auto value = EdgeType::_z1;
+  static constexpr auto value = EdgeType::_z1;
 };
-
 struct edge_identifier_1z : TAO_PEGTL_STRING( "1z" ) {
-  // static constexpr auto value = EdgeType::_1z;
+  static constexpr auto value = EdgeType::_1z;
 };
-
 struct edge_identifier_z0 : TAO_PEGTL_STRING( "z0" ) {
-  // static constexpr auto value = EdgeType::_z0;
+  static constexpr auto value = EdgeType::_z0;
 };
 
 struct edge_identifier : sor<
@@ -172,8 +168,8 @@ struct port_edge : op_sep_seq<
 >{};
 
 struct port_spec : sor< 
-  port_instance,
-  port_edge
+  port_edge,
+  port_instance
 >{};
 
 // struct lbl_def : op_sep_seq< 

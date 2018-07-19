@@ -56,11 +56,11 @@ inline const NodeConstantEquality test_nodeconstantequality_2{
   true
 };
 
-constexpr auto test_invertednode_3_str = "~" + node_3_str;
+constexpr auto test_invertednode_3_str = "~" + port_7_str;
 constexpr std::string_view test_invertednode_3_sv(
   test_invertednode_3_str, std::size(test_invertednode_3_str));
 inline const InvertedNode test_invertednode_3{
-  node_3
+  port_7
 };
 
 constexpr auto test_nodeconstantequality_3_str = port_4_str + "!==1";
