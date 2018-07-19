@@ -9,7 +9,6 @@
 #include <sdf/grammar/base.hpp>
 #include <sdf/grammar/grammar.hpp>
 #include <sdf/grammar/delayfile.hpp>
-
 #include <sdf/types/base.hpp>
 #include <sdf/types/delayfile.hpp>
 #include <sdf/types/delayfile_reader.hpp>
@@ -160,14 +159,14 @@ int main(int argc, char **argv) {
 
   auto header_p = vcd_reader.release();
   assert(header_p.operator bool());
+  
   auto timing_checker = VCDAssert::TimingChecker(std::move(header_p));
   
   // Read in corresponding SDF files
   for (auto&& [node,sdf_file_array] : apply_nodes) {
     
-    // std::string_view node_view(std::begin(node), std::size(node));
-
     SDF::HierarchicalIdentifier path{};
+    
     //if the node specifed on CMD is a path, parse it, even if single identifier.
     tao::pegtl::memory_input<> path_input(node, "node");
     tao::pegtl::parse<
@@ -177,13 +176,12 @@ int main(int argc, char **argv) {
       >(path_input, path);
     
     for(auto&& sdf_file : sdf_files){
-      // (void)sdf_file;
+
       SDF::DelayFileReader sdf_reader{};
 
       tao::pegtl::file_input<> sdf_input(sdf_file);
       tao::pegtl::parse<SDF::Grammar::delay_file, 
                         Parse::make_pegtl_template<SDF::Actions::DelayFileAction>::type,
-                        // SDF::Actions::DelayFileAction,
                         Parse::capture_control>(sdf_input, sdf_reader);
       
       auto delayfile_p = sdf_reader.release();
