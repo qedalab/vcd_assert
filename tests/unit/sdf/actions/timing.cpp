@@ -26,23 +26,23 @@ TEST_CASE("SDF.Actions.EdgeTypeAction", "[SDF][Actions][EdgeTypeAction]") {
 
 TEST_CASE("SDF.Actions.NodeAction", "[SDF][Actions][NodeAction]") {
 
-  SECTION(fmt::format("ScalarPort : \"{}\"", node_1_sv)) {
+  SECTION(fmt::format("ScalarPort : \"{}\"", node_1_str.to_string_view())) {
 
     Node test{};
-    Node wanted{NodeType::unspecified, std::string(node_1_str.c_str())};
-    INFO("Parsing " << node_1_sv);
-    require_parse<Grammar::scalar_node, Actions::NodeAction>(node_1_sv, test);
+    Node wanted{NodeType::unspecified, node_1_str.to_string()};
+    INFO("Parsing " << node_1_str.to_string_view());
+    require_parse<Grammar::scalar_port, Actions::NodeAction>(node_1_str.to_string_view(), test);
     CAPTURE(test.type);
     CAPTURE(test.basename_identifier);
     catch_test_node(wanted,test);
   }
 
 
-  SECTION(fmt::format("BusPort : \"{}[3:0]\"", node_1_sv)) {
+  SECTION(fmt::format("BusPort : \"{}[3:0]\"", node_1_str.to_string_view())) {
 
-    std::string test_str = fmt::format("{}[3:0]",node_1_sv);
+    std::string test_str = (node_1_str + "[3:0]").to_string();
     Node test{};
-    Node wanted{NodeType::unspecified,  std::string(node_1_str.c_str()), {}, {}, 0, 3};
+    Node wanted{NodeType::unspecified, node_1_str.to_string(), {}, {}, 0, 3};
     INFO("Parsing " << test_str);
     require_parse<Grammar::bus_node, Actions::NodeAction>(test_str, test);
     CAPTURE(test.type);
@@ -57,12 +57,12 @@ TEST_CASE("SDF.Actions.NodeAction", "[SDF][Actions][NodeAction]") {
 
 TEST_CASE("SDF.Actions.PortAction", "[SDF][Actions][PortAction") {
 
-  SECTION(fmt::format("ScalarPort : \"{}\"", port_1_sv)) {
+  SECTION(fmt::format("ScalarPort : \"{}\"", port_1_str.to_string_view())) {
 
     Node test{};
-    Node wanted{NodeType::port, std::string(port_1_str.c_str())};
-    INFO("Parsing " << port_1_sv);
-    require_parse<Grammar::port, Actions::PortAction>(port_1_sv, test);
+    Node wanted{NodeType::port, port_1_str.to_string()};
+    INFO("Parsing " << port_1_str.to_string_view());
+    require_parse<Grammar::port, Actions::PortAction>(port_1_str.to_string_view(), test);
     CAPTURE(test.type);
     CAPTURE(test.basename_identifier);
     CAPTURE(test.hierarchical_identifier);
@@ -74,11 +74,11 @@ TEST_CASE("SDF.Actions.PortAction", "[SDF][Actions][PortAction") {
   }
 
 
-  SECTION(fmt::format("BusPort : \"{}[3:0]\"", port_1_sv)) {
+  SECTION(fmt::format("BusPort : \"{}[3:0]\"", port_1_str.to_string_view())) {
 
-    std::string test_str = fmt::format("{}[3:0]",port_1_sv);
+    std::string test_str = fmt::format("{}[3:0]",port_1_str.to_string_view());
     Node test{};
-    Node wanted{NodeType::port,  std::string(port_1_str.c_str()), {}, {}, 0, 3};
+    Node wanted{NodeType::port, port_1_str.to_string(), {}, {}, 0, 3};
     INFO("Parsing " << test_str);
     require_parse<Grammar::port, Actions::PortAction>(test_str, test);
     CAPTURE(test.type);
@@ -95,12 +95,12 @@ TEST_CASE("SDF.Actions.PortAction", "[SDF][Actions][PortAction") {
 
 TEST_CASE("SDF.Actions.PortInstanceAction", "[SDF][Actions][PortInstance]") {
 
-  SECTION(fmt::format("ScalarPort : \"{}\"", port_1_sv)) {
+  SECTION(fmt::format("ScalarPort : \"{}\"", port_1_str.to_string_view())) {
 
     Node test{};
-    Node wanted{NodeType::port, std::string(port_1_str.c_str())};
-    INFO("Parsing " << port_1_sv);
-    require_parse<Grammar::port_instance, Actions::PortInstanceAction>(port_1_sv, test);
+    Node wanted{NodeType::port, port_1_str.to_string()};
+    INFO("Parsing " << port_1_str.to_string_view());
+    require_parse<Grammar::port_instance, Actions::PortInstanceAction>(port_1_str.to_string_view(), test);
     CAPTURE(test.type);
     CAPTURE(test.basename_identifier);
     CAPTURE(test.hierarchical_identifier);
@@ -108,12 +108,12 @@ TEST_CASE("SDF.Actions.PortInstanceAction", "[SDF][Actions][PortInstance]") {
   }
 
 
-  SECTION(fmt::format("BusPort : \"{}[3:0]\"", port_1_sv)) {
+  SECTION(fmt::format("BusPort : \"{}[3:0]\"", port_1_str.to_string_view())) {
 
     Node test{};
-    Node wanted{NodeType::port, std::string(port_1_str.c_str()), {}, {}, 0, 3};
-    INFO("Parsing " << fmt::format("{}[3:0]",port_1_str));
-    require_parse<Grammar::port_instance, Actions::PortInstanceAction>(fmt::format("{}[3:0]",port_1_str), test);
+    Node wanted{NodeType::port, port_1_str.to_string(), {}, {}, 0, 3};
+    INFO("Parsing " << fmt::format("{}[3:0]",port_1_str.to_string_view()));
+    require_parse<Grammar::port_instance, Actions::PortInstanceAction>(fmt::format("{}[3:0]",port_1_str.to_string_view()), test);
     CAPTURE(test.type);
     CAPTURE(test.basename_identifier);
     CAPTURE(test.hierarchical_identifier);
@@ -125,12 +125,12 @@ TEST_CASE("SDF.Actions.PortInstanceAction", "[SDF][Actions][PortInstance]") {
 
 TEST_CASE("SDF.Actions.PortSpecAction", "[SDF][Actions][PortSpec]") {
 
-  SECTION(fmt::format("ScalarPort : \"{}\"", port_1_sv)) {
+  SECTION(fmt::format("ScalarPort : \"{}\"", port_1_str.to_string_view())) {
 
     Node test{};
-    Node wanted{NodeType::port, std::string(port_1_str.c_str())};
-    INFO("Parsing " << port_1_sv);
-    require_parse<Grammar::port_spec, Actions::PortSpecAction>(port_1_sv, test);
+    Node wanted{NodeType::port, port_1_str.to_string()};
+    INFO("Parsing " << port_1_str.to_string_view());
+    require_parse<Grammar::port_spec, Actions::PortSpecAction>(port_1_str.to_string_view(), test);
     CAPTURE(test.type);
     CAPTURE(test.basename_identifier);
     CAPTURE(test.hierarchical_identifier);
@@ -138,12 +138,12 @@ TEST_CASE("SDF.Actions.PortSpecAction", "[SDF][Actions][PortSpec]") {
   }
 
 
-  SECTION(fmt::format("BusPort : \"{}[3:0]\"", port_1_sv)) {
+  SECTION(fmt::format("BusPort : \"{}[3:0]\"", port_1_str.to_string_view())) {
 
     Node test{};
-    Node wanted{NodeType::port, std::string(port_1_str.c_str()), {}, {}, 0, 3};
-    INFO("Parsing " << fmt::format("{}[3:0]",port_1_str));
-    require_parse<Grammar::port_instance, Actions::PortInstanceAction>(fmt::format("{}[3:0]",port_1_str), test);
+    Node wanted{NodeType::port, port_1_str.to_string(), {}, {}, 0, 3};
+    INFO("Parsing " << fmt::format("{}[3:0]",port_1_str.to_string_view()));
+    require_parse<Grammar::port_instance, Actions::PortInstanceAction>(fmt::format("{}[3:0]",port_1_str.to_string()), test);
     CAPTURE(test.type);
     CAPTURE(test.basename_identifier);
     CAPTURE(test.hierarchical_identifier);

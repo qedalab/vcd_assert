@@ -1,10 +1,9 @@
 #ifndef LIBSDF_TYPES_TIMING_HPP
 #define LIBSDF_TYPES_TIMING_HPP
 
-#include <sdf/types/base.hpp>
-#include <sdf/types/values.hpp>
+#include "./base.hpp"
+#include "./values.hpp"
 
-#include <variant>
 #include <optional>
 
 namespace SDF {

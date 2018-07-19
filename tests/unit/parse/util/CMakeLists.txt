@@ -5,5 +5,6 @@ target_sources(unit_parse PRIVATE
   ${DIR}/name_index_map.cpp
   ${DIR}/dependent_value.cpp
   ${DIR}/name_index_map.cpp
+  ${DIR}/static_string.cpp
   ${DIR}/tag.cpp
   )

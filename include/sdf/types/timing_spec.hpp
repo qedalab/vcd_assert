@@ -1,9 +1,11 @@
 #ifndef LIBSDF_TYPES_TIMINGSPEC_HPP
 #define LIBSDF_TYPES_TIMINGSPEC_HPP
 
-#include <sdf/types/timing_check.hpp>
-#include <sdf/types/enums.hpp>
+#include "./enums.hpp"
+#include "./timing_check.hpp"
+
 #include <parse/util/dependent_value.hpp>
+
 #include <type_traits>
 
 namespace SDF {

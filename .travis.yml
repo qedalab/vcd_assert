@@ -1,25 +1,3 @@
-<<<<<<< HEAD
-language: generic
-dist: trusty
-
-matrix:
-  include:
-    - compiler: gcc
-      addons:
-        apt:
-          sources: ['ubuntu-toolchain-r-test']
-          packages: ['g++-7']
-      env:
-        - CXX=g++-7
-      script:
-        conan install ..
-        conan build ..
-
-before_script:
-  - pip install --user conan
-  - mkdir build
-  - cd build
-=======
 sudo: required
 
 language: generic
@@ -31,9 +9,58 @@ before_script:
   - docker run --name runner -t -d pleroux0/centos7-devel
   - docker exec runner git clone -b "${TRAVIS_BRANCH}" --recurse-submodules --depth=1 "https://github.com/${TRAVIS_REPO_SLUG}.git" "repo"
   - docker exec runner mkdir "repo/travis-build"
-
-script:
   - docker exec runner conan remote add pleroux0 "https://api.bintray.com/conan/pleroux0/pleroux0"
-  - docker exec runner scl enable devtoolset-7 -- bash -c "cd repo/travis-build && conan install .. --build=missing"
-  - docker exec runner scl enable devtoolset-7 -- bash -c "cd repo/travis-build && conan build .."
->>>>>>> origin/master
+
+matrix:
+  include:
+    # CentOS Release build
+    - env:
+      - TEST_NAME="Centos Release"
+      script:
+        - docker exec runner scl enable devtoolset-7 -- bash -c "cd repo/travis-build && conan install .. --build=missing -s build_type=Release"
+        - docker exec runner scl enable devtoolset-7 -- bash -c "cd repo/travis-build && conan build .."
+
+    # Coverage report
+    - env:
+      - TEST_NAME="Coverage report"
+      script:
+      - docker exec runner scl enable devtoolset-7 -- bash -c "cd repo/travis-build && conan install .. --build=missing -s build_type=Debug -e CXXFLAGS=--coverage"
+      - docker exec runner scl enable devtoolset-7 -- bash -c "cd repo/travis-build && conan build .."
+      - docker exec runner scl enable devtoolset-7 -- bash -c "cd repo/travis-build && lcov --directory . --capture --output-file coverage.info"
+      - docker exec runner scl enable devtoolset-7 -- bash -c "cd repo/travis-build && lcov --extract coverage.info \"*repo*\" --output-file coverage.info"
+      - docker exec runner scl enable devtoolset-7 -- bash -c "cd repo/travis-build && bash <(curl -s https://codecov.io/bash) -t ${CODECOV_TOKEN}"
+
+    # Valgrind
+    - env:
+      - TEST_NAME="Valgrind"
+      script:
+      - docker exec runner scl enable devtoolset-7 -- bash -c "cd repo/travis-build && conan install .. --build=missing -s build_type=Debug"
+      - docker exec runner scl enable devtoolset-7 -- bash -c "cd repo/travis-build && conan build .."
+      - docker exec runner scl enable devtoolset-7 -- bash -c "cd repo/travis-build && ctest -T memcheck"
+      - docker exec runner bash -c "cat repo/travis-build/Testing/Temporary/MemoryChecker.*.log"
+      - docker exec runner bash -c "if [ -s repo/travis-build/Testing/Temporary/MemoryChecker.0.log ]; then false; fi"
+      - docker exec runner bash -c "if [ -s repo/travis-build/Testing/Temporary/MemoryChecker.1.log ]; then false; fi"
+      - docker exec runner bash -c "if [ -s repo/travis-build/Testing/Temporary/MemoryChecker.2.log ]; then false; fi"
+      - docker exec runner bash -c "if [ -s repo/travis-build/Testing/Temporary/MemoryChecker.3.log ]; then false; fi"
+
+    # Clang-Tidy
+#     - env:
+#       - TEST_NAME="Clang-Tidy"
+#       - CXX=clang++-6.0
+#       - CC=clang-6.0
+#       - CXXFLAGS=-stdlib=libc++
+#       before_script:
+#         - pip install conan --user
+#         - mkdir build
+#         - cd build
+#         - conan remote add pleroux0 "https://api.bintray.com/conan/pleroux0/pleroux0"
+#       compiler: clang
+#       addons:
+#         apt:
+#           sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-trusty-6.0']
+#           packages: ['clang-6.0', 'clang-tidy-6.0']
+#       script:
+#         - conan install .. --build=missing -s build_type=Debug -s compiler.libcxx=libc++ -e CC=${CC} -e CXX=${CXX}
+#         - cmake .. -DBUILD_TESTS="ON" -DCMAKE_TOOLCHAIN_FILE=conan_paths.cmake -DCMAKE_CXX_CLANG_TIDY=clang-tidy-6.0
+#         - cmake --build .
+#         - ctest

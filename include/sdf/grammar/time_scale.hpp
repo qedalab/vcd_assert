@@ -1,9 +1,9 @@
 #ifndef LIBSDF_GRAMMAR_TIME_SCALE_HPP
 #define LIBSDF_GRAMMAR_TIME_SCALE_HPP
 
+#include "../types/time_scale.hpp"
 #include "./block.hpp"
 #include "./keywords.hpp"
-#include "../types/time_scale.hpp"
 
 namespace SDF::Grammar {
 

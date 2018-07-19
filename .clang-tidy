@@ -1,4 +1,4 @@
-Checks:          'clang-diagnostic-*,clang-analyzer-*,readability-*,modernize-*,cppcore*,llvm-*,cert-*,-readability-braces-around-statements,-cppcoreguidelines-pro-bounds-array-to-pointer-decay,-readability-misleading-indentation,-llvm-header-guard,-llvm-namespace-comment,-readability-else-after-return,-cppcoreguidelines-pro-bounds-pointer-arithmetic'
+Checks:          'clang-diagnostic-*,clang-analyzer-*,readability-*,modernize-*,cppcore*,llvm-*,cert-*,-readability-braces-around-statements,-cppcoreguidelines-pro-bounds-array-to-pointer-decay,-readability-misleading-indentation,-llvm-header-guard,-llvm-namespace-comment,-readability-else-after-return,-cppcoreguidelines-pro-bounds-pointer-arithmetic,-cert-err58-cpp,-llvm-include-order'
 WarningsAsErrors: '*'
 HeaderFilterRegex: '.*'
 CheckOptions:

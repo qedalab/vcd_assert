@@ -3,12 +3,13 @@
 
 #include <sdf/types/enums.hpp>
 
-#include <string>
-#include <vector>
-#include <iostream>
-#include <range/v3/view/zip.hpp>
 #include <fmt/format.h>
 #include <fmt/printf.h>
+#include <range/v3/algorithm/equal.hpp>
+
+#include <iostream>
+#include <string>
+#include <vector>
 
 namespace SDF {
  
@@ -33,24 +34,10 @@ struct HierarchicalIdentifier {
   std::vector<Identifier> value; //should make this contiguous?
   
   bool operator==(const HierarchicalIdentifier& other) const noexcept{
-    if(value.size() == other.value.size()){
-      if(value.size() == 0){
-        return true;
-      }else{
-        for(auto&& [s0,s1] : ranges::view::zip( value, other.value)){
-          if(!s0.compare(s1)) {
-              return false;
-          };
-        }
-        return true;
-      }
-    }else{
-      return false;
-    }
+    return ranges::equal(value, other.value);
   }
 };
 
 } // namespace SDF
 
 #endif // LIBSDF_TYPES_BASE_HPP
-
