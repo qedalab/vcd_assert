@@ -52,7 +52,7 @@ matrix:
       - docker exec runner mkdir "repo/travis-build"
       - docker exec runner conan remote add pleroux0 "https://api.bintray.com/conan/pleroux0/pleroux0"
       script:
-      - docker exec runner bash -c "cd repo/travis-build && conan install .. --build=missing -s build_type=Debug -s compiler=clang -s compiler.libcxx=libc++ -s compiler.version=6.0 -e CXXFLAGS=-fsanitize=undefined -e CC=clang -e CXX=clang++"
+      - docker exec runner bash -c "cd repo/travis-build && conan install .. --build=missing -s build_type=Debug -s compiler=clang -s compiler.libcxx=libc++ -s compiler.version=6.0 -e CXXFLAGS='-fsanitize=undefined' -e CC=clang -e CXX=clang++"
       - docker exec runner bash -c "cd repo/travis-build && conan build .."
 
     - env:
@@ -63,7 +63,7 @@ matrix:
       - docker exec runner mkdir "repo/travis-build"
       - docker exec runner conan remote add pleroux0 "https://api.bintray.com/conan/pleroux0/pleroux0"
       script:
-      - docker exec runner bash -c "cd repo/travis-build && conan install .. --build=missing -s build_type=Debug -s compiler=clang -s compiler.libcxx=libc++ -s compiler.version=6.0 -e CXXFLAGS=-fsanitize=address -e CC=clang -e CXX=clang++"
+      - docker exec runner bash -c "cd repo/travis-build && conan install .. --build=missing -s build_type=Debug -s compiler=clang -s compiler.libcxx=libc++ -s compiler.version=6.0 -e CXXFLAGS='-fsanitize=address' -e CC=clang -e CXX=clang++"
       - docker exec runner bash -c "cd repo/travis-build && conan build .."
 
     - env:
@@ -74,7 +74,7 @@ matrix:
       - docker exec runner mkdir "repo/travis-build"
       - docker exec runner conan remote add pleroux0 "https://api.bintray.com/conan/pleroux0/pleroux0"
       script:
-      - docker exec runner bash -c "cd repo/travis-build && conan install .. --build=missing -s build_type=Debug -s compiler=clang -s compiler.libcxx=libc++ -s compiler.version=6.0 -e CXXFLAGS=-fsanitize=address -e CC=clang -e CXX=clang++"
+      - docker exec runner bash -c "cd repo/travis-build && conan install .. --build=missing -s build_type=Debug -s compiler=clang -s compiler.libcxx=libc++ -s compiler.version=6.0 -e CC=clang -e CXX=clang++"
       - docker exec runner bash -c "cd repo/travis-build && conan build .."
       - docker exec runner bash -c "cd repo/travis-build && cmake -DCMAKE_CXX_CLANG_TIDY=clang-tidy"
       - docker exec runner bash -c "cd repo/travis-build && cmake --build ."
