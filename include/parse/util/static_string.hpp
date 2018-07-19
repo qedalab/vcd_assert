@@ -11,15 +11,16 @@ namespace Parse::Util {
 template <std::size_t Size>
 class static_string
 {
-  char data_[Size] = {};
+  char data_[Size+1] = {};
   static_assert(Size > 0);
-  static_assert(sizeof(data_) == Size);
+  static_assert(sizeof(data_) == Size + 1);
 
 public:
   constexpr static_string(const char(&data)[Size+1]) noexcept
   {
-    // Ignores last charcter
+    // Ignores last charcter and force it to be '\0'
     ranges::copy(std::string_view(&data[0], Size), std::begin(data_));
+    data_[Size] = '\0';
   }
 
   constexpr std::string_view to_string_view() const noexcept
