@@ -203,9 +203,16 @@ struct NetAction : multi_dispatch<
   using state = Node;
 };
 
+struct NodeStorage {
+  static bool store(Node &parent, Node child) {
+    parent = std::move(child);
+    parent.type = NodeType::unspecified;
+    return true;
+  }
+};
 struct ScalarNodeAction :  multi_dispatch<
-    Grammar::scalar_port, inner_action_passthrough<PortAction>,
-    Grammar::scalar_net, inner_action_passthrough<NetAction>
+    Grammar::scalar_port, inner_action<PortAction, NodeStorage>,
+    Grammar::scalar_net, inner_action<NetAction, NodeStorage>
 >{
   using state = Node;
 };

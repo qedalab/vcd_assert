@@ -22,7 +22,7 @@ namespace Unsupported {} // namespace Unsupported
 
 // Technically a node is a net_instance or port_instance as they are interchangeable
 struct Node {
-  NodeType type; //could make ScalarNet, ScalarPort, BusNet, BusPort
+  NodeType type = NodeType::unspecified; //could make ScalarNet, ScalarPort, BusNet, BusPort
   std::string basename_identifier;
   std::optional<EdgeType> edge = {}; //only allowed if node is port spec
   std::optional<HierarchicalIdentifier> hierarchical_identifier = {};

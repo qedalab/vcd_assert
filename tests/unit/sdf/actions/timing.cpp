@@ -38,7 +38,7 @@ TEST_CASE("SDF.Actions.NodeAction", "[SDF][Actions][NodeAction]") {
   }
 
 
-  SECTION(fmt::format("BusPort : \"{}[3:0]\"", port_1_sv)) {
+  SECTION(fmt::format("BusPort : \"{}[3:0]\"", node_1_sv)) {
 
     std::string test_str = fmt::format("{}[3:0]",node_1_sv);
     Node test{};

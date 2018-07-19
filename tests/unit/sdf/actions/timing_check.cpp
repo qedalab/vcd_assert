@@ -56,7 +56,7 @@ TEST_CASE("SDF.Actions.TimingCheckCondAction", "[SDF][Actions][TimingCheckCondAc
   
     SECTION("TimingCheckCondAction with condition"){
       // INFO("port_1 " << port_1_sv);
-      wanted = {Node{port_1}};
+      wanted = {Node{node_1}};
       CAPTURE(wanted);
       require_parse<Grammar::timing_check_condition, 
                     Actions::TimingCheckConditionAction>(port_1_sv, test);

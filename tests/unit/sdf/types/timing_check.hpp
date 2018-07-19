@@ -24,50 +24,50 @@ namespace SDF::Test {
 using namespace SDF;
 using namespace Parse::Util;
 
-constexpr auto test_invertednode_1_str = "~" + port_1_str;
+constexpr auto test_invertednode_1_str = "~" + node_1_str;
 constexpr std::string_view test_invertednode_1_sv(
   test_invertednode_1_str, std::size(test_invertednode_1_str));
 inline const InvertedNode test_invertednode_1{
-  port_1
+  node_1
 };
 
-constexpr auto test_nodeconstantequality_1_str =  port_1_str + "==1";
+constexpr auto test_nodeconstantequality_1_str =  node_1_str + "==1";
 constexpr std::string_view test_nodeconstantequality_1_sv(
   test_nodeconstantequality_1_str, std::size(test_nodeconstantequality_1_str));
 inline const NodeConstantEquality test_nodeconstantequality_1{
-  port_1,
+  node_1,
   EqualityOperator::logic_equal,
   true
 };
 
-constexpr auto test_invertednode_2_str = "~" + port_3_str;
+constexpr auto test_invertednode_2_str = "~" + node_3_str;
 constexpr std::string_view test_invertednode_2_sv(
   test_invertednode_2_str, std::size(test_invertednode_2_str));
 inline const InvertedNode test_invertednode_2{
-  port_3
+  {NodeType::unspecified,std::string(node_3_str)}
 };
 
-constexpr auto test_nodeconstantequality_2_str = port_3_str + "===1";
+constexpr auto test_nodeconstantequality_2_str = node_3_str + "===1";
 constexpr std::string_view test_nodeconstantequality_2_sv(
   test_nodeconstantequality_2_str, std::size(test_nodeconstantequality_2_str));
 inline const NodeConstantEquality test_nodeconstantequality_2{
-  port_3,
+  {NodeType::unspecified,std::string(node_3_str)},
   EqualityOperator::case_equal,
   true
 };
 
-constexpr auto test_invertednode_3_str = "~" + port_7_str;
+constexpr auto test_invertednode_3_str = "~" + node_4_str;
 constexpr std::string_view test_invertednode_3_sv(
   test_invertednode_3_str, std::size(test_invertednode_3_str));
 inline const InvertedNode test_invertednode_3{
-  port_7
+  {NodeType::unspecified,std::string(node_4_str)}
 };
 
-constexpr auto test_nodeconstantequality_3_str = port_4_str + "!==1";
+constexpr auto test_nodeconstantequality_3_str = node_4_str + "!==1";
 constexpr std::string_view test_nodeconstantequality_3_sv(
   test_nodeconstantequality_3_str, std::size(test_nodeconstantequality_3_str));
 inline const NodeConstantEquality test_nodeconstantequality_3{
-  port_4,
+  {NodeType::unspecified,std::string(node_4_str)},
   EqualityOperator::case_inv,
   true
 };
@@ -105,13 +105,15 @@ inline const TimingCheckCondition test_timingcheckcondition_4{
 };
 
 constexpr auto test_porttimingcheck_1_str = 
-  "(COND " + node_1_str + " " + port_1_posedge_str + ")";
+  "(COND " + node_2_str + " " + port_1_posedge_str + ")";
 constexpr std::string_view test_porttimingcheck_1_sv(
   test_porttimingcheck_1_str, std::size(test_porttimingcheck_1_str));
 inline const PortTimingCheck test_porttimingcheck_1{
   port_1_posedge,
-  TimingCheckCondition{node_1}
+  TimingCheckCondition{node_2}
 };
+
+
 
 constexpr auto test_porttimingcheck_2_str = 
   port_1_posedge_str;
