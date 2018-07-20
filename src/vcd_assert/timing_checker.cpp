@@ -50,7 +50,7 @@ TimingChecker::match_scope_helper(std::vector<std::string> path,
 {
   VCD::Scope cur_scope = header_->get_scope(scope_index);
 
-  if (path[path_index].compare(cur_scope.get_identifier())) {
+  if (path[path_index] != cur_scope.get_identifier()) {
 
     // move to next path segment
     std::size_t new_path_index = path_index + 1;
@@ -85,13 +85,13 @@ TimingChecker::match_scope(std::vector<std::string> path,
   auto base_scope_identifier = starting_scope.get_identifier();
 
   // Find index of application scope as supplied on cmd line. if possible.
-  if (path.size() == 0) {
+  if (path.empty()) {
 
     return 0; // Implicitly applied at root.
 
   } else if (path.size() == 1) {
 
-    if (path[0].compare(base_scope_identifier)) {
+    if (path[0] != base_scope_identifier) {
       return 0; // Explicitly applied at root.
     } else {
       return {/*EMPTY*/}; // Path specified not applicable/valid.
@@ -99,7 +99,7 @@ TimingChecker::match_scope(std::vector<std::string> path,
 
   } else {
     // Not applied at root, try to find where it is applied:
-    if (!path[0].compare(base_scope_identifier)) {
+    if (path[0] == base_scope_identifier) {
       return {/*EMPTY*/}; // path specified not applicable/valid.
     } else {
       return match_scope_helper(path, 0, 0);
@@ -235,7 +235,7 @@ void TimingChecker::apply_sdf_cell(std::shared_ptr<SDF::DelayFile> sc,
       from the current root scope. */
 
     auto hi = std::get<SDF::HierarchicalIdentifier>(cell.cell_instance);
-    if (hi.value.size() == 0) {
+    if (hi.value.empty()) {
       /* for module/instance scopes in CURRENT scope ONLY: */
 
       for (auto &&[ident, index] : apply_scope.get_scopes()) {
@@ -300,9 +300,9 @@ void TimingChecker::apply_sdf_file(/*VerilogSourceTree *ast, */
 {
   std::optional<std::size_t> apply_at_index = match_scope(vcd_node_path, 0);
 
-  // Should always match the SDF file timescale with that of the VCD.
+  // TODO: Should always match the SDF file timescale with that of the VCD.
   // ..which could require conversion of the value.
-  auto timescale = delayfile->get_timescale();
+  // auto timescale = delayfile->get_timescale();
   std::vector<SDF::Cell> cells = delayfile->get_cells();
   /*etc*/
 
