@@ -56,7 +56,7 @@ add_library(libvcd_assert "src/vcd_assert")
 target_include_directories(libvcd PUBLIC "${PROJECT_SOURCE_DIR}/include/")
 # target_link_libraries(libvcd_assert PUBLIC libvcd verilog_parser)
 target_link_libraries(libvcd_assert PUBLIC libvcd libsdf libparse)
-target_add_warnings(libvcd_assert)
+# target_add_warnings(libvcd_assert)
 
 add_subdirectory(src)
 
