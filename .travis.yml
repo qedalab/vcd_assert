@@ -76,5 +76,5 @@ matrix:
       script:
       - docker exec runner bash -c "cd repo/travis-build && conan install .. --build=missing -s build_type=Debug -s compiler=clang -s compiler.libcxx=libc++ -s compiler.version=6.0 -e CC=clang -e CXX=clang++ -e CXXFLAGS='-stdlib=libc++'"
       - docker exec runner bash -c "cd repo/travis-build && conan build .."
-      - docker exec runner bash -c "cd repo/travis-build && cmake -DCMAKE_CXX_CLANG_TIDY=clang-tidy"
+      - docker exec runner bash -c "cd repo/travis-build && cmake .. -DCMAKE_CXX_CLANG_TIDY=clang-tidy"
       - docker exec runner bash -c "cd repo/travis-build && cmake --build ."
