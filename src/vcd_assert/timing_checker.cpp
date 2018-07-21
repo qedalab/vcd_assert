@@ -105,214 +105,242 @@ TimingChecker::match_scope(std::vector<std::string> path,
   }
 }
 
+std::optional<ConditionalValuePointer>
+TimingChecker::get_sdf_node_ptr(SDF::Node node, std::size_t scope_index,
+                                VCD::Scope &scope)
+{
+
+  auto inner_scope = scope;
+
+  // update the scope if node name is a path
+  if (node.hierarchical_identifier.has_value()) {
+    auto hi = node.hierarchical_identifier.value();
+    auto inner_scope_index = match_scope(hi.value, scope_index);
+    if (inner_scope_index.has_value()) {
+      inner_scope = header_->get_scope(inner_scope_index.value());
+    } else {
+      return {}; // path to variable not understood. Ignore.
+    }
+  }
+
+  // get the variable from the scope
+  if (inner_scope.contains_variable(node.basename_identifier)) {
+    auto var_index = inner_scope.get_variable_index(node.basename_identifier);
+
+    // get the conditional value pointer of the variable
+    auto var_svp = state_.get_value_pointer(var_index);
+    if (std::holds_alternative<VCD::Value *>(var_svp)) {
+      auto var_svp_val = std::get<VCD::Value *>(var_svp);
+      auto var_cvp = ConditionalValuePointer(var_svp_val);
+      return var_cvp;
+    } else {
+      throw std::runtime_error("InternalError");
+    }
+
+  } else {
+    return {};
+  }
+}
+
+ConditionalValuePointer
+TimingChecker::get_sdf_conditional_ptr_helper(SDF::EqualityOperator &op,
+                                              ConditionalValuePointer &left,
+                                              ConditionalValuePointer &right)
+{
+  switch (op) {
+  case SDF::EqualityOperator::case_inv:
+
+    return ConditionalValuePointer(
+        std::move(ConditionalOperator<EqualityOperator::case_not_equal>(
+            std::move(left), std::move(right))));
+
+    break;
+
+  case SDF::EqualityOperator::case_equal:
+
+    return ConditionalValuePointer(
+        std::move(ConditionalOperator<EqualityOperator::case_equal>(
+            std::move(left), std::move(right))));
+
+    break;
+
+  case SDF::EqualityOperator::logic_inv:
+
+    return ConditionalValuePointer(
+        std::move(ConditionalOperator<EqualityOperator::logical_not_equal>(
+            std::move(left), std::move(right))));
+
+    break;
+
+  case SDF::EqualityOperator::logic_equal:
+
+    return ConditionalValuePointer(
+        std::move(ConditionalOperator<EqualityOperator::logical_equal>(
+            std::move(left), std::move(right))));
+
+    break;
+
+  default:
+    throw std::runtime_error("InternalError");
+  }
+}
+
+std::optional<ConditionalValuePointer> TimingChecker::get_sdf_conditional_ptr(
+    SDF::TimingCheckCondition cond, std::size_t scope_index, VCD::Scope &scope)
+{
+
+  auto inner_scope = scope;
+
+  switch (cond.get_enum_type()) {
+  case SDF::ConditionalType::none: /* node==1 is condition */
+  {
+
+    SDF::Node node = std::get<SDF::Node>(cond.value);
+
+    // get the conditional value pointer of the variable
+    auto left_cvp = get_sdf_node_ptr(node, scope_index, scope);
+
+    if (left_cvp.has_value()) {
+
+      auto right_cvp = ConditionalValuePointer(VCD::Value::zero); /// <<<<
+
+      auto cond_op = ConditionalOperator<EqualityOperator::logical_equal>(
+          std::move(left_cvp.value()), std::move(right_cvp));
+
+      return ConditionalValuePointer(std::move(cond_op));
+
+    } else {
+      return {};
+    }
+
+  } break;
+  case SDF::ConditionalType::inverted: /* ~node or node~=1 is condition */
+  {
+
+    SDF::InvertedNode node = std::get<SDF::InvertedNode>(cond.value);
+
+    // get the conditional value pointer of the variable
+    auto left_cvp = get_sdf_node_ptr(node, scope_index, scope);
+
+    if (left_cvp.has_value()) {
+
+      auto right_cvp = ConditionalValuePointer(VCD::Value::zero); /// <<<<
+
+      auto cond_op = ConditionalOperator<EqualityOperator::logical_equal>(
+          std::move(left_cvp.value()), std::move(right_cvp));
+
+      return ConditionalValuePointer(std::move(cond_op));
+
+    } else {
+      return {};
+    }
+
+  } break;
+  case SDF::ConditionalType::equality: /* node <operator> <constant> */
+  {
+
+    auto equality = std::get<SDF::NodeConstantEquality>(cond.value);
+    std::size_t var_index;
+    SDF::Node node = equality.left;
+
+    // get the conditional value pointer of the variable
+    auto left_cvp = get_sdf_node_ptr(node, scope_index, scope);
+
+    if (left_cvp.has_value()) {
+      auto right_cvp = equality.right
+                           ? ConditionalValuePointer(VCD::Value::one)
+                           : ConditionalValuePointer(VCD::Value::zero);
+
+      return get_sdf_conditional_ptr_helper(equality.op, left_cvp.value(),
+                                            right_cvp);
+
+    } else {
+      return {};
+    }
+
+  } break;
+  default:
+    throw std::runtime_error("InternalError");
+  }
+}
+
+// void TimingChecker::sdf_to_vcd_timing_check(SDF::TimingCheckCondition hold,
+// std::size_t scope_index,
+//                                    VCD::Scope &scope)
+// {
+// }
+
 void TimingChecker::apply_sdf_hold(std::shared_ptr<SDF::DelayFile> /*sc*/,
                                    SDF::Hold hold, std::size_t scope_index,
                                    VCD::Scope &scope)
 {
 
   auto value = hold.value.content(); // chooses TYP for now.
-  auto trigger_port_tchk = hold.trigger;
-  auto assert_port_tchk = hold.assert;
-
-  std::optional<ConditionalValuePointer> trigger_cond_cvp;
-  std::optional<ConditionalValuePointer> assert_cond_cvp;
+  auto reg_port_tchk = hold.reg;
+  auto trig_port_tchk = hold.trig;
 
   if (value.has_value()) {
 
-    // if(trigger_port_tchk.timing_check_condition.has_value()){
-    //   auto trigger_cond = trigger_port_tchk.timing_check_condition.value();
+    // get the value pointer of the reg port
+    auto reg_port_cvp_option =
+        get_sdf_node_ptr(reg_port_tchk.port, scope_index, scope);
 
-    //   switch (trigger_cond.get_enum_type()){
-    //     case SDF::ConditionalType::none:
-    //         /* node or node==1  */
-    //       {
-    //         auto node = std::get<SDF::Node>(trigger_cond.value);
-    //         auto node_val_p = ConditionalValuePointer(one);
-    //         auto node_id_p =
-    //         ConditionalValuePointer(trigger_cond.value.node);
-    //       }
-    //       break;
-    //     case SDF::ConditionalType::inverted:
-    //       /* ~node or node~=1  */
-    //       break;
-    //     case SDF::ConditionalType::equality:
-    //       /* node=constant  */
-    //       break;
-    //     default:
-    //       break;
-    //   }
-    // }else{
-    //   //
-    // }
+    // get the conditional value pointer of the trig port
+    auto trig_port_cvp_option =
+        get_sdf_node_ptr(trig_port_tchk.port, scope_index, scope);
 
-    if (assert_port_tchk.timing_check_condition.has_value()) {
+    if (reg_port_cvp_option.has_value() && trig_port_cvp_option.has_value() ) {
 
-      auto assert_cond = assert_port_tchk.timing_check_condition.value();
+      // SDF::EdgeType reg_port_edge = reg_port_tchk.port.edge.value();
+      // SDF::EdgeType trig_port_edge = trig_port_tchk.port.edge.value();
 
-      auto inner_scope = scope;
+      // std::optional<ConditionalValuePointer> reg_cond_cvp_option{};
+      // std::optional<ConditionalValuePointer> trig_cond_cvp_option{};
 
-      std::optional<ConditionalValuePointer> left_cvp;
-      std::optional<ConditionalValuePointer> right_cvp;
+      if (reg_port_tchk.timing_check_condition.has_value()) {
 
-      switch (assert_cond.get_enum_type()) {
-      case SDF::ConditionalType::none: /* node==1 is condition */
-      {
+        auto conditional_node_cvp_option = get_sdf_conditional_ptr(
+            reg_port_tchk.timing_check_condition.value(), scope_index,
+            scope);
 
-        SDF::Node node = std::get<SDF::Node>(assert_cond.value);
+        if(conditional_node_cvp_option.has_value()){
 
-        // update the scope if node name is a path
-        if (node.hierarchical_identifier.has_value()) {
-          auto hi = node.hierarchical_identifier.value();
-          auto inner_scope_index = match_scope(hi.value, scope_index);
-          if(inner_scope_index.has_value()){
-            inner_scope = header_->get_scope(inner_scope_index.value());
-          }else{
-            //TODO variable could not be found in current scope TODO
-          }
+          auto cond_op = ConditionalOperator<EqualityOperator::logical_equal>(
+                                std::move(conditional_node_cvp_option.value()), 
+                                std::move(reg_port_cvp_option.value())
+                                );
+                          
+          auto reg_cond_cvp = ConditionalValuePointer(std::move(cond_op));
+
+          // TODO Create ConditionalRegisterEvent
+          
         }
-
-        // get the conditional value pointer of the variable
-        if (inner_scope.contains_variable(node.basename_identifier)) {
-          auto var_index =
-              inner_scope.get_variable_index(node.basename_identifier);
-
-          auto var_svp = state_.get_value_pointer(var_index);
-
-          left_cvp = ConditionalValuePointer(var_svp);
-        }
-
-        right_cvp = ConditionalValuePointer(VCD::Value::one);
-
-        auto cond_op = ConditionalOperator<EqualityOperator::logical_equal>(
-            std::move(left_cvp.value()), std::move(right_cvp.value()));
-
-        assert_cond_cvp = ConditionalValuePointer(std::move(cond_op));
-
-      } break;
-      case SDF::ConditionalType::inverted: /* ~node or node~=1 is condition */
-      {
-
-        SDF::InvertedNode node = std::get<SDF::InvertedNode>(assert_cond.value);
-
-        // update the scope if node name is a path
-        if (node.hierarchical_identifier.has_value()) {
-          auto hi = node.hierarchical_identifier.value();
-          auto inner_scope_index = match_scope(hi.value, scope_index);
-          if(inner_scope_index.has_value()){
-            inner_scope = header_->get_scope(inner_scope_index.value());
-          }else{
-            //TODO variable could not be found in current scope TODO
-          }
-        }
-
-        // get the conditional value pointer of the variable
-        if (inner_scope.contains_variable(node.basename_identifier)) {
-          auto var_index =
-              inner_scope.get_variable_index(node.basename_identifier);
-
-          auto var_svp = state_.get_value_pointer(var_index);
-
-          left_cvp = ConditionalValuePointer(var_svp);
-        }
-
-        right_cvp = ConditionalValuePointer(VCD::Value::zero);
-
-        auto cond_op = ConditionalOperator<EqualityOperator::logical_equal>(
-            std::move(left_cvp.value()), std::move(right_cvp.value()));
-
-        assert_cond_cvp = ConditionalValuePointer(std::move(cond_op));
-
-      } break;
-      case SDF::ConditionalType::equality: /* node <operator> <constant> */
-      {
-
-        auto equality = std::get<SDF::NodeConstantEquality>(assert_cond.value);
-        auto node = equality.left;
-
-        // update the scope if node name is a path
-        if (node.hierarchical_identifier.has_value()) {
-          auto hi = node.hierarchical_identifier.value();
-          auto inner_scope_index = match_scope(hi.value, scope_index);
-          if(inner_scope_index.has_value()){
-            inner_scope = header_->get_scope(inner_scope_index.value());
-          }else{
-            //TODO variable could not be found in current scope TODO
-          }
-        }
-
-        // get the conditional value pointer of the variable
-        if (inner_scope.contains_variable(node.basename_identifier)) {
-          auto var_index =
-              inner_scope.get_variable_index(node.basename_identifier);
-
-          auto var_svp = state_.get_value_pointer(var_index);
-
-          left_cvp = ConditionalValuePointer(var_svp);
-        }
-
-        if (equality.right) {
-          right_cvp = ConditionalValuePointer(VCD::Value::one);
-        }else{
-          right_cvp = ConditionalValuePointer(VCD::Value::zero);
-        }
-
-        switch (equality.op) {
-        case SDF::EqualityOperator::case_inv:
-
-          assert_cond_cvp = ConditionalValuePointer(std::move(
-            ConditionalOperator<EqualityOperator::case_not_equal>(
-              std::move(left_cvp.value()), std::move(right_cvp.value()))
-          ));
-
-          break;
-
-        case SDF::EqualityOperator::case_equal:
-
-          assert_cond_cvp = ConditionalValuePointer(std::move(
-            ConditionalOperator<EqualityOperator::case_equal>(
-              std::move(left_cvp.value()), std::move(right_cvp.value()))
-          ));
-
-          break;
-
-        case SDF::EqualityOperator::logic_inv:
-
-          assert_cond_cvp = ConditionalValuePointer(std::move(
-            ConditionalOperator<EqualityOperator::logical_not_equal>(
-              std::move(left_cvp.value()), std::move(right_cvp.value()))
-          ));
-
-          break;
-
-        case SDF::EqualityOperator::logic_equal:
-
-          assert_cond_cvp = ConditionalValuePointer(std::move(
-            ConditionalOperator<EqualityOperator::logical_equal>(
-              std::move(left_cvp.value()), std::move(right_cvp.value()))
-          ));
-
-          break;
-
-        default:
-          throw std::runtime_error("InternalError");
-        }
-
-      } break;
-      default:
-        break;
+      }else{
+          // TODO Create RegisterEvent
       }
-    } else {
-      // HoldEvent he{index, value};
-    }
+            
+      if (trig_port_tchk.timing_check_condition.has_value()) {
 
-    // BUILD PORT SPEC HERE>
+        auto conditional_node_cvp_option = get_sdf_conditional_ptr(
+            trig_port_tchk.timing_check_condition.value(), scope_index,
+            scope);
 
-    // if(assert_cond_cvp.has_value()){
+        if(conditional_node_cvp_option.has_value()){
 
-    // }
+          auto cond_op = ConditionalOperator<EqualityOperator::logical_equal>(
+                                std::move(conditional_node_cvp_option.value()), 
+                                std::move(trig_port_cvp_option.value())
+                                );
+                          
+          auto trig_cond_cvp = ConditionalValuePointer(std::move(cond_op));
 
-  } else {
-    // has no value, ignore it..
+          
+          // TODO Create ConditionalHoldEvent // ConditionalTriggerEvent 
+        }
+      }else{
+          // TODO Create TriggerEvent
+      }
+    }  
   }
 }
 
@@ -322,10 +350,10 @@ void TimingChecker::apply_sdf_hold(std::shared_ptr<SDF::DelayFile> /*sc*/,
       for all hold timing checks
         create hold or conditional hold for the port/values/events involved.
 */
-void TimingChecker::apply_sdf_timing_specs(
-    std::shared_ptr<SDF::DelayFile> sc, SDF::Cell cell,
-    std::size_t scope_index, // remove
-    VCD::Scope &scope)
+void TimingChecker::apply_sdf_timing_specs(std::shared_ptr<SDF::DelayFile> sc,
+                                           SDF::Cell cell,
+                                           std::size_t scope_index, // remove
+                                           VCD::Scope &scope)
 {
   for (auto &&spec : cell.timing_specs) {
     switch (spec.get_enum_type()) {
@@ -333,11 +361,12 @@ void TimingChecker::apply_sdf_timing_specs(
 
       for (auto &&check : std::get<SDF::TimingCheckSpec>(spec.value)) {
         switch (check.get_enum_type()) {
-        case SDF::TimingCheckType::hold:
-          apply_sdf_hold(sc, std::get<SDF::Hold>(check.value), scope_index,
-                         scope);
-
-          break;
+        case SDF::TimingCheckType::hold: {
+          // apply_sdf_hold(sc, std::get<SDF::Hold>(check.value), scope_index,
+          //                scope);
+          // auto var_svp = state_.get_value_pointer(0);
+          // auto var_cvp = ConditionalValuePointer(var_svp);
+        } break;
         default:
           throw std::runtime_error("InternalError");
         }
@@ -354,8 +383,7 @@ void TimingChecker::apply_sdf_timing_specs(
 // It cannot work without the Verilog parser+ast to convert instance-name ->
 // module-name.
 void TimingChecker::apply_sdf_cell_helper(std::shared_ptr<SDF::DelayFile> sc,
-                                          SDF::Cell cell,
-                                          VCD::Scope &scope)
+                                          SDF::Cell cell, VCD::Scope &scope)
 {
 
   for (auto &&[ident, index] : scope.get_scopes()) {

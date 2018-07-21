@@ -104,9 +104,9 @@ void serialize_hold_check(OutputIterator oi, int indent,
                           Hold hold) noexcept(noexcept(*oi++ = '!')) {
   serialize_indent(oi, indent);
   ranges::copy(std::string_view("(HOLD "), oi);
-  serialize_port_tchk(oi, 0, hold.assert);
+  serialize_port_tchk(oi, 0, hold.trig);
   ranges::copy(std::string_view(" "), oi);
-  serialize_port_tchk(oi, 0, hold.trigger);
+  serialize_port_tchk(oi, 0, hold.reg);
   ranges::copy(std::string_view(" "), oi);
   serialize_value(oi, 0, hold.value);
   ranges::copy(std::string_view(")\n"), oi);

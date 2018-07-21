@@ -23,6 +23,7 @@
 #include <range/v3/span.hpp>
 #include <range/v3/view/indices.hpp>
 #include <variant>
+#include <optional>
 
 // using VerilogSourceTree = verilog_source_tree;
 
@@ -62,6 +63,20 @@ private:
                                                 
   std::optional<std::size_t> match_scope(std::vector<std::string> path, 
                                          std::size_t scope_index);
+
+  std::optional<ConditionalValuePointer> 
+  get_sdf_node_ptr(SDF::Node node,std::size_t scope_index,
+                   VCD::Scope &scope);
+
+  ConditionalValuePointer
+  get_sdf_conditional_ptr_helper(SDF::EqualityOperator &op, 
+                                 ConditionalValuePointer &left,
+                                 ConditionalValuePointer &right);
+  
+  std::optional<ConditionalValuePointer> 
+  get_sdf_conditional_ptr(SDF::TimingCheckCondition cond,
+                          std::size_t scope_index,
+                          VCD::Scope &scope);
 
   void apply_sdf_hold(std::shared_ptr<SDF::DelayFile> sc, SDF::Hold hold,
                       std::size_t scope_index, 
