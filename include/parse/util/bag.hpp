@@ -1,7 +1,10 @@
 #ifndef LIBPARSE_UTIL_BAG_HPP
 #define LIBPARSE_UTIL_BAG_HPP
 
+#include <cassert>
 #include <vector>
+
+#include <range/v3/span.hpp>
 
 namespace Parse::Util {
 
@@ -10,6 +13,9 @@ class Bag
 {
 public:
   using index_t = std::size_t;
+
+  // Default constructable
+  Bag() = default;
 
   // Moveable
   Bag(Bag<T> &&other) noexcept { storage_ = std::move(other.storage_); }
@@ -33,18 +39,23 @@ public:
   }
 
   // Get item
-  T &operator[](index_t index) noexcept { return storage_[index]; }
+  T &operator[](index_t index) noexcept
+  {
+    assert(index < get_size());
+    return storage_[index];
+  }
 
-  T &operator[](index_t index) const noexcept { return storage_[index]; }
+  T &operator[](index_t index) const noexcept
+  {
+    assert(index < get_size());
+    return storage_[index];
+  }
 
-  bool is_empty() const noexcept {}
+  bool is_empty() const noexcept { return storage_.empty(); }
 
-  // Get item with exception
-  T &at(index_t index) { return storage_.at(index); }
+  auto get_size() const noexcept { return storage_.size(); }
 
-  T &at(index_t index) const { return storage_.at(index); }
-
-  void insert(T &&t) { storage_.emplace_back(t); }
+  void insert(T &&t) { storage_.emplace_back(std::forward<T>(t)); }
 
   void insert(const T &t) { storage_.emplace_back(t); }
 
@@ -61,14 +72,30 @@ public:
   };
 
   // Make range
-  T *begin() { return storage_.begin(); }
+  T *begin() noexcept
+  {
+    if (storage_.empty())
+      return nullptr;
 
-  T *end() { return storage_.end(); }
+    return std::addressof(storage_.front());
+  }
+
+  T *end()
+  {
+    if (storage_.empty())
+      return nullptr;
+
+    return std::addressof(storage_.back())+1;
+  }
+
+  auto as_range() {
+    return ranges::span(storage_);
+  }
 
 private:
   std::vector<T> storage_;
 };
 
-}; // namespace Parse::Util
+} // namespace Parse::Util
 
 #endif // namespace LIBPARSE_UTIL_BAG_HPP
