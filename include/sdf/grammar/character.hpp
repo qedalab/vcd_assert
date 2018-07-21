@@ -6,7 +6,8 @@
 #include "parse/grammar/base.h"
 
 namespace SDF::Grammar {
-  using namespace Parse::Grammar::Base;
+
+using namespace Parse::Grammar::Base;
 
 //removed '«' temporarily due to char overflow will need utf8?
 struct special_character_without_brackets : one<
@@ -15,7 +16,7 @@ struct special_character_without_brackets : one<
   '\'','{','|','}','~' 
 >{};
 struct special_character_without_backslash : one<
-  '!','#','%','&','*','+',',','-','.',
+  '!','#','%','&','*','+',',','-','.',char(174) /* ASCII version of « */,
   '/',':',';','<','=','>','?','@','[',']','^',
   '\'','{','|','}','~','(',')'
 >{};
