@@ -44,27 +44,33 @@ public:
   }
 
   std::size_t insert(T&& other) {
+    std::size_t index;
+
     if (slot_storage_.empty()) {
+      index = element_storage_.size();
       element_storage_.emplace_back(other);
-      return;
+      return index;
     }
 
-    auto index = slot_storage_.back();
+    index = slot_storage_.back();
     slot_storage_.pop_back();
     element_storage_[index] = other;
-    return;
+    return index;
   }
 
   std::size_t insert(const T& other) {
+    std::size_t index;
+
     if (slot_storage_.empty()) {
+      index = element_storage_.size();
       element_storage_.emplace_back(other);
-      return;
+      return index;
     }
 
-    auto index = slot_storage_.back();
+    index = slot_storage_.back();
     slot_storage_.pop_back();
     element_storage_[index] = other;
-    return;
+    return index;
   }
 
   void remove(std::size_t index) {
