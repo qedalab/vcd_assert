@@ -30,7 +30,6 @@ bool VCDAssert::edge_type_matches(EdgeType type, VCD::Value from, VCD::Value to)
 
     if (type == EdgeType::_z1)
       return to == VCD::Value::one;
-
   }
 
   if (to == VCD::Value::one)
@@ -39,7 +38,7 @@ bool VCDAssert::edge_type_matches(EdgeType type, VCD::Value from, VCD::Value to)
   if (to == VCD::Value::zero)
     return type == EdgeType::NegEdge || type == EdgeType::Edge;
 
-  return false;
+  return type == EdgeType::NoEdge;
 }
 
 auto VCDAssert::get_edge_type(VCD::Value from, VCD::Value to) -> EdgeType
