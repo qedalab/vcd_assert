@@ -3,6 +3,7 @@
 #include "vcd_assert/edge_type.hpp"
 
 #include <range/v3/view/indices.hpp>
+#include <range/v3/view/linear_distribute.hpp>
 
 using namespace VCDAssert;
 using namespace ranges::view;
@@ -105,9 +106,9 @@ TimingChecker::match_scope(std::vector<std::string> path,
   }
 }
 
-std::optional<ConditionalValuePointer>
-TimingChecker::get_sdf_node_ptr(SDF::Node node, std::size_t scope_index,
-                                VCD::Scope &scope)
+std::optional<std::size_t>
+TimingChecker::get_sdf_node_index(SDF::Node node, std::size_t scope_index,
+                                  VCD::Scope &scope)
 {
 
   auto inner_scope = scope;
@@ -125,20 +126,25 @@ TimingChecker::get_sdf_node_ptr(SDF::Node node, std::size_t scope_index,
 
   // get the variable from the scope
   if (inner_scope.contains_variable(node.basename_identifier)) {
-    auto var_index = inner_scope.get_variable_index(node.basename_identifier);
-
-    // get the conditional value pointer of the variable
-    auto var_svp = state_.get_value_pointer(var_index);
-    if (std::holds_alternative<VCD::Value *>(var_svp)) {
-      auto var_svp_val = std::get<VCD::Value *>(var_svp);
-      auto var_cvp = ConditionalValuePointer(var_svp_val);
-      return var_cvp;
-    } else {
-      throw std::runtime_error("InternalError");
-    }
-
+    return inner_scope.get_variable_index(node.basename_identifier);
   } else {
     return {};
+  }
+}
+
+// std::optional<ConditionalValuePointer>
+// TimingChecker::get_sdf_node_ptr(SDF::Node node, std::size_t scope_index,
+//                                   VCD::Scope &scope)
+ConditionalValuePointer TimingChecker::get_sdf_node_ptr(std::size_t var_index)
+{
+  // get the conditional value pointer of the variable
+  auto var_svp = state_.get_value_pointer(var_index);
+  if (std::holds_alternative<VCD::Value *>(var_svp)) {
+    auto var_svp_val = std::get<VCD::Value *>(var_svp);
+    auto var_cvp = ConditionalValuePointer(var_svp_val);
+    return var_cvp;
+  } else {
+    throw std::runtime_error("InternalError");
   }
 }
 
@@ -198,14 +204,16 @@ std::optional<ConditionalValuePointer> TimingChecker::get_sdf_conditional_ptr(
     SDF::Node node = std::get<SDF::Node>(cond.value);
 
     // get the conditional value pointer of the variable
-    auto left_cvp = get_sdf_node_ptr(node, scope_index, scope);
+    auto left_index_op = get_sdf_node_index(node, scope_index, scope);
 
-    if (left_cvp.has_value()) {
+    if (left_index_op.has_value()) {
+
+      auto left_cvp = get_sdf_node_ptr(left_index_op.value());
 
       auto right_cvp = ConditionalValuePointer(VCD::Value::zero); /// <<<<
 
       auto cond_op = ConditionalOperator<EqualityOperator::logical_equal>(
-          std::move(left_cvp.value()), std::move(right_cvp));
+          std::move(left_cvp), std::move(right_cvp));
 
       return ConditionalValuePointer(std::move(cond_op));
 
@@ -220,14 +228,16 @@ std::optional<ConditionalValuePointer> TimingChecker::get_sdf_conditional_ptr(
     SDF::InvertedNode node = std::get<SDF::InvertedNode>(cond.value);
 
     // get the conditional value pointer of the variable
-    auto left_cvp = get_sdf_node_ptr(node, scope_index, scope);
+    auto left_index_op = get_sdf_node_index(node, scope_index, scope);
 
-    if (left_cvp.has_value()) {
+    if (left_index_op.has_value()) {
+
+      auto left_cvp = get_sdf_node_ptr(left_index_op.value());
 
       auto right_cvp = ConditionalValuePointer(VCD::Value::zero); /// <<<<
 
       auto cond_op = ConditionalOperator<EqualityOperator::logical_equal>(
-          std::move(left_cvp.value()), std::move(right_cvp));
+          std::move(left_cvp), std::move(right_cvp));
 
       return ConditionalValuePointer(std::move(cond_op));
 
@@ -244,15 +254,17 @@ std::optional<ConditionalValuePointer> TimingChecker::get_sdf_conditional_ptr(
     SDF::Node node = equality.left;
 
     // get the conditional value pointer of the variable
-    auto left_cvp = get_sdf_node_ptr(node, scope_index, scope);
+    auto left_index_op = get_sdf_node_index(node, scope_index, scope);
 
-    if (left_cvp.has_value()) {
+    if (left_index_op.has_value()) {
+
+      auto left_cvp = get_sdf_node_ptr(left_index_op.value());
+
       auto right_cvp = equality.right
                            ? ConditionalValuePointer(VCD::Value::one)
                            : ConditionalValuePointer(VCD::Value::zero);
 
-      return get_sdf_conditional_ptr_helper(equality.op, left_cvp.value(),
-                                            right_cvp);
+      return get_sdf_conditional_ptr_helper(equality.op, left_cvp, right_cvp);
 
     } else {
       return {};
@@ -264,83 +276,165 @@ std::optional<ConditionalValuePointer> TimingChecker::get_sdf_conditional_ptr(
   }
 }
 
-// void TimingChecker::sdf_to_vcd_timing_check(SDF::TimingCheckCondition hold,
-// std::size_t scope_index,
-//                                    VCD::Scope &scope)
-// {
-// }
+template <class ConditionalEventType, class EventType>
+std::vector<std::tuple<Event, std::size_t>>
+TimingChecker::get_sdf_port_tchk_events(std::size_t event_value,
+                                        SDF::PortTimingCheck port_tchk,
+                                        std::size_t port_vcd_index,
+                                        std::size_t scope_index,
+                                        VCD::Scope &scope)
+{
+  std::vector<std::tuple<Event, std::size_t>> events{};
+
+  auto port = port_tchk.port;
+  auto port_cvp = get_sdf_node_ptr(port_vcd_index);
+
+  std::optional<ConditionalValuePointer> cond_op_cvp_optional{};
+
+  if (port_tchk.timing_check_condition.has_value()) {
+    auto conditional_node_cvp_option = get_sdf_conditional_ptr(
+        port_tchk.timing_check_condition.value(), scope_index, scope);
+
+    if (conditional_node_cvp_option.has_value()) {
+
+      auto cond_op = ConditionalOperator<EqualityOperator::logical_equal>(
+          std::move(conditional_node_cvp_option.value()), std::move(port_cvp));
+
+      cond_op_cvp_optional = ConditionalValuePointer(std::move(cond_op));
+    }
+  }
+
+  /* if range */
+  if (port.end.has_value()) {
+    if (port.start.has_value()) {
+
+      auto sdf_port_start = port.start.value();
+      auto sdf_port_end = port.end.value();
+
+      auto [vcd_val_start, vcd_val_end] = index_lookup_[port_vcd_index];
+
+      // verify range size corresponds
+      if (vcd_val_start + sdf_port_end > vcd_val_end) {
+        fmt::printf("WARN : Ignoring extra indices specified for signal : {}",
+                    port.basename_identifier);
+      }
+
+      if (vcd_val_start + sdf_port_start <= vcd_val_end) {
+        for (auto &&index : indices(sdf_port_start, sdf_port_end)) {
+          if (cond_op_cvp_optional.has_value()) {
+            events.push_back(
+                {ConditionalHoldEvent{
+                     std::move(cond_op_cvp_optional.value()),
+                     std::move(EventType{vcd_val_start + index, event_value})},
+                 vcd_val_start + index});
+          } else {
+            events.push_back(
+                {std::move(EventType{vcd_val_start + index, event_value}),
+                 vcd_val_start + index});
+          }
+        }
+      } else {
+        // Specified starting index out of bounds.
+        // Ignore the HOLD.
+      }
+    }
+
+    /* if single value from a range */
+  } else if (port.start.has_value()) {
+
+    auto sdf_port_start = port.start.value();
+
+    auto [vcd_val_start, vcd_val_end] = index_lookup_[port_vcd_index];
+
+    if (vcd_val_start + sdf_port_start <= vcd_val_end) {
+      if (cond_op_cvp_optional.has_value()) {
+        events.push_back(
+            {ConditionalEventType{
+                 std::move(cond_op_cvp_optional.value()),
+                 EventType{vcd_val_start + sdf_port_start, event_value}},
+             vcd_val_start + sdf_port_start});
+      } else {
+        events.push_back(
+            {EventType{vcd_val_start + sdf_port_start, event_value},
+             vcd_val_start + sdf_port_start});
+      }
+    } else {
+      // Specified index does not exist.
+      // Ignore the HOLD.
+    }
+
+    /* if single value only */
+  } else {
+    if (cond_op_cvp_optional.has_value()) {
+      events.push_back(
+          {ConditionalEventType{std::move(cond_op_cvp_optional.value()),
+                                EventType{port_vcd_index, event_value}},
+           port_vcd_index});
+    } else {
+      events.push_back(
+          {EventType{port_vcd_index, event_value}, port_vcd_index});
+    }
+  }
+  return std::move(events);
+}
 
 void TimingChecker::apply_sdf_hold(std::shared_ptr<SDF::DelayFile> /*sc*/,
                                    SDF::Hold hold, std::size_t scope_index,
                                    VCD::Scope &scope)
 {
 
-  auto value = hold.value.content(); // chooses TYP for now.
-  auto reg_port_tchk = hold.reg;
-  auto trig_port_tchk = hold.trig;
+  auto sdf_value = hold.value.content(); // chooses TYP for now.
 
-  if (value.has_value()) {
+  if (sdf_value.has_value()) {
 
-    // get the value pointer of the reg port
-    auto reg_port_cvp_option =
-        get_sdf_node_ptr(reg_port_tchk.port, scope_index, scope);
+    // get the indexes to reg and trig port in header
+    auto reg_port_index_option =
+        get_sdf_node_index(hold.reg.port, scope_index, scope);
+    auto trig_port_index_option =
+        get_sdf_node_index(hold.trig.port, scope_index, scope);
 
-    // get the conditional value pointer of the trig port
-    auto trig_port_cvp_option =
-        get_sdf_node_ptr(trig_port_tchk.port, scope_index, scope);
+    if (reg_port_index_option.has_value() &&
+        trig_port_index_option.has_value()) {
 
-    if (reg_port_cvp_option.has_value() && trig_port_cvp_option.has_value() ) {
+      auto reg_port_index = reg_port_index_option.value();
+      auto trig_port_index = trig_port_index_option.value();
 
-      // SDF::EdgeType reg_port_edge = reg_port_tchk.port.edge.value();
-      // SDF::EdgeType trig_port_edge = trig_port_tchk.port.edge.value();
+      std::vector<std::tuple<Event, std::size_t>> reg_events{
+          get_sdf_port_tchk_events<ConditionalHoldEvent, HoldEvent>(
+              (std::size_t)(sdf_value.value() * 1000), // todo
+              hold.reg, reg_port_index, scope_index, scope)};
 
-      // std::optional<ConditionalValuePointer> reg_cond_cvp_option{};
-      // std::optional<ConditionalValuePointer> trig_cond_cvp_option{};
+      std::vector<std::tuple<Event, std::size_t>> trig_events{
+          get_sdf_port_tchk_events<ConditionalHoldEvent, HoldEvent>(
+              (std::size_t)(sdf_value.value() * 1000), hold.trig,
+              trig_port_index, scope_index, scope)};
 
-      if (reg_port_tchk.timing_check_condition.has_value()) {
-
-        auto conditional_node_cvp_option = get_sdf_conditional_ptr(
-            reg_port_tchk.timing_check_condition.value(), scope_index,
-            scope);
-
-        if(conditional_node_cvp_option.has_value()){
-
-          auto cond_op = ConditionalOperator<EqualityOperator::logical_equal>(
-                                std::move(conditional_node_cvp_option.value()), 
-                                std::move(reg_port_cvp_option.value())
-                                );
-                          
-          auto reg_cond_cvp = ConditionalValuePointer(std::move(cond_op));
-
-          // TODO Create ConditionalRegisterEvent
-          
+      if (trig_events.size() >= 1) {
+        if (hold.trig.port.edge.has_value()) {
+          switch (hold.trig.port.edge.value()) {
+          case SDF::EdgeType::posedge:
+          case SDF::EdgeType::_01:
+            for (auto &&[event, index] : trig_events) {
+              event_lists_[index].pos_edge.push_back(std::move(event));
+            }
+            break;
+          case SDF::EdgeType::negedge:
+          case SDF::EdgeType::_10:
+            for (auto &&[event, index] : trig_events) {
+              event_lists_[index].pos_edge.push_back(std::move(event));
+            }
+            break;
+          default:
+            throw std::runtime_error("InternalError : unsupported edgetype");
+          }
+        } else {
+          for (auto &&[event, index] : trig_events) {
+            event_lists_[index].pos_edge.push_back(std::move(event));
+            event_lists_[index].neg_edge.push_back(std::move(event));
+          }
         }
-      }else{
-          // TODO Create RegisterEvent
       }
-            
-      if (trig_port_tchk.timing_check_condition.has_value()) {
-
-        auto conditional_node_cvp_option = get_sdf_conditional_ptr(
-            trig_port_tchk.timing_check_condition.value(), scope_index,
-            scope);
-
-        if(conditional_node_cvp_option.has_value()){
-
-          auto cond_op = ConditionalOperator<EqualityOperator::logical_equal>(
-                                std::move(conditional_node_cvp_option.value()), 
-                                std::move(trig_port_cvp_option.value())
-                                );
-                          
-          auto trig_cond_cvp = ConditionalValuePointer(std::move(cond_op));
-
-          
-          // TODO Create ConditionalHoldEvent // ConditionalTriggerEvent 
-        }
-      }else{
-          // TODO Create TriggerEvent
-      }
-    }  
+    }
   }
 }
 
@@ -362,8 +456,8 @@ void TimingChecker::apply_sdf_timing_specs(std::shared_ptr<SDF::DelayFile> sc,
       for (auto &&check : std::get<SDF::TimingCheckSpec>(spec.value)) {
         switch (check.get_enum_type()) {
         case SDF::TimingCheckType::hold: {
-          // apply_sdf_hold(sc, std::get<SDF::Hold>(check.value), scope_index,
-          //                scope);
+          apply_sdf_hold(sc, std::get<SDF::Hold>(check.value), scope_index,
+                         scope);
           // auto var_svp = state_.get_value_pointer(0);
           // auto var_cvp = ConditionalValuePointer(var_svp);
         } break;

@@ -26,14 +26,14 @@ specify
 
     if (state == 1) (reset => out) = delay_state1_reset_out;
    
-    // $hold( posedge set &&& not_state , reset  , ct_state0_set_reset);
-    // $hold( negedge set &&& not_state , reset  , ct_state0_set_reset);
+    $hold( posedge set &&& not_state , reset  , ct_state0_set_reset);
+    $hold( negedge set &&& not_state , reset  , ct_state0_set_reset);
 
-    // $hold( posedge set &&& state , reset , ct_state1_set_reset);
-    // $hold( negedge set &&& state , reset , ct_state1_set_reset);
+    $hold( posedge set &&& state , reset , ct_state1_set_reset);
+    $hold( negedge set &&& state , reset , ct_state1_set_reset);
 
-    // $hold( posedge reset &&& not_state , set , ct_state0_reset_set);
-    // $hold( negedge reset &&& not_state , set , ct_state0_reset_set);
+    $hold( posedge reset &&& not_state , set , ct_state0_reset_set);
+    $hold( negedge reset &&& not_state , set , ct_state0_reset_set);
 
 endspecify
 
