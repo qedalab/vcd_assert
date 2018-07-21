@@ -30,8 +30,8 @@ using IdentifierArray = std::vector<Identifier>;
 // };
 
 struct HierarchicalIdentifier {
-  HChar sep; //should maybe make global/header to hold this?
-  std::vector<Identifier> value; //should make this contiguous?
+  HChar sep {}; //should maybe make global/header to hold this?
+  std::vector<Identifier> value = {}; //should make this contiguous?
   
   bool operator==(const HierarchicalIdentifier& other) const noexcept{
     return ranges::equal(value, other.value);

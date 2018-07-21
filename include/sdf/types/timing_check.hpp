@@ -31,9 +31,9 @@ struct InvertedNode : public Node {};
 using NodeEqualityTuple = std::tuple<Node,Node>;
 
 struct NodeConstantEquality {
-  Node left;
-  EqualityOperator op;
-  bool right;
+  Node left = {};
+  EqualityOperator op = {};
+  bool right = {};
 
   bool operator==(const NodeConstantEquality& other) const noexcept{
     if((left == other.left)

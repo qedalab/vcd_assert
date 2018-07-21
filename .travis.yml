@@ -42,25 +42,39 @@ matrix:
       - docker exec runner bash -c "if [ -s repo/travis-build/Testing/Temporary/MemoryChecker.1.log ]; then false; fi"
       - docker exec runner bash -c "if [ -s repo/travis-build/Testing/Temporary/MemoryChecker.2.log ]; then false; fi"
       - docker exec runner bash -c "if [ -s repo/travis-build/Testing/Temporary/MemoryChecker.3.log ]; then false; fi"
+  
+    # Clang based tests
+    - env:
+      - TEST_NAME="Clang sanitize undefined'
+      before_script:
+      - docker run --name runner -t -d pleroux0/ubuntu-clang6-devel
+      - docker exec runner git clone -b "${TRAVIS_BRANCH}" --recurse-submodules --depth=1 "https://github.com/${TRAVIS_REPO_SLUG}.git" "repo"
+      - docker exec runner mkdir "repo/travis-build"
+      - docker exec runner conan remote add pleroux0 "https://api.bintray.com/conan/pleroux0/pleroux0"
+      script:
+      - docker exec runner bash -c "cd repo/travis-build && conan install .. --build=missing -s build_type=Debug -s compiler=clang -s compiler.libcxx=libc++ -s compiler.version=6.0 -e CXXFLAGS='-fsanitize=undefined -stdlib=libc++' -e CC=clang -e CXX=clang++"
+      - docker exec runner bash -c "cd repo/travis-build && conan build .."
 
-    # Clang-Tidy
-#     - env:
-#       - TEST_NAME="Clang-Tidy"
-#       - CXX=clang++-6.0
-#       - CC=clang-6.0
-#       - CXXFLAGS=-stdlib=libc++
-#       before_script:
-#         - pip install conan --user
-#         - mkdir build
-#         - cd build
-#         - conan remote add pleroux0 "https://api.bintray.com/conan/pleroux0/pleroux0"
-#       compiler: clang
-#       addons:
-#         apt:
-#           sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-trusty-6.0']
-#           packages: ['clang-6.0', 'clang-tidy-6.0']
-#       script:
-#         - conan install .. --build=missing -s build_type=Debug -s compiler.libcxx=libc++ -e CC=${CC} -e CXX=${CXX}
-#         - cmake .. -DBUILD_TESTS="ON" -DCMAKE_TOOLCHAIN_FILE=conan_paths.cmake -DCMAKE_CXX_CLANG_TIDY=clang-tidy-6.0
-#         - cmake --build .
-#         - ctest
+    - env:
+      - TEST_NAME="Clang sanitize address'
+      before_script:
+      - docker run --name runner -t -d pleroux0/ubuntu-clang6-devel
+      - docker exec runner git clone -b "${TRAVIS_BRANCH}" --recurse-submodules --depth=1 "https://github.com/${TRAVIS_REPO_SLUG}.git" "repo"
+      - docker exec runner mkdir "repo/travis-build"
+      - docker exec runner conan remote add pleroux0 "https://api.bintray.com/conan/pleroux0/pleroux0"
+      script:
+      - docker exec runner bash -c "cd repo/travis-build && conan install .. --build=missing -s build_type=Debug -s compiler=clang -s compiler.libcxx=libc++ -s compiler.version=6.0 -e CXXFLAGS='-fsanitize=address -stdlib=libc++' -e CC=clang -e CXX=clang++"
+      - docker exec runner bash -c "cd repo/travis-build && conan build .."
+
+    - env:
+      - TEST_NAME="Clang Tidy'
+      before_script:
+      - docker run --name runner -t -d pleroux0/ubuntu-clang6-devel
+      - docker exec runner git clone -b "${TRAVIS_BRANCH}" --recurse-submodules --depth=1 "https://github.com/${TRAVIS_REPO_SLUG}.git" "repo"
+      - docker exec runner mkdir "repo/travis-build"
+      - docker exec runner conan remote add pleroux0 "https://api.bintray.com/conan/pleroux0/pleroux0"
+      script:
+      - docker exec runner bash -c "cd repo/travis-build && conan install .. --build=missing -s build_type=Debug -s compiler=clang -s compiler.libcxx=libc++ -s compiler.version=6.0 -e CC=clang -e CXX=clang++ -e CXXFLAGS='-stdlib=libc++'"
+      - docker exec runner bash -c "cd repo/travis-build && conan build .."
+      - docker exec runner bash -c "cd repo/travis-build && cmake .. -DCMAKE_CXX_CLANG_TIDY=clang-tidy"
+      - docker exec runner bash -c "cd repo/travis-build && cmake --build ."
