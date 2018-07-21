@@ -7,6 +7,7 @@ target_sources(libvcd_assert PRIVATE
   ${DIR}/event.cpp
   ${DIR}/state.cpp
   ${DIR}/timing_checker.cpp
+  ${DIR}/triggered_timing_checker.cpp
   )
 
 add_executable(vcd_assert
