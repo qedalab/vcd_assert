@@ -18,6 +18,7 @@ class VCDAssertConan(ConanFile):
         cmake.definitions["BUILD_TESTS"] = "ON"
         cmake.definitions["BUILD_DOCS"] = "ON"
         cmake.definitions["CMAKE_TOOLCHAIN_FILE"] = "conan_paths.cmake"
+        cmake.definitions["RUN_ALL_TESTS"] = "ON"
 
         cmake.configure()
 
