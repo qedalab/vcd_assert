@@ -5,24 +5,10 @@
 
 #include "sdf/types/enums.hpp"
 #include "./edge_type.hpp"
-
-#include <parse/util/slot_map.hpp>
-#include <parse/util/bag.hpp>
-
-#include <optional>
+#include "./event.hpp"
 
 namespace VCDAssert {
 
-struct TriggeredEvent {
-  ConditionalValuePointer condition;
-  EdgeType edge_type;
-  std::size_t assertion_index;
-  std::size_t until;
-};
-
-struct TriggeredEventList {
-  Parse::Util::Bag<TriggeredEvent> events;
-};
 
 class TriggeredTimingChecker
 {

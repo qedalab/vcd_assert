@@ -4,50 +4,34 @@
 #include "./conditional.hpp"
 #include "./edge_type.hpp"
 
+#include "parse/util/bag.hpp"
+
 #include <range/v3/span.hpp>
 
 #include <cstdint>
-#include <optional>
-#include <variant>
 #include <vector>
 
 namespace VCDAssert {
 
-struct HoldEvent {
-  std::size_t index;
-  std::size_t hold_time;
-};
-
-struct SetupEvent {
-  std::size_t index;
-  std::size_t setup_time;
-};
-
-struct ConditionalSetupEvent {
+struct TriggeredEvent {
   ConditionalValuePointer condition;
-  SetupEvent event;
+  EdgeType edge_type;
+  std::size_t assertion_index;
+  std::size_t until;
 };
 
-struct ConditionalHoldEvent {
+struct TriggeredEventList {
+  Parse::Util::Bag<TriggeredEvent> events;
+};
+
+struct RegisterEvent {
   ConditionalValuePointer condition;
-  HoldEvent event;
+  EdgeType edge_type;
+  TriggeredEvent triggered;
 };
 
-// clang-format off
-
-using Event = std::variant<
-  HoldEvent,
-  SetupEvent,
-  ConditionalSetupEvent,
-  ConditionalHoldEvent>;
-
-// clang-format on
-
-struct EventList {
-  std::vector<Event> pos_edge;
-  std::vector<Event> neg_edge;
-
-  ranges::span<Event> get_event_list(EdgeType type);
+struct RegisterEventList {
+  std::vector<RegisterEvent> events;
 };
 
 } // namespace VCDAssert

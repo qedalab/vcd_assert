@@ -1,7 +1,7 @@
 #ifndef VCD_ASSERT_TIMING_CHECKER_HPP
 #define VCD_ASSERT_TIMING_CHECKER_HPP
 
-#include "./basic_timing_checker.hpp"
+#include "./triggered_timing_checker.hpp"
 #include "./conditional.hpp"
 #include "./event.hpp"
 #include "./state.hpp"
@@ -38,10 +38,10 @@ class TimingChecker {
   // Order is important
   std::shared_ptr<VCD::Header> header_;
   State state_;
-  BasicTimingChecker checker_;
+  TriggeredTimingChecker checker_;
 
   std::vector<IndexLookup> index_lookup_;
-  std::vector<EventList> event_lists_;
+  std::vector<RegisterEventList> event_lists_;
   
   size_t sim_time_ = 0;
 
@@ -53,7 +53,7 @@ class TimingChecker {
 
   MinTypeMax min_typ_max_ = MinTypeMax::typ;
 
-  [[nodiscard]] bool handle_event(const Event& event);
+//   [[nodiscard]] bool handle_event(const Event& event);
 
 private:
   std::optional<std::size_t> match_scope_helper(std::vector<std::string> path, 
