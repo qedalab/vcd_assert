@@ -108,9 +108,9 @@ struct PortCheckAction : multi_dispatch<
 
 struct HoldTimingCheckAction : multi_dispatch<
   Grammar::port_tchk_1, inner_action<
-    PortCheckAction, Storage::member<&Hold::assert>>,
+    PortCheckAction, Storage::member<&Hold::trig>>,
   Grammar::port_tchk_2, inner_action<
-    PortCheckAction, Storage::member<&Hold::trigger>>,
+    PortCheckAction, Storage::member<&Hold::reg>>,
   Grammar::value, inner_action<
     ValueAction, Storage::member<&Hold::value>>
 >{

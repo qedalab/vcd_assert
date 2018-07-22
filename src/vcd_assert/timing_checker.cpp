@@ -3,6 +3,7 @@
 #include "vcd_assert/edge_type.hpp"
 
 #include <range/v3/view/indices.hpp>
+#include <range/v3/view/linear_distribute.hpp>
 
 using namespace VCDAssert;
 using namespace ranges::view;
@@ -35,14 +36,14 @@ TimingChecker::TimingChecker(std::shared_ptr<VCD::Header> header) :
   };
 }
 
-  // Iterate over all scopes. Every part of path must match a scope (instance).
-  /*
-    If the current scope does not contain the next path segment,
-        and it is not the last segment, NO match..
-    If it does contain the next segment, get the index of that scope,
-      set i to the index and check if it is NOW at the end of the path,
-      repeat..
-  */
+// Iterate over all scopes. Every part of path must match a scope (instance).
+/*
+  If the current scope does not contain the next path segment,
+      and it is not the last segment, NO match..
+  If it does contain the next segment, get the index of that scope,
+    set i to the index and check if it is NOW at the end of the path,
+    repeat..
+*/
 std::optional<std::size_t>
 TimingChecker::match_scope_helper(std::vector<std::string> path,
                                   std::size_t path_index,
@@ -72,13 +73,11 @@ TimingChecker::match_scope_helper(std::vector<std::string> path,
   }
 }
 
-
-
 // Starting from index 'scope_index' it tries to match 'path' to a branch of the
 // scope tree and if successful, returns the index to the scope the path leads
 // to.
 std::optional<std::size_t>
-TimingChecker::match_scope(std::vector<std::string> path, 
+TimingChecker::match_scope(std::vector<std::string> path,
                            std::size_t scope_index)
 {
   auto starting_scope = header_->get_scope(scope_index);
@@ -107,86 +106,369 @@ TimingChecker::match_scope(std::vector<std::string> path,
   }
 }
 
-void TimingChecker::apply_sdf_hold(std::shared_ptr<SDF::DelayFile> sc,
-                                   SDF::Hold hold,
-                                  //  std::size_t apply_scope_index,
-                                   VCD::Scope &apply_scope)
+std::optional<std::size_t>
+TimingChecker::get_sdf_node_index(SDF::Node node, std::size_t scope_index,
+                                  VCD::Scope &scope)
 {
-  // auto value = hold.value.content(); //chooses TYP for now.
-  // auto trigger_port_tchk = hold.trigger; //chooses TYP for now.
-  // auto assert_port_tchk = hold.assert; //chooses TYP for now.
 
-  // if(value.has_value()){
-  //   // HoldEvent he{index, value};  
-  //   if(trigger_port_tchk.timing_check_condition.has_value()){
-  //     TimingCheckCondition cond = trigger_port_tchk.timing_check_condition.value()
-  //     //create conditional
-      
-  //     switch (cond.get_enum_type()){
-  //       case ConditionalType::none:
-  //         /* node==1 is condition */
-  //         auto port = std::get<Node>(cond.port);
-  //         auto node_val_p = ConditionalValuePointer(one);    
-  //         auto node_id_p = ConditionalValuePointer(cond.node);    
-          
-  //         break;
-  //       case ConditionalType::inverted:
-  //         /* ~node or node~=1 is condition */
-  //         break;
-  //       case ConditionalType::equality:
-  //         /* node=constant is condition */
-  //         break;
-  //       default:
-  //         break;
-  //     }
-  //     switch(cond.get_enum_type()){
-      
-  //     }
-  //   }
-  //   //in both cases : 
-  //   apply(trigger_port_tchk.port)
+  auto inner_scope = scope;
 
-  //   if(violation_port_tchk.timing_check_condition.has_value()){
-  //     //create conditional
-  //   }
-  //   apply(violation_port_tchk.port)
+  // update the scope if node name is a path
+  if (node.hierarchical_identifier.has_value()) {
+    auto hi = node.hierarchical_identifier.value();
+    auto inner_scope_index = match_scope(hi.value, scope_index);
+    if (inner_scope_index.has_value()) {
+      inner_scope = header_->get_scope(inner_scope_index.value());
+    } else {
+      return {}; // path to variable not understood. Ignore.
+    }
+  }
 
-  // }else{
-
-  // }
+  // get the variable from the scope
+  if (inner_scope.contains_variable(node.basename_identifier)) {
+    return inner_scope.get_variable_index(node.basename_identifier);
+  } else {
+    return {};
+  }
 }
 
+// std::optional<ConditionalValuePointer>
+// TimingChecker::get_sdf_node_ptr(SDF::Node node, std::size_t scope_index,
+//                                   VCD::Scope &scope)
+ConditionalValuePointer TimingChecker::get_sdf_node_ptr(std::size_t var_index)
+{
+  // get the conditional value pointer of the variable
+  auto var_svp = state_.get_value_pointer(var_index);
+  if (std::holds_alternative<VCD::Value *>(var_svp)) {
+    auto var_svp_val = std::get<VCD::Value *>(var_svp);
+    auto var_cvp = ConditionalValuePointer(var_svp_val);
+    return var_cvp;
+  } else {
+    throw std::runtime_error("InternalError");
+  }
+}
+
+ConditionalValuePointer
+TimingChecker::get_sdf_conditional_ptr_helper(SDF::EqualityOperator &op,
+                                              ConditionalValuePointer &left,
+                                              ConditionalValuePointer &right)
+{
+  switch (op) {
+  case SDF::EqualityOperator::case_inv:
+
+    return ConditionalValuePointer(
+        std::move(ConditionalOperator<EqualityOperator::case_not_equal>(
+            std::move(left), std::move(right))));
+
+    break;
+
+  case SDF::EqualityOperator::case_equal:
+
+    return ConditionalValuePointer(
+        std::move(ConditionalOperator<EqualityOperator::case_equal>(
+            std::move(left), std::move(right))));
+
+    break;
+
+  case SDF::EqualityOperator::logic_inv:
+
+    return ConditionalValuePointer(
+        std::move(ConditionalOperator<EqualityOperator::logical_not_equal>(
+            std::move(left), std::move(right))));
+
+    break;
+
+  case SDF::EqualityOperator::logic_equal:
+
+    return ConditionalValuePointer(
+        std::move(ConditionalOperator<EqualityOperator::logical_equal>(
+            std::move(left), std::move(right))));
+
+    break;
+
+  default:
+    throw std::runtime_error("InternalError");
+  }
+}
+
+std::optional<ConditionalValuePointer> TimingChecker::get_sdf_conditional_ptr(
+    SDF::TimingCheckCondition cond, std::size_t scope_index, VCD::Scope &scope)
+{
+
+  auto inner_scope = scope;
+
+  switch (cond.get_enum_type()) {
+  case SDF::ConditionalType::none: /* node==1 is condition */
+  {
+
+    SDF::Node node = std::get<SDF::Node>(cond.value);
+
+    // get the conditional value pointer of the variable
+    auto left_index_op = get_sdf_node_index(node, scope_index, scope);
+
+    if (left_index_op.has_value()) {
+
+      auto left_cvp = get_sdf_node_ptr(left_index_op.value());
+
+      auto right_cvp = ConditionalValuePointer(VCD::Value::zero); /// <<<<
+
+      auto cond_op = ConditionalOperator<EqualityOperator::logical_equal>(
+          std::move(left_cvp), std::move(right_cvp));
+
+      return ConditionalValuePointer(std::move(cond_op));
+
+    } else {
+      return {};
+    }
+
+  } break;
+  case SDF::ConditionalType::inverted: /* ~node or node~=1 is condition */
+  {
+
+    SDF::InvertedNode node = std::get<SDF::InvertedNode>(cond.value);
+
+    // get the conditional value pointer of the variable
+    auto left_index_op = get_sdf_node_index(node, scope_index, scope);
+
+    if (left_index_op.has_value()) {
+
+      auto left_cvp = get_sdf_node_ptr(left_index_op.value());
+
+      auto right_cvp = ConditionalValuePointer(VCD::Value::zero); /// <<<<
+
+      auto cond_op = ConditionalOperator<EqualityOperator::logical_equal>(
+          std::move(left_cvp), std::move(right_cvp));
+
+      return ConditionalValuePointer(std::move(cond_op));
+
+    } else {
+      return {};
+    }
+
+  } break;
+  case SDF::ConditionalType::equality: /* node <operator> <constant> */
+  {
+
+    auto equality = std::get<SDF::NodeConstantEquality>(cond.value);
+    std::size_t var_index;
+    SDF::Node node = equality.left;
+
+    // get the conditional value pointer of the variable
+    auto left_index_op = get_sdf_node_index(node, scope_index, scope);
+
+    if (left_index_op.has_value()) {
+
+      auto left_cvp = get_sdf_node_ptr(left_index_op.value());
+
+      auto right_cvp = equality.right
+                           ? ConditionalValuePointer(VCD::Value::one)
+                           : ConditionalValuePointer(VCD::Value::zero);
+
+      return get_sdf_conditional_ptr_helper(equality.op, left_cvp, right_cvp);
+
+    } else {
+      return {};
+    }
+
+  } break;
+  default:
+    throw std::runtime_error("InternalError");
+  }
+}
+
+// template <class ConditionalEventType, class EventType>
+// std::vector<std::tuple<Event, std::size_t>>
+// TimingChecker::get_sdf_port_tchk_events(std::size_t event_value,
+//                                         SDF::PortTimingCheck port_tchk,
+//                                         std::size_t port_vcd_index,
+//                                         std::size_t scope_index,
+//                                         VCD::Scope &scope)
+// {
+//   std::vector<std::tuple<Event, std::size_t>> events{};
+
+//   auto port = port_tchk.port;
+//   auto port_cvp = get_sdf_node_ptr(port_vcd_index);
+
+//   std::optional<ConditionalValuePointer> cond_op_cvp_optional{};
+
+//   if (port_tchk.timing_check_condition.has_value()) {
+//     auto conditional_node_cvp_option = get_sdf_conditional_ptr(
+//         port_tchk.timing_check_condition.value(), scope_index, scope);
+
+//     if (conditional_node_cvp_option.has_value()) {
+
+//       auto cond_op = ConditionalOperator<EqualityOperator::logical_equal>(
+//           std::move(conditional_node_cvp_option.value()), std::move(port_cvp));
+
+//       cond_op_cvp_optional = ConditionalValuePointer(std::move(cond_op));
+//     }
+//   }
+
+//   /* if range */
+//   if (port.end.has_value()) {
+//     if (port.start.has_value()) {
+
+//       auto sdf_port_start = port.start.value();
+//       auto sdf_port_end = port.end.value();
+
+//       auto [vcd_val_start, vcd_val_end] = index_lookup_[port_vcd_index];
+
+//       // verify range size corresponds
+//       if (vcd_val_start + sdf_port_end > vcd_val_end) {
+//         fmt::printf("WARN : Ignoring extra indices specified for signal : {}",
+//                     port.basename_identifier);
+//       }
+
+//       if (vcd_val_start + sdf_port_start <= vcd_val_end) {
+//         for (auto &&index : indices(sdf_port_start, sdf_port_end)) {
+//           if (cond_op_cvp_optional.has_value()) {
+//             events.push_back(
+//                 {ConditionalHoldEvent{
+//                      std::move(cond_op_cvp_optional.value()),
+//                      std::move(EventType{vcd_val_start + index, event_value})},
+//                  vcd_val_start + index});
+//           } else {
+//             events.push_back(
+//                 {std::move(EventType{vcd_val_start + index, event_value}),
+//                  vcd_val_start + index});
+//           }
+//         }
+//       } else {
+//         // Specified starting index out of bounds.
+//         // Ignore the HOLD.
+//       }
+//     }
+
+//     /* if single value from a range */
+//   } else if (port.start.has_value()) {
+
+//     auto sdf_port_start = port.start.value();
+
+//     auto [vcd_val_start, vcd_val_end] = index_lookup_[port_vcd_index];
+
+//     if (vcd_val_start + sdf_port_start <= vcd_val_end) {
+//       if (cond_op_cvp_optional.has_value()) {
+//         events.push_back(
+//             {ConditionalEventType{
+//                  std::move(cond_op_cvp_optional.value()),
+//                  EventType{vcd_val_start + sdf_port_start, event_value}},
+//              vcd_val_start + sdf_port_start});
+//       } else {
+//         events.push_back(
+//             {EventType{vcd_val_start + sdf_port_start, event_value},
+//              vcd_val_start + sdf_port_start});
+//       }
+//     } else {
+//       // Specified index does not exist.
+//       // Ignore the HOLD.
+//     }
+
+//     /* if single value only */
+//   } else {
+//     if (cond_op_cvp_optional.has_value()) {
+//       events.push_back(
+//           {ConditionalEventType{std::move(cond_op_cvp_optional.value()),
+//                                 EventType{port_vcd_index, event_value}},
+//            port_vcd_index});
+//     } else {
+//       events.push_back(
+//           {EventType{port_vcd_index, event_value}, port_vcd_index});
+//     }
+//   }
+//   return std::move(events);
+// }
+
+void TimingChecker::apply_sdf_hold(std::shared_ptr<SDF::DelayFile> /*sc*/,
+                                   SDF::Hold hold, std::size_t scope_index,
+                                   VCD::Scope &scope)
+{
+
+  auto sdf_value = hold.value.content(); // chooses TYP for now.
+
+  if (sdf_value.has_value()) {
+
+    // get the indexes to reg and trig port in header
+    auto reg_port_index_option =
+        get_sdf_node_index(hold.reg.port, scope_index, scope);
+    auto trig_port_index_option =
+        get_sdf_node_index(hold.trig.port, scope_index, scope);
+
+    if (reg_port_index_option.has_value() &&
+        trig_port_index_option.has_value()) {
+
+      auto reg_port_index = reg_port_index_option.value();
+      auto trig_port_index = trig_port_index_option.value();
+
+      // std::vector<std::tuple<Event, std::size_t>> reg_events{
+      //     get_sdf_port_tchk_events<ConditionalHoldEvent, HoldEvent>(
+      //         (std::size_t)(sdf_value.value() * 1000), // todo
+      //         hold.reg, reg_port_index, scope_index, scope)};
+
+      // std::vector<std::tuple<Event, std::size_t>> trig_events{
+      //     get_sdf_port_tchk_events<ConditionalHoldEvent, HoldEvent>(
+      //         (std::size_t)(sdf_value.value() * 1000), hold.trig,
+      //         trig_port_index, scope_index, scope)};
+
+      // if (trig_events.size() >= 1) {
+      //   if (hold.trig.port.edge.has_value()) {
+      //     switch (hold.trig.port.edge.value()) {
+      //     case SDF::EdgeType::posedge:
+      //     case SDF::EdgeType::_01:
+      //       for (auto &&[event, index] : trig_events) {
+      //         event_lists_[index].pos_edge.push_back(std::move(event));
+      //       }
+      //       break;
+      //     case SDF::EdgeType::negedge:
+      //     case SDF::EdgeType::_10:
+      //       for (auto &&[event, index] : trig_events) {
+      //         event_lists_[index].pos_edge.push_back(std::move(event));
+      //       }
+      //       break;
+      //     default:
+      //       throw std::runtime_error("InternalError : unsupported edgetype");
+      //     }
+      //   } else {
+      //     for (auto &&[event, index] : trig_events) {
+      //       event_lists_[index].pos_edge.push_back(std::move(event));
+      //       event_lists_[index].neg_edge.push_back(std::move(event));
+      //     }
+      //   }
+      // }
+    }
+  }
+}
+
+/*
+  for all timing specifications
+    considering only timing checks
+      for all hold timing checks
+        create hold or conditional hold for the port/values/events involved.
+*/
 void TimingChecker::apply_sdf_timing_specs(std::shared_ptr<SDF::DelayFile> sc,
                                            SDF::Cell cell,
-                                          //  std::size_t instance_index, //remove
-                                           VCD::Scope &instance_scope)
+                                           std::size_t scope_index, // remove
+                                           VCD::Scope &scope)
 {
-  /*
-    for all timing specifications
-      considering only timing checks
-        for all hold timing checks
-          create hold or conditional hold for the port/values/events involved.
-  */
   for (auto &&spec : cell.timing_specs) {
     switch (spec.get_enum_type()) {
     case SDF::TimingSpecType::timing_check:
 
-      for(auto&& check : std::get<SDF::TimingCheckSpec>(spec.value)) {
+      for (auto &&check : std::get<SDF::TimingCheckSpec>(spec.value)) {
         switch (check.get_enum_type()) {
-        case SDF::TimingCheckType::hold: 
-            apply_sdf_hold(sc, std::get<SDF::Hold>(check.value), 
-                          // instance_index, 
-                          instance_scope);
-        break;
+        case SDF::TimingCheckType::hold: {
+          apply_sdf_hold(sc, std::get<SDF::Hold>(check.value), scope_index,
+                         scope);
+          // auto var_svp = state_.get_value_pointer(0);
+          // auto var_cvp = ConditionalValuePointer(var_svp);
+        } break;
         default:
           throw std::runtime_error("InternalError");
-        }  
+        }
       }
       break;
 
     default:
       throw std::runtime_error("InternalError");
-
     }
   }
 }
@@ -195,33 +477,34 @@ void TimingChecker::apply_sdf_timing_specs(std::shared_ptr<SDF::DelayFile> sc,
 // It cannot work without the Verilog parser+ast to convert instance-name ->
 // module-name.
 void TimingChecker::apply_sdf_cell_helper(std::shared_ptr<SDF::DelayFile> sc,
-                                          SDF::Cell cell,
-                                          VCD::Scope &apply_scope)
+                                          SDF::Cell cell, VCD::Scope &scope)
 {
-  for (auto && [ident, index]  : apply_scope.get_scopes()) {
 
-    VCD::Scope scope = header_->get_scope(index);
+  for (auto &&[ident, index] : scope.get_scopes()) {
 
-    if (scope.get_scope_type() == VCD::ScopeType::module) {
+    // cell instance scope
+    VCD::Scope next_scope = header_->get_scope(index);
+
+    if (next_scope.get_scope_type() == VCD::ScopeType::module) {
       // std::string module_name =
       // ast->get_instance_type_name(ident);
 
       // if(cell.cell_type.compare(module_name)){
-      apply_sdf_timing_specs(sc, cell, scope);
+      apply_sdf_timing_specs(sc, cell, index, next_scope);
       // }
     }
 
-    apply_sdf_cell_helper(sc, cell, scope);
+    apply_sdf_cell_helper(sc, cell, next_scope);
   }
 }
 
 void TimingChecker::apply_sdf_cell(std::shared_ptr<SDF::DelayFile> sc,
-                                   SDF::Cell cell, 
+                                   SDF::Cell cell,
                                    std::size_t apply_scope_index)
 {
 
   VCD::Scope apply_scope = header_->get_scope(apply_scope_index);
-  
+
   /* IF the cell instance is blank or *, then look for
       verilog scopes of 'cell_type' among the available VCD scopes. */
   if (std::holds_alternative<SDF::Star>(cell.cell_instance)) {
@@ -247,7 +530,7 @@ void TimingChecker::apply_sdf_cell(std::shared_ptr<SDF::DelayFile> sc,
           // ast->get_instance_type_name(scope.get_identifier());
 
           // if(cell.cell_type.compare(module_name)){
-          apply_sdf_timing_specs(sc, cell, scope);
+          apply_sdf_timing_specs(sc, cell, index, scope);
           // }
         }
       }
@@ -255,11 +538,14 @@ void TimingChecker::apply_sdf_cell(std::shared_ptr<SDF::DelayFile> sc,
     } else {
 
       // ONLY the module/instance scope supplied:
-      auto index = match_scope(hi.value, apply_scope_index);
+      std::optional<size_t> index = match_scope(hi.value, apply_scope_index);
+
       if (index.has_value()) {
         VCD::Scope scope = header_->get_scope(index.value());
-        
-        apply_sdf_timing_specs(sc, cell, scope);
+
+        // apply sdf timing specs withing cell instance
+        apply_sdf_timing_specs(sc, cell, index.value(), scope);
+
       } else {
         // cell instance was not found.
       }
@@ -302,6 +588,7 @@ void TimingChecker::apply_sdf_file(/*VerilogSourceTree *ast, */
 
   // TODO: Should always match the SDF file timescale with that of the VCD.
   // ..which could require conversion of the value.
+
   // auto timescale = delayfile->get_timescale();
   std::vector<SDF::Cell> cells = delayfile->get_cells();
   /*etc*/
