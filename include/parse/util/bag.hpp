@@ -67,26 +67,9 @@ public:
 
   void remove(T *pointer) noexcept
   {
-    auto index = pointer - begin();
+    auto index = pointer - std::addressof(storage_.front());
     remove(index);
   };
-
-  // Make range
-  T *begin() noexcept
-  {
-    if (storage_.empty())
-      return nullptr;
-
-    return std::addressof(storage_.front());
-  }
-
-  T *end()
-  {
-    if (storage_.empty())
-      return nullptr;
-
-    return std::addressof(storage_.back())+1;
-  }
 
   auto as_range() {
     return ranges::span(storage_);

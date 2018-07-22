@@ -10,10 +10,9 @@ TEST_CASE("Parse.Util.Bag", "[Util]") {
     Bag<int> bag_default;
     REQUIRE(bag_default.is_empty());
 
-    REQUIRE(bag_default.begin() == bag_default.begin());
     REQUIRE(bag_default.get_size() == 0);
 
-    for([[maybe_unused]] auto& t: bag_default) {
+    for([[maybe_unused]] auto& t: bag_default.as_range()) {
       REQUIRE(false);
     }
   }

@@ -17,7 +17,7 @@ struct TriggeredEvent {
   ConditionalValuePointer condition;
   EdgeType edge_type;
   std::size_t assertion_index;
-  std::size_t until;
+  std::size_t hold_time;
 };
 
 struct TriggeredEventList {

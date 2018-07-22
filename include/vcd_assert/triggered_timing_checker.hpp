@@ -2,17 +2,29 @@
 #define VCD_ASSERT_TRIGGERED_TIMING_CHECKER_HPP
 
 #include "./conditional.hpp"
-
-#include "sdf/types/enums.hpp"
 #include "./edge_type.hpp"
 #include "./event.hpp"
 
+#include "sdf/types/enums.hpp"
+
+#include "parse/util/bag.hpp"
+
 namespace VCDAssert {
 
+struct TriggeredItem {
+  std::reference_wrapper<const ConditionalValuePointer> condition;
+  EdgeType edge_type;
+  std::size_t assertion_index;
+  std::size_t until;
+};
+
+struct TriggeredItemList {
+  Parse::Util::Bag<TriggeredItem> items;
+};
 
 class TriggeredTimingChecker
 {
-  std::vector<TriggeredEventList> triggered_event_list_;
+  std::vector<TriggeredItemList> triggered_item_list_;
   std::size_t sim_time_;
 
 public:
@@ -23,8 +35,7 @@ public:
   [[nodiscard]] bool event(std::size_t index,
                            VCD::Value from, VCD::Value to);
 
-  void hold(ConditionalValuePointer condition, std::size_t index,
-            std::size_t hold_time, EdgeType edge_type);
+  void hold(const TriggeredEvent &event, std::size_t index);
 };
 
 } // namespace VCDAssert

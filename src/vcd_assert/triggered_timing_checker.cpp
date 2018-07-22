@@ -6,47 +6,51 @@
 using namespace VCDAssert;
 
 TriggeredTimingChecker::TriggeredTimingChecker(std::size_t size) :
-    triggered_event_list_(size){};
+    triggered_item_list_(size), sim_time_(0) {
+    // Empty
+    };
 
 void TriggeredTimingChecker::update_sim_time(std::size_t sim_time) {
   sim_time_ = sim_time;
 }
 
 bool TriggeredTimingChecker::event(std::size_t index, VCD::Value from, VCD::Value to) {
-  auto& ref = triggered_event_list_[index];
+  auto& ref = triggered_item_list_[index];
   bool out = false;
 
-  for(auto &event : ranges::view::reverse(ref.events.as_range())) {
+  for(auto &item : ranges::view::reverse(ref.items.as_range())) {
     // If the assertion no longer needs to be checked
-    if (sim_time_ >= event.until) {
-      ref.events.remove(std::addressof(event));
+    if (sim_time_ >= item.until) {
+      ref.items.remove(std::addressof(item));
       continue;
     }
 
     // If edge type doesn't match it doesn't matter
-    if (!edge_type_matches(event.edge_type, from, to)) {
+    if (!edge_type_matches(item.edge_type, from, to)) {
       continue;
     }
     
     // if it actually triggered
-    if (event.condition.value() == VCD::Value::one) {
+    if (item.condition.get().value() == VCD::Value::one) {
       // TODO trigger event
+      // Print message or something
+      out |= true;
     }
   }
 
   return out;
 }
 
-void TriggeredTimingChecker::hold(ConditionalValuePointer condition,
-                                  std::size_t index, std::size_t hold_time,
-                                  EdgeType edge_type)
+void TriggeredTimingChecker::hold(const TriggeredEvent &event, std::size_t index)
 {
-  auto& ref = triggered_event_list_[index];
-  TriggeredEvent triggered_event {
-    std::move(condition),
-    edge_type,
-    sim_time_ + hold_time
+  auto& ref = triggered_item_list_[index];
+
+  TriggeredItem triggered_item {
+    event.condition,
+    event.edge_type,
+    event.assertion_index,
+    sim_time_ + event.hold_time
   };
 
-  ref.events.insert(std::move(triggered_event));
+  ref.items.insert(triggered_item);
 }
