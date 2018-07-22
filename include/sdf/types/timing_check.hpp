@@ -101,9 +101,9 @@ struct PortTimingCheck{
 //note input == port_tchk 2 ! 
 //note : order is important.
 struct Hold {
-  PortTimingCheck assert;  //subjective event
-  PortTimingCheck trigger; //trigger event
-  Value value;
+  PortTimingCheck trig;  //triggers HOLD violation (data)
+  PortTimingCheck reg;   //triggers HOLD check     (clk)
+  Value value;           //time period from check start that wil cause violation.
 };
 
 // clang-format off
