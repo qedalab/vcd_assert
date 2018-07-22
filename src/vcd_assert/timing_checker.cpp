@@ -276,107 +276,107 @@ std::optional<ConditionalValuePointer> TimingChecker::get_sdf_conditional_ptr(
   }
 }
 
-template <class ConditionalEventType, class EventType>
-std::vector<std::tuple<Event, std::size_t>>
-TimingChecker::get_sdf_port_tchk_events(std::size_t event_value,
-                                        SDF::PortTimingCheck port_tchk,
-                                        std::size_t port_vcd_index,
-                                        std::size_t scope_index,
-                                        VCD::Scope &scope)
-{
-  std::vector<std::tuple<Event, std::size_t>> events{};
+// template <class ConditionalEventType, class EventType>
+// std::vector<std::tuple<Event, std::size_t>>
+// TimingChecker::get_sdf_port_tchk_events(std::size_t event_value,
+//                                         SDF::PortTimingCheck port_tchk,
+//                                         std::size_t port_vcd_index,
+//                                         std::size_t scope_index,
+//                                         VCD::Scope &scope)
+// {
+//   std::vector<std::tuple<Event, std::size_t>> events{};
 
-  auto port = port_tchk.port;
-  auto port_cvp = get_sdf_node_ptr(port_vcd_index);
+//   auto port = port_tchk.port;
+//   auto port_cvp = get_sdf_node_ptr(port_vcd_index);
 
-  std::optional<ConditionalValuePointer> cond_op_cvp_optional{};
+//   std::optional<ConditionalValuePointer> cond_op_cvp_optional{};
 
-  if (port_tchk.timing_check_condition.has_value()) {
-    auto conditional_node_cvp_option = get_sdf_conditional_ptr(
-        port_tchk.timing_check_condition.value(), scope_index, scope);
+//   if (port_tchk.timing_check_condition.has_value()) {
+//     auto conditional_node_cvp_option = get_sdf_conditional_ptr(
+//         port_tchk.timing_check_condition.value(), scope_index, scope);
 
-    if (conditional_node_cvp_option.has_value()) {
+//     if (conditional_node_cvp_option.has_value()) {
 
-      auto cond_op = ConditionalOperator<EqualityOperator::logical_equal>(
-          std::move(conditional_node_cvp_option.value()), std::move(port_cvp));
+//       auto cond_op = ConditionalOperator<EqualityOperator::logical_equal>(
+//           std::move(conditional_node_cvp_option.value()), std::move(port_cvp));
 
-      cond_op_cvp_optional = ConditionalValuePointer(std::move(cond_op));
-    }
-  }
+//       cond_op_cvp_optional = ConditionalValuePointer(std::move(cond_op));
+//     }
+//   }
 
-  /* if range */
-  if (port.end.has_value()) {
-    if (port.start.has_value()) {
+//   /* if range */
+//   if (port.end.has_value()) {
+//     if (port.start.has_value()) {
 
-      auto sdf_port_start = port.start.value();
-      auto sdf_port_end = port.end.value();
+//       auto sdf_port_start = port.start.value();
+//       auto sdf_port_end = port.end.value();
 
-      auto [vcd_val_start, vcd_val_end] = index_lookup_[port_vcd_index];
+//       auto [vcd_val_start, vcd_val_end] = index_lookup_[port_vcd_index];
 
-      // verify range size corresponds
-      if (vcd_val_start + sdf_port_end > vcd_val_end) {
-        fmt::printf("WARN : Ignoring extra indices specified for signal : {}",
-                    port.basename_identifier);
-      }
+//       // verify range size corresponds
+//       if (vcd_val_start + sdf_port_end > vcd_val_end) {
+//         fmt::printf("WARN : Ignoring extra indices specified for signal : {}",
+//                     port.basename_identifier);
+//       }
 
-      if (vcd_val_start + sdf_port_start <= vcd_val_end) {
-        for (auto &&index : indices(sdf_port_start, sdf_port_end)) {
-          if (cond_op_cvp_optional.has_value()) {
-            events.push_back(
-                {ConditionalHoldEvent{
-                     std::move(cond_op_cvp_optional.value()),
-                     std::move(EventType{vcd_val_start + index, event_value})},
-                 vcd_val_start + index});
-          } else {
-            events.push_back(
-                {std::move(EventType{vcd_val_start + index, event_value}),
-                 vcd_val_start + index});
-          }
-        }
-      } else {
-        // Specified starting index out of bounds.
-        // Ignore the HOLD.
-      }
-    }
+//       if (vcd_val_start + sdf_port_start <= vcd_val_end) {
+//         for (auto &&index : indices(sdf_port_start, sdf_port_end)) {
+//           if (cond_op_cvp_optional.has_value()) {
+//             events.push_back(
+//                 {ConditionalHoldEvent{
+//                      std::move(cond_op_cvp_optional.value()),
+//                      std::move(EventType{vcd_val_start + index, event_value})},
+//                  vcd_val_start + index});
+//           } else {
+//             events.push_back(
+//                 {std::move(EventType{vcd_val_start + index, event_value}),
+//                  vcd_val_start + index});
+//           }
+//         }
+//       } else {
+//         // Specified starting index out of bounds.
+//         // Ignore the HOLD.
+//       }
+//     }
 
-    /* if single value from a range */
-  } else if (port.start.has_value()) {
+//     /* if single value from a range */
+//   } else if (port.start.has_value()) {
 
-    auto sdf_port_start = port.start.value();
+//     auto sdf_port_start = port.start.value();
 
-    auto [vcd_val_start, vcd_val_end] = index_lookup_[port_vcd_index];
+//     auto [vcd_val_start, vcd_val_end] = index_lookup_[port_vcd_index];
 
-    if (vcd_val_start + sdf_port_start <= vcd_val_end) {
-      if (cond_op_cvp_optional.has_value()) {
-        events.push_back(
-            {ConditionalEventType{
-                 std::move(cond_op_cvp_optional.value()),
-                 EventType{vcd_val_start + sdf_port_start, event_value}},
-             vcd_val_start + sdf_port_start});
-      } else {
-        events.push_back(
-            {EventType{vcd_val_start + sdf_port_start, event_value},
-             vcd_val_start + sdf_port_start});
-      }
-    } else {
-      // Specified index does not exist.
-      // Ignore the HOLD.
-    }
+//     if (vcd_val_start + sdf_port_start <= vcd_val_end) {
+//       if (cond_op_cvp_optional.has_value()) {
+//         events.push_back(
+//             {ConditionalEventType{
+//                  std::move(cond_op_cvp_optional.value()),
+//                  EventType{vcd_val_start + sdf_port_start, event_value}},
+//              vcd_val_start + sdf_port_start});
+//       } else {
+//         events.push_back(
+//             {EventType{vcd_val_start + sdf_port_start, event_value},
+//              vcd_val_start + sdf_port_start});
+//       }
+//     } else {
+//       // Specified index does not exist.
+//       // Ignore the HOLD.
+//     }
 
-    /* if single value only */
-  } else {
-    if (cond_op_cvp_optional.has_value()) {
-      events.push_back(
-          {ConditionalEventType{std::move(cond_op_cvp_optional.value()),
-                                EventType{port_vcd_index, event_value}},
-           port_vcd_index});
-    } else {
-      events.push_back(
-          {EventType{port_vcd_index, event_value}, port_vcd_index});
-    }
-  }
-  return std::move(events);
-}
+//     /* if single value only */
+//   } else {
+//     if (cond_op_cvp_optional.has_value()) {
+//       events.push_back(
+//           {ConditionalEventType{std::move(cond_op_cvp_optional.value()),
+//                                 EventType{port_vcd_index, event_value}},
+//            port_vcd_index});
+//     } else {
+//       events.push_back(
+//           {EventType{port_vcd_index, event_value}, port_vcd_index});
+//     }
+//   }
+//   return std::move(events);
+// }
 
 void TimingChecker::apply_sdf_hold(std::shared_ptr<SDF::DelayFile> /*sc*/,
                                    SDF::Hold hold, std::size_t scope_index,
@@ -399,41 +399,41 @@ void TimingChecker::apply_sdf_hold(std::shared_ptr<SDF::DelayFile> /*sc*/,
       auto reg_port_index = reg_port_index_option.value();
       auto trig_port_index = trig_port_index_option.value();
 
-      std::vector<std::tuple<Event, std::size_t>> reg_events{
-          get_sdf_port_tchk_events<ConditionalHoldEvent, HoldEvent>(
-              (std::size_t)(sdf_value.value() * 1000), // todo
-              hold.reg, reg_port_index, scope_index, scope)};
+      // std::vector<std::tuple<Event, std::size_t>> reg_events{
+      //     get_sdf_port_tchk_events<ConditionalHoldEvent, HoldEvent>(
+      //         (std::size_t)(sdf_value.value() * 1000), // todo
+      //         hold.reg, reg_port_index, scope_index, scope)};
 
-      std::vector<std::tuple<Event, std::size_t>> trig_events{
-          get_sdf_port_tchk_events<ConditionalHoldEvent, HoldEvent>(
-              (std::size_t)(sdf_value.value() * 1000), hold.trig,
-              trig_port_index, scope_index, scope)};
+      // std::vector<std::tuple<Event, std::size_t>> trig_events{
+      //     get_sdf_port_tchk_events<ConditionalHoldEvent, HoldEvent>(
+      //         (std::size_t)(sdf_value.value() * 1000), hold.trig,
+      //         trig_port_index, scope_index, scope)};
 
-      if (trig_events.size() >= 1) {
-        if (hold.trig.port.edge.has_value()) {
-          switch (hold.trig.port.edge.value()) {
-          case SDF::EdgeType::posedge:
-          case SDF::EdgeType::_01:
-            for (auto &&[event, index] : trig_events) {
-              event_lists_[index].pos_edge.push_back(std::move(event));
-            }
-            break;
-          case SDF::EdgeType::negedge:
-          case SDF::EdgeType::_10:
-            for (auto &&[event, index] : trig_events) {
-              event_lists_[index].pos_edge.push_back(std::move(event));
-            }
-            break;
-          default:
-            throw std::runtime_error("InternalError : unsupported edgetype");
-          }
-        } else {
-          for (auto &&[event, index] : trig_events) {
-            event_lists_[index].pos_edge.push_back(std::move(event));
-            event_lists_[index].neg_edge.push_back(std::move(event));
-          }
-        }
-      }
+      // if (trig_events.size() >= 1) {
+      //   if (hold.trig.port.edge.has_value()) {
+      //     switch (hold.trig.port.edge.value()) {
+      //     case SDF::EdgeType::posedge:
+      //     case SDF::EdgeType::_01:
+      //       for (auto &&[event, index] : trig_events) {
+      //         event_lists_[index].pos_edge.push_back(std::move(event));
+      //       }
+      //       break;
+      //     case SDF::EdgeType::negedge:
+      //     case SDF::EdgeType::_10:
+      //       for (auto &&[event, index] : trig_events) {
+      //         event_lists_[index].pos_edge.push_back(std::move(event));
+      //       }
+      //       break;
+      //     default:
+      //       throw std::runtime_error("InternalError : unsupported edgetype");
+      //     }
+      //   } else {
+      //     for (auto &&[event, index] : trig_events) {
+      //       event_lists_[index].pos_edge.push_back(std::move(event));
+      //       event_lists_[index].neg_edge.push_back(std::move(event));
+      //     }
+      //   }
+      // }
     }
   }
 }

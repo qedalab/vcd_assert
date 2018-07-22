@@ -76,13 +76,13 @@ private:
   get_sdf_conditional_ptr(SDF::TimingCheckCondition cond,
                           std::size_t scope_index, VCD::Scope &scope);
 
-  template<class ConditionalEventType, class EventType>
-  std::vector<std::tuple<Event,std::size_t>>
-  get_sdf_port_tchk_events(std::size_t hold_value, 
-                          SDF::PortTimingCheck port_tchk,
-                          std::size_t port_vcd_index,
-                          std::size_t scope_index, 
-                          VCD::Scope &scope);
+  // template<class ConditionalEventType, class EventType>
+  // std::vector<std::tuple<Event,std::size_t>>
+  // get_sdf_port_tchk_events(std::size_t hold_value, 
+  //                         SDF::PortTimingCheck port_tchk,
+  //                         std::size_t port_vcd_index,
+  //                         std::size_t scope_index, 
+  //                         VCD::Scope &scope);
 
   void apply_sdf_hold(std::shared_ptr<SDF::DelayFile> sc, SDF::Hold hold,
                       std::size_t scope_index, VCD::Scope &scope);
