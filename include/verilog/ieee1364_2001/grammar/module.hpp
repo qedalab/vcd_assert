@@ -62,7 +62,7 @@ struct parameter_declaration : sor<
 
 /*# ( parameter_declaration { , parameter_declaration } )*/
 struct module_parameter_port_list : op_sep_seq<
-  one<'('>,
+  seq<one<'#'>, one<'('>>,
   list< 
     seq<
       parameter_declaration, 

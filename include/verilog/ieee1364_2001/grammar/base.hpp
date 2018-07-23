@@ -4,6 +4,7 @@
 
 #include "./character.hpp"
 #include "./comment.hpp"
+#include "./block.hpp"
 
 #include <parse/grammar/base.h>
 #include <parse/grammar/part.h>

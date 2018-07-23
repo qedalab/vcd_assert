@@ -51,6 +51,12 @@ endif()
 target_link_libraries(libsdf PUBLIC libparse fmt::fmt static_string )
 target_add_warnings(libsdf)
 
+#Add libverilog library
+add_library(libverilog "src/verilog")
+target_include_directories(libverilog PUBLIC "${PROJECT_SOURCE_DIR}/include/")
+target_link_libraries(libverilog PUBLIC libparse )
+target_add_warnings(libverilog)
+
 #Add vcd_assert library
 add_library(libvcd_assert "src/vcd_assert")
 target_include_directories(libvcd PUBLIC "${PROJECT_SOURCE_DIR}/include/")
@@ -67,7 +73,7 @@ if(${BUILD_TESTS})
   add_subdirectory(tests)
 
   set_target_properties(unit_parse unit_parse unit_vcd unit_vcd_assert
-                        unit_sdf libvcd_bench_grammar
+                        unit_sdf unit_verilog libvcd_bench_grammar
     PROPERTIES
     ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
     LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
@@ -75,7 +81,7 @@ if(${BUILD_TESTS})
 )
 endif()
 
-set_target_properties(libparse libvcd libvcd_assert vcd_assert libsdf
+set_target_properties(libparse libvcd libvcd_assert vcd_assert libsdf libverilog
   PROPERTIES
   ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
   LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
