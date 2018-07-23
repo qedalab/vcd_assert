@@ -619,24 +619,26 @@ void TimingChecker::apply_sdf_file(/*VerilogSourceTree *ast, */
   return out;
 }
 
-    [[nodiscard]] bool TimingChecker::event(std::size_t index, VCD::Value value)
+[[nodiscard]] bool TimingChecker::internal_event(std::size_t index,
+                                                 VCD::Value value)
 {
-  auto &events = event_lists_.at(index).events;
-  auto prev_value = state_.get_scalar_value(index);
+auto &events = event_lists_.at(index).events;
+auto prev_value = state_.get_scalar_value(index);
 
-  // Check for timing violation
-  bool timing_violation = false;
-  for (const auto &event : events)
-    timing_violation |= handle_event(event, index, prev_value, value);
+// Check for timing violation
+bool timing_violation = false;
+for (const auto &event : events)
+  timing_violation |= handle_event(event, index, prev_value, value);
 
-  // Update state
-  state_.set_value(index, value);
+// Update state
+state_.set_value(index, value);
 
   return timing_violation;
 }
 
-[[nodiscard]] bool TimingChecker::event(std::size_t range_index,
-                                        ranges::span<VCD::Value> values) {
+[[nodiscard]] bool
+TimingChecker::internal_event(std::size_t range_index,
+                              ranges::span<VCD::Value> values) {
   auto prev_values = state_.get_vector_value(range_index);
   assert(values.size() == prev_values.size());
 
@@ -653,7 +655,7 @@ void TimingChecker::apply_sdf_file(/*VerilogSourceTree *ast, */
 
     // Check for timing violation
     for (const auto &event : events)
-      timing_violation |= handle_event(event, index, prev_value, values[i]);
+      timing_violation |= handle_event(event, index, prev_value, value);
   }
 
   // Update values
@@ -662,8 +664,119 @@ void TimingChecker::apply_sdf_file(/*VerilogSourceTree *ast, */
   return timing_violation;
 }
 
-void TimingChecker::update_sim_time(std::size_t sim_time)
+void TimingChecker::internal_update_sim_time(std::size_t sim_time)
 {
   this->sim_time_ = sim_time;
   this->checker_.update_sim_time(sim_time_);
+}
+
+void TimingChecker::simulation_time(VCD::SimulationTime simulation_time)
+{
+  if (sim_time_ > simulation_time.number) {
+    fmt::print(
+        "ERROR: simulation time change in VCD file is going back in time\n"
+        "  To continue execution the simulation time change is ignored\n");
+    return;
+  }
+
+  if (sim_time_ == simulation_time.number) {
+    fmt::print(
+        "WARNING: simulation time change in VCD file does not change time\n");
+  }
+
+  this->internal_update_sim_time(simulation_time.number);
+}
+
+void TimingChecker::scalar_value_change(VCD::ScalarValueChangeView value_change)
+{
+  std::string identifier_code_str{value_change.identifier_code};
+
+  if (!header_->has_var_id_code(identifier_code_str)) {
+    fmt::print("ERROR: Unknown identifier code\n"
+               "  To continue execution the scalar value change is ignored\n");
+    return;
+  }
+
+  auto index = header_->get_var_id_code_index(identifier_code_str);
+
+  if (internal_event(index, value_change.value)) {
+    // TODO Timing assert message
+    fmt::print("TIMING ASSERT: Timing violation occured during parsing of "
+               "scalar value change\n");
+  };
+}
+
+void TimingChecker::vector_value_change(
+    VCD::UncheckedVectorValueChangeView value_change)
+{
+  std::string identifier_code_str{value_change.identifier_code};
+  std::string_view values = value_change.values;
+
+  if (!header_->has_var_id_code(identifier_code_str)) {
+    fmt::print("ERROR: Unknown identifier code\n");
+    fmt::print("  To continue execution the vector value change is ignored\n");
+    return;
+  }
+
+  auto index = header_->get_var_id_code_index(identifier_code_str);
+  auto var_id_code = header_->get_var_id_code(index);
+
+  if (values.size() > var_id_code.get_size()) {
+    fmt::print(
+        "ERROR: Vector value change is larger than specified in the header\n"
+        "  To continue execution the vector value change is ignored\n");
+    return;
+  }
+
+  auto padded = var_id_code.get_size() - values.size();
+
+  for (auto i : indices(values.size())) {
+    char value_char = values[i];
+    auto buffer_index = i + padded;
+    switch (value_char) {
+      // clang-format off
+      case 'x': case 'X': value_buffer_[buffer_index] = VCD::Value::x; break;
+      case 'z': case 'Z': value_buffer_[buffer_index] = VCD::Value::z; break;
+      case '1': value_buffer_[buffer_index] = VCD::Value::one; break;
+      case '0': value_buffer_[buffer_index] = VCD::Value::x; break;
+      // clang-format on
+    }
+  }
+
+  // Do left extention
+  VCD::Value left_extend_value;
+
+  switch (value_buffer_[padded]) {
+  // clang-format off
+    case VCD::Value::one: left_extend_value = VCD::Value::zero; break;
+    case VCD::Value::zero: left_extend_value = VCD::Value::zero; break;
+    case VCD::Value::x: left_extend_value = VCD::Value::x; break;
+    case VCD::Value::z: left_extend_value = VCD::Value::z; break;
+    // clang-format on
+  }
+
+  for (auto i : indices(padded)) {
+    value_buffer_[i] = left_extend_value;
+  }
+
+  // Get range of values
+  ranges::span<VCD::Value> range = value_buffer_;
+  range = range.subspan(var_id_code.get_size());
+
+  if (internal_event(index, range)) {
+    // TODO Better timing assert message
+    fmt::print("TIMING ASSERT: Timing violation occured during parsing of "
+               "vector value change\n");
+  };
+}
+
+void TimingChecker::real_value_change(VCD::RealValueChangeView value_change)
+{
+  static bool did_warn = false;
+
+  if (!did_warn) {
+    fmt::print(
+        "WARNING: Real value changes ignored in VCD file: UNIMPLEMENTED\n");
+    did_warn = true;
+  }
 }

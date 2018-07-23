@@ -16,6 +16,7 @@ public:
 
   // Default constructable
   Bag() = default;
+  ~Bag() = default;
 
   // Moveable
   Bag(Bag<T> &&other) noexcept { storage_ = std::move(other.storage_); }
