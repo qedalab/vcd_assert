@@ -1,4 +1,5 @@
 #include "vcd_assert/timing_checker.hpp"
+#include "vcd_assert/actions.hpp"
 
 #include "vcd/grammar/grammar.hpp"
 #include "vcd/types/header_reader.hpp"
@@ -190,6 +191,11 @@ int main(int argc, char **argv) {
       timing_checker.apply_sdf_file(/*ast,*/ std::move(delayfile_p), path.value);
     }    
   }
+
+  // Stream in vcd file
+  tao::pegtl::parse<Parse::Grammar::star<VCD::Grammar::simulation_command>,
+                    Parse::make_pegtl_template<VCDAssert::TimingCheckerAction>::type,
+                    Parse::capture_control>(vcd_input, timing_checker);
 
   return 0;
 }

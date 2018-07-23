@@ -22,6 +22,12 @@ struct VectorValueChangeView {
   std::string_view identifier_code; /// identifier code
 };
 
+/// View of vector value change
+struct UncheckedVectorValueChangeView {
+  std::string_view values;
+  std::string_view identifier_code;
+};
+
 /// View of real value change
 /// \todo ensure identifier code correctness
 struct RealValueChangeView {

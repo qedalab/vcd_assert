@@ -19,6 +19,9 @@
 // #include <verilog_parser.h>
 
 #include "vcd/types/header.hpp"
+#include "vcd/types/simulation_time.hpp"
+#include "vcd/types/value_change.hpp"
+
 #include <optional>
 #include <range/v3/span.hpp>
 #include <range/v3/view/indices.hpp>
@@ -49,6 +52,8 @@ class TimingChecker
   enum class MinTypeMax { min, typ, max };
 
   MinTypeMax min_typ_max_ = MinTypeMax::typ;
+
+  std::vector<VCD::Value> value_buffer_;
 
   [[nodiscard]] bool handle_event(const RegisterEvent &event, std::size_t index,
                                   VCD::Value from, VCD::Value to);
@@ -96,6 +101,12 @@ class TimingChecker
   void apply_sdf_cell(std::shared_ptr<SDF::DelayFile> sc, SDF::Cell cell,
                       std::size_t apply_scope_index);
 
+  [[nodiscard]] bool internal_event(std::size_t index, VCD::Value value);
+  [[nodiscard]] bool internal_event(std::size_t range_index, ranges::span<VCD::Value> values);
+  // [[nodiscard]] bool event(std::size_t index, double value);
+
+  void internal_update_sim_time(std::size_t sim_time);
+
 public:
   // Claims ownership of the header
   TimingChecker(std::shared_ptr<VCD::Header> header);
@@ -104,14 +115,11 @@ public:
                       std::shared_ptr<SDF::DelayFile> delayfile,
                       std::vector<std::string> vcd_node_path);
 
-  // Trigger event and return true if event was triggered
-  [[nodiscard]] bool event(std::size_t index, VCD::Value value);
+  void simulation_time(VCD::SimulationTime simulation_time);
 
-  [[nodiscard]] bool event(std::size_t index, ranges::span<VCD::Value> values);
-
-  void update_sim_time(std::size_t sim_time_);
-  // Don't handle doubles for now
-  // [[nodiscard]] bool event(std::size_t index, double value);
+  void scalar_value_change(VCD::ScalarValueChangeView value_change);
+  void vector_value_change(VCD::UncheckedVectorValueChangeView value_change);
+  void real_value_change(VCD::RealValueChangeView value_change);
 };
 
 } // namespace VCDAssert

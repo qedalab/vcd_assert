@@ -6,7 +6,7 @@
 
 namespace VCD::Test {
 
-void catch_test_scope(VCD::Header &header, VCD::Scope &scope, TestScope &test);
+void catch_test_scope(const VCD::Header &header, const VCD::Scope &scope, TestScope &test);
 
 } // namespace VCD
 
