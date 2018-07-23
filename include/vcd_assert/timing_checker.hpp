@@ -53,6 +53,8 @@ class TimingChecker
 
   MinTypeMax min_typ_max_ = MinTypeMax::typ;
 
+  std::vector<VCD::Value> value_buffer_;
+
   [[nodiscard]] bool handle_event(const RegisterEvent &event, std::size_t index,
                                   VCD::Value from, VCD::Value to);
 
