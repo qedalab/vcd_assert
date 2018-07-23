@@ -650,7 +650,7 @@ void TimingChecker::apply_sdf_file(/*VerilogSourceTree *ast, */
 
     // Check for timing violation
     for (const auto &event : events)
-      timing_violation |= handle_event(event, index, prev_value, values[i]);
+      timing_violation |= handle_event(event, index, prev_value, value);
   }
 
   // Update values
