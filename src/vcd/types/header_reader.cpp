@@ -19,7 +19,7 @@ void HeaderReader::scope(ScopeType type, std::string name)
     scope_stack_.push_back(0);
   } else {
 
-    auto &current_scope_ref = header_->get_scope(scope_stack_.back());
+    auto &current_scope_ref = header_->scopes_.at(scope_stack_.back());
 
     if (current_scope_ref.contains_scope(name))
       throw std::runtime_error("Duplicate scope name");
@@ -55,7 +55,7 @@ void HeaderReader::var(VarType type, std::size_t size,
 
   // Grab references for convenience
   auto &variables_ref = header_->variables_;
-  auto &current_scope_ref = header_->get_scope(scope_stack_.back());
+  auto &current_scope_ref = header_->scopes_.at(scope_stack_.back());
   auto &id_codes_ref = header_->id_codes_;
 
   auto &id_code_map_ref = header_->var_id_code_map_;

@@ -6,8 +6,8 @@
 
 namespace VCD::Test {
 
-void catch_test_var(VCD::Header &header,
-                    VCD::Variable &variable, TestVar test);
+void catch_test_var(const VCD::Header &header,
+                    const VCD::Variable &variable, TestVar test);
 
 } // namespace VCD
 

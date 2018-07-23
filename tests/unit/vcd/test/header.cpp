@@ -5,7 +5,7 @@
 
 #include <catch2/catch.hpp>
 
-void VCD::Test::catch_test_header(VCD::Header &header, TestHeader &test)
+void VCD::Test::catch_test_header(const VCD::Header &header, TestHeader &test)
 {
   SECTION("TimeScale") {
     if(test.time_scale) {

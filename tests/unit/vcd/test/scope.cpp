@@ -4,7 +4,7 @@
 
 #include <catch2/catch.hpp>
 
-void VCD::Test::catch_test_scope(VCD::Header &header, VCD::Scope &scope,
+void VCD::Test::catch_test_scope(const VCD::Header &header, const VCD::Scope &scope,
                                  TestScope &test)
 {
   CHECK(scope.get_scope_type() == test.type);

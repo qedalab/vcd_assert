@@ -15,7 +15,6 @@
 #include "parse/actions/dispatch.hpp"
 #include "parse/actions/storage/member.hpp"
 
-#include <parse/actions/apply/string_view.hpp>
 #include <string_view>
 
 namespace VCD::Actions {

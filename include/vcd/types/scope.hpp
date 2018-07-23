@@ -71,12 +71,12 @@ public:
   /// Returns a range of identifier-index pairs of the scopes
   /// \returns identifier-index pairs range
   /// \TODO Make and use identifier-index range
-  auto get_scopes() -> decltype(ranges::view::all(this->child_scopes_));
+  auto get_scopes() const -> decltype(ranges::view::all(this->child_scopes_));
 
   /// Returns a range of identifier-index pairs of the variables
   /// \returns identifier-index pairs range
   /// \TODO Make and use identifier-index range
-  auto get_variables() -> decltype(ranges::view::all(this->child_variables_));
+  auto get_variables() const -> decltype(ranges::view::all(this->child_variables_));
 
   /// Get scope identifier
   /// \returns View of identifier string

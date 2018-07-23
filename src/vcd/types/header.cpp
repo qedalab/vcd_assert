@@ -26,19 +26,19 @@ std::optional<std::string_view> Header::get_version() const noexcept
 
 bool Header::has_version() const noexcept { return version_.has_value(); }
 
-Variable &Header::get_var(std::size_t index)
+const Variable &Header::get_var(std::size_t index) const
 {
   assert(variables_.size() > index);
   return variables_.at(index);
 }
 
-Scope &Header::get_scope(std::size_t index)
+const Scope &Header::get_scope(std::size_t index) const
 {
   assert(scopes_.size() > index);
   return scopes_.at(index);
 }
 
-Scope &Header::get_root_scope()
+const Scope &Header::get_root_scope() const
 {
   assert(!scopes_.empty());
   return scopes_.at(0);
@@ -50,7 +50,7 @@ std::size_t Header::get_var_id_code_index(std::string &id_code) const
   return var_id_code_map_.get_index(id_code);
 }
 
-VarIdCode &Header::get_var_id_code(std::size_t index)
+const VarIdCode &Header::get_var_id_code(std::size_t index) const
 {
   assert(index < num_id_codes());
   return id_codes_.at(index);
