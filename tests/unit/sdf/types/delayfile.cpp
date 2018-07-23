@@ -6,7 +6,7 @@ using namespace SDF::Test;
 // tests should not repeat for every higher level that is run.
 
 // TODO : Empty delayfile necessary?
-
+ 
 TEST_CASE("SDF.Types.DelayFile") {
 
   SECTION("Case 1: Empty DelayFile example ") {

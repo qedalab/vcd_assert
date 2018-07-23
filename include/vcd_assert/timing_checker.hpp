@@ -75,26 +75,24 @@ class TimingChecker
   get_sdf_conditional_ptr(SDF::TimingCheckCondition cond,
                           std::size_t scope_index, VCD::Scope &scope);
 
-  // template<class ConditionalEventType, class EventType>
-  // std::vector<std::tuple<Event,std::size_t>>
-  // get_sdf_port_tchk_events(std::size_t hold_value, 
-  //                         SDF::PortTimingCheck port_tchk,
-  //                         std::size_t port_vcd_index,
-  //                         std::size_t scope_index, 
-  //                         VCD::Scope &scope);
+  std::vector<std::size_t> get_hold_event_range(SDF::Node port,
+                                                std::size_t port_vcd_index);
 
-  void apply_sdf_hold(std::shared_ptr<SDF::DelayFile> sc, SDF::Hold hold,
-                      std::size_t scope_index, VCD::Scope &scope);
+  std::optional<std::tuple<ConditionalValuePointer, EdgeType>>
+  apply_sdf_hold_port_tchk_helper(SDF::PortTimingCheck port_tchk,
+                                  std::size_t scope_index, VCD::Scope &scope);
+  
 
-  void apply_sdf_timing_specs(std::shared_ptr<SDF::DelayFile> sc,
-                              SDF::Cell cell, std::size_t scope_index,
+  void apply_sdf_hold(SDF::Hold hold, std::size_t scope_index,
+                      VCD::Scope &scope);
+
+  void apply_sdf_timing_specs(SDF::Cell cell,
+                              std::size_t scope_index, // remove
                               VCD::Scope &scope);
 
-  void apply_sdf_cell_helper(std::shared_ptr<SDF::DelayFile> sc, SDF::Cell cell,
-                             VCD::Scope &scope);
+  void apply_sdf_cell_helper(SDF::Cell cell, VCD::Scope &scope);
 
-  void apply_sdf_cell(std::shared_ptr<SDF::DelayFile> sc, SDF::Cell cell,
-                      std::size_t apply_scope_index);
+  void apply_sdf_cell(SDF::Cell cell, std::size_t apply_scope_index);
 
 public:
   // Claims ownership of the header
