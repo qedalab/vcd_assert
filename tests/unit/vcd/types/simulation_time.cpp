@@ -4,8 +4,9 @@
 
 using namespace VCD;
 
-TEST_CASE("VCD.Types.SimulationTime") {
-  SimulationTime test;
+TEST_CASE("VCD.Types.SimulationTime")
+{
+  SimulationTime test{};
 
   test = 3;
   CHECK(test.number == 3);
