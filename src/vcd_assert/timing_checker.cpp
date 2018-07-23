@@ -616,7 +616,7 @@ void TimingChecker::apply_sdf_file(/*VerilogSourceTree *ast, */
   return out;
 }
 
-[[nodiscard]] bool TimingChecker::event(std::size_t index, VCD::Value value)
+[[nodiscard]] bool TimingChecker::internal_event(std::size_t index, VCD::Value value)
 {
   auto& events = event_lists_.at(index).events;
   auto prev_value = state_.get_scalar_value(index);
@@ -632,7 +632,7 @@ void TimingChecker::apply_sdf_file(/*VerilogSourceTree *ast, */
   return timing_violation;
 }
 
-[[nodiscard]] bool TimingChecker::event(std::size_t range_index,
+[[nodiscard]] bool TimingChecker::internal_event(std::size_t range_index,
                                         ranges::span<VCD::Value> values) {
   auto prev_values = state_.get_vector_value(range_index);
   assert(values.size() == prev_values.size());
@@ -659,8 +659,49 @@ void TimingChecker::apply_sdf_file(/*VerilogSourceTree *ast, */
   return timing_violation;
 }
 
-void TimingChecker::update_sim_time(std::size_t sim_time)
+void TimingChecker::internal_update_sim_time(std::size_t sim_time)
 {
   this->sim_time_ = sim_time;
   this->checker_.update_sim_time(sim_time_);
+}
+
+void TimingChecker::simulation_time(VCD::SimulationTime simulation_time) {
+  if(sim_time_ > simulation_time.number) {
+    fmt::print("ERROR: simulation time change in VCD file is going back in time");
+    fmt::print("  To continue execution the simulation time change is ignored");
+    return;
+  }
+
+  if(sim_time_ == simulation_time.number) {
+    fmt::print("WARNING: simulation time change in VCD file does not change time");
+  }
+
+  this->internal_update_sim_time(simulation_time.number);
+}
+
+void TimingChecker::scalar_value_change(VCD::ScalarValueChangeView value_change) {
+  static bool did_warn = false;
+
+  if (!did_warn) {
+    fmt::print("WARNING: Scalar value changes ignored in VCD file: UNIMPLEMENTED");
+    did_warn = true;
+  }
+}
+
+void TimingChecker::vector_value_change(VCD::UncheckedVectorValueChangeView value_change) {
+  static bool did_warn = false;
+
+  if (!did_warn) {
+    fmt::print("WARNING: Vector value changes ignored in VCD file: UNIMPLEMENTED");
+    did_warn = true;
+  }
+}
+
+void TimingChecker::real_value_change(VCD::RealValueChangeView value_change) {
+  static bool did_warn = false;
+
+  if (!did_warn) {
+    fmt::print("WARNING: Real value changes ignored in VCD file: UNIMPLEMENTED");
+    did_warn = true;
+  }
 }
