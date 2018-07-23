@@ -6,9 +6,11 @@
 using namespace VCDAssert;
 
 TriggeredTimingChecker::TriggeredTimingChecker(std::size_t size) :
-    triggered_item_list_(size), sim_time_(0) {
-    // Empty
-    };
+    triggered_item_list_(size),
+    sim_time_(0)
+{
+  // Empty
+}
 
 void TriggeredTimingChecker::update_sim_time(std::size_t sim_time) {
   sim_time_ = sim_time;

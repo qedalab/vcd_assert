@@ -156,33 +156,29 @@ TimingChecker::get_sdf_conditional_ptr_helper(SDF::EqualityOperator &op,
   switch (op) {
   case SDF::EqualityOperator::case_inv:
 
-    return ConditionalValuePointer(
-        std::move(ConditionalOperator<EqualityOperator::case_not_equal>(
-            std::move(left), std::move(right))));
+    return ConditionalOperator<EqualityOperator::case_not_equal>(
+            std::move(left), std::move(right));
 
     break;
 
   case SDF::EqualityOperator::case_equal:
 
-    return ConditionalValuePointer(
-        std::move(ConditionalOperator<EqualityOperator::case_equal>(
-            std::move(left), std::move(right))));
+    return ConditionalOperator<EqualityOperator::case_equal>(
+            std::move(left), std::move(right));
 
     break;
 
   case SDF::EqualityOperator::logic_inv:
 
-    return ConditionalValuePointer(
-        std::move(ConditionalOperator<EqualityOperator::logical_not_equal>(
-            std::move(left), std::move(right))));
+    return ConditionalOperator<EqualityOperator::logical_not_equal>(
+            std::move(left), std::move(right));
 
     break;
 
   case SDF::EqualityOperator::logic_equal:
 
-    return ConditionalValuePointer(
-        std::move(ConditionalOperator<EqualityOperator::logical_equal>(
-            std::move(left), std::move(right))));
+    return ConditionalOperator<EqualityOperator::logical_equal>(
+            std::move(left), std::move(right));
 
     break;
 
@@ -251,7 +247,7 @@ TimingChecker::get_sdf_conditional_ptr(SDF::TimingCheckCondition cond, std::size
   {
 
     auto equality = std::get<SDF::NodeConstantEquality>(cond.value);
-    std::size_t var_index;
+    // std::size_t var_index;
     SDF::Node node = equality.left;
 
     // get the conditional value pointer of the variable
@@ -275,6 +271,10 @@ TimingChecker::get_sdf_conditional_ptr(SDF::TimingCheckCondition cond, std::size
   default:
     throw std::runtime_error("InternalError");
   }
+
+  // Should return before this
+  std::puts("INTERNAL ERROR: Code should not be reachable");
+  std::abort();
 }
 
 std::vector<std::size_t>
@@ -325,7 +325,7 @@ TimingChecker::get_hold_event_range(SDF::Node port, std::size_t port_vcd_index)
   } else {
     result.push_back(port_vcd_index);
   }
-  return std::move(result);
+  return result;
 }
 
 std::optional<std::tuple<ConditionalValuePointer, EdgeType>>
@@ -404,7 +404,7 @@ void TimingChecker::apply_sdf_hold(SDF::Hold hold, std::size_t scope_index,
     if (reg_port_index_option.has_value() &&
         trig_port_index_option.has_value()) {
 
-      auto trig_port_index = trig_port_index_option.value();
+      // auto trig_port_index = trig_port_index_option.value();
       auto reg_port_index = reg_port_index_option.value();
 
       auto reg_apply_data_option = apply_sdf_hold_port_tchk_helper(reg, scope_index, scope);
@@ -421,20 +421,20 @@ void TimingChecker::apply_sdf_hold(SDF::Hold hold, std::size_t scope_index,
     
         auto reg_event_range = get_hold_event_range(reg.port, reg_port_index);
 
-        if (reg_event_range.size() >= 1) {
+        if (!reg_event_range.empty()) {
           for (auto && index : reg_event_range) {
             event_lists_[index].events.emplace_back(
-                std::move(RegisterEvent{
+                RegisterEvent{
                   std::move(reg_conditional_cvp),
                   reg_edge,
-                  std::move(TriggeredEvent{
+                  TriggeredEvent{
                     std::move(trig_conditional_cvp), 
                     trig_edge,
                     (std::size_t)0, 
                     (std::size_t)(sdf_value.value() * 1000)
-                  })
+                  }
                 }
-                ));
+                );
           }
         } else {
           // failed to get applicable range
@@ -482,7 +482,8 @@ void TimingChecker::apply_sdf_timing_specs(SDF::Cell cell,
 // module-name.
 void TimingChecker::apply_sdf_cell_helper(SDF::Cell cell, VCD::Scope &scope)
 {
-  for (auto &&[ident, index] : scope.get_scopes()) {
+  for (auto &scope_pair : scope.get_scopes()) {
+    auto index = scope_pair.second;
 
     // cell instance scope
     VCD::Scope next_scope = header_->get_scope(index);
@@ -522,7 +523,8 @@ void TimingChecker::apply_sdf_cell(SDF::Cell cell,
     if (hi.value.empty()) {
       /* for module/instance scopes in CURRENT scope ONLY: */
 
-      for (auto &&[ident, index] : apply_scope.get_scopes()) {
+      for (auto &scope_pair : apply_scope.get_scopes()) {
+        auto index = scope_pair.second;
 
         VCD::Scope scope = header_->get_scope(index);
 
@@ -752,6 +754,9 @@ void TimingChecker::vector_value_change(
     case VCD::Value::zero: left_extend_value = VCD::Value::zero; break;
     case VCD::Value::x: left_extend_value = VCD::Value::x; break;
     case VCD::Value::z: left_extend_value = VCD::Value::z; break;
+    default:
+      puts("INTERNAL ERROR: Code should be unreachable");
+      std::abort();
     // clang-format on
   }
 
@@ -770,7 +775,7 @@ void TimingChecker::vector_value_change(
   };
 }
 
-void TimingChecker::real_value_change(VCD::RealValueChangeView value_change)
+void TimingChecker::real_value_change(VCD::RealValueChangeView /*unused*/)
 {
   static bool did_warn = false;
 
