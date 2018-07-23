@@ -67,7 +67,7 @@ constexpr auto decimal_range_str =
   };
 
 constexpr auto escaped_decimal_range_str = 
-  std::array<std::string_view, 28> {
+  std::array<std::string_view, 10> {
     "\\0","\\1","\\2","\\3","\\4","\\5","\\6","\\7","\\8","\\9"
   };
 

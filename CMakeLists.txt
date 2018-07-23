@@ -61,6 +61,7 @@ target_link_libraries(libvcd_assert PUBLIC libvcd libsdf libparse)
 add_subdirectory(src)
 
 if(${BUILD_TESTS})
+  option(RUN_ALL_TESTS "Run slow hidden tests" FALSE)
   find_package(Catch2 2.2.3 REQUIRED)
   include(CTest)
   add_subdirectory(tests)

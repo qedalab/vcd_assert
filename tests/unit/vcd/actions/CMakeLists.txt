@@ -5,5 +5,6 @@ target_sources(unit_vcd PRIVATE
   ${DIR}/identifier_code.cpp
   ${DIR}/scope.cpp
   ${DIR}/time_scale.cpp
+  ${DIR}/value_change.cpp
   ${DIR}/var.cpp
   )

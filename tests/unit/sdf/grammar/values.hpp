@@ -4,6 +4,7 @@
 
 #include "base.hpp"
 #include <sdf/grammar/values.hpp>
+#include <sdf/grammar/timing.hpp>
 
 namespace Test {
 namespace SDF {

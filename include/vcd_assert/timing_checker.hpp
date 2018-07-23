@@ -1,16 +1,15 @@
 #ifndef VCD_ASSERT_TIMING_CHECKER_HPP
 #define VCD_ASSERT_TIMING_CHECKER_HPP
 
-#include "./basic_timing_checker.hpp"
 #include "./conditional.hpp"
 #include "./event.hpp"
 #include "./state.hpp"
+#include "./triggered_timing_checker.hpp"
 
 #include "sdf/actions/delayfile.hpp"
 #include "sdf/grammar/grammar.hpp"
 #include "sdf/types/delayfile.hpp"
 #include "sdf/types/enums.hpp"
-// #include "sdf/types/timing.hpp"
 #include "sdf/types/timing_check.hpp"
 #include "sdf/types/timing_spec.hpp"
 #include "sdf/types/values.hpp"
@@ -20,6 +19,9 @@
 // #include <verilog_parser.h>
 
 #include "vcd/types/header.hpp"
+#include "vcd/types/simulation_time.hpp"
+#include "vcd/types/value_change.hpp"
+
 #include <optional>
 #include <range/v3/span.hpp>
 #include <range/v3/view/indices.hpp>
@@ -40,10 +42,10 @@ class TimingChecker
   // Order is important
   std::shared_ptr<VCD::Header> header_;
   State state_;
-  BasicTimingChecker checker_;
+  TriggeredTimingChecker checker_;
 
   std::vector<IndexLookup> index_lookup_;
-  std::vector<EventList> event_lists_;
+  std::vector<RegisterEventList> event_lists_;
 
   size_t sim_time_ = 0;
 
@@ -51,9 +53,11 @@ class TimingChecker
 
   MinTypeMax min_typ_max_ = MinTypeMax::typ;
 
-  [[nodiscard]] bool handle_event(const Event &event);
+  std::vector<VCD::Value> value_buffer_;
 
-private:
+  [[nodiscard]] bool handle_event(const RegisterEvent &event, std::size_t index,
+                                  VCD::Value from, VCD::Value to);
+
   std::optional<std::size_t> match_scope_helper(std::vector<std::string> path,
                                                 size_t path_index,
                                                 size_t scope_index);
@@ -76,26 +80,30 @@ private:
   get_sdf_conditional_ptr(SDF::TimingCheckCondition cond,
                           std::size_t scope_index, VCD::Scope &scope);
 
-  template<class ConditionalEventType, class EventType>
-  std::vector<std::tuple<Event,std::size_t>>
-  get_sdf_port_tchk_events(std::size_t hold_value, 
-                          SDF::PortTimingCheck port_tchk,
-                          std::size_t port_vcd_index,
-                          std::size_t scope_index, 
-                          VCD::Scope &scope);
+  std::vector<std::size_t> get_hold_event_range(SDF::Node port,
+                                                std::size_t port_vcd_index);
 
-  void apply_sdf_hold(std::shared_ptr<SDF::DelayFile> sc, SDF::Hold hold,
-                      std::size_t scope_index, VCD::Scope &scope);
+  std::optional<std::tuple<ConditionalValuePointer, EdgeType>>
+  apply_sdf_hold_port_tchk_helper(SDF::PortTimingCheck port_tchk,
+                                  std::size_t scope_index, VCD::Scope &scope);
+  
 
-  void apply_sdf_timing_specs(std::shared_ptr<SDF::DelayFile> sc,
-                              SDF::Cell cell, std::size_t scope_index,
+  void apply_sdf_hold(SDF::Hold hold, std::size_t scope_index,
+                      VCD::Scope &scope);
+
+  void apply_sdf_timing_specs(SDF::Cell cell,
+                              std::size_t scope_index, // remove
                               VCD::Scope &scope);
 
-  void apply_sdf_cell_helper(std::shared_ptr<SDF::DelayFile> sc, SDF::Cell cell,
-                             VCD::Scope &scope);
+  void apply_sdf_cell_helper(SDF::Cell cell, VCD::Scope &scope);
 
-  void apply_sdf_cell(std::shared_ptr<SDF::DelayFile> sc, SDF::Cell cell,
-                      std::size_t apply_scope_index);
+  void apply_sdf_cell(SDF::Cell cell, std::size_t apply_scope_index);
+
+  [[nodiscard]] bool internal_event(std::size_t index, VCD::Value value);
+  [[nodiscard]] bool internal_event(std::size_t range_index, ranges::span<VCD::Value> values);
+  // [[nodiscard]] bool event(std::size_t index, double value);
+
+  void internal_update_sim_time(std::size_t sim_time);
 
 public:
   // Claims ownership of the header
@@ -105,16 +113,11 @@ public:
                       std::shared_ptr<SDF::DelayFile> delayfile,
                       std::vector<std::string> vcd_node_path);
 
-  // Trigger event and return true if event was triggered
-  [[nodiscard]] bool event(std::size_t time, std::size_t index,
-                           VCD::Value value);
+  void simulation_time(VCD::SimulationTime simulation_time);
 
-  [[nodiscard]] bool event(std::size_t time, std::size_t index,
-                           ranges::span<VCD::Value> values);
-
-  void update_sim_time(std::size_t sim_time_);
-  // Don't handle doubles for now
-  // [[nodiscard]] bool event(std::size_t index, double value);
+  void scalar_value_change(VCD::ScalarValueChangeView value_change);
+  void vector_value_change(VCD::UncheckedVectorValueChangeView value_change);
+  void real_value_change(VCD::RealValueChangeView value_change);
 };
 
 } // namespace VCDAssert

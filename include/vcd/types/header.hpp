@@ -61,16 +61,16 @@ public:
 
   /// Get variable by index
   /// \param index the variable index
-  Variable &get_var(std::size_t index);
+  const Variable &get_var(std::size_t index) const;
 
   /// Get scope by index
   /// \param index the scope index
   /// \returns the scope
-  Scope &get_scope(std::size_t index);
+  const Scope &get_scope(std::size_t index) const;
 
   /// Get the first scope defined in the header
   /// \returns the root scope
-  Scope &get_root_scope();
+  const Scope &get_root_scope() const;
 
   /// Get the identifier code index by string
   /// \param id_code the identifier code string
@@ -80,7 +80,7 @@ public:
   /// Get the identifier code by index
   /// \param index the identifier code index
   /// \returns the identifier code
-  VarIdCode &get_var_id_code(std::size_t index);
+  const VarIdCode &get_var_id_code(std::size_t index) const;
 
   /// True if header contains the identifier code
   /// \param id_code the identifier code string

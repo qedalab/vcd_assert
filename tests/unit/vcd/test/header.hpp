@@ -6,7 +6,7 @@
 
 namespace VCD::Test {
 
-void catch_test_header(VCD::Header &header, TestHeader &test);
+void catch_test_header(const VCD::Header &header, TestHeader &test);
 
 } // namespace VCD
 

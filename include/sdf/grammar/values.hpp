@@ -20,13 +20,15 @@ template <class Number>
 struct triple_max : alias<Number>{};
 
 template <class Number>
-struct define_triple : op_sep_seq<
-  // not_at<string<':',':'>, not_at<Number> >,
-  opt<triple_min<Number>>,
-  one<':'>,
-  opt<triple_typ<Number>>,
-  one<':'>,
-  opt<triple_max<Number>>
+struct define_triple : seq < 
+  not_at< string<':',':'>, not_at<Number> >,
+  op_sep_seq<
+    opt<triple_min<Number>>,
+    one<':'>,
+    opt<triple_typ<Number>>,
+    one<':'>,
+    opt<triple_max<Number>>
+  >
 > {};
 
 struct triple : define_triple<real_number> {};
