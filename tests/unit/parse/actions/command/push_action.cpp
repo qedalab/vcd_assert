@@ -124,7 +124,7 @@ TEST_CASE("Parse.Actions.Command.PushAction", "[Actions][Command]") {
   std::vector<std::string_view> fail_data{
       R"outer(R"(raw_chars")outer",
       R"outer(R"2(asdf)3")outer",
-      R"outer(R"d({R"(still_raw)"})(d")outer" };
+      R"outer(R"not_a_raw_string")outer" };
 
   for (auto &[input_str, delimiter, raw_chars] : success_data) {
     SECTION("Parse: " + std::string(input_str)) {
