@@ -115,13 +115,18 @@ TEST_CASE("Parse.Actions.Command.PushAction", "[Actions][Command]") {
     std::string_view raw_characters;
   };
 
-  std::vector<RawLiteralMatch> data{
+  std::vector<RawLiteralMatch> success_data{
       {R"outer(R"(raw_chars)")outer", "", R"(raw_chars)"},
       {R"outer(R"2(asdf)2")outer", "2", "asdf"},
       {R"outer(R"d({R"(still_raw)"})d")outer", "d",
        R"outer({R"(still_raw)"})outer"}};
 
-  for (auto &[input_str, delimiter, raw_chars] : data) {
+  std::vector<std::string_view> fail_data{
+      R"outer(R"(raw_chars")outer",
+      R"outer(R"2(asdf)3")outer",
+      R"outer(R"d({R"(still_raw)"})(d")outer" };
+
+  for (auto &[input_str, delimiter, raw_chars] : success_data) {
     SECTION("Parse: " + std::string(input_str)) {
       RawStringLiteral rsl;
 
@@ -137,5 +142,21 @@ TEST_CASE("Parse.Actions.Command.PushAction", "[Actions][Command]") {
       CHECK(delimiter == rsl.delimiter);
       CHECK(raw_chars == rsl.raw_characters);
     }
+  }
+
+  for(auto&& input_str: fail_data) {
+    SECTION("Parse: " + std::string(input_str)) {
+      INFO("Should fail")
+      RawStringLiteral rsl;
+
+      tao::pegtl::memory_input<> input(std::begin(input_str),
+                                       std::end(input_str), "push_action");
+
+      CHECK_THROWS(
+          tao::pegtl::parse<raw_string,
+                            make_pegtl_template<RawStringAction>::type,
+                            capture_control>(input, rsl));
+    }
+
   }
 }

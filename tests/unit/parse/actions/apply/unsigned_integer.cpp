@@ -1,4 +1,4 @@
-#include "parse/actions/apply/integer.hpp"
+#include "parse/actions/apply/unsigned_integer.hpp"
 
 #include <catch2/catch.hpp>
 
@@ -14,9 +14,9 @@ struct IntegerActionInput {
 
 struct Rule;
 
-TEST_CASE("Parse.Actions.Apply.Integer", "[Actions][Apply]") {
+TEST_CASE("Parse.Actions.Apply.UnsignedInteger", "[Actions][Apply]") {
   IntegerActionInput input;
-  int state;
-  Apply::integer::apply<Rule>(input, state);
+  unsigned int state;
+  Apply::unsigned_integer::apply<Rule>(input, state);
   REQUIRE(state == Approx(42));
 }

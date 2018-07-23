@@ -10,7 +10,6 @@ using namespace VCD;
 
 Test::TestHeader vcd_empty_header {};
 
-
 TEST_CASE("VCD.Types.VCDHeaderReader") {
   Test::TestHeader vcd_4_state_example_header {
     TimeScale {TimeNumber::_1, TimeUnit::ns},
