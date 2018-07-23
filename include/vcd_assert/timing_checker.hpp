@@ -51,7 +51,7 @@ class TimingChecker
 
   enum class MinTypeMax { min, typ, max };
 
-  MinTypeMax min_typ_max_ = MinTypeMax::typ;
+  // MinTypeMax min_typ_max_ = MinTypeMax::typ;
 
   std::vector<VCD::Value> value_buffer_;
 

@@ -11,7 +11,7 @@ namespace VCD {
 /// View of scalar value change
 /// \todo ensure identifier code correctness
 struct ScalarValueChangeView {
-  Value value;                      /// scalar value
+  Value value{};                    /// scalar value
   std::string_view identifier_code; /// identifier code
 };
 
