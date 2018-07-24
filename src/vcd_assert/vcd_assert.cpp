@@ -158,9 +158,7 @@ int main(int argc, char **argv) {
                     Parse::make_pegtl_template<VCD::Actions::HeaderAction>::type,
                     Parse::capture_control>(vcd_input, vcd_reader);
 
-  auto header_p = vcd_reader.release();
-  assert(header_p.operator bool());
-  
+  auto header_p = std::make_unique<VCD::Header>(vcd_reader.release());
   auto timing_checker = VCDAssert::TimingChecker(std::move(header_p));
   
   // Read in corresponding SDF files

@@ -86,7 +86,7 @@ public:
   /// Essentially finalizaing the data within the header file.
   /// \returns Owning pointer to the Header
   /// \exception Throws if all there is still scope in the stack.
-  std::unique_ptr<Header> release();
+  Header release();
 };
 
 }

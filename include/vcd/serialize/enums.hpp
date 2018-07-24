@@ -4,8 +4,8 @@
 #include "../types/enums.hpp"
 
 #include <cassert>
-#include <cstdlib>
 #include <cstdio>
+#include <cstdlib>
 #include <string_view>
 
 namespace VCD {
@@ -14,7 +14,8 @@ namespace VCD {
 /// \param st The ScopeType to convert.
 ///           Must be in valid enum state undefined behaviour otherwise
 /// \returns static view of ScopeType string
-constexpr std::string_view scope_type_to_string(ScopeType st) noexcept {
+constexpr std::string_view scope_type_to_string(ScopeType st) noexcept
+{
   switch (st) {
   case ScopeType::begin:
     return "begin";
@@ -36,7 +37,8 @@ constexpr std::string_view scope_type_to_string(ScopeType st) noexcept {
 /// \param tu The TimeUnit to convert.
 ///           Must be in valid enum state undefined behaviour otherwise
 /// \returns static view of TimeUnit string
-constexpr std::string_view time_unit_to_string(TimeUnit tu) noexcept {
+constexpr std::string_view time_unit_to_string(TimeUnit tu) noexcept
+{
   switch (tu) {
   case TimeUnit::s:
     return "s";
@@ -60,7 +62,8 @@ constexpr std::string_view time_unit_to_string(TimeUnit tu) noexcept {
 /// \param tn The TimeNumber to convert.
 ///           Must be in valid enum state undefined behaviour otherwise
 /// \returns static view of TimeNumber string
-constexpr std::string_view time_number_to_string(TimeNumber tn) noexcept {
+constexpr std::string_view time_number_to_string(TimeNumber tn) noexcept
+{
   switch (tn) {
   case TimeNumber::_1:
     return "1";
@@ -78,7 +81,8 @@ constexpr std::string_view time_number_to_string(TimeNumber tn) noexcept {
 /// \param vr The VarNumber to convert.
 ///           Must be in valid enum state undefined behaviour otherwise
 /// \returns static view of VarType string
-constexpr std::string_view var_type_to_string(VarType vr) noexcept {
+constexpr std::string_view var_type_to_string(VarType vr) noexcept
+{
   switch (vr) {
   case VarType::event:
     return "event";
@@ -126,7 +130,8 @@ constexpr std::string_view var_type_to_string(VarType vr) noexcept {
 /// \param v The Value to convert.
 ///          Must be in valid enum state undefined behaviour otherwise
 /// \returns char representing the Value
-constexpr char value_to_char(Value v) noexcept {
+constexpr char value_to_char(Value v) noexcept
+{
   switch (v) {
   case Value::zero:
     return '0';
@@ -146,7 +151,8 @@ constexpr char value_to_char(Value v) noexcept {
 /// \param v The Value to convert.
 ///          Must be in valid enum state undefined behaviour otherwise
 /// \returns static view of Value string
-constexpr std::string_view value_to_string(Value v) {
+constexpr std::string_view value_to_string(Value v)
+{
   switch (v) {
   case Value::zero:
     return "0";

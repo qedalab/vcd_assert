@@ -153,11 +153,14 @@ bool HeaderReader::has_timescale() const noexcept
   return header_->has_time_scale();
 }
 
-std::unique_ptr<Header> HeaderReader::release()
+Header HeaderReader::release()
 {
   if (!scope_stack_.empty())
     throw std::runtime_error(
         "Cannot release Header while there is still scope");
 
-  return std::move(header_);
+  auto tmp = std::make_unique<Header>();
+  std::swap(tmp, header_);
+
+  return *tmp.release();
 }

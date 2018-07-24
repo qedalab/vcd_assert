@@ -4,20 +4,23 @@
 
 using namespace Parse::Util;
 
-TEST_CASE("Parse.Util.Bag", "[Util]") {
-  
-  SECTION("Default constructed") {
+TEST_CASE("Parse.Util.Bag", "[Util]")
+{
+
+  SECTION("Default constructed")
+  {
     Bag<int> bag_default;
     REQUIRE(bag_default.is_empty());
 
     REQUIRE(bag_default.get_size() == 0);
 
-    for([[maybe_unused]] auto& t: bag_default.as_range()) {
-      REQUIRE(false);
+    for ([[maybe_unused]] auto &t : bag_default.as_range()) {
+      REQUIRE(false); // LCOV_EXCL_LINE
     }
   }
 
-  SECTION("Add then remove") {
+  SECTION("Add then remove")
+  {
     Bag<int> bag_add_remove;
     int must_copy = 2;
 

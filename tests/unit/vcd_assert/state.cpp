@@ -121,9 +121,7 @@ TEST_CASE("VCDAssert.State") {
 
     HeaderReader reader;
     Test::read_in_test_header(reader, test_base);
-    auto header_p = reader.release();
-    REQUIRE(header_p.operator bool());
-    auto& header = *header_p;
+    auto header = reader.release();
 
     auto state = State(header);
 
@@ -145,9 +143,7 @@ TEST_CASE("VCDAssert.State") {
 
     HeaderReader reader;
     Test::read_in_test_header(reader, test_base);
-    auto header_p = reader.release();
-    REQUIRE(header_p.operator bool());
-    auto& header = *header_p;
+    auto header = reader.release();
 
     auto state = State(header);
 
@@ -169,9 +165,7 @@ TEST_CASE("VCDAssert.State") {
 
     HeaderReader reader;
     Test::read_in_test_header(reader, test_base);
-    auto header_p = reader.release();
-    REQUIRE(header_p.operator bool());
-    auto& header = *header_p;
+    auto header = reader.release();
 
     auto state = State(header);
 
