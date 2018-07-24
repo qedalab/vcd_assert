@@ -12,6 +12,7 @@
 #include <tao/pegtl/parse.hpp>
 #include <tao/pegtl/string_input.hpp>
 
+#include <array>
 #include <cstring>
 #include <string>
 #include <string_view>
@@ -32,7 +33,8 @@ struct delimiter_end {
             template <typename...> class Action,
             template <typename...> class Control, typename Input>
   static bool match(Input &in, const std::string & /*unused*/,
-                    const RawStringLiteral &rsl) {
+                    const RawStringLiteral &rsl)
+  {
     if (in.size() >= rsl.delimiter.size()) {
       if (std::memcmp(in.current(), rsl.delimiter.data(),
                       rsl.delimiter.size()) == 0) {
@@ -47,7 +49,8 @@ struct delimiter_end {
   template <tao::pegtl::apply_mode A, tao::pegtl::rewind_mode M,
             template <typename...> class Action,
             template <typename...> class Control, typename Input>
-  static bool match(Input &in, const RawStringLiteral &rsl) {
+  static bool match(Input &in, const RawStringLiteral &rsl)
+  {
     if (in.size() >= rsl.delimiter.size()) {
       if (std::memcmp(in.current(), rsl.delimiter.data(),
                       rsl.delimiter.size()) == 0) {
@@ -108,26 +111,30 @@ struct RawStringAction : multi_dispatch<
 
 // clang-format on
 
-TEST_CASE("Parse.Actions.Command.PushAction", "[Actions][Command]") {
+TEST_CASE("Parse.Actions.Command.PushAction", "[Actions][Command]")
+{
   struct RawLiteralMatch {
     std::string_view input;
     std::string_view delimtier;
     std::string_view raw_characters;
   };
 
-  std::vector<RawLiteralMatch> success_data{
-      {R"outer(R"(raw_chars)")outer", "", R"(raw_chars)"},
-      {R"outer(R"2(asdf)2")outer", "2", "asdf"},
-      {R"outer(R"d({R"(still_raw)"})d")outer", "d",
-       R"outer({R"(still_raw)"})outer"}};
+  std::array<RawLiteralMatch, 3> test_success{
+      RawLiteralMatch{R"outer(R"(raw_chars)")outer", "", R"(raw_chars)"},
+      RawLiteralMatch{R"outer(R"2(asdf)2")outer", "2", "asdf"},
+      RawLiteralMatch{R"outer(R"d({R"(still_raw)"})d")outer", "d",
+                      R"outer({R"(still_raw)"})outer"}};
 
-  std::vector<std::string_view> fail_data{
+  std::array<std::string_view, 2> test_fail_end{
       R"outer(R"(raw_chars")outer",
-      R"outer(R"2(asdf)3")outer",
-      R"outer(R"not_a_raw_string")outer" };
+      R"outer(R"2(asdf)3")outer"};
 
-  for (auto &[input_str, delimiter, raw_chars] : success_data) {
-    SECTION("Parse: " + std::string(input_str)) {
+  std::array<std::string_view, 1> test_fail_begin{
+      R"outer(R"not_a_raw_string")outer"};
+
+  for (auto &[input_str, delimiter, raw_chars] : test_success) {
+    SECTION("Parse: " + std::string(input_str))
+    {
       RawStringLiteral rsl;
 
       tao::pegtl::memory_input<> input(std::begin(input_str),
@@ -144,19 +151,33 @@ TEST_CASE("Parse.Actions.Command.PushAction", "[Actions][Command]") {
     }
   }
 
-  for(auto&& input_str: fail_data) {
-    SECTION("Parse: " + std::string(input_str)) {
+  for (auto &&input_str : test_fail_end) {
+    SECTION("Parse: " + std::string(input_str))
+    {
       INFO("Should fail")
       RawStringLiteral rsl;
 
       tao::pegtl::memory_input<> input(std::begin(input_str),
                                        std::end(input_str), "push_action");
 
-      CHECK_THROWS(
-          tao::pegtl::parse<raw_string,
-                            make_pegtl_template<RawStringAction>::type,
-                            capture_control>(input, rsl));
+      CHECK_THROWS(tao::pegtl::parse<raw_string,
+                                     make_pegtl_template<RawStringAction>::type,
+                                     capture_control>(input, rsl));
     }
+  }
 
+  for (auto &&input_str : test_fail_begin) {
+    SECTION("Parse: " + std::string(input_str))
+    {
+      INFO("Should fail")
+      RawStringLiteral rsl;
+
+      tao::pegtl::memory_input<> input(std::begin(input_str),
+                                       std::end(input_str), "push_action");
+
+      CHECK_FALSE(tao::pegtl::parse<raw_string,
+                                    make_pegtl_template<RawStringAction>::type,
+                                    capture_control>(input, rsl));
+    }
   }
 }
