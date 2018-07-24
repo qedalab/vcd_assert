@@ -30,7 +30,8 @@ class TriggeredTimingChecker
 public:
   TriggeredTimingChecker(std::size_t size);
 
-  void update_sim_time(std::size_t sim_time);
+  void set_sim_time(std::size_t sim_time);
+  std::size_t get_sim_time();
 
   [[nodiscard]] bool event(std::size_t index,
                            VCD::Value from, VCD::Value to);

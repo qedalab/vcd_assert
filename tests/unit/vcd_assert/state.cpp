@@ -125,6 +125,10 @@ TEST_CASE("VCDAssert.State") {
 
     auto state = State(header);
 
+    REQUIRE(state.num_values() == 4);
+    REQUIRE(state.num_packed_vector_values() == 0);
+    REQUIRE(state.num_total_values() == 4);
+
     catch_state_value(state, 0, 3.14, 2.78);
     catch_state_value(state, 1, Value::zero, Value::z);
     catch_state_value(state, 2, Value::x, Value::one);
@@ -146,6 +150,10 @@ TEST_CASE("VCDAssert.State") {
     auto header = reader.release();
 
     auto state = State(header);
+
+    REQUIRE(state.num_values() == 4);
+    REQUIRE(state.num_packed_vector_values() == 10);
+    REQUIRE(state.num_total_values() == 14);
 
     catch_state_value(state, 0, {x,one}, {zero, zero});
     catch_state_value(state, 1, {one, z, z}, {one, zero, x});
@@ -169,9 +177,40 @@ TEST_CASE("VCDAssert.State") {
 
     auto state = State(header);
 
+    REQUIRE(state.num_values() == 4);
+    REQUIRE(state.num_packed_vector_values() == 5);
+    REQUIRE(state.num_total_values() == 9);
+
     catch_state_value(state, 0, 5.67, 1.13);
     catch_state_value(state, 1, Value::one, Value::x);
     catch_state_value(state, 2, {x, one, one, one, one}, {one, zero, zero, x, z});
     catch_state_value(state, 3, 1.80, 4.04);
+  }
+
+  SECTION("Mismatched vector size") {
+    std::vector<Test::TestVar> test_mixed = {
+      {VarType::real, 64, "1", "1"},
+      {VarType::reg, 1, "2", "2"},
+      {VarType::wire, 5, "3", "3"},
+      {VarType::real, 64, "4", "4"}
+    };
+
+    test_base.root_scope.value().variables = std::move(test_mixed);
+
+    HeaderReader reader;
+    Test::read_in_test_header(reader, test_base);
+    auto header = reader.release();
+
+    auto state = State(header);
+
+    REQUIRE(state.num_values() == 4);
+    REQUIRE(state.num_packed_vector_values() == 5);
+    REQUIRE(state.num_total_values() == 9);
+
+    std::vector range {one, zero};
+    CHECK_THROWS(state.set_value(2, range));
+
+    range = {one, one, one, one, one, one};
+    CHECK_THROWS(state.set_value(2, range));
   }
 }

@@ -180,6 +180,13 @@ TEST_CASE("VCD.Types.VCDHeaderReader") {
     reader.scope(ScopeType::begin, "scope");
     CHECK_THROWS(reader.release());
   }
+
+  SECTION("Case 10: Duplicate variable") {
+    HeaderReader reader;
+    reader.scope(ScopeType::begin, "scope");
+    reader.var(VarType::reg, 1, "id_code", "ref_1");
+    CHECK_THROWS(reader.var(VarType::reg, 1, "id_code", "ref_1"));
+  }
 }
 
 

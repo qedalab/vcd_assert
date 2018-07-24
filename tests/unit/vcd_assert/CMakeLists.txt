@@ -11,4 +11,5 @@ target_sources(unit_vcd_assert PRIVATE
   ${DIR}/event.cpp
   ${DIR}/state.cpp
   ${DIR}/timing_checker.cpp
+  ${DIR}/triggered_timing_checker.cpp
   )

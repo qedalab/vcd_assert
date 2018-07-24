@@ -12,8 +12,12 @@ TriggeredTimingChecker::TriggeredTimingChecker(std::size_t size) :
   // Empty
 }
 
-void TriggeredTimingChecker::update_sim_time(std::size_t sim_time) {
+void TriggeredTimingChecker::set_sim_time(std::size_t sim_time) {
   sim_time_ = sim_time;
+}
+
+std::size_t TriggeredTimingChecker::get_sim_time() {
+  return sim_time_;
 }
 
 bool TriggeredTimingChecker::event(std::size_t index, VCD::Value from, VCD::Value to) {

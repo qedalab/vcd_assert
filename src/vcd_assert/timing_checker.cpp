@@ -669,7 +669,7 @@ TimingChecker::internal_event(std::size_t range_index,
 void TimingChecker::internal_update_sim_time(std::size_t sim_time)
 {
   this->sim_time_ = sim_time;
-  this->checker_.update_sim_time(sim_time_);
+  this->checker_.set_sim_time(sim_time_);
 }
 
 void TimingChecker::simulation_time(VCD::SimulationTime simulation_time)
