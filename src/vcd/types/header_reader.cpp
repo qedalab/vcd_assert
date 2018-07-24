@@ -162,5 +162,5 @@ Header HeaderReader::release()
   auto tmp = std::make_unique<Header>();
   std::swap(tmp, header_);
 
-  return *tmp.release();
+  return std::move(*tmp.get());
 }
