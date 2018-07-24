@@ -2,6 +2,7 @@
 
 #include "../test/header.hpp"
 
+#include "vcd/util/size.hpp"
 #include "vcd/test/header.hpp"
 
 #include <catch2/catch.hpp>
@@ -56,6 +57,7 @@ TEST_CASE("VCD.Types.VCDHeaderReader") {
     auto header_p = reader.release();
     REQUIRE(header_p.operator bool());
     Test::catch_test_header(*header_p, vcd_empty_header);
+    CHECK(Util::get_max_var_size(*header_p) == 0);
   }
 
   SECTION("Case 2: From VCD Example") {
@@ -66,6 +68,7 @@ TEST_CASE("VCD.Types.VCDHeaderReader") {
     REQUIRE(header_p.operator bool());
     auto &header = *header_p;
     Test::catch_test_header(header, vcd_4_state_example_header);
+    CHECK(Util::get_max_var_size(*header_p) == 32);
   }
 }
 

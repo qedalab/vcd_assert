@@ -10,7 +10,6 @@
 #include <tao/pegtl/memory_input.hpp>
 #include <tao/pegtl/parse.hpp>
 
-
 namespace Parse::Test {
 
 template <class Rule, class Action, class... States>

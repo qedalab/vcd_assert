@@ -1,6 +1,7 @@
 #include "vcd/grammar/base.hpp"
 
 #include "parse/test/match.hpp"
+#include "parse/test/error_rule.hpp"
 
 #include <catch2/catch.hpp>
 
@@ -13,6 +14,10 @@ constexpr char seperator_2[] = "  ";
 constexpr char nz_1[] = "1";
 
 TEST_CASE("VCD.Grammar.Base", "[VCD][Grammar]") {
+  SECTION("Plus Blank") {
+    CHECK(is_valid_error_rule<plus_blank>());
+  }
+
   SECTION("CommandSeperator") {
     CHECK(match_exactly<command_separator>(empty));
     CHECK(match_exactly<command_separator>(seperator_1));

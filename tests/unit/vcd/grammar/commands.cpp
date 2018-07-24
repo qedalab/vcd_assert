@@ -1,6 +1,7 @@
 #include "vcd/grammar/commands.hpp"
 
 #include "parse/test/match.hpp"
+#include "parse/test/error_rule.hpp"
 
 #include <catch2/catch.hpp>
 
@@ -28,11 +29,14 @@ constexpr char dumpvars_str[] = "$dumpvars x*@ z*$ b0 (k $end";
 TEST_CASE("VCD.Grammar.Commands", "[VCD][Grammar][Commands]")
 {
   SECTION("Comment") {
+    CHECK(is_valid_error_rule<comment_end>());
+
     CHECK(match_exactly<comment_command>(comment_line));
     CHECK(match_exactly<comment_command>(comment_multiline));
   }
 
   SECTION("Version") {
+    CHECK(is_valid_error_rule<version_end>());
     CHECK(match_exactly<version_command>(version_str));
   }
 
@@ -41,6 +45,7 @@ TEST_CASE("VCD.Grammar.Commands", "[VCD][Grammar][Commands]")
   }
 
   SECTION("Date") {
+    CHECK(is_valid_error_rule<date_end>());
     CHECK(match_exactly<date_command>(date_str));
   }
 
@@ -57,6 +62,8 @@ TEST_CASE("VCD.Grammar.Commands", "[VCD][Grammar][Commands]")
   }
 
   SECTION("Dump") {
+    CHECK(is_valid_error_rule<dump_end>());
+
     SECTION("All") {
       CHECK(match_exactly<dumpall_command>(dumpall_str));
     }

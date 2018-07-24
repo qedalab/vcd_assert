@@ -20,6 +20,7 @@ TEST_CASE("MemoryInput", "[Input]")
       MemoryInput parser{test_case};
       REQUIRE(parser.size() == test_case.size());
       REQUIRE(std::equal(test_case.begin(), test_case.end(), parser.data()));
+      REQUIRE_FALSE(std::string(parser.source()).empty());
     }
   }
 }
