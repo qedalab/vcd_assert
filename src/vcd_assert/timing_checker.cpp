@@ -2,6 +2,8 @@
 
 #include "vcd_assert/edge_type.hpp"
 
+#include "vcd/util/size.hpp"
+
 #include <range/v3/view/indices.hpp>
 #include <range/v3/view/linear_distribute.hpp>
 
@@ -12,7 +14,8 @@ TimingChecker::TimingChecker(std::shared_ptr<VCD::Header> header) :
     header_(std::move(header)),
     state_(*header_),
     checker_(state_.num_total_values()),
-    event_lists_(state_.num_total_values())
+    event_lists_(state_.num_total_values()),
+    value_buffer_(VCD::Util::get_max_var_size(*header_))
 {
   index_lookup_.reserve(state_.num_values());
 
