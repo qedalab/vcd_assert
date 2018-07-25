@@ -24,6 +24,14 @@ maintain standard correctness.
    not allow.
  * Whether or not more than one root scope is allowed. Implementation chose to
    not allow.
+ * Multiple references are allowed to point to the same identifier code, but
+   the references doesn't necesarily have the same variable type. Things like
+   `reg` and `wire` can have the same identifier code, but `real` and `wire`
+   make things difficult since `real`'s are specified with `real_value_change`
+   and `wire`'s aren't. The standard doesn't appear to offer any guidance in
+   this case. Implementation chose to allow everything to alias eachother
+   except `real`'s. References sharing the same identifier code always has to
+   have the same type.
  
 These are not strictly disallowed by VCD, but adding those restriction seem
 sensible to us.

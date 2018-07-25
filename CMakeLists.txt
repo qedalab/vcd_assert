@@ -6,6 +6,7 @@ option(BUILD_TESTS "Build tests" FALSE)
 option(BUILD_DOCS "Build documentation [unused]" FALSE)
 
 include(cmake/warnings.cmake)
+include(cmake/create_vcd_from_verilog.cmake)
 
 #Include dependencies
 find_package(fmt REQUIRED)

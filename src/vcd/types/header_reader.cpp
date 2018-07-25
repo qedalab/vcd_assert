@@ -72,8 +72,12 @@ void HeaderReader::var(VarType type, std::size_t size,
     auto &id_code_ref = id_codes_ref.at(id_code_index);
     assert(id_code_ref.get_id_code() == identifier_code);
 
-    bool same =
-        id_code_ref.get_size() == size && id_code_ref.get_type() == type;
+    // Size must always match
+    bool same = id_code_ref.get_size() == size;
+
+    // Don't allow real's to alias types that aren't real's
+    if(id_code_ref.get_type() == VCD::VarType::real)
+      same &= type == VCD::VarType::real;
 
     if (!same)
       throw std::runtime_error("Same identifier code with different types");
