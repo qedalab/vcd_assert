@@ -724,8 +724,8 @@ void TimingChecker::vector_value_change(
     return;
   }
 
-  auto index = header_->get_var_id_code_index(identifier_code_str);
-  auto var_id_code = header_->get_var_id_code(index);
+  auto vcd_index = header_->get_var_id_code_index(identifier_code_str);
+  auto var_id_code = header_->get_var_id_code(vcd_index);
 
   if (values.size() > var_id_code.get_size()) {
     fmt::print(
@@ -770,9 +770,9 @@ void TimingChecker::vector_value_change(
 
   // Get range of values
   ranges::span<VCD::Value> range = value_buffer_;
-  range = range.subspan(var_id_code.get_size());
+  range = range.subspan(0, var_id_code.get_size());
 
-  if (internal_event(index, range)) {
+  if (internal_event(vcd_index, range)) {
     // TODO Better timing assert message
     fmt::print("TIMING ASSERT: Timing violation occured during parsing of "
                "vector value change\n");
