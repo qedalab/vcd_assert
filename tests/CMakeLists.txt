@@ -5,8 +5,9 @@ create_vcd_from_verilog(basic_dro tb_dro "${DRO_SOURCE}")
 
 add_custom_target(
   vcd_integration_examples
+  ALL
   DEPENDS
-  ${CMAKE_BINARY_DIR}/vcd/basic_dro/output.vcd
+    ${CMAKE_BINARY_DIR}/vcd/basic_dro/output.vcd
 )
 
 add_test(NAME integration_dro COMMAND vcd_assert ${CMAKE_BINARY_DIR}/vcd/basic_dro/output.vcd)
