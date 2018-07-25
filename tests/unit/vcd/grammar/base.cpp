@@ -23,4 +23,10 @@ TEST_CASE("VCD.Grammar.Base", "[VCD][Grammar]") {
     CHECK(match_exactly<command_separator>(seperator_1));
     CHECK(match_exactly<command_separator>(seperator_2));
   }
+
+  SECTION("Identifier") {
+    CHECK_FALSE(match_exactly<identifier>(""));
+    CHECK_FALSE(match_exactly<identifier>("!"));
+    CHECK_FALSE(match_exactly<identifier>("!!"));
+  }
 }

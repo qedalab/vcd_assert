@@ -78,6 +78,7 @@ TEST_CASE("VCD.Grammar.Commands", "[VCD][Grammar][Commands]")
 
     SECTION("Vars") {
       CHECK(match_exactly<dumpvars_command>(dumpvars_str));
+      CHECK(match_exactly<dumpvars_command>("$dumpvars r0 ! $end"));
     }
   }
 

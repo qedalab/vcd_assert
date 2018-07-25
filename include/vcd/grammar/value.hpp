@@ -38,6 +38,7 @@ struct real_value_change : seq<
   one<'r','R'>,
   must<
     real_number,
+    plus_blank,
     identifier_code,
     command_separator
   >
