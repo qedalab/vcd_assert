@@ -2,6 +2,7 @@
 // Verilog testbench file, created with TimEx v1.00.02
 // For questions about TimEx, contact CJ Fourie, coenrad@sun.ac.za
 // ---------------------------------------------------------------------------
+include <dro.v>;
 `timescale 1ps/100fs
 module tb_dro;
    reg set = 0;

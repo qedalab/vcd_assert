@@ -160,14 +160,23 @@ struct _module_description_ : sor<
 > {};
 
 struct _include_statement_ : seq< 
-  include_keyword, 
-  one<'<'>, 
-  file_path_spec, 
-  one<'>'>
+  include_keyword,
+  sor<
+    seq<
+      one<'<'>, 
+      file_path_spec, 
+      one<'>'>
+    >,
+    seq<
+      one<'"'>, 
+      file_path_spec, 
+      one<'"'>
+    >
+  >
 >{};
 
 
-struct _library_description_ : sor<
+struct compiler_directive : sor<
   // _library_declaration_,
   _include_statement_
   // _config_declaration_
@@ -177,7 +186,7 @@ struct _grammar_ : must<
   list<
     opt<separator>,
     sor<
-      until<_library_description_>,
+      until<seq<one<'`'>,compiler_directive>>,
       until<_module_description_>
     >
   >

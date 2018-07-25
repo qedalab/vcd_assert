@@ -37,7 +37,8 @@ class DesignReader {
 public:
   /// DesignReader constructor
   DesignReader();
-  void merge(std::unique_ptr<DesignReader> other);
+  // void merge(std::unique_ptr<DesignReader> other);
+  void merge(DesignReader other);
 
   std::size_t module(std::string module_name, std::string file_path);
   

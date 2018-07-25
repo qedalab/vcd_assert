@@ -6,7 +6,8 @@ using namespace Verilog;
 
 DesignReader::DesignReader() { design_ = std::make_unique<Design>(); }
 
-void DesignReader::merge(std::unique_ptr<DesignReader> other)
+// void DesignReader::merge(std::unique_ptr<DesignReader> other)
+void DesignReader::merge(DesignReader other)
 {
 
   // auto other_design = other.release();
@@ -34,7 +35,7 @@ void DesignReader::merge(std::unique_ptr<DesignReader> other)
   //   }
   // }
 
-  for (auto &&new_module : other->design_->modules_) {
+  for (auto &&new_module : other.design_->modules_) {
 
     auto search = design_->module_lookup_.find(new_module.identifier);
     if (search == design_->module_lookup_.end()) {
@@ -51,7 +52,7 @@ void DesignReader::merge(std::unique_ptr<DesignReader> other)
     }
   }
 
-  for (auto &&new_net : other->design_->nets_) {
+  for (auto &&new_net : other.design_->nets_) {
     design_->nets_.emplace_back(new_net);
   }
 

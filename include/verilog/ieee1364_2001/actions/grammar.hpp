@@ -6,30 +6,44 @@
 
 #include "../grammar/grammar_hacked.hpp"
 #include "../../types/design_reader.hpp"
+#include "../../util/parse_input.hpp"
 
+#include "parse/actions/make_pegtl_template.hpp"
+#include <tao/pegtl/memory_input.hpp>
 
 namespace Verilog {
 namespace IEEE1364_2001 {
+namespace Actions {
 // clang-format off
-
-using namespace Parse;  
-using namespace Verilog;  
 
 struct GrammarAction;
 
 struct IncludeFileApply {
-  template <class Rule, class ActionInput, class InputType>
+  template <class Rule, class ActionInput>
   static bool apply(const ActionInput &input, DesignReader &reader,
-                    std::unordered_map<std::string, InputType> &handles)
-  {
-    auto input_identifier = input.string();
-    auto search = handles.find(input_identifier);
-    if (search != handles.end()) {
-      /*file_input<>*/ auto fh = handles[input_identifier];
+                    Util::InputMap &inputmap)
+  { 
+    // std::filesystem::current_path();
+    auto next_input_identifier = input.string();
+    auto search = inputmap.find(next_input_identifier);
+    if (search != inputmap.end()) {
+      auto next_input = inputmap.at(next_input_identifier);
+      if(next_input.type == Util::InputTypeEnum::file){
+        tao::pegtl::file_input<> new_input(next_input_identifier);
 
-      tao::pegtl::parse_nested<Grammar::_grammar_,
-                               make_pegtl_template<GrammarAction>::type,
-                               capture_control>(input, fh, reader, input_identifier, handles);
+        tao::pegtl::parse_nested<Grammar::_grammar_,
+                                Parse::make_pegtl_template<GrammarAction>::type,
+                                Parse::capture_control>(input, new_input, reader, inputmap);
+      }else{
+        auto start = std::get<const char*>(next_input.value);
+        tao::pegtl::memory_input<> new_input(start, next_input_identifier);
+
+        tao::pegtl::parse_nested<Grammar::_grammar_,
+                                Parse::make_pegtl_template<GrammarAction>::type,
+                                Parse::capture_control>(input, new_input, reader, inputmap);
+      }
+      
+      
     } else {
       throw std::runtime_error("InternalError");
     }
@@ -38,20 +52,19 @@ struct IncludeFileApply {
   }
 };
 
+// struct action : Rule<tao::pegtl::nothing>{};
+// struct IncludeFileAction : all_dispatch<
+//   apply<Apply::pegtl_action<action>>
+// > {};
 
-struct IncludeFileAction : all_dispatch<
-  apply<IncludeFileApply>
-> {};
 
 struct IncludeStatementAction: single_dispatch<
-    Grammar::file_path_spec, inner_action_passthrough<
-      IncludeFileAction
-  >
+    Grammar::file_path_spec, apply<IncludeFileApply>
 > {
   using state = DesignReader;
 };
 
-struct LibraryDescriptionAction: single_dispatch<
+struct CompilerDirectiveAction: single_dispatch<
     Grammar::_include_statement_, 
     inner_action_passthrough<IncludeStatementAction>
 > {
@@ -82,16 +95,6 @@ struct ModuleInstanceAction : single_dispatch<
 //  };
 
 
-struct ModuleInstantiationIdentifierAction : single_dispatch<
-    Grammar::module_identifier, inner_action<
-      IdentifierAction, 
-      Storage::member<&NetDataView::identifier>
-    >
->{
-  using state = NetDataView;
-};
-
-
 
 struct StringStringMapping {
   std::string type;
@@ -105,7 +108,7 @@ struct ModuleEvent {
 
 struct ModuleInstantiationAction : multi_dispatch<
     Grammar::module_identifier, inner_action<
-      ModuleInstantiationIdentifierAction, 
+      IdentifierAction, 
       Storage::member<&StringStringMapping::type>
     >,
     Grammar::module_instance, inner_action<
@@ -132,7 +135,7 @@ struct ModuleDeclarationAction : multi_dispatch<
       Storage::member<&ModuleEvent::module_identifier>
     >,
     Grammar::module_instantiation, inner_action<
-      ModuleInstantiationAction, 
+      ModuleInstantiationArrayAction, 
       Storage::member<&ModuleEvent::instances>
     >
 > {
@@ -167,20 +170,29 @@ struct ModuleDescriptionAction: single_dispatch<
   using state = DesignReader;
 };
 
+using DesignReaderFunctionType = void (DesignReader::*)(DesignReader);
+
 struct GrammarAction : multi_dispatch<
-  Grammar::_library_description_, inner_action<
-      LibraryDescriptionAction, 
-      Storage::function<&DesignReader::merge>
+  Grammar::compiler_directive, inner_action<
+      CompilerDirectiveAction, 
+      Storage::function<
+        &DesignReader::merge
+        // static_cast<DesignReaderFunctionType>(&DesignReader::merge)
+        >
   >,
   Grammar::_module_description_, inner_action<
       ModuleDescriptionAction, 
-      Storage::function<&DesignReader::merge>
+      Storage::function<
+        &DesignReader::merge
+        // static_cast<DesignReaderFunctionType>(&DesignReader::merge)
+        >
   >
 > {
   using state = DesignReader;
 };
       
 
+}
 }
 }
 

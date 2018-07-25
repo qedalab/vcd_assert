@@ -9,7 +9,7 @@
 #include <catch2/catch.hpp>
 #include "parse/test/match.hpp"
 
-using namespace Test::Verilog::IEEE1364_2001;
+using namespace Verilog::Test::Verilog::IEEE1364_2001;
 using namespace Verilog::IEEE1364_2001;
 
 

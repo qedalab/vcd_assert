@@ -1,7 +1,7 @@
 #ifndef UNIT_VERILOG_TEST_DESIGN_HPP
 #define UNIT_VERILOG_TEST_DESIGN_HPP
 
-namespace Test{
+namespace Verilog::Test{
 namespace Verilog::IEEE1364_2001{
 
 constexpr auto module_keyword = "module";

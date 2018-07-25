@@ -20,11 +20,15 @@
 #include "parse/actions/dispatch.hpp"
 #include "parse/actions/control.hpp"
 
+#include "parse/actions/make_pegtl_template.hpp"
+#include <tao/pegtl/memory_input.hpp>
+
+
+using namespace Parse;
+
 namespace Verilog {
 namespace IEEE1364_2001 {
 
-using namespace Verilog;
-using namespace Parse;
 
 // struct HCharAction : all_dispatch<apply0<Apply::rule_value>> {
 //   using state = HChar;
