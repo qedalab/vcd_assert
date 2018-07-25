@@ -23,7 +23,7 @@ class VCDAssertConan(ConanFile):
         cmake.configure()
 
         cmake.build()
-        cmake.test()
+        cmake.test(["--",  "CTEST_OUTPUT_ON_FAILURE=TRUE"])
 
     def package(self):
         pass
