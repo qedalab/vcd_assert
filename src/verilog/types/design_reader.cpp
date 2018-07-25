@@ -204,30 +204,6 @@ void DesignReader::var(Verilog::VariableView variable)
             std::string(variable.reference));
 }
 
-// void DesignReader::timescale(TimeScaleNumber number, TimeScaleUnit unit)
-// {
-//   if (has_timescale())
-//     throw std::runtime_error("Design already has timescale property");
-
-//   design_->time_scale_ = TimeScale{number, unit};
-// }
-
-// void DesignReader::timescale(TimeScaleView time_scale)
-// {
-//   timescale(time_scale.number, time_scale.unit);
-// }
-
-// void DesignReader::overwrite_timescale(TimeScaleNumber number,
-//                                        TimeScaleUnit unit) noexcept
-// {
-//   design_->time_scale_ = TimeScale{number, unit};
-// }
-
-// bool DesignReader::has_timescale() const noexcept
-// {
-//   return design_->has_time_scale();
-// }
-
 std::unique_ptr<Design> DesignReader::release()
 {
   if (!net_stack_.empty())

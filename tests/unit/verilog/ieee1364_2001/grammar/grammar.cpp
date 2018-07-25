@@ -1,12 +1,21 @@
-#include "./grammar.hpp"
+#include "../design.hpp"
+#include "verilog/ieee1364_2001/grammar/grammar_hacked.hpp"
 
 
-using namespace Parse::Test;
+#include <fmt/format.h>
+
+// #include "parse/test/parse.hpp"
+
+#include <catch2/catch.hpp>
+#include "parse/test/match.hpp"
+
+using namespace Test::Verilog::IEEE1364_2001;
 using namespace Verilog::IEEE1364_2001;
-using namespace Test::Verilog::IEEE1364_2001::Grammar;
+
 
 TEST_CASE("Verilog.IEEE1364_2001.Grammar.Grammer", "[Verilog][IEEE1364_2001][Grammar][Grammar]") {
 
+  using Parse::Test::match_exactly;
   SECTION("identifier"){
     CAPTURE(module_keyword);
     CHECK(match_exactly<Grammar::identifier>(module_keyword));

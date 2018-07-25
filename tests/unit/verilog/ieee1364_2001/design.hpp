@@ -1,36 +1,8 @@
-#include "verilog/ieee1364_2001/grammar/grammar_hacked.hpp"
-// #include "verilog/ieee1364_2001/grammar/attribute.hpp"
-// #include "verilog/ieee1364_2001/grammar/base.hpp"
-// #include "verilog/ieee1364_2001/grammar/block.hpp"
-// #include "verilog/ieee1364_2001/grammar/character.hpp"
-// #include "verilog/ieee1364_2001/grammar/comment.hpp"
-// #include "verilog/ieee1364_2001/grammar/constants.hpp"
-// #include "verilog/ieee1364_2001/grammar/data.hpp"
-// #include "verilog/ieee1364_2001/grammar/expressions.hpp"
-// #include "verilog/ieee1364_2001/grammar/grammar.hpp"
-// #include "verilog/ieee1364_2001/grammar/keywords.hpp"
-// #include "verilog/ieee1364_2001/grammar/module.hpp"
-// #include "verilog/ieee1364_2001/grammar/numbers.hpp"
-// #include "verilog/ieee1364_2001/grammar/operators.hpp"
-// #include "verilog/ieee1364_2001/grammar/ports.hpp"
-// #include "verilog/ieee1364_2001/grammar/separator.hpp"
-// #include "verilog/ieee1364_2001/grammar/source_text.hpp"
-// #include "verilog/ieee1364_2001/grammar/time_scale.hpp"
-// #include "verilog/ieee1364_2001/grammar/udp.hpp"
+#ifndef UNIT_VERILOG_TEST_DESIGN_HPP
+#define UNIT_VERILOG_TEST_DESIGN_HPP
 
-#include <parse/util/array_append.hpp>
-#include <parse/test/match.hpp>
-#include <parse/test/parse.hpp>
-
-#include <array>
-#include <iostream>
-#include <string>
-#include <catch2/catch.hpp>
-#include <fmt/format.h>
-
-
-namespace Test::Verilog::IEEE1364_2001::Grammar {
-
+namespace Test{
+namespace Verilog::IEEE1364_2001{
 
 constexpr auto module_keyword = "module";
 constexpr auto module_declaration_1 = "module dro; endmodule";
@@ -152,4 +124,62 @@ endmodule
 
 )####";
 
-} // namespace Test::Verilog::IEEE1364_2001::Grammar
+
+// Test::Design dro_example_design_test {
+//   { //vector
+//     { //module
+//       "dro",   // identifier
+//       {},      // instances
+//       {},      // variable
+//       {}       // attributes
+//     }
+//   },
+//   {},
+//   {},
+//   {},
+
+//   Test::Net { 
+//       NetType::module, //type_
+//       "dro",           //identifier_    //what to name root net ?
+//       (std::size_t)0   //definition_index_ 
+//       {
+//           // No child nets
+//       },
+//       {
+//           // No variables 
+//       }
+//   }
+// };
+
+// Test::Design tb_dro_example_design_test {
+//   { //vector
+//     { //module
+//       "dro",   // identifier
+//       {},      // instances
+//       {},      // variable
+//       {}       // attributes
+//     }
+//   },
+//   {},
+//   {},
+//   {},
+
+//   Test::Net { 
+//       NetType::module, //type_
+//       "dro",           //identifier_    //what to name root net ?
+//       (std::size_t)0   //definition_index_ 
+//       {
+//           // No child nets
+//       },
+//       {
+//           // No variables 
+//       }
+//   }
+// };
+
+
+} // namespace Test::Verilog::IEEE1364_2001
+}
+
+
+#endif // UNIT_VERILOG_TEST_DESIGN_HPP

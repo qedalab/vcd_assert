@@ -1,63 +1,23 @@
+#include "../design.hpp"
 #include "verilog/ieee1364_2001/actions/grammar.hpp"
+#include "verilog/ieee1364_2001/grammar/grammar_hacked.hpp"
 
-// Test::Design dro_example_design_test {
-//   { //vector
-//     { //module
-//       "dro",   // identifier
-//       {},      // instances
-//       {},      // variable
-//       {}       // attributes
-//     }
-//   },
-//   {},
-//   {},
-//   {},
 
-//   Test::Net { 
-//       NetType::module, //type_
-//       "dro",           //identifier_    //what to name root net ?
-//       (std::size_t)0   //definition_index_ 
-//       {
-//           // No child nets
-//       },
-//       {
-//           // No variables 
-//       }
-//   }
-// };
+#include <catch2/catch.hpp>
+#include "parse/test/parse.hpp"
+#include "parse/test/match.hpp"
 
-// Test::Design tb_dro_example_design_test {
-//   { //vector
-//     { //module
-//       "dro",   // identifier
-//       {},      // instances
-//       {},      // variable
-//       {}       // attributes
-//     }
-//   },
-//   {},
-//   {},
-//   {},
 
-//   Test::Net { 
-//       NetType::module, //type_
-//       "dro",           //identifier_    //what to name root net ?
-//       (std::size_t)0   //definition_index_ 
-//       {
-//           // No child nets
-//       },
-//       {
-//           // No variables 
-//       }
-//   }
-// };
+using namespace Test::Verilog::IEEE1364_2001;
+using namespace Verilog::IEEE1364_2001;
+using Parse::Test::require_parse;
 
-// TEST_CASE("Verilog.Events.Design", "[Verilog][Events][Design]") {
+// TEST_CASE("Verilog.Actions.Design", "[Verilog][Events][Design]") {
+  
 //   SECTION("dro example"){
-    
 //     DesignReader reader;
 //     require_parse<Grammar::_grammar_, Actions::GrammarAction>(
-//         dro_example, reader);
+//         dro_example, reader, );
 
 //     auto design_p = reader.release();
 //     REQUIRE(design_p.operator bool());

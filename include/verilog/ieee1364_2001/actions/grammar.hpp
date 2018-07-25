@@ -143,26 +143,16 @@ struct ModuleDeclarationAction : multi_dispatch<
 struct ModuleDescriptionStorage{
   static bool store(DesignReader &reader, ModuleEvent data) {
 
-    // reader->file_names_.push_back(file_path); //source
-    // auto from = reader.design_->num_instance();
-    // auto to = from + data.instances.size();
-
-    // auto index = reader.design_->num_modules();
+    //technically this does not have to happen before instances are 
+    //  added, as this module may not be instanced in itself, so the lookup doesnt
+    // require it to be present.
     reader.module(data.module_identifier, "dummy filename");
-    
 
     std::vector<std::size_t> insert_indices;
     
     for (auto&& instance : data.instances ){
       reader.instance(NetType::module,  instance.name, instance.type);
     }
-
-    // // auto index = reader.design_->num_modules();
-    // reader.module(
-    //   data.module_identifier,
-    //   insert_indices 
-    // );
-    
     return true;
    }
  };
@@ -190,22 +180,6 @@ struct GrammarAction : multi_dispatch<
   using state = DesignReader;
 };
       
-
-
-
-
-// struct GrammarAction : single_dispatch<
-//     Grammar::_grammar_, 
-//     inner_action<
-//       DesignAction,
-//       apply<DesignApply>
-//   >
-// > {
-//   using state = DesignReader;
-// };
-//clang-format on
-
-
 
 }
 }
