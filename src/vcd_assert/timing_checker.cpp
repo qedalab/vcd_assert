@@ -10,7 +10,7 @@ using namespace ranges::view;
 
 TimingChecker::TimingChecker(std::shared_ptr<VCD::Header> header) :
     header_(std::move(header)),
-    state_(*header),
+    state_(*header_),
     checker_(state_.num_total_values()),
     event_lists_(state_.num_total_values())
 {
@@ -19,7 +19,7 @@ TimingChecker::TimingChecker(std::shared_ptr<VCD::Header> header) :
   std::size_t counter = 0;
 
   for (auto i : indices(state_.num_values())) {
-    auto var_id_code_view = header->get_var_id_code(i);
+    auto var_id_code_view = header_->get_var_id_code(i);
     auto var_size = var_id_code_view.get_size();
     auto var_type = var_id_code_view.get_type();
 
@@ -621,11 +621,12 @@ void TimingChecker::apply_sdf_file(/*VerilogSourceTree *ast, */
   return out;
 }
 
-[[nodiscard]] bool TimingChecker::internal_event(std::size_t index,
+[[nodiscard]] bool TimingChecker::internal_event(std::size_t vcd_index,
                                                  VCD::Value value)
 {
-auto &events = event_lists_.at(index).events;
-auto prev_value = state_.get_scalar_value(index);
+auto prev_value = state_.get_scalar_value(vcd_index);
+auto index = index_lookup_[vcd_index].from;
+auto &events = event_lists_.at(vcd_index).events;
 
 // Check for timing violation
 bool timing_violation = false;
@@ -639,13 +640,13 @@ state_.set_value(index, value);
 }
 
 [[nodiscard]] bool
-TimingChecker::internal_event(std::size_t range_index,
+TimingChecker::internal_event(std::size_t vcd_range_index,
                               ranges::span<VCD::Value> values) {
-  auto prev_values = state_.get_vector_value(range_index);
+  auto prev_values = state_.get_vector_value(vcd_range_index);
   assert(values.size() == prev_values.size());
 
   bool timing_violation = false;
-  auto range_indices = index_lookup_.at(range_index);
+  auto range_indices = index_lookup_.at(vcd_range_index);
 
   // For each updated value
   for (auto i : indices(values.size())) {
@@ -661,7 +662,7 @@ TimingChecker::internal_event(std::size_t range_index,
   }
 
   // Update values
-  state_.set_value(range_index, values);
+  state_.set_value(vcd_range_index, values);
 
   return timing_violation;
 }

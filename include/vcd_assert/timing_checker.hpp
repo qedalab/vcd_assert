@@ -99,8 +99,8 @@ class TimingChecker
 
   void apply_sdf_cell(SDF::Cell cell, std::size_t apply_scope_index);
 
-  [[nodiscard]] bool internal_event(std::size_t index, VCD::Value value);
-  [[nodiscard]] bool internal_event(std::size_t range_index, ranges::span<VCD::Value> values);
+  [[nodiscard]] bool internal_event(std::size_t vcd_index, VCD::Value value);
+  [[nodiscard]] bool internal_event(std::size_t vcd_range_index, ranges::span<VCD::Value> values);
   // [[nodiscard]] bool event(std::size_t index, double value);
 
   void internal_update_sim_time(std::size_t sim_time);
