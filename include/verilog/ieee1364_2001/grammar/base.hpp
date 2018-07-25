@@ -69,12 +69,13 @@ struct qstring : if_must<
 > {};
 
 
-struct escaped_identifier : must<
+struct escaped_identifier : seq<
   one<'\\'>,
   plus<tao::pegtl::identifier_other>
 > {};
 
-struct simple_identifier : must<
+
+struct simple_identifier : seq<
   tao::pegtl::identifier_first,
   star<tao::pegtl::identifier_other>
 > {};
@@ -88,6 +89,23 @@ struct hierarchical_identifier : seq <
     identifier
   >>
 > {};
+
+struct path_star : alias<one<'*'>>{};
+
+struct path_dot : alias<hchar_dot>{};
+struct path_separator : alias<hchar_slash>{};
+
+struct path_identifier : seq<path_star, path_dot, identifier>{};
+
+struct file_path : list< 
+  path_identifier,
+  path_separator
+> {};
+
+struct file_path_spec : alias<
+  file_path
+> {};
+
 
 struct bracket_pairs;
 

@@ -1,7 +1,7 @@
 #ifndef LIBVERILOG_TIME_SCALE_HPP
 #define LIBVERILOG_TIME_SCALE_HPP
 
-#include "./enums.hpp"
+#include "enums.hpp"
 
 namespace Verilog {
 

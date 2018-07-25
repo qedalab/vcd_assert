@@ -66,3 +66,5 @@ std::size_t Header::num_scopes() const noexcept { return scopes_.size(); }
 std::size_t Header::num_variables() const noexcept { return variables_.size(); }
 
 std::size_t Header::num_id_codes() const noexcept { return id_codes_.size(); }
+
+

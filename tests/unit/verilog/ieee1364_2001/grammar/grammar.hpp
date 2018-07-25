@@ -37,9 +37,9 @@ constexpr auto module_declaration_1 = "module dro; endmodule";
 constexpr auto module_declaration_2 = "module dro(); endmodule";
 constexpr auto module_declaration_3 = "module dro (); endmodule";
 constexpr auto module_declaration_4 = "module dro (set, reset, out);endmodule";
-constexpr auto module_declaration_5 = " module dro (set, reset, out);endmodule";
-constexpr auto module_declaration_6 = "  module dro (set, reset, out);endmodule";
-constexpr auto module_declaration_7 = "\nmodule dro (set, reset, out);endmodule";
+constexpr auto module_declaration_5 = "module  dro (set, reset, out);endmodule";
+constexpr auto module_declaration_6 = "module dro  (set, reset, out);\nendmodule";
+constexpr auto module_declaration_7 = "module dro (set, reset, out);endmodule";
 
 constexpr auto module_example_1 = "\nmodule dro;\nendmodule";
 
@@ -120,6 +120,7 @@ constexpr auto tb_dro_example = R"####(
 // Verilog testbench file, created with TimEx v1.00.02
 // For questions about TimEx, contact CJ Fourie, coenrad@sun.ac.za
 // ---------------------------------------------------------------------------
+include <dro.v>
 `timescale 1ps/100fs
 module tb_dro;
    reg set = 0;

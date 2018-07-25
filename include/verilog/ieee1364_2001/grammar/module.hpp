@@ -75,17 +75,124 @@ struct module_parameter_port_list : op_sep_seq<
 
 struct module_identifier : alias<identifier> {};
 
-// struct module_item : TODO
+struct net_declaration : seq<
+  net_keyword,
+  until<one<';'>>
+>{};
+struct reg_declaration : seq<
+  reg_keyword,
+  until<one<';'>>
+>{};
+struct integer_declaration : seq<
+  integer_keyword,
+  until<one<';'>>
+>{};
+struct real_declaration : seq<
+  real_keyword,
+  until<one<';'>>
+>{};
+struct time_declaration : seq<
+  time_keyword,
+  until<one<';'>>
+>{};
+struct realtime_declaration : seq<
+  realtime_keyword,
+  until<one<';'>>
+>{};
+struct event_declaration : seq<
+  event_keyword,
+  until<one<';'>>
+>{};
+struct genvar_declaration : seq<
+  genvar_keyword,
+  until<one<';'>>
+>{};
+struct task_declaration : seq<
+  task_keyword,
+  until<one<';'>>
+>{};
+struct function_declaration : seq<
+  function_keyword,
+  until<one<';'>>
+>{};
 
-struct module_declaration : must<
-  star<attribute_instance>,
-  module_keyword,
-  module_identifier,
-  opt<module_parameter_port_list>,
-  opt<list_of_ports>,
-  one<';'>,
-  // star<module_item>,
-  endmodule_keyword
+struct module_or_generate_item_declaration : sor< 
+  net_declaration,
+  reg_declaration,
+  integer_declaration,
+  real_declaration,
+  time_declaration,
+  realtime_declaration,
+  event_declaration,
+  genvar_declaration,
+  task_declaration,
+  function_declaration
+> {};
+
+struct module_instance_identifier : alias<identifier>{};
+
+struct name_of_instance : seq < 
+  module_instance_identifier, 
+  one<'['>, 
+  bus_range, 
+  one<']'>
+>{};
+
+struct module_instance : seq<
+  name_of_instance, one<'('>, opt<list_of_port_connections>, one<')'>
+>{};
+
+struct module_instantiation : seq<
+  // opt< parameter_value_assignment> 
+  until<module_identifier>,
+  plus_blank,
+  opt<separator>,
+  list<module_instance, one<','>>,
+  one<';'>
+> {};
+
+
+struct module_or_generate_item : seq<
+  star<attribute_instance>, 
+  sor<
+    module_or_generate_item_declaration,
+    module_instantiation,
+    // udp_instantiation,
+    until<one<';'>>
+    // parameter_override,
+    // continuous_assign,
+    // gate_instantiation,
+    // initial_construct,
+    // always_construct
+  >
+> {};
+
+struct module_item : sor<
+  module_or_generate_item,
+  seq<port_declaration, one<';'>>,
+  seq<
+    star<attribute_instance>, 
+    sor<
+      generated_instantiation,
+      local_parameter_declaration,
+      parameter_declaration,
+      specify_block,
+      specparam_declaration
+    >
+  >
+>{};
+
+struct module_declaration : seq<
+  // star<attribute_instance>,
+  if_must<
+    module_keyword,
+    module_identifier,
+    opt<module_parameter_port_list>,
+    opt<list_of_ports>,
+    one<';'>,
+    // star<module_item>,
+    endmodule_keyword
+  >
 > {};
 
 // clang-format on

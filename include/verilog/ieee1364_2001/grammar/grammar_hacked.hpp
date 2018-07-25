@@ -50,38 +50,137 @@ struct unimplemented_brackets : if_must<
   until<close>
 > {};
 
-struct module_item_hack : sor<
-  op_sep_ignored,
-  until<eol>
+// struct _module_item_ : sor<
+//   op_sep_ignored,
+//   until<eol>
+// > {};
+
+
+struct net_declaration : seq<
+  net_keyword,
+  until<one<';'>>
+>{};
+struct reg_declaration : seq<
+  reg_keyword,
+  until<one<';'>>
+>{};
+struct integer_declaration : seq<
+  integer_keyword,
+  until<one<';'>>
+>{};
+struct real_declaration : seq<
+  real_keyword,
+  until<one<';'>>
+>{};
+struct time_declaration : seq<
+  time_keyword,
+  until<one<';'>>
+>{};
+struct realtime_declaration : seq<
+  realtime_keyword,
+  until<one<';'>>
+>{};
+struct event_declaration : seq<
+  event_keyword,
+  until<one<';'>>
+>{};
+struct genvar_declaration : seq<
+  genvar_keyword,
+  until<one<';'>>
+>{};
+struct task_declaration : seq<
+  task_keyword,
+  until<one<';'>>
+>{};
+struct function_declaration : seq<
+  function_keyword,
+  until<one<';'>>
+>{};
+
+struct module_or_generate_item_declaration : sor< 
+  net_declaration,
+  reg_declaration,
+  integer_declaration,
+  real_declaration,
+  time_declaration,
+  realtime_declaration,
+  event_declaration,
+  genvar_declaration,
+  task_declaration,
+  function_declaration
 > {};
+
+struct module_instance_identifier : alias<identifier>{};
+
+struct fake_bus_range : seq<
+  one<'['>,
+  until<one<']'>>
+>{};
+
+struct name_of_instance : seq < 
+  module_instance_identifier, 
+  opt<fake_bus_range>
+>{};
+
+struct module_instance : seq<
+  name_of_instance, seq<one<'('>, /*opt<list_of_port_connections>,*/ until<one<')'>>>
+>{};
 
 struct module_identifier : alias<identifier> {};
 
-struct module_declaration_hack : if_must<
-  until< module_keyword >,
+struct module_instantiation : seq<
+  // opt< parameter_value_assignment> 
+  module_identifier,
+  plus_blank,
+  // opt<separator>,
+  opt< list<module_instance, one<','> > >,
+  opt<until<one<';'>>>
+> {};
+
+
+struct _module_declaration_ : seq<
+  module_keyword,
   plus_blank,
   module_identifier,
-  until<endmodule_keyword>,
+  until<one<';'>>,
+  star<module_instantiation>,
+    // star<
+    //   // until<at<module_identifier>>
+    //   until<at<module_instantiation>>,
+    //   module_instantiation
+    // >,
+  // opt<until<at<endmodule_keyword>>>,
+  must<until<endmodule_keyword>>,
   opt<separator>
 > {};
 
-
-struct description_hack : seq<
-  module_declaration_hack //,
+struct _module_description_ : sor<
+  _module_declaration_ //,
   // udp_declaration
 > {};
 
-/* The top-level grammar allows one or more desciptions 
-   block and then expects eof. */
-struct source_text_hack : seq<
-  list< description_hack, opt<separator> >
+struct _include_statement_ : seq< 
+  include_keyword, 
+  one<'<'>, 
+  file_path_spec, 
+  one<'>'>
+>{};
+
+
+struct _library_description_ : sor<
+  // _library_declaration_,
+  _include_statement_
+  // _config_declaration_
 > {};
 
-
-struct grammar_hack : must<
-  opt<separator>,
-  source_text_hack,
-  opt<separator>  
+struct _grammar_ : must<
+  list<
+    opt<separator>,
+    sor<
+      until<_library_description_>,
+      until<_module_description_>
+    >
+  >
   // opt<eof>
 > {};
 

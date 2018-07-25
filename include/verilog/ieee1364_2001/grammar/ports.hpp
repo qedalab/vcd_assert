@@ -51,10 +51,12 @@ struct port : sor<
   port_expression,  //ASSUMPTION (assume not optional)
   seq<one<'.'>, port_identifier>, one<'('>, opt<port_expression>, one<')'>
 > {};
+
 struct port_expression : sor<
   port_reference, 
   list<seq<port_reference, opt<separator>>,one<','>> 
 > {};
+
 struct port_reference : sor<
   port_identifier, 
   op_sep_seq< 

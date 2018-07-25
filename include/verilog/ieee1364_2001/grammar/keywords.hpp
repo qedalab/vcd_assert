@@ -20,19 +20,32 @@ struct module_keyword : sor<
 > {}; 
 
 // misc
-struct endmodule_keyword      : TAO_PEGTL_STRING("endmodule"){};         
-struct endprimitive_keyword   : TAO_PEGTL_STRING("endprimitive"){};           
-struct inout_keyword          : TAO_PEGTL_STRING("inout"){};             
-struct input_keyword          : TAO_PEGTL_STRING("input"){};     
-struct integer_keyword        : TAO_PEGTL_STRING("integer"){};               
-struct output_keyword         : TAO_PEGTL_STRING("output"){};             
-struct parameter_keyword      : TAO_PEGTL_STRING("parameter"){};         
-struct primitive_keyword      : TAO_PEGTL_STRING("primitive"){};         
-struct real_keyword           : TAO_PEGTL_STRING("real"){};           
-struct realtime_keyword       : TAO_PEGTL_STRING("realtime"){};       
-struct reg_keyword            : TAO_PEGTL_STRING("reg"){};   
-struct signed_keyword         : TAO_PEGTL_STRING("signed"){};             
-struct time_keyword           : TAO_PEGTL_STRING("time"){};   
+
+struct endmodule_keyword      : TAO_PEGTL_STRING("endmodule"){};
+struct endprimitive_keyword   : TAO_PEGTL_STRING("endprimitive"){};
+struct inout_keyword          : TAO_PEGTL_STRING("inout"){};
+struct input_keyword          : TAO_PEGTL_STRING("input"){};
+struct integer_keyword        : TAO_PEGTL_STRING("integer"){};
+struct include_keyword        : TAO_PEGTL_STRING("include"){};
+struct output_keyword         : TAO_PEGTL_STRING("output"){};
+struct parameter_keyword      : TAO_PEGTL_STRING("parameter"){};
+struct primitive_keyword      : TAO_PEGTL_STRING("primitive"){};
+struct real_keyword           : TAO_PEGTL_STRING("real"){};
+struct realtime_keyword       : TAO_PEGTL_STRING("realtime"){};
+struct reg_keyword            : TAO_PEGTL_STRING("reg"){};
+struct signed_keyword         : TAO_PEGTL_STRING("signed"){};
+struct time_keyword           : TAO_PEGTL_STRING("time"){};
+
+struct begin_keyword          : TAO_PEGTL_STRING("begin"){};
+struct end_keyword            : TAO_PEGTL_STRING("end"){};
+struct always_keyword         : TAO_PEGTL_STRING("always"){};
+struct initial_keyword        : TAO_PEGTL_STRING("initial"){};
+
+struct net_keyword            : TAO_PEGTL_STRING("net"){};
+struct event_keyword          : TAO_PEGTL_STRING("event"){};
+struct genvar_keyword         : TAO_PEGTL_STRING("genvar"){};
+struct task_keyword           : TAO_PEGTL_STRING("task"){};
+struct function_keyword       : TAO_PEGTL_STRING("function"){};
 
 // net types
 struct supply0_keyword        : TAO_PEGTL_STRING("supply0"){};

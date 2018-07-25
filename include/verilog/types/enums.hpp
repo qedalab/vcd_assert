@@ -3,6 +3,44 @@
 
 namespace Verilog {
 
+/// Verilog Scope type enum
+enum class ScopeType {
+  begin, fork, function, module, task, instance
+};
+
+/// Verilog Net type enum
+//TODO the netlist doesn't usually contain the module + instance, does it?
+enum class NetType {
+  module, instance, variable, port
+};
+
+/// Verilog Time number enum
+enum class TimeNumber {
+  _1=1, _10=10, _100=100
+};
+
+/// Verilog Time unit enum
+enum class TimeUnit {
+  s, ms, us, ns, ps, fs
+};
+
+/// Verilog Variable type enum
+enum class VarType {
+  event, integer, parameter, real, realtime, reg, supply0, supply1, time,
+  tri, triand, trior, trireg, tri0, tri1, wand, wire, wor
+};
+
+/// Verilog Variable value enum
+enum class Value {
+  zero, one, x, z
+};
+
+/// Verilog $dump types enum
+enum class DumpType {
+  all, off, on, vars
+};
+
+
 enum class HChar {
   dot, slash
 };
