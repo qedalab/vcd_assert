@@ -21,12 +21,12 @@ struct mtm_spec : alias<qstring>{};
 struct scale_factors : alias<qstring>{};
 struct scale_type : alias<qstring>{};
 
-struct sdf_annotate_task : seq<
+struct sdf_annotate_task : if_must<
   seq<
     one<'$'>, 
     sdf_annotate_keyword
   >,
-  // opt<separator>,
+  opt<separator>,
   if_must<
     one<'('>, 
     opt<separator>,
@@ -61,7 +61,7 @@ struct sdf_annotate_task : seq<
         > 
       >
     >, 
-    // opt<separator>,
+    opt<separator>,
     one<')'>
   >,
   opt<separator>,

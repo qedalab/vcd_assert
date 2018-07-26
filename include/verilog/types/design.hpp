@@ -2,8 +2,6 @@
 #define LIBVERILOG_TYPES_DESIGN_HPP
 
 #include "netlist.hpp"
-#include "time_scale.hpp"
-#include "var_id_code.hpp"
 #include "variable.hpp"
 
 #include "parse/util/name_index_map.hpp"

@@ -4,16 +4,18 @@
 #include "base.hpp"
 #include "commands.hpp"
 
-#include <filesystem>
-// #include <stdlib.h>
-
 #include "../../types/commands.hpp"
 #include "../../types/design_reader.hpp"
 #include "../../util/parse_input.hpp"
 #include "../grammar/grammar_hacked.hpp"
 
+#include "parse/actions/command/inner_action_then_apply.hpp"
 #include "parse/actions/make_pegtl_template.hpp"
 #include <tao/pegtl/memory_input.hpp>
+
+
+#include <filesystem>
+// #include <stdlib.h>
 
 namespace Verilog {
 namespace IEEE1364_2001 {
@@ -89,6 +91,14 @@ struct CommandArrayAction : single_dispatch<
 //   using state = ModuleEvent;
 // };
 
+// struct sdf_annotate_task_storage {
+//   static bool storage(ModuleEvent &outer, ModuleEvent inner ){
+    
+
+//     return true;
+//   }
+// };
+
 struct ModuleDeclarationAction : multi_dispatch<
     Grammar::module_identifier, inner_action<
       IdentifierAction, 
@@ -98,6 +108,10 @@ struct ModuleDeclarationAction : multi_dispatch<
       ModuleInstantiationArrayAction, 
       Storage::member<&ModuleEvent::instances>
     >,
+    // Grammar::sdf_annotate_task, inner_action<
+    //   CommandArrayAction, 
+    //   sdf_annotate_task_storage
+    // >
     Grammar::sdf_annotate_task, inner_action<
       CommandArrayAction, 
       Storage::member<&ModuleEvent::commands>
@@ -109,14 +123,15 @@ struct ModuleDeclarationAction : multi_dispatch<
 
 struct ModuleDescriptionApply{
   template <class Rule, class ActionInput>
-  static bool apply(const ActionInput &input, DesignReader &reader, ModuleEvent data, 
+  static bool apply(const ActionInput &input, ModuleEvent data, DesignReader &reader,  
                     Util::InputMap &inputmap){
 
+                      (void)inputmap;
     //technically this does not have to happen before instances are 
     //  added, as this module may not be instanced in itself, so the lookup doesn't
     // require it to be present.
-    reader.module(data.module_identifier, std::string(in.source()));
-    // throw std::runtime_error(fmt::format("Saving module : {}",data.module_identifier));
+    reader.module(data.module_identifier, input.position().source);
+    // throw std::runtime_error(fmt::format("Saving module : {} from file : {}", data.module_identifier, input.position().source));
 
     std::vector<std::size_t> insert_indices;
     
@@ -129,7 +144,10 @@ struct ModuleDescriptionApply{
 
 struct ModuleDescriptionAction: single_dispatch<
     Grammar::_module_declaration_, 
-    inner_action< ModuleDeclarationAction, ModuleDescriptionApply >
+    inner_action_then_apply< 
+      ModuleDeclarationAction, 
+      ModuleDescriptionApply 
+    >
 > {
   using state = DesignReader;
 };

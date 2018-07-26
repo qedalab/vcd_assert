@@ -199,7 +199,7 @@ struct at_least_blank_separator : seq<
   opt<separator>
 >{};
 
-struct initial_block : if_must <
+struct initial_block : seq < //causes parse errors when if_must
   initial_keyword,
   // at_least_blank_separator,
   separator,
@@ -220,7 +220,7 @@ struct _module_declaration_ : if_must<
   plus_blank,
   module_identifier,
   until<one<';'>>,
-  // opt<separator>,
+  opt<separator>,
   star<
     until<
       sor<
