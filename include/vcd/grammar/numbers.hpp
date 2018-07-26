@@ -80,20 +80,20 @@ struct sign : one<'+', '-'> {};
 
 struct real_exponent_part : seq<
   one<'e','E'>,
-  one<'+','-'>,
+  opt<one<'+','-'>>,
   unsigned_number
 > {};
 
 struct real_number : seq<
   unsigned_number,
-  sor<
+  opt<sor<
     seq<
       one<'.'>,
       unsigned_number,
       opt<real_exponent_part>
     >,
     real_exponent_part
-  >
+  >>
 > {};
 
 } // namespace VCD::Grammar

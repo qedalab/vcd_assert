@@ -6,5 +6,6 @@ target_sources(unit_parse PRIVATE
   ${DIR}/rule_value.cpp
   ${DIR}/string.cpp
   ${DIR}/string_view.cpp
+  ${DIR}/unsigned_integer.cpp
   ${DIR}/value.cpp
   )

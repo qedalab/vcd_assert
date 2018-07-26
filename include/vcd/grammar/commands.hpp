@@ -19,7 +19,6 @@ using namespace Parse::Grammar::Base;
 
 // clang-format off
 
-
 // TODO move into own header
 struct bit_select_index : decimal_number {};
 struct msb_index : decimal_number {};
@@ -103,7 +102,7 @@ struct timescale_command : delimited_seq<plus_blank,
   timescale_keyword,
   must<
     time_number,
-    opt<plus<blank>>,
+    star<blank>,
     time_unit,
     plus_blank,
     end_command

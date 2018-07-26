@@ -29,6 +29,14 @@ TEST_CASE("VCDAssert.Conditional") {
   constexpr auto logical_equal = EqualityOperator::logical_equal;
   constexpr auto logical_not_equal = EqualityOperator::logical_not_equal;
 
+  SECTION("Move assign") {
+    ConditionalValuePointer left = VCD::Value::zero;
+    ConditionalValuePointer right = VCD::Value::one;
+    left = std::move(right);
+
+    CHECK(left.value() == VCD::Value::one);
+  }
+
   SECTION("ConditionalValuePointer") {
     SECTION("Value pointer") {
       VCD::Value value = VCD::Value::one;

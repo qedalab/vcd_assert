@@ -7,6 +7,7 @@ services:
 
 before_script:
   - docker run --name runner -t -d pleroux0/centos7-devel
+  - docker exec runner yum -y install iverilog
   - docker exec runner git clone -b "${TRAVIS_BRANCH}" --recurse-submodules --depth=1 "https://github.com/${TRAVIS_REPO_SLUG}.git" "repo"
   - docker exec runner mkdir "repo/travis-build"
   - docker exec runner conan remote add pleroux0 "https://api.bintray.com/conan/pleroux0/pleroux0"
@@ -48,6 +49,7 @@ matrix:
       - TEST_NAME="Clang sanitize undefined'
       before_script:
       - docker run --name runner -t -d pleroux0/ubuntu-clang6-devel
+      - docker exec runner apt-get install -y iverilog
       - docker exec runner git clone -b "${TRAVIS_BRANCH}" --recurse-submodules --depth=1 "https://github.com/${TRAVIS_REPO_SLUG}.git" "repo"
       - docker exec runner mkdir "repo/travis-build"
       - docker exec runner conan remote add pleroux0 "https://api.bintray.com/conan/pleroux0/pleroux0"
@@ -59,6 +61,7 @@ matrix:
       - TEST_NAME="Clang sanitize address'
       before_script:
       - docker run --name runner -t -d pleroux0/ubuntu-clang6-devel
+      - docker exec runner apt-get install -y iverilog
       - docker exec runner git clone -b "${TRAVIS_BRANCH}" --recurse-submodules --depth=1 "https://github.com/${TRAVIS_REPO_SLUG}.git" "repo"
       - docker exec runner mkdir "repo/travis-build"
       - docker exec runner conan remote add pleroux0 "https://api.bintray.com/conan/pleroux0/pleroux0"
@@ -70,6 +73,7 @@ matrix:
       - TEST_NAME="Clang Tidy'
       before_script:
       - docker run --name runner -t -d pleroux0/ubuntu-clang6-devel
+      - docker exec runner apt-get install -y iverilog
       - docker exec runner git clone -b "${TRAVIS_BRANCH}" --recurse-submodules --depth=1 "https://github.com/${TRAVIS_REPO_SLUG}.git" "repo"
       - docker exec runner mkdir "repo/travis-build"
       - docker exec runner conan remote add pleroux0 "https://api.bintray.com/conan/pleroux0/pleroux0"

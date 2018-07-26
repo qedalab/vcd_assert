@@ -96,7 +96,23 @@ struct JSONValueAction : multi_dispatch<
   using state = JSONValuePtr;
 };
 
+using rule_one = tao::pegtl::one<'1'>;
+
+struct rule_one_with_error : rule_one {
+  static constexpr auto error() {
+    return "error";
+  }
+};
+
 TEST_CASE("Parse.CaptureControl") {
+  SECTION("raise") {
+    std::string_view raise_input = "asdf";
+    tao::pegtl::memory_input<> input(std::begin(raise_input), std::end(raise_input));
+
+    CHECK_THROWS(tao::pegtl::parse<tao::pegtl::must<rule_one_with_error>, tao::pegtl::nothing, capture_control>(input));
+    CHECK_THROWS(tao::pegtl::parse<tao::pegtl::must<rule_one>, tao::pegtl::nothing, capture_control>(input));
+  }
+
   SECTION("JSON") {
     JSONValuePtr json;
 

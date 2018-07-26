@@ -44,14 +44,14 @@ int main(int argc, char **argv) {
   cli.failure_message(CLI::FailureMessage::help);
 
   std::string vcd_file;
-  auto vcd_file_option = cli.add_option("file", vcd_file, "VCD file");
+  auto vcd_file_option = cli.add_option("vcd_file", vcd_file, "VCD file");
   vcd_file_option->required();
   vcd_file_option->check(CLI::ExistingFile);
 
-  std::vector<std::string> verilog_files;
-  auto verilog_file_option = cli.add_option("file", verilog_files, "Verilog file(s)");
-  verilog_file_option->required();
-  verilog_file_option->check(CLI::ExistingFile); //TODO : is this necessary?
+//   std::vector<std::string> verilog_files;
+//   auto verilog_file_option = cli.add_option("verilog_file", verilog_files, "Verilog file(s)");
+//   verilog_file_option->required();
+//   verilog_file_option->check(CLI::ExistingFile);
 
   std::vector<std::string> vcd_nodes;
   auto node_option = cli.add_option("--node,-n", vcd_nodes, "VCD Node");
@@ -107,7 +107,7 @@ int main(int argc, char **argv) {
 
   if (apply_nodes.empty()) {
     fmt::print(FMT_STRING("ERROR: No timing checks to match!\n"));
-    return 1;
+    // return 1;
   }
 
   assert(sdf_files.empty());
@@ -158,9 +158,7 @@ int main(int argc, char **argv) {
                     Parse::make_pegtl_template<VCD::Actions::HeaderAction>::type,
                     Parse::capture_control>(vcd_input, vcd_reader);
 
-  auto header_p = vcd_reader.release();
-  assert(header_p.operator bool());
-  
+  auto header_p = std::make_unique<VCD::Header>(vcd_reader.release());
   auto timing_checker = VCDAssert::TimingChecker(std::move(header_p));
   
   // Read in corresponding SDF files

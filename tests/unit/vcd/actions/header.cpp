@@ -75,8 +75,7 @@ TEST_CASE("VCD.Events.Header", "[VCD][Events][Header]") {
   require_parse<Grammar::header_commands, Actions::HeaderAction>(
       four_state_vcd_example_header_str, reader);
 
-  auto header_p = reader.release();
-  REQUIRE(header_p.operator bool());
-  Test::catch_test_header(*header_p, vcd_4_state_example_header);
+  auto header = reader.release();
+  Test::catch_test_header(header, vcd_4_state_example_header);
 }
 

@@ -6,7 +6,7 @@ VCD Assert
     :target: https://travis-ci.org/pleroux0/docker-ubuntu-clang6-devel
 
 .. image:: https://codecov.io/gh/pleroux0/vcd_assert/branch/master/graph/badge.svg
-  :target: https://codecov.io/gh/pleroux0/vcd_assert<Paste>
+  :target: https://codecov.io/gh/pleroux0/vcd_assert
 
 An external program that checks for timing violations outside of the simulator,
 by looking at the VCD output.

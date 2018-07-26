@@ -15,7 +15,7 @@ constexpr auto four_state_vcd_example_str =
     "$timescale 1 ns\n"
     "$end\n"
     "$scope module top $end\n"
-    "$scope module m1 $end\n" // Error here?
+    "$scope module m1 $end\n"
     "$var trireg 1 *@ net1 $end\n"
     "$var trireg 1 *# net2 $end\n"
     "$var trireg 1 *$ net3 $end\n"

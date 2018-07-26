@@ -34,7 +34,7 @@ struct IncludeFileApply {
     auto search_input = fs::path(next_input_identifier).lexically_normal();
     auto abs_path = fs::weakly_canonical(search_input);
     
-    // throw std::runtime_error(fmt::format("PATH : {} vs {} ",search_input,abs_path));
+    throw std::runtime_error(fmt::format("PATH : {} vs {} ",search_input,abs_path));
 
     auto search = inputmap.find(search_input);
     if (search != inputmap.end()) {
@@ -66,12 +66,6 @@ struct IncludeFileApply {
     return true;
   }
 };
-
-// struct action : Rule<tao::pegtl::nothing>{};
-// struct IncludeFileAction : all_dispatch<
-//   apply<Apply::pegtl_action<action>>
-// > {};
-
 
 struct IncludeStatementAction: single_dispatch<
     Grammar::file_path_spec, apply<IncludeFileApply>

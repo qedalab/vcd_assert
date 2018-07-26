@@ -2,13 +2,15 @@
 #define LIBVERILOG_IEEE1364_2001_ACTIONS_MODULE_HPP
 
 #include "base.hpp"
+#include "commands.hpp"
 
 #include <filesystem>
 // #include <stdlib.h>
 
+#include "../../types/commands.hpp"
 #include "../../types/design_reader.hpp"
 #include "../../util/parse_input.hpp"
-#include "../grammar/module.hpp"
+#include "../grammar/grammar_hacked.hpp"
 
 #include "parse/actions/make_pegtl_template.hpp"
 #include <tao/pegtl/memory_input.hpp>
@@ -42,6 +44,7 @@ struct StringStringMapping {
 struct ModuleEvent {
   std::string module_identifier;
   std::vector<StringStringMapping> instances; 
+  std::vector<Command> commands; 
 };
 
 
@@ -68,7 +71,7 @@ struct ModuleInstantiationArrayAction : single_dispatch<
 };
 
 
-struct InitialBlockArrayAction : single_dispatch<
+struct CommandArrayAction : single_dispatch<
     Grammar::sdf_annotate_task, inner_action<
       SDFAnnotateTaskAction, 
       Storage::push_back
@@ -77,6 +80,14 @@ struct InitialBlockArrayAction : single_dispatch<
   using state = std::vector<Command>;
 };
 
+
+// struct InitialBlockAction : single_dispatch<
+//     Grammar::sdf_annotate_task, inner_action_passthrough<
+//       SDFAnnotateTaskAction,
+//     >
+// > {
+//   using state = ModuleEvent;
+// };
 
 struct ModuleDeclarationAction : multi_dispatch<
     Grammar::module_identifier, inner_action<
@@ -87,8 +98,8 @@ struct ModuleDeclarationAction : multi_dispatch<
       ModuleInstantiationArrayAction, 
       Storage::member<&ModuleEvent::instances>
     >,
-    Grammar::initial_block, inner_action<
-      InitialBlockArrayAction, 
+    Grammar::sdf_annotate_task, inner_action<
+      CommandArrayAction, 
       Storage::member<&ModuleEvent::commands>
     >
 > {
@@ -102,7 +113,7 @@ struct ModuleDescriptionApply{
                     Util::InputMap &inputmap){
 
     //technically this does not have to happen before instances are 
-    //  added, as this module may not be instanced in itself, so the lookup doesnt
+    //  added, as this module may not be instanced in itself, so the lookup doesn't
     // require it to be present.
     reader.module(data.module_identifier, std::string(in.source()));
     // throw std::runtime_error(fmt::format("Saving module : {}",data.module_identifier));

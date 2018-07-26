@@ -128,5 +128,12 @@ void State::set_value(std::size_t index, ranges::span<VCD::Value> values)
 
 std::size_t State::num_values() { return values_.size(); }
 
-//TODO
-std::size_t State::num_total_values() { return values_.size(); }
+std::size_t State::num_packed_vector_values()
+{
+  return packed_vector_values_.size();
+}
+
+std::size_t State::num_total_values()
+{
+  return num_values() + num_packed_vector_values();
+}

@@ -224,7 +224,7 @@ struct _module_declaration_ : if_must<
   star<
     until<
       sor<
-        initial_block
+        initial_block,
         module_instantiation
       >
     >

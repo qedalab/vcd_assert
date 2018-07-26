@@ -7,7 +7,7 @@ add_test(NAME unit_parse COMMAND unit_parse)
 
 add_subdirectory(actions)
 add_subdirectory(concepts)
-add_subdirectory(control) # TODO
+add_subdirectory(control)
 add_subdirectory(grammar)
 add_subdirectory(input)
 add_subdirectory(util)

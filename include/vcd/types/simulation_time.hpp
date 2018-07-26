@@ -1,7 +1,7 @@
 #ifndef LIBVCD_TYPES_SIMULATION_TIME_HPP
 #define LIBVCD_TYPES_SIMULATION_TIME_HPP
 
-#include <cstdint>
+#include <cstddef>
 
 namespace VCD {
 

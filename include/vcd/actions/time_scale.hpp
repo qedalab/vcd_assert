@@ -20,25 +20,14 @@ namespace VCD::Actions {
 
 using namespace Parse;
 
-struct TimeUnitAction : all_dispatch<apply0<Apply::rule_value>>
-{
+struct TimeUnitAction : all_dispatch<apply0<Apply::rule_value>> {
   using state = TimeUnit;
 };
 
-// struct TimeUnitAction : multi_dispatch<
-//   Grammar::time_s, apply0<Apply::value<TimeUnit::s>>,
-//   Grammar::time_ms, apply0<Apply::value<TimeUnit::ms>>,
-//   Grammar::time_us, apply0<Apply::value<TimeUnit::us>>,
-//   Grammar::time_ns, apply0<Apply::value<TimeUnit::ns>>,
-//   Grammar::time_ps, apply0<Apply::value<TimeUnit::ps>>,
-//   Grammar::time_fs, apply0<Apply::value<TimeUnit::fs>>
-// > {
-//   using state = TimeUnit;
-// };
-
 struct TimeNumberApply {
   template <class Rule, class ActionInput>
-  static bool apply(const ActionInput &input, TimeNumber &tn) {
+  static bool apply(const ActionInput &input, TimeNumber &tn)
+  {
     switch (input.size()) {
     case 1:
       tn = TimeNumber::_1;
@@ -49,26 +38,33 @@ struct TimeNumberApply {
     case 3:
       tn = TimeNumber::_100;
       break;
-    default:
-      throw std::runtime_error("InternalError");
+    default:                                                   // LCOV_EXCL_LINE
+      std::puts("INTERNAL ERROR: Code should be unreachable"); // LCOV_EXCL_LINE
+      std::abort();                                            // LCOV_EXCL_LINE
     }
 
     return true;
   }
 };
 
-struct TimeNumberAction : single_dispatch <
-    Grammar::time_number, apply<TimeNumberApply>
+// clang-format off
+struct TimeNumberAction : single_dispatch<
+  Grammar::time_number, apply<TimeNumberApply>
 > {
   using state = TimeNumber;
 };
+// clang-format on
 
+// clang-format off
 struct TimeScaleAction : multi_dispatch <
-    Grammar::time_number, inner_action<TimeNumberAction, Storage::member<&TimeScaleView::number>>,
-    Grammar::time_unit, inner_action<TimeUnitAction, Storage::member<&TimeScaleView::unit>>
+    Grammar::time_number, inner_action<
+      TimeNumberAction, Storage::member<&TimeScaleView::number>>,
+    Grammar::time_unit, inner_action<
+      TimeUnitAction, Storage::member<&TimeScaleView::unit>>
 > {
   using state = TimeScaleView;
 };
+// clang-format on
 
 } // namespace VCD::Actions
 

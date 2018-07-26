@@ -16,7 +16,7 @@ struct Rule;
 
 TEST_CASE("Parse.Actions.Apply.Integer", "[Actions][Apply]") {
   IntegerActionInput input;
-  double state;
+  int state;
   Apply::integer::apply<Rule>(input, state);
   REQUIRE(state == Approx(42));
 }

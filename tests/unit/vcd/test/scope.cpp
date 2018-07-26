@@ -13,6 +13,10 @@ void VCD::Test::catch_test_scope(const VCD::Header &header, const VCD::Scope &sc
   CHECK(scope.num_variables() == test.variables.size());
   CHECK(scope.num_scopes() == test.scopes.size());
 
+  VCD::ScopeDataView scope_view = scope;
+  CHECK(scope_view.identifier == test.identifier);
+  CHECK(scope_view.type == test.type);
+
   for (auto &inner_test_scope : test.scopes) {
     SECTION(std::string("Scope: ") + inner_test_scope.identifier) {
       REQUIRE(scope.contains_scope(inner_test_scope.identifier));

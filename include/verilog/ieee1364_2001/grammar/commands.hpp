@@ -12,6 +12,8 @@ namespace IEEE1364_2001 {
 namespace Grammar {
 // clang-format off
 
+struct name_of_instance;
+
 struct sdf_file : if_must< one<'"'>, file_path_spec, one<'"'>>{};
 struct config_file : if_must< one<'"'>, file_path_spec, one<'"'>>{};
 struct log_file : if_must< one<'"'>, file_path_spec, one<'"'>>{};

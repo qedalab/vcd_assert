@@ -23,7 +23,11 @@ struct command_separator : sor<
 
 struct printable_ascii_except_whitespace : range<33,126> {};
 
-struct identifier_code : until<at<command_separator>> {};
+// TODO be strict about what is allowed as identifiers
+struct identifier_code : seq<
+  not_at<command_separator>,
+  until<at<command_separator>>
+> {};
 
 struct simple_identifier : seq<
   tao::pegtl::identifier_first,
