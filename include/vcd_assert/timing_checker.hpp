@@ -58,23 +58,9 @@ class TimingChecker
   [[nodiscard]] bool handle_event(const RegisterEvent &event, std::size_t index,
                                   VCD::Value from, VCD::Value to);
 
-  std::optional<std::size_t> match_scope_helper(std::vector<std::string> path,
-                                                size_t path_index,
-                                                size_t scope_index);
-
-  std::optional<std::size_t> match_scope(std::vector<std::string> path,
-                                         std::size_t scope_index);
-
   std::optional<std::size_t> get_sdf_node_index(SDF::Node node,
                                                 std::size_t scope_index,
                                                 VCD::Scope &scope);
-
-  ConditionalValuePointer get_sdf_node_ptr(std::size_t var_index);
-
-  ConditionalValuePointer
-  get_sdf_conditional_ptr_helper(SDF::EqualityOperator &op,
-                                 ConditionalValuePointer &left,
-                                 ConditionalValuePointer &right);
 
   std::optional<ConditionalValuePointer>
   get_sdf_conditional_ptr(SDF::TimingCheckCondition cond,
