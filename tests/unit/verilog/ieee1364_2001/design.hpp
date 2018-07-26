@@ -4,6 +4,10 @@
 namespace Verilog::Test{
 namespace Verilog::IEEE1364_2001{
 
+constexpr auto include_statement = "include \"to_be_included\"";
+constexpr auto include_statement_no_qstring = "include to_be_included";
+constexpr auto compiler_directive = "`include \"to_be_included\"";
+
 constexpr auto module_keyword = "module";
 constexpr auto module_declaration_1 = "module dro; endmodule";
 constexpr auto module_declaration_2 = "module dro(); endmodule";
@@ -27,6 +31,7 @@ constexpr auto dro_example = R"####(
 // For questions about TimEx, contact CJ Fourie, coenrad@sun.ac.za
 // (c) 2016-2017 Stellenbosch University
 // ---------------------------------------------------------------------------
+`include \"to_be_included\";
 `timescale 1ps/100fs
 module dro (set, reset, out);
 

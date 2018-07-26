@@ -159,34 +159,29 @@ struct _module_description_ : sor<
   // udp_declaration
 > {};
 
-struct _include_statement_ : seq< 
+struct include_statement : seq< 
   include_keyword,
-  sor<
-    seq<
-      one<'<'>, 
-      file_path_spec, 
-      one<'>'>
-    >,
-    seq<
-      one<'"'>, 
-      file_path_spec, 
-      one<'"'>
-    >
+  seq<
+    plus_blank,
+    one<'"'>, 
+    file_path_spec,
+    one<'"'>
   >
 >{};
 
 
-struct compiler_directive : sor<
-  // _library_declaration_,
-  _include_statement_
-  // _config_declaration_
+struct compiler_directive : seq<
+  one<'`'>, //one<'‘'>,
+  sor<
+    include_statement
+  >
 > {};
 
 struct _grammar_ : must<
   list<
     opt<separator>,
     sor<
-      until<seq<one<'`'>,compiler_directive>>,
+      until<compiler_directive>,
       until<_module_description_>
     >
   >

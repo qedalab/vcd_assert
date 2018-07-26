@@ -20,6 +20,7 @@ struct Instance {
   std::string identifier_;           /// The net identifier
 };
 
+class DesignTester;
 /// Stores the Verilog definition information.
 /// Allows for efficient lookups for common access pattern. Also efficient when
 /// being read in from file or similar data structure. Can only be populated
@@ -56,6 +57,7 @@ class Design
   // std::unordered_map<std::size_t, std::size_t> file_lookup_;   
 
   friend class DesignReader;
+  friend class DesignTester;
 
 public:
   /// Get variable by index
@@ -113,6 +115,15 @@ public:
   /// \returns the number of identifier code define din the design
   std::size_t num_instances() const noexcept;
 };
+
+namespace Test{
+  class DesignTester
+  { 
+    Verilog::Design design_;
+    virtual void test() = 0;
+  };
+}
+
 
 } // namespace Verilog
 

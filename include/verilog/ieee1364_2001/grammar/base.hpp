@@ -95,10 +95,10 @@ struct path_star : alias<one<'*'>>{};
 struct path_dot : alias<hchar_dot>{};
 struct path_separator : alias<hchar_slash>{};
 
-struct path_identifier : seq<path_star, path_dot, identifier>{};
+struct path_identifier : sor<path_star, path_dot, identifier>{};
 
 struct file_path : list< 
-  path_identifier,
+  plus<path_identifier>,
   path_separator
 > {};
 

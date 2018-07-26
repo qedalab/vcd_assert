@@ -20,7 +20,26 @@ TEST_CASE("Verilog.IEEE1364_2001.Grammar.Grammer", "[Verilog][IEEE1364_2001][Gra
     CAPTURE(module_keyword);
     CHECK(match_exactly<Grammar::identifier>(module_keyword));
   }
+
+  SECTION("include_statement"){
+    CAPTURE(include_statement);
+    CHECK(match_exactly<Grammar::include_statement>(include_statement));
+  }
+  SECTION("include_statement incorrect input"){
+    CAPTURE(include_statement_no_qstring);
+    CHECK_FALSE(match_exactly<Grammar::include_statement>(include_statement_no_qstring));
+  }
+
+  SECTION("compiler_directive"){
+    CAPTURE(compiler_directive);
+    CHECK(match_exactly<Grammar::compiler_directive>(compiler_directive));
+  }
   
+  SECTION("compiler_directive incorrect input"){
+    CAPTURE(include_statement_no_qstring);
+    CHECK_FALSE(match_exactly<Grammar::compiler_directive>(include_statement_no_qstring));
+  }
+
   SECTION("module_keyword"){
     CAPTURE(module_keyword);
     CHECK(match_exactly<Grammar::module_keyword>(module_keyword));

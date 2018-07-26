@@ -4,12 +4,16 @@
 #include "base.hpp"
 #include "module.hpp"
 
+#include <filesystem>
+// #include <stdlib.h>
+
 #include "../grammar/grammar_hacked.hpp"
 #include "../../types/design_reader.hpp"
 #include "../../util/parse_input.hpp"
 
 #include "parse/actions/make_pegtl_template.hpp"
 #include <tao/pegtl/memory_input.hpp>
+
 
 namespace Verilog {
 namespace IEEE1364_2001 {
@@ -23,19 +27,29 @@ struct IncludeFileApply {
   static bool apply(const ActionInput &input, DesignReader &reader,
                     Util::InputMap &inputmap)
   { 
+    namespace fs = std::filesystem;
+
     // std::filesystem::current_path();
     auto next_input_identifier = input.string();
-    auto search = inputmap.find(next_input_identifier);
+    auto search_input = fs::path(next_input_identifier).lexically_normal();
+    auto abs_path = fs::weakly_canonical(search_input);
+    
+    // throw std::runtime_error(fmt::format("PATH : {} vs {} ",search_input,abs_path));
+
+    auto search = inputmap.find(search_input);
     if (search != inputmap.end()) {
-      auto next_input = inputmap.at(next_input_identifier);
-      if(next_input.type == Util::InputTypeEnum::file){
-        tao::pegtl::file_input<> new_input(next_input_identifier);
+
+      auto parse_input = inputmap.at(search_input);
+
+      if(parse_input.type == Util::InputTypeEnum::file){
+        auto next_input = std::get<std::string>(parse_input.value);
+        tao::pegtl::file_input<> new_input(next_input);
 
         tao::pegtl::parse_nested<Grammar::_grammar_,
                                 Parse::make_pegtl_template<GrammarAction>::type,
                                 Parse::capture_control>(input, new_input, reader, inputmap);
       }else{
-        auto start = std::get<const char*>(next_input.value);
+        auto start = std::get<const char*>(parse_input.value);
         tao::pegtl::memory_input<> new_input(start, next_input_identifier);
 
         tao::pegtl::parse_nested<Grammar::_grammar_,
@@ -45,7 +59,8 @@ struct IncludeFileApply {
       
       
     } else {
-      throw std::runtime_error("InternalError");
+      throw std::runtime_error(fmt::format("Could not find included file : {}",search_input));
+      // throw std::runtime_error("InternalError");
     }
 
     return true;
@@ -65,7 +80,7 @@ struct IncludeStatementAction: single_dispatch<
 };
 
 struct CompilerDirectiveAction: single_dispatch<
-    Grammar::_include_statement_, 
+    Grammar::include_statement, 
     inner_action_passthrough<IncludeStatementAction>
 > {
   using state = DesignReader;
@@ -150,6 +165,7 @@ struct ModuleDescriptionStorage{
     //  added, as this module may not be instanced in itself, so the lookup doesnt
     // require it to be present.
     reader.module(data.module_identifier, "dummy filename");
+    // throw std::runtime_error(fmt::format("Saving module : {}",data.module_identifier));
 
     std::vector<std::size_t> insert_indices;
     
