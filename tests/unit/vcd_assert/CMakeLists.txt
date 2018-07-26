@@ -9,6 +9,7 @@ target_sources(unit_vcd_assert PRIVATE
   ${DIR}/conditional.cpp
   ${DIR}/edge_type.cpp
   ${DIR}/event.cpp
+  ${DIR}/sdf_matching.cpp
   ${DIR}/state.cpp
   ${DIR}/timing_checker.cpp
   ${DIR}/triggered_timing_checker.cpp

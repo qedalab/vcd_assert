@@ -108,13 +108,12 @@ VCDAssert::get_sdf_conditional_ptr_helper(SDF::EqualityOperator op,
     break;
 
   case SDF::EqualityOperator::logic_equal:
-
     return ConditionalOperator<EqualityOperator::logical_equal>(
         std::move(left), std::move(right));
     break;
 
-  default:
-    std::puts("INTERNAL ERROR: Unreachable code");
-    std::abort();
+  default:                                         // LCOV_EXCL_LINE
+    std::puts("INTERNAL ERROR: Unreachable code"); // LCOV_EXCL_LINE
+    std::abort();                                  // LCOV_EXCL_LINE
   }
 }
