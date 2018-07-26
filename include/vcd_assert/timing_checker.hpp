@@ -58,14 +58,6 @@ class TimingChecker
   [[nodiscard]] bool handle_event(const RegisterEvent &event, std::size_t index,
                                   VCD::Value from, VCD::Value to);
 
-  std::optional<std::size_t> get_sdf_node_index(SDF::Node node,
-                                                std::size_t scope_index,
-                                                VCD::Scope &scope);
-
-  std::optional<ConditionalValuePointer>
-  get_sdf_conditional_ptr(SDF::TimingCheckCondition cond,
-                          std::size_t scope_index, VCD::Scope &scope);
-
   std::vector<std::size_t> get_hold_event_range(SDF::Node port,
                                                 std::size_t port_vcd_index);
 

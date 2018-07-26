@@ -117,3 +117,120 @@ VCDAssert::get_sdf_conditional_ptr_helper(SDF::EqualityOperator op,
     std::abort();                                  // LCOV_EXCL_LINE
   }
 }
+
+std::optional<std::size_t>
+VCDAssert::get_sdf_node_index(const VCD::Header &header, SDF::Node node,
+                              std::size_t scope_index, const VCD::Scope &scope)
+{
+
+  auto inner_scope = scope;
+
+  // update the scope if node name is a path
+  if (node.hierarchical_identifier.has_value()) {
+    auto hi = node.hierarchical_identifier.value();
+    auto inner_scope_index = match_scope(header, hi.value, scope_index);
+    if (inner_scope_index.has_value()) {
+      inner_scope = header.get_scope(inner_scope_index.value());
+    } else {
+      return {}; // path to variable not understood. Ignore.
+    }
+  }
+
+  // get the variable from the scope
+  if (inner_scope.contains_variable(node.basename_identifier)) {
+    return inner_scope.get_variable_index(node.basename_identifier);
+  } else {
+    return {};
+  }
+}
+
+std::optional<ConditionalValuePointer>
+VCDAssert::get_sdf_conditional_ptr(const VCD::Header &header, State &state,
+                        SDF::TimingCheckCondition cond, std::size_t scope_index,
+                        VCD::Scope &scope)
+{
+
+  auto inner_scope = scope;
+
+  switch (cond.get_enum_type()) {
+  case SDF::ConditionalType::none: /* node==1 is condition */
+  {
+
+    SDF::Node node = std::get<SDF::Node>(cond.value);
+
+    // get the conditional value pointer of the variable
+    auto left_index_option = get_sdf_node_index(header, node, scope_index, scope);
+
+    if (left_index_option.has_value()) {
+
+      auto left_cvp = get_sdf_node_ptr(state, left_index_option.value());
+
+      auto right_cvp = ConditionalValuePointer(VCD::Value::zero); /// <<<<
+
+      auto cond_op = ConditionalOperator<EqualityOperator::logical_equal>(
+          std::move(left_cvp), std::move(right_cvp));
+
+      return ConditionalValuePointer(std::move(cond_op));
+
+    } else {
+      return {}; // not found
+    }
+
+  } break;
+  case SDF::ConditionalType::inverted: /* ~node or node~=1 is condition */
+  {
+
+    SDF::InvertedNode node = std::get<SDF::InvertedNode>(cond.value);
+
+    // get the conditional value pointer of the variable
+    auto left_index_option = get_sdf_node_index(header, node, scope_index, scope);
+
+    if (left_index_option.has_value()) {
+
+      auto left_cvp = get_sdf_node_ptr(state, left_index_option.value());
+
+      auto right_cvp = ConditionalValuePointer(VCD::Value::zero); /// <<<<
+
+      auto cond_op = ConditionalOperator<EqualityOperator::logical_equal>(
+          std::move(left_cvp), std::move(right_cvp));
+
+      return ConditionalValuePointer(std::move(cond_op));
+
+    } else {
+      return {}; // not found
+    }
+
+  } break;
+  case SDF::ConditionalType::equality: /* node <operator> <constant> */
+  {
+
+    auto equality = std::get<SDF::NodeConstantEquality>(cond.value);
+    // std::size_t var_index;
+    SDF::Node node = equality.left;
+
+    // get the conditional value pointer of the variable
+    auto left_index_option = get_sdf_node_index(header, node, scope_index, scope);
+
+    if (left_index_option.has_value()) {
+
+      auto left_cvp = get_sdf_node_ptr(state, left_index_option.value());
+
+      auto right_cvp = equality.right
+                           ? ConditionalValuePointer(VCD::Value::one)
+                           : ConditionalValuePointer(VCD::Value::zero);
+
+      return {get_sdf_conditional_ptr_helper(equality.op, std::move(left_cvp), std::move(right_cvp))};
+
+    } else {
+      return {}; // not found
+    }
+
+  } break;
+  default:
+    break;
+  }
+
+  // Should return before this
+  std::puts("INTERNAL ERROR: Code should not be reachable");
+  std::abort();
+}

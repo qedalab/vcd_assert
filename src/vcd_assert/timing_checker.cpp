@@ -40,119 +40,60 @@ TimingChecker::TimingChecker(std::shared_ptr<VCD::Header> header) :
   };
 }
 
-std::optional<std::size_t>
-TimingChecker::get_sdf_node_index(SDF::Node node, std::size_t scope_index,
-                                  VCD::Scope &scope)
+std::optional<std::tuple<ConditionalValuePointer, EdgeType>>
+TimingChecker::apply_sdf_hold_port_tchk_helper(SDF::PortTimingCheck port_tchk,
+                                               std::size_t scope_index,
+                                               VCD::Scope &scope)
 {
 
-  auto inner_scope = scope;
+  EdgeType edge{};
 
-  // update the scope if node name is a path
-  if (node.hierarchical_identifier.has_value()) {
-    auto hi = node.hierarchical_identifier.value();
-    auto inner_scope_index = match_scope(*header_, hi.value, scope_index);
-    if (inner_scope_index.has_value()) {
-      inner_scope = header_->get_scope(inner_scope_index.value());
-    } else {
-      return {}; // path to variable not understood. Ignore.
+  if (port_tchk.port.edge.has_value()) {
+    switch (port_tchk.port.edge.value()) {
+    case SDF::EdgeType::posedge:
+      edge = VCDAssert::EdgeType::PosEdge;
+      break;
+    case SDF::EdgeType::_01:
+      edge = VCDAssert::EdgeType::_01;
+      break;
+    case SDF::EdgeType::negedge:
+      edge = VCDAssert::EdgeType::NegEdge;
+      break;
+    case SDF::EdgeType::_10:
+      edge = VCDAssert::EdgeType::_10;
+      break;
+    case SDF::EdgeType::_z0:
+      edge = VCDAssert::EdgeType::_z0;
+      break;
+    case SDF::EdgeType::_0z:
+      edge = VCDAssert::EdgeType::_0z;
+      break;
+    case SDF::EdgeType::_z1:
+      edge = VCDAssert::EdgeType::_z1;
+      break;
+    case SDF::EdgeType::_1z:
+      edge = VCDAssert::EdgeType::_1z;
+      break;
+    default:
+      throw std::runtime_error("InternalError : unsupported edgetype");
     }
-  }
-
-  // get the variable from the scope
-  if (inner_scope.contains_variable(node.basename_identifier)) {
-    return inner_scope.get_variable_index(node.basename_identifier);
   } else {
-    return {};
-  }
-}
-
-std::optional<ConditionalValuePointer> TimingChecker::get_sdf_conditional_ptr(
-    SDF::TimingCheckCondition cond, std::size_t scope_index, VCD::Scope &scope)
-{
-
-  auto inner_scope = scope;
-
-  switch (cond.get_enum_type()) {
-  case SDF::ConditionalType::none: /* node==1 is condition */
-  {
-
-    SDF::Node node = std::get<SDF::Node>(cond.value);
-
-    // get the conditional value pointer of the variable
-    auto left_index_option = get_sdf_node_index(node, scope_index, scope);
-
-    if (left_index_option.has_value()) {
-
-      auto left_cvp = get_sdf_node_ptr(state_, left_index_option.value());
-
-      auto right_cvp = ConditionalValuePointer(VCD::Value::zero); /// <<<<
-
-      auto cond_op = ConditionalOperator<EqualityOperator::logical_equal>(
-          std::move(left_cvp), std::move(right_cvp));
-
-      return ConditionalValuePointer(std::move(cond_op));
-
-    } else {
-      return {}; // not found
-    }
-
-  } break;
-  case SDF::ConditionalType::inverted: /* ~node or node~=1 is condition */
-  {
-
-    SDF::InvertedNode node = std::get<SDF::InvertedNode>(cond.value);
-
-    // get the conditional value pointer of the variable
-    auto left_index_option = get_sdf_node_index(node, scope_index, scope);
-
-    if (left_index_option.has_value()) {
-
-      auto left_cvp = get_sdf_node_ptr(state_, left_index_option.value());
-
-      auto right_cvp = ConditionalValuePointer(VCD::Value::zero); /// <<<<
-
-      auto cond_op = ConditionalOperator<EqualityOperator::logical_equal>(
-          std::move(left_cvp), std::move(right_cvp));
-
-      return ConditionalValuePointer(std::move(cond_op));
-
-    } else {
-      return {}; // not found
-    }
-
-  } break;
-  case SDF::ConditionalType::equality: /* node <operator> <constant> */
-  {
-
-    auto equality = std::get<SDF::NodeConstantEquality>(cond.value);
-    // std::size_t var_index;
-    SDF::Node node = equality.left;
-
-    // get the conditional value pointer of the variable
-    auto left_index_option = get_sdf_node_index(node, scope_index, scope);
-
-    if (left_index_option.has_value()) {
-
-      auto left_cvp = get_sdf_node_ptr(state_, left_index_option.value());
-
-      auto right_cvp = equality.right
-                           ? ConditionalValuePointer(VCD::Value::one)
-                           : ConditionalValuePointer(VCD::Value::zero);
-
-      return {get_sdf_conditional_ptr_helper(equality.op, std::move(left_cvp), std::move(right_cvp))};
-
-    } else {
-      return {}; // not found
-    }
-
-  } break;
-  default:
-    throw std::runtime_error("InternalError");
+    edge = VCDAssert::EdgeType::Edge;
   }
 
-  // Should return before this
-  std::puts("INTERNAL ERROR: Code should not be reachable");
-  std::abort();
+  if (port_tchk.timing_check_condition.has_value()) {
+    auto cond_cvd_option = get_sdf_conditional_ptr(*header_, state_,
+        port_tchk.timing_check_condition.value(), scope_index, scope);
+
+    if (cond_cvd_option.has_value()) {
+      return {{std::move(cond_cvd_option.value()), edge}};
+    } else {
+      return {};
+    }
+
+  } else {
+    return {{std::move(VCD::Value::one), edge}};
+  }
 }
 
 std::vector<std::size_t>
@@ -206,66 +147,9 @@ TimingChecker::get_hold_event_range(SDF::Node port, std::size_t port_vcd_index)
   return result;
 }
 
-std::optional<std::tuple<ConditionalValuePointer, EdgeType>>
-TimingChecker::apply_sdf_hold_port_tchk_helper(SDF::PortTimingCheck port_tchk,
-                                               std::size_t scope_index,
-                                               VCD::Scope &scope)
-{
-
-  EdgeType edge{};
-
-  if (port_tchk.port.edge.has_value()) {
-    switch (port_tchk.port.edge.value()) {
-    case SDF::EdgeType::posedge:
-      edge = VCDAssert::EdgeType::PosEdge;
-      break;
-    case SDF::EdgeType::_01:
-      edge = VCDAssert::EdgeType::_01;
-      break;
-    case SDF::EdgeType::negedge:
-      edge = VCDAssert::EdgeType::NegEdge;
-      break;
-    case SDF::EdgeType::_10:
-      edge = VCDAssert::EdgeType::_10;
-      break;
-    case SDF::EdgeType::_z0:
-      edge = VCDAssert::EdgeType::_z0;
-      break;
-    case SDF::EdgeType::_0z:
-      edge = VCDAssert::EdgeType::_0z;
-      break;
-    case SDF::EdgeType::_z1:
-      edge = VCDAssert::EdgeType::_z1;
-      break;
-    case SDF::EdgeType::_1z:
-      edge = VCDAssert::EdgeType::_1z;
-      break;
-    default:
-      throw std::runtime_error("InternalError : unsupported edgetype");
-    }
-  } else {
-    edge = VCDAssert::EdgeType::Edge;
-  }
-
-  if (port_tchk.timing_check_condition.has_value()) {
-    auto cond_cvd_option = get_sdf_conditional_ptr(
-        port_tchk.timing_check_condition.value(), scope_index, scope);
-
-    if (cond_cvd_option.has_value()) {
-      return {{std::move(cond_cvd_option.value()), edge}};
-    } else {
-      return {};
-    }
-
-  } else {
-    return {{std::move(VCD::Value::one), edge}};
-  }
-}
-
 void TimingChecker::apply_sdf_hold(SDF::Hold hold, std::size_t scope_index,
                                    VCD::Scope &scope)
 {
-
   auto sdf_value = hold.value.content(); // chooses TYP for now.
 
   auto reg = hold.reg;
@@ -275,9 +159,9 @@ void TimingChecker::apply_sdf_hold(SDF::Hold hold, std::size_t scope_index,
 
     // get the indexes to reg and trig port in header
     auto reg_port_index_option =
-        get_sdf_node_index(reg.port, scope_index, scope);
+        get_sdf_node_index(*header_, reg.port, scope_index, scope);
     auto trig_port_index_option =
-        get_sdf_node_index(trig.port, scope_index, scope);
+        get_sdf_node_index(*header_, trig.port, scope_index, scope);
 
     if (reg_port_index_option.has_value() &&
         trig_port_index_option.has_value()) {
