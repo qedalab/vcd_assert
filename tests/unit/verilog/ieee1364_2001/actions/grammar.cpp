@@ -105,13 +105,6 @@ TEST_CASE("Verilog.Actions.Design", "[Verilog][Events][Design]")
   SECTION("both tb_dro and dro from file")
   {
     Verilog::DesignReader reader;
-    // Verilog::DesignTester tester;
-
-    // std::string test_string{dro_example};
-    // auto abs_path =
-    // fs::weakly_canonical(fs::path(next_input_identifier).lexically_normal());
-
-    // const char* test_string_p = test_string.c_str();
 
     auto dro_file_path_rel_ =
         fs::relative(fs::path(dro_file_path_abs_.to_string()),
@@ -132,8 +125,10 @@ TEST_CASE("Verilog.Actions.Design", "[Verilog][Events][Design]")
     auto design_p = reader.release();
     REQUIRE(design_p.operator bool());
     // Test::catch_test_design_via_reader(*design_p, dro_example);
+
   }
 
   // void catch_test_design()
 }
+
 // Verilog::CatchDesign::test()

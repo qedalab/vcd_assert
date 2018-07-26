@@ -10,7 +10,7 @@ module tb_dro;
 
    initial
       begin
-         $sdf_annotate("../../dro.sdf", tb_dro);
+         $sdf_annotate("dro.sdf", tb_dro);
          $dumpfile("tb_dro_example_1.vcd");
          $dumpvars;
 

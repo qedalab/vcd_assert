@@ -5,6 +5,7 @@
 #include "./character.hpp"
 #include "./comment.hpp"
 #include "./block.hpp"
+#include "./keywords.hpp"
 
 #include <parse/grammar/base.h>
 #include <parse/grammar/part.h>
@@ -80,7 +81,7 @@ struct simple_identifier : seq<
   star<tao::pegtl::identifier_other>
 > {};
 
-struct identifier : sor<simple_identifier, escaped_identifier > {};
+struct identifier : seq< not_at<keyword>, sor< simple_identifier, escaped_identifier >> {};
 
 struct hierarchical_identifier : seq <
   identifier,

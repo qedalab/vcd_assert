@@ -16,15 +16,22 @@ using namespace Verilog::IEEE1364_2001;
 TEST_CASE("Verilog.IEEE1364_2001.Grammar.Grammer", "[Verilog][IEEE1364_2001][Grammar][Grammar]") {
 
   using Parse::Test::match_exactly;
-  SECTION("identifier"){
+
+  SECTION("keyword not an identifier"){
     CAPTURE(module_keyword);
-    CHECK(match_exactly<Grammar::identifier>(module_keyword));
+    CHECK_FALSE(match_exactly<Grammar::identifier>(module_keyword));
+  }
+
+  SECTION("keyword"){
+    CAPTURE(module_keyword);
+    CHECK(match_exactly<Grammar::keyword>(module_keyword));
   }
 
   SECTION("include_statement"){
     CAPTURE(include_statement);
     CHECK(match_exactly<Grammar::include_statement>(include_statement));
   }
+
   SECTION("include_statement incorrect input"){
     CAPTURE(include_statement_no_qstring);
     CHECK_FALSE(match_exactly<Grammar::include_statement>(include_statement_no_qstring));
@@ -114,6 +121,43 @@ TEST_CASE("Verilog.IEEE1364_2001.Grammar.Grammer", "[Verilog][IEEE1364_2001][Gra
     CAPTURE(module_declaration_7);
     CHECK(match_exactly<Grammar::_module_description_>(module_declaration_7));
   }
+
+
+  SECTION("\'_grammar_\' with input module_declaration_1"){
+    CAPTURE(module_declaration_1);
+    CHECK(match_exactly<Grammar::_grammar_>(module_declaration_1));
+  }
+
+  SECTION("\'_grammar_\' with input module_declaration_2"){
+    CAPTURE(module_declaration_2);
+    CHECK(match_exactly<Grammar::_grammar_>(module_declaration_2));
+  }
+
+  SECTION("\'_grammar_\' with input module_declaration_3"){
+    CAPTURE(module_declaration_3);
+    CHECK(match_exactly<Grammar::_grammar_>(module_declaration_3));
+  }
+
+  SECTION("\'_grammar_\' with input module_declaration_4"){
+    CAPTURE(module_declaration_4);
+    CHECK(match_exactly<Grammar::_grammar_>(module_declaration_4));
+  }
+
+  SECTION("\'_grammar_\' with input module_declaration_5"){
+    CAPTURE(module_declaration_5);
+    CHECK(match_exactly<Grammar::_grammar_>(module_declaration_5));
+  }
+
+  SECTION("\'_grammar_\' with input module_declaration_6"){
+    CAPTURE(module_declaration_6);
+    CHECK(match_exactly<Grammar::_grammar_>(module_declaration_6));
+  }
+
+  SECTION("\'_grammar_\' with input module_declaration_7"){
+    CAPTURE(module_declaration_7);
+    CHECK(match_exactly<Grammar::_grammar_>(module_declaration_7));
+  }
+
   
 
   SECTION("module_example_1"){
@@ -124,6 +168,71 @@ TEST_CASE("Verilog.IEEE1364_2001.Grammar.Grammer", "[Verilog][IEEE1364_2001][Gra
   SECTION("module_example_2"){
     CAPTURE(module_example_2);
     CHECK(match_exactly<Grammar::_grammar_>(module_example_2));
+  }
+
+
+  SECTION("sdf_annotate_example"){
+    CAPTURE(sdf_annotate_example);
+    CHECK(match_exactly<Grammar::sdf_annotate_task>(sdf_annotate_example));
+  }
+
+
+  SECTION("begin_end_example_1"){
+    CAPTURE(begin_end_example_1);
+    CHECK(match_exactly<Grammar::unimplemented_begin_end>(begin_end_example_1));
+  }
+
+  SECTION("begin_end_example_2"){
+    CAPTURE(begin_end_example_2);
+    CHECK(match_exactly<Grammar::unimplemented_begin_end>(begin_end_example_2));
+  }
+
+  SECTION("begin_end_example_3"){
+    CAPTURE(begin_end_example_3);
+    CHECK(match_exactly<Grammar::unimplemented_begin_end>(begin_end_example_3));
+  }
+
+  SECTION("begin_end_example_4"){
+    CAPTURE(begin_end_example_4);
+    CHECK(match_exactly<Grammar::unimplemented_begin_end>(begin_end_example_4));
+  }
+
+  SECTION("begin_end_example_5"){
+    CAPTURE(begin_end_example_5);
+    CHECK(match_exactly<Grammar::unimplemented_begin_end>(begin_end_example_5));
+  }
+
+
+
+  SECTION("initial_block_example_1"){
+    CAPTURE(initial_block_example_1);
+    CHECK(match_exactly<Grammar::initial_block>(initial_block_example_1));
+  }
+
+  SECTION("initial_block_example_2"){
+    CAPTURE(initial_block_example_2);
+    CHECK(match_exactly<Grammar::initial_block>(initial_block_example_2));
+  }
+
+  SECTION("initial_block_example_3"){
+    CAPTURE(initial_block_example_3);
+    INFO("Should not allow whitespace after last end keyword");
+    CHECK_FALSE(match_exactly<Grammar::initial_block>(initial_block_example_3));
+  }
+
+  SECTION("initial_block_example_4"){
+    CAPTURE(initial_block_example_4);
+    CHECK(match_exactly<Grammar::initial_block>(initial_block_example_4));
+  }
+
+  SECTION("initial_block_example_5"){
+    CAPTURE(initial_block_example_5);
+    CHECK(match_exactly<Grammar::initial_block>(initial_block_example_5));
+  }
+
+  SECTION("initial_block_with_sdf_example_1"){
+    CAPTURE(initial_block_with_sdf_example_1);
+    CHECK(match_exactly<Grammar::initial_block>(initial_block_with_sdf_example_1));
   }
 
 

@@ -11,7 +11,7 @@ enum class ScopeType {
 /// Verilog Net type enum
 //TODO the netlist doesn't usually contain the module + instance, does it?
 enum class NetType {
-  module, instance, variable, port
+  module, variable, port
 };
 
 /// Verilog Time number enum

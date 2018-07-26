@@ -7,14 +7,16 @@
 // #include "./attribute.hpp"
 #include "./base.hpp"
 #include "./keywords.hpp"
+#include "./commands.hpp"
 
 namespace Verilog {
 namespace IEEE1364_2001 {
 namespace Grammar {
 // clang-format off
 
-struct ignored;
+struct sdf_annotate_task;
 
+struct ignored;
 struct ignored_content : 
   sor<
     qstring,
@@ -50,65 +52,119 @@ struct unimplemented_brackets : if_must<
   until<close>
 > {};
 
+struct begin_end_pair;
+// struct begin_end_pairs;
+
+struct begin_end_contents : 
+  sor<
+    qstring,
+    separator,
+    one<'`'>,
+    plus<special_character>,
+    // seq<blank,any_character,blank>,
+    plus<not_at<sor<begin_keyword,end_keyword>>, any_character>,
+    // hierarchical_identifier,
+    begin_end_pair
+> {};
+
+struct begin_end_pair : if_must<
+  begin_keyword,
+  star<begin_end_contents>,
+  end_keyword
+> {};
+
+// struct begin_end_pairs : plus<
+//   opt<sps>,
+//   tao::pegtl::list<begin_end_pair,opt<sps>>
+// > {};
+
+struct unimplemented_begin_end : if_must<
+  begin_keyword,
+  star<begin_end_contents>,
+  // star<begin_end_pairs>,
+  // star<begin_end_contents>,
+  until<end_keyword>
+> {};
+
 // struct _module_item_ : sor<
 //   op_sep_ignored,
 //   until<eol>
 // > {};
 
 
-struct net_declaration : seq<
-  net_keyword,
-  until<one<';'>>
->{};
-struct reg_declaration : seq<
-  reg_keyword,
-  until<one<';'>>
->{};
-struct integer_declaration : seq<
-  integer_keyword,
-  until<one<';'>>
->{};
-struct real_declaration : seq<
-  real_keyword,
-  until<one<';'>>
->{};
-struct time_declaration : seq<
-  time_keyword,
-  until<one<';'>>
->{};
-struct realtime_declaration : seq<
-  realtime_keyword,
-  until<one<';'>>
->{};
-struct event_declaration : seq<
-  event_keyword,
-  until<one<';'>>
->{};
-struct genvar_declaration : seq<
-  genvar_keyword,
-  until<one<';'>>
->{};
-struct task_declaration : seq<
-  task_keyword,
-  until<one<';'>>
->{};
-struct function_declaration : seq<
-  function_keyword,
-  until<one<';'>>
+
+struct include_statement : seq< 
+  include_keyword,
+  seq<
+    plus_blank,
+    one<'"'>, 
+    file_path_spec,
+    one<'"'>
+  >
 >{};
 
-struct module_or_generate_item_declaration : sor< 
-  net_declaration,
-  reg_declaration,
-  integer_declaration,
-  real_declaration,
-  time_declaration,
-  realtime_declaration,
-  event_declaration,
-  genvar_declaration,
-  task_declaration,
-  function_declaration
+
+struct compiler_directive : seq<
+  one<'`'>, //one<'‘'>,
+  sor<
+    include_statement
+  >
 > {};
+
+
+// struct net_declaration : seq<
+//   net_keyword,
+//   until<one<';'>>
+// >{};
+// struct reg_declaration : seq<
+//   reg_keyword,
+//   until<one<';'>>
+// >{};
+// struct integer_declaration : seq<
+//   integer_keyword,
+//   until<one<';'>>
+// >{};
+// struct real_declaration : seq<
+//   real_keyword,
+//   until<one<';'>>
+// >{};
+// struct time_declaration : seq<
+//   time_keyword,
+//   until<one<';'>>
+// >{};
+// struct realtime_declaration : seq<
+//   realtime_keyword,
+//   until<one<';'>>
+// >{};
+// struct event_declaration : seq<
+//   event_keyword,
+//   until<one<';'>>
+// >{};
+// struct genvar_declaration : seq<
+//   genvar_keyword,
+//   until<one<';'>>
+// >{};
+// struct task_declaration : seq<
+//   task_keyword,
+//   until<one<';'>>
+// >{};
+// struct function_declaration : seq<
+//   function_keyword,
+//   until<one<';'>>
+// >{};
+
+// struct module_or_generate_item_declaration : sor< 
+//   net_declaration,
+//   reg_declaration,
+//   integer_declaration,
+//   real_declaration,
+//   time_declaration,
+//   realtime_declaration,
+//   event_declaration,
+//   genvar_declaration,
+//   task_declaration,
+//   function_declaration
+// > {};
 
 struct module_instance_identifier : alias<identifier>{};
 
@@ -132,26 +188,48 @@ struct module_instantiation : seq<
   // opt< parameter_value_assignment> 
   module_identifier,
   plus_blank,
-  // opt<separator>,
   opt< list<module_instance, one<','> > >,
-  opt<until<one<';'>>>
+  opt<separator>,
+  one<';'>
 > {};
 
+struct at_least_blank_separator : seq<
+  opt<separator>,  
+  plus_blank,
+  opt<separator>
+>{};
 
-struct _module_declaration_ : seq<
+struct initial_block : if_must <
+  initial_keyword,
+  // at_least_blank_separator,
+  separator,
+  begin_keyword,
+  star<
+    until<
+      sor<
+        sdf_annotate_task,
+        unimplemented_begin_end
+      >
+    >
+  >,
+  until<end_keyword>
+> {};
+
+struct _module_declaration_ : if_must<
   module_keyword,
   plus_blank,
   module_identifier,
   until<one<';'>>,
-  star<module_instantiation>,
-    // star<
-    //   // until<at<module_identifier>>
-    //   until<at<module_instantiation>>,
-    //   module_instantiation
-    // >,
-  // opt<until<at<endmodule_keyword>>>,
-  must<until<endmodule_keyword>>,
-  opt<separator>
+  // opt<separator>,
+  star<
+    until<
+      sor<
+        initial_block
+        module_instantiation
+      >
+    >
+  >,
+  until<endmodule_keyword>
 > {};
 
 struct _module_description_ : sor<
@@ -159,32 +237,16 @@ struct _module_description_ : sor<
   // udp_declaration
 > {};
 
-struct include_statement : seq< 
-  include_keyword,
-  seq<
-    plus_blank,
-    one<'"'>, 
-    file_path_spec,
-    one<'"'>
-  >
->{};
-
-
-struct compiler_directive : seq<
-  one<'`'>, //one<'‘'>,
-  sor<
-    include_statement
-  >
-> {};
-
 struct _grammar_ : must<
-  list<
-    opt<separator>,
-    sor<
-      until<compiler_directive>,
-      until<_module_description_>
-    >
-  >
+  opt<separator>,
+  opt<list<
+    until<
+      sor<compiler_directive,_module_description_>
+    >,
+    opt<separator>
+  >>,
+  opt<separator>
+  
   // opt<eof>
 > {};
 

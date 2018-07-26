@@ -2,18 +2,18 @@
 #define LIBVERILOG_IEEE1364_2001_ACTIONS_GRAMMAR_HPP
 
 #include "base.hpp"
+#include "commands.hpp"
 #include "module.hpp"
 
 #include <filesystem>
 // #include <stdlib.h>
 
-#include "../grammar/grammar_hacked.hpp"
 #include "../../types/design_reader.hpp"
 #include "../../util/parse_input.hpp"
+#include "../grammar/grammar_hacked.hpp"
 
 #include "parse/actions/make_pegtl_template.hpp"
 #include <tao/pegtl/memory_input.hpp>
-
 
 namespace Verilog {
 namespace IEEE1364_2001 {
@@ -59,7 +59,7 @@ struct IncludeFileApply {
       
       
     } else {
-      throw std::runtime_error(fmt::format("Could not find included file : {}",search_input));
+      throw std::runtime_error(fmt::format("RuntimeError : Could not find included file ({})",search_input));
       // throw std::runtime_error("InternalError");
     }
 
@@ -86,122 +86,16 @@ struct CompilerDirectiveAction: single_dispatch<
   using state = DesignReader;
 };
 
-struct ModuleInstanceIdentifierAction : single_dispatch<
-    Grammar::module_instance_identifier, 
-    inner_action_passthrough< IdentifierAction >
-> {
-  using state = std::string;
-};
-
-struct ModuleInstanceAction : single_dispatch<
-    Grammar::name_of_instance, 
-    inner_action_passthrough< ModuleInstanceIdentifierAction>
-> {
-  using state = std::string;
-};
-
-// struct InstantiationModuleIdentifierStorage{
-//   static bool store(DesignReader &reader, std::string s) {
-//     auto module = reader_->modules.back();
-//     module
-//     hi.value.push_back(std::move(s));
-//     return true;
-//    }
-//  };
-
-
-
-struct StringStringMapping {
-  std::string type;
-  std::string name;
-};
-
-struct ModuleEvent {
-  std::string module_identifier;
-  std::vector<StringStringMapping> instances; 
-};
-
-struct ModuleInstantiationAction : multi_dispatch<
-    Grammar::module_identifier, inner_action<
-      IdentifierAction, 
-      Storage::member<&StringStringMapping::type>
-    >,
-    Grammar::module_instance, inner_action<
-      ModuleInstanceAction, 
-      Storage::member<&StringStringMapping::name>
-    >
-> {
-  using state = StringStringMapping;
-};
-
-struct ModuleInstantiationArrayAction : single_dispatch<
-    Grammar::module_instantiation, inner_action<
-      ModuleInstantiationAction, 
-      Storage::push_back
-    >
-> {
-  using state = std::vector<StringStringMapping>;
-};
-
-
-struct ModuleDeclarationAction : multi_dispatch<
-    Grammar::module_identifier, inner_action<
-      IdentifierAction, 
-      Storage::member<&ModuleEvent::module_identifier>
-    >,
-    Grammar::module_instantiation, inner_action<
-      ModuleInstantiationArrayAction, 
-      Storage::member<&ModuleEvent::instances>
-    >
-> {
-  using state = ModuleEvent;
-};
-
-
-struct ModuleDescriptionStorage{
-  static bool store(DesignReader &reader, ModuleEvent data) {
-
-    //technically this does not have to happen before instances are 
-    //  added, as this module may not be instanced in itself, so the lookup doesnt
-    // require it to be present.
-    reader.module(data.module_identifier, "dummy filename");
-    // throw std::runtime_error(fmt::format("Saving module : {}",data.module_identifier));
-
-    std::vector<std::size_t> insert_indices;
-    
-    for (auto&& instance : data.instances ){
-      reader.instance(NetType::module,  instance.name, instance.type);
-    }
-    return true;
-   }
- };
-
-
-struct ModuleDescriptionAction: single_dispatch<
-    Grammar::_module_declaration_, inner_action<
-      ModuleDeclarationAction, 
-      ModuleDescriptionStorage
-    >
-> {
-  using state = DesignReader;
-};
-
 using DesignReaderFunctionType = void (DesignReader::*)(DesignReader);
 
 struct GrammarAction : multi_dispatch<
   Grammar::compiler_directive, inner_action<
       CompilerDirectiveAction, 
-      Storage::function<
-        &DesignReader::merge
-        // static_cast<DesignReaderFunctionType>(&DesignReader::merge)
-        >
+      Storage::function<&DesignReader::merge>
   >,
   Grammar::_module_description_, inner_action<
       ModuleDescriptionAction, 
-      Storage::function<
-        &DesignReader::merge
-        // static_cast<DesignReaderFunctionType>(&DesignReader::merge)
-        >
+      Storage::function<&DesignReader::merge>
   >
 > {
   using state = DesignReader;

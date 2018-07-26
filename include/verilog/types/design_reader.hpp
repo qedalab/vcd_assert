@@ -51,21 +51,21 @@ public:
   std::size_t instance(NetType type, std::string instance_name, std::string defintion_name);
 
   /// Introduce a new net
-  void net(NetType type, std::string name, std::string net_definition);
+  // void net(NetType type, std::string name, std::string net_definition);
 
-  /// Introduce a new net
-  void net(NetDataView net);
+  // /// Introduce a new net
+  // void net(NetDataView net);
 
-  /// Exits current net
-  void upnet();
+  // /// Exits current net
+  // void upnet();
 
-  /// Adds a variable to the net
-  void var(VarType type, std::size_t size, std::string identifier_code,
-           std::string reference);
+  // /// Adds a variable to the net
+  // void var(VarType type, std::size_t size, std::string identifier_code,
+  //          std::string reference);
 
-  /// Adds a variable to the net
-  /// \param VariableView view of variable to add
-  void var(VariableView variable);
+  // /// Adds a variable to the net
+  // /// \param VariableView view of variable to add
+  // void var(VariableView variable);
 
   // /// Set design time scale
   // /// \param number The time scale number

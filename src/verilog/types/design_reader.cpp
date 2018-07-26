@@ -9,9 +9,11 @@ DesignReader::DesignReader() { design_ = std::make_unique<Design>(); }
 // void DesignReader::merge(std::unique_ptr<DesignReader> other)
 void DesignReader::merge(DesignReader other)
 {
-
-  // auto other_design = other.release();
-  auto module_index = design_->modules_.size();
+   //Files
+  // std::vector<std::string> file_names_;      /// File Names
+  
+  /// 'module index' <-> 'file index' lookup
+  // std::unordered_map<std::size_t, std::size_t> file_name_lookup_;  
 
   // for(auto &&new_file_name : new_reader.design_->file_names_){
   //   bool found = false;
@@ -35,13 +37,22 @@ void DesignReader::merge(DesignReader other)
   //   }
   // }
 
+  auto module_index = design_->modules_.size();
+  auto instance_index = design_->instances_.size();
+
   for (auto &&new_module : other.design_->modules_) {
 
     auto search = design_->module_lookup_.find(new_module.identifier);
     if (search == design_->module_lookup_.end()) {
       module_index += 1;
+
+      for(auto && [key,value] : new_module.instance_lookup_){
+        new_module.instance_lookup_[key] = value+instance_index;
+      }
+
       design_->modules_.emplace_back(std::move(new_module));
       design_->module_lookup_.insert({new_module.identifier, module_index});
+
     } else {
       auto found =
           design_->modules_[design_->module_lookup_[new_module.identifier]];
@@ -52,13 +63,10 @@ void DesignReader::merge(DesignReader other)
     }
   }
 
-  for (auto &&new_net : other.design_->nets_) {
-    design_->nets_.emplace_back(new_net);
+  for (auto &&new_instance : other.design_->instances_) {
+      design_->instances_.emplace_back(std::move(new_instance));
   }
 
-  // for(auto &&net_index : other.net_stack_){
-  //   net_stack_.push_back(net_index);
-  // }
 }
 
 std::size_t DesignReader::module(std::string module_name, std::string file_path)
@@ -105,105 +113,105 @@ std::size_t DesignReader::instance(NetType type, std::string instance_name,
   }
 }
 
-void DesignReader::net(NetType /*type*/, std::string /*name*/,
-                       std::string /*net_definition*/)
-{
-  // net_definition must have been included
-  // auto search = design_->modules_.find(net_definition);
-  // if(search != design_->modules_.end()){
+// void DesignReader::net(NetType /*type*/, std::string /*name*/,
+//                        std::string /*net_definition*/)
+// {
+//   // net_definition must have been included
+//   // auto search = design_->modules_.find(net_definition);
+//   // if(search != design_->modules_.end()){
 
-  //   auto definition_index = design_->modules_[net_definition]
-  //   auto &nets_ref = design_->nets_;
+//   //   auto definition_index = design_->modules_[net_definition]
+//   //   auto &nets_ref = design_->nets_;
 
-  //   if (net_stack_.empty()) {
-  //     if (design_->num_nets() > 0)
-  //       throw std::runtime_error("Cannot have more than one base net");
+//   //   if (net_stack_.empty()) {
+//   //     if (design_->num_nets() > 0)
+//   //       throw std::runtime_error("Cannot have more than one base net");
 
-  //     // Create root net
-  //     nets_ref.emplace_back(type, std::move(name), definition_index);
-  //     net_stack_.push_back(0);
-  //   } else {
+//   //     // Create root net
+//   //     nets_ref.emplace_back(type, std::move(name), definition_index);
+//   //     net_stack_.push_back(0);
+//   //   } else {
 
-  //     auto &current_net_ref = design_->nets_.at(net_stack_.back());
+//   //     auto &current_net_ref = design_->nets_.at(net_stack_.back());
 
-  //     if (current_net_ref.contains_net(name))
-  //       throw std::runtime_error("Duplicate net name");
+//   //     if (current_net_ref.contains_net(name))
+//   //       throw std::runtime_error("Duplicate net name");
 
-  //     // Create net within a net
-  //     auto index = nets_ref.size();
-  //     current_net_ref.child_nets_[name] = index;
-  //     nets_ref.emplace_back(type, std::move(name), definition_index);
+//   //     // Create net within a net
+//   //     auto index = nets_ref.size();
+//   //     current_net_ref.child_nets_[name] = index;
+//   //     nets_ref.emplace_back(type, std::move(name), definition_index);
 
-  //     // Make new net active
-  //     net_stack_.push_back(index);
-  //   }
-  // }else{
-  //   throw std::runtime_error(fmt::format("Declaration of {} not found.",
-  //   net_definition));
-  // }
-}
+//   //     // Make new net active
+//   //     net_stack_.push_back(index);
+//   //   }
+//   // }else{
+//   //   throw std::runtime_error(fmt::format("Declaration of {} not found.",
+//   //   net_definition));
+//   // }
+// }
 
-void DesignReader::net(Verilog::NetDataView /*net*/)
-{
-  // this->net(net.type, std::string(net.identifier), net.net_definition);
-}
+// void DesignReader::net(Verilog::NetDataView /*net*/)
+// {
+//   // this->net(net.type, std::string(net.identifier), net.net_definition);
+// }
 
-void DesignReader::upnet()
-{
-  if (net_stack_.empty())
-    throw std::runtime_error("Cannot upnet if there is no net!");
+// void DesignReader::upnet()
+// {
+//   if (net_stack_.empty())
+//     throw std::runtime_error("Cannot upnet if there is no net!");
 
-  net_stack_.pop_back();
-}
+//   net_stack_.pop_back();
+// }
 
-void DesignReader::var(VarType type, std::size_t size,
-                       std::string identifier_code, std::string reference)
-{
-  if (net_stack_.empty())
-    throw std::runtime_error("Variable must have net");
+// void DesignReader::var(VarType type, std::size_t size,
+//                        std::string identifier_code, std::string reference)
+// {
+//   if (net_stack_.empty())
+//     throw std::runtime_error("Variable must have net");
 
-  // Grab references for convenience
-  auto &variables_ref = design_->variables_;
-  auto &current_net_ref = design_->nets_.at(net_stack_.back());
-  auto &id_codes_ref = design_->id_codes_;
+//   // Grab references for convenience
+//   auto &variables_ref = design_->variables_;
+//   auto &current_net_ref = design_->nets_.at(net_stack_.back());
+//   auto &id_codes_ref = design_->id_codes_;
 
-  auto &id_code_map_ref = design_->var_id_code_map_;
+//   auto &id_code_map_ref = design_->var_id_code_map_;
 
-  if (current_net_ref.contains_variable(reference))
-    throw std::runtime_error("Duplicate variable reference");
+//   if (current_net_ref.contains_variable(reference))
+//     throw std::runtime_error("Duplicate variable reference");
 
-  std::size_t id_code_index;
+//   std::size_t id_code_index;
 
-  if (id_code_map_ref.has_name(identifier_code)) {
-    // Check that existing identifier_code has the same type
-    id_code_index = id_code_map_ref.get_index(identifier_code);
+//   if (id_code_map_ref.has_name(identifier_code)) {
+//     // Check that existing identifier_code has the same type
+//     id_code_index = id_code_map_ref.get_index(identifier_code);
 
-    auto &id_code_ref = id_codes_ref.at(id_code_index);
-    assert(id_code_ref.get_id_code() == identifier_code);
+//     auto &id_code_ref = id_codes_ref.at(id_code_index);
+//     assert(id_code_ref.get_id_code() == identifier_code);
 
-    bool same =
-        id_code_ref.get_size() == size && id_code_ref.get_type() == type;
+//     bool same =
+//         id_code_ref.get_size() == size && id_code_ref.get_type() == type;
 
-    if (!same)
-      throw std::runtime_error("Same identifier code with different types");
-  } else {
-    // Add new identifier_code
-    id_code_index = id_code_map_ref.add_new_name(identifier_code);
-    assert(id_code_index == id_codes_ref.size());
+//     if (!same)
+//       throw std::runtime_error("Same identifier code with different types");
+//   } else {
+//     // Add new identifier_code
+//     id_code_index = id_code_map_ref.add_new_name(identifier_code);
+//     assert(id_code_index == id_codes_ref.size());
 
-    id_codes_ref.emplace_back(type, size, identifier_code);
-  }
+//     id_codes_ref.emplace_back(type, size, identifier_code);
+//   }
 
-  auto var_index = variables_ref.size();
-  variables_ref.emplace_back(id_code_index, reference);
-  current_net_ref.child_variables_[reference] = var_index;
-}
+//   auto var_index = variables_ref.size();
+//   variables_ref.emplace_back(id_code_index, reference);
+//   current_net_ref.child_variables_[reference] = var_index;
+// }
 
-void DesignReader::var(Verilog::VariableView variable)
-{
-  this->var(variable.type, variable.size, std::string(variable.identifier_code),
-            std::string(variable.reference));
-}
+// void DesignReader::var(Verilog::VariableView variable)
+// {
+//   this->var(variable.type, variable.size, std::string(variable.identifier_code),
+//             std::string(variable.reference));
+// }
 
 std::unique_ptr<Design> DesignReader::release()
 {

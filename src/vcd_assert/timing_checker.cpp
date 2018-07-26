@@ -191,7 +191,6 @@ std::optional<ConditionalValuePointer>
 TimingChecker::get_sdf_conditional_ptr(SDF::TimingCheckCondition cond, std::size_t scope_index,
                         VCD::Scope &scope)
 {
-
   auto inner_scope = scope;
 
   switch (cond.get_enum_type()) {
@@ -323,7 +322,7 @@ TimingChecker::get_hold_event_range(SDF::Node port, std::size_t port_vcd_index)
 
     /* if single value only */
   } else {
-    result.push_back(port_vcd_index);
+    result.push_back(index_lookup_[port_vcd_index].from);
   }
   return result;
 }
