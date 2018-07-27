@@ -6,7 +6,7 @@ set(INTEGRATION_DIR ${DIR}/integration/basic)
 set(BASIC_DRO_SOURCE ${INTEGRATION_DIR}/dro/dro.v ${INTEGRATION_DIR}/dro/tb_dro.v)
 create_vcd_from_verilog(basic_dro tb_basic_dro "${BASIC_DRO_SOURCE}")
 set_vcd_variable(basic_dro)
-add_test(NAME integration_basic_dro COMMAND vcd_assert ${basic_dro})
+add_test(NAME integration_basic_dro COMMAND vcd_assert ${basic_dro} -s ${INTEGRATION_DIR}/dro/dro.sdf)
 
 # Basic And
 set(BASIC_AND_SOURCE ${INTEGRATION_DIR}/and/and.v ${INTEGRATION_DIR}/and/tb_and.v)
