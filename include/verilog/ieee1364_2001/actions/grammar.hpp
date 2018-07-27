@@ -5,8 +5,8 @@
 #include "commands.hpp"
 #include "module.hpp"
 
+// #include <parse/util/filesystem.hpp>
 #include <filesystem>
-// #include <stdlib.h>
 
 #include "../../types/design_reader.hpp"
 #include "../../util/parse_input.hpp"
@@ -25,16 +25,16 @@ struct GrammarAction;
 struct IncludeFileApply {
   template <class Rule, class ActionInput>
   static bool apply(const ActionInput &input, DesignReader &reader,
-                    Util::InputMap &inputmap)
+                    Util::InputMap &inputmap/*, Counter &*//*module_count*/)
   { 
+    // namespace fs =  Parse::Util::fs;
     namespace fs = std::filesystem;
 
-    // std::filesystem::current_path();
     auto next_input_identifier = input.string();
     auto search_input = fs::path(next_input_identifier).lexically_normal();
     auto abs_path = fs::weakly_canonical(search_input);
     
-    // throw std::runtime_error(fmt::format("PATH : {} vs {} ",search_input,abs_path));
+    // std::cout << fmt::format("INCLUDE : {}({}) \n",search_input,abs_path) ;
 
     auto search = inputmap.find(search_input);
     if (search != inputmap.end()) {
@@ -60,7 +60,6 @@ struct IncludeFileApply {
       
     } else {
       throw std::runtime_error(fmt::format("RuntimeError : Could not find included file ({})",search_input));
-      // throw std::runtime_error("InternalError");
     }
 
     return true;

@@ -62,10 +62,9 @@ struct SDFAnnotateTaskActionProxy : single_dispatch<
 struct SDFAnnotateTaskStorage{
   static bool store(Command &outer, Command inner){
     
-    outer = Command{std::move(inner)};
+    outer = std::move(inner);
     
     outer.type = CommandTypeEnum::sdf_annotate_task;
-    // auto temp = std::get<SDFAnnotateCommand>(outer);
 
     return true;
   }
@@ -73,7 +72,7 @@ struct SDFAnnotateTaskStorage{
 
 struct SDFAnnotateTaskAction : single_dispatch<
   Grammar::sdf_annotate_task, inner_action<
-      SDFAnnotateTaskHelperAction, 
+      SDFAnnotateTaskActionProxy, 
       SDFAnnotateTaskStorage
     >
 > {    

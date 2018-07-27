@@ -1,62 +1,70 @@
 #ifndef UNIT_VERILOG_TEST_DESIGN_HPP
 #define UNIT_VERILOG_TEST_DESIGN_HPP
 
-namespace Verilog::Test{
-namespace Verilog::IEEE1364_2001{
+#include "verilog/types/design.hpp"
+
+using namespace Verilog;
+
+namespace Verilog::Test::Verilog::IEEE1364_2001{
 
 
-// Test::Design dro_example_design_test {
-//   { //vector
-//     { //module
-//       "dro",   // identifier
-//       {},      // instances
-//       {},      // variable
-//       {}       // attributes
-//     }
-//   },
-//   {},
-//   {},
-//   {},
+// clang-format off
+inline DesignView dro_example_design_test {
+  { //vector of module
+    { //module
+      "dro",   // identifier
+      "dro.v", // path
+      {}       // instances lookup
+    }
+  },
+  {}, //vector of instances
+  { //module lookup
+    {"dro", 0}
+  },
+  {}, //sdf_commands
+  {}  //sdf_commands_lookup_
+};
+// clang-format on
 
-//   Test::Net { 
-//       NetType::module, //type_
-//       "dro",           //identifier_    //what to name root net ?
-//       (std::size_t)0   //definition_index_ 
-//       {
-//           // No child nets
-//       },
-//       {
-//           // No variables 
-//       }
-//   }
-// };
-
-// Test::Design tb_dro_example_design_test {
-//   { //vector
-//     { //module
-//       "dro",   // identifier
-//       {},      // instances
-//       {},      // variable
-//       {}       // attributes
-//     }
-//   },
-//   {},
-//   {},
-//   {},
-
-//   Test::Net { 
-//       NetType::module, //type_
-//       "dro",           //identifier_    //what to name root net ?
-//       (std::size_t)0   //definition_index_ 
-//       {
-//           // No child nets
-//       },
-//       {
-//           // No variables 
-//       }
-//   }
-// };
-
+// clang-format off
+inline DesignView tb_dro_example_design_test {
+ { //vector of modules
+    Module{ //module
+      "tb_dro",   // identifier
+      "tb_dro.v", // path
+      {// instances lookup
+        {"DUT",0}
+      }   
+    },
+    { //module
+      "dro",   // identifier
+      "dro.v", // path      
+      {{}}       // instances lookup
+    }
+  },
+  { //vector of instances
+    {
+      NetType::module, //type_
+      "DUT",            //identifier_    //what to name root net ?
+      1
+    }
+  },
+  { //module lookup
+    {"tb_dro", 0},
+    {"dro", 1}
+  },
+  { //sdf_commands total
+    { // sdf_commands for tb_dro module
+      SDFAnnotateCommand{
+      "../../dro.sdf", "tb_dro", {}, {}, {}, {}, {}
+      }
+    }
+  }, 
+  { //sdf_commands_lookup_
+    {0,0} // chooses tb_dro's sdf annotation command vector
+  }  
+};
+// clang-format on
 
 
 constexpr auto include_statement = "include \"to_be_included\"";
@@ -176,9 +184,7 @@ endmodule
 
 )####";
 
-constexpr auto basic_annotation_example = R"####(
-`timescale 1ps/100fs
-module dro;
+constexpr auto basic_annotation_example = R"####(module dro;
    reg set = 0;
    reg reset = 0;
 
@@ -231,9 +237,11 @@ endmodule
 
 )####";
 
+void catch_design(DesignView wanted, Design test);
+void catch_module(Module wanted, Module test);
+void catch_instance(Instance wanted, Instance test);
 
 } // namespace Test::Verilog::IEEE1364_2001
-}
 
 
 #endif // UNIT_VERILOG_TEST_DESIGN_HPP

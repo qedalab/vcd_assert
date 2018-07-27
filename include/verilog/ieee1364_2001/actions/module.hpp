@@ -13,7 +13,7 @@
 #include "parse/actions/make_pegtl_template.hpp"
 #include <tao/pegtl/memory_input.hpp>
 
-#include <filesystem>
+// #include <filesystem>
 // #include <stdlib.h>
 
 namespace Verilog {
@@ -100,10 +100,13 @@ struct ModuleDeclarationAction : multi_dispatch<
 struct ModuleDescriptionApply{
   template <class Rule, class ActionInput>
   static bool apply(const ActionInput &input, ModuleEvent data, DesignReader &reader,  
-                    Util::InputMap &/*inputmap*/){
+                    Util::InputMap &/*inputmap*//*, Counter &*//*module_count*/){
+            
+    // std::cout << fmt::format("Module count: {} \n",module_count.value++);
 
     reader.module(data.module_identifier, input.position().source);
-    // throw std::runtime_error(fmt::format("Saving module : {} from file : {}", data.module_identifier, input.position().source));
+
+    // std::cout << fmt::format("Saving module : {} from file : {} \n", data.module_identifier, input.position().source);
 
     std::vector<std::size_t> insert_indices;
     

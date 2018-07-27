@@ -16,14 +16,23 @@ namespace Verilog {
 struct Instance {
   NetType type_;                     /// The net type
   std::string identifier_;           /// The net identifier
+  std::size_t definition_index;      /// The net definition identifier
+};
+
+struct Counter {
+  std::size_t value;
 };
 
 struct DesignView{
-  //Defintions
-  std::vector<Instance> instances_;        /// Instance
+  //Definitions
   std::vector<Module> modules_;            /// Modules
-  std::unordered_map<std::string, std::size_t> instance_lookup_; /// Instance lookup
+  std::vector<Instance> instances_;        /// Instance
+
   std::unordered_map<std::string, std::size_t> module_lookup_;   /// Modules lookup
+
+  /// Instance index -> instance definition index lookup
+  // std::unordered_map<std::size_t, std::size_t> definition_lookup_;
+
 
   std::vector<std::vector<SDFAnnotateCommand>> sdf_commands_;        /// SDF commands per scope
   std::unordered_map<std::size_t, std::size_t> sdf_commands_lookup_;   /// Module -> SDF commands lookup
@@ -33,8 +42,9 @@ struct DesignView{
   // /// 'module index' <-> 'file index' lookup
   // std::unordered_map<std::size_t, std::size_t> file_name_lookup_;  
 };
+
 namespace Test{
-class DesignTester;
+  class DesignTester;
 }
 
 /// Stores the Verilog definition information.
@@ -44,9 +54,9 @@ class DesignTester;
 /// \related DesignReader
 class Design
 {
-  //Defintions
-  std::vector<Instance> instances_;        /// Instance
+  //Definitions
   std::vector<Module> modules_;            /// Modules
+  std::vector<Instance> instances_;        /// Instance
   // std::vector<Function> functions_;     /// Functions
   // std::vector<Task> tasks_;             /// Tasks
 
@@ -99,6 +109,8 @@ public:
   /// Returns the number of identifier codes defined in the design
   /// \returns the number of identifier code define din the design
   std::size_t num_instances() const noexcept;
+  
+  std::size_t num_sdf_commands() const noexcept;
 };
 
 namespace Test{

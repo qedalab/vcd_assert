@@ -30,7 +30,7 @@
 //   NetType type_;                     /// The net type
 //   std::string identifier_;           /// The net identifier
 
-//   std::optional<std::size_t> definition_index_; /// Index to the net defintion
+//   std::optional<std::size_t> definition_index_; /// Index to the net definition
 
 //   /// Child nets
 //   std::unordered_map<std::string, std::size_t> child_nets_;
@@ -45,7 +45,7 @@
 //   /// \param type The net type
 //   /// \param identifier The identifier string
 //   /// \todo ensure identifier correctness
-//   Net(NetType type, std::string identifier, std::optional<std::size_t> defintion_index) noexcept;
+//   Net(NetType type, std::string identifier, std::optional<std::size_t> definition_index) noexcept;
 
 //   /// True if the net directly contains the variable reference
 //   /// \param reference The variable reference
@@ -61,12 +61,12 @@
 //   /// \returns The number of variables directly in this net
 //   std::size_t num_variables() const noexcept;
   
-//   /// Get whether net in an instance of a defintion
-//   bool has_defintion_index() const noexcept;
+//   /// Get whether net in an instance of a definition
+//   bool has_definition_index() const noexcept;
 
-//   /// Get the defintion of the net instance
-//   /// \returns The defintion index
-//   std::size_t get_defintion_index() const;
+//   /// Get the definition of the net instance
+//   /// \returns The definition index
+//   std::size_t get_definition_index() const;
 
 //   /// True if the net directly contains the net
 //   /// \param identifier The child net identifier

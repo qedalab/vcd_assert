@@ -29,7 +29,6 @@ using InputHandles = std::unordered_map<std::string, InputType>; //source
 class DesignReader {
   std::unique_ptr<Design> design_;       /// Pointer to Verilog Design
   std::vector<std::size_t> net_stack_;   /// Stack of current nets
-
   // InputHandles<InputType> inputs_;
   // std::vector<tao::pegtl::file_input> files_;
   // std::unordered_map<std::string, std::size_t> file_lookup_; 
@@ -43,13 +42,13 @@ public:
 
   std::size_t module(std::string module_name, std::string file_path);
   
-  /// Introduces a new instance, and links it with a <NetType> defintion  
-  /// \param NetType instance defintion's type
+  /// Introduces a new instance, and links it with a <NetType> definition  
+  /// \param NetType instance definition's type
   /// \param instance_name instance identifier.
-  /// \param definition_name <NetType> defintion identifier
+  /// \param definition_name <NetType> definition identifier
   /// \return index instance is stored at if successful, throws otherwise.
   /// \exception Throws if definition is not found. (missing import statement)
-  std::size_t instance(NetType type, std::string instance_name, std::string defintion_name);
+  std::size_t instance(NetType type, std::string instance_name, std::string definition_name);
 
   /// Add a command to be applied at a specific definition scope
   /// \param command command to add

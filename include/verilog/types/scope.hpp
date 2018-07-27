@@ -31,7 +31,7 @@
 // class Scope {
 //   ScopeType type_;                         /// The scope type
 //   std::string identifier_;                 /// The scope identifier
-//   std::optional<std::size_t> instance_of_; /// The scope defintion
+//   std::optional<std::size_t> instance_of_; /// The scope definition
 
 //   /// Child scopes
 //   std::unordered_map<std::string, std::size_t> child_scopes_;

@@ -1,7 +1,7 @@
 #include "verilog/types/design_reader.hpp"
 
-#include <cassert>
 #include "parse/util/dependent_value.hpp"
+#include <cassert>
 
 using namespace Verilog;
 
@@ -45,14 +45,13 @@ void DesignReader::merge(DesignReader other)
 
     auto search = design_->module_lookup_.find(new_module.identifier);
     if (search == design_->module_lookup_.end()) {
-      module_index += 1;
 
       for (auto &&[key, value] : new_module.instance_lookup_) {
         new_module.instance_lookup_[key] = value + instance_index;
       }
 
       design_->modules_.emplace_back(std::move(new_module));
-      design_->module_lookup_.insert({new_module.identifier, module_index});
+      design_->module_lookup_.insert({new_module.identifier, module_index++});
 
     } else {
       auto found =
@@ -71,13 +70,17 @@ void DesignReader::merge(DesignReader other)
 
 std::size_t DesignReader::module(std::string module_name, std::string file_path)
 {
+  // index to store at.
   auto module_index = design_->modules_.size();
+
+  // check that module not already defined
   auto search = design_->module_lookup_.find(module_name);
   if (search == design_->module_lookup_.end()) {
-    module_index += 1;
+
     design_->modules_.emplace_back(Module{module_name, file_path, {}});
-    design_->module_lookup_.insert({module_name, module_index});
+    design_->module_lookup_.insert({module_name, module_index++});
     return (design_->modules_.size() - 1);
+
   } else {
     auto found = design_->modules_[design_->module_lookup_[module_name]];
     throw std::runtime_error(
@@ -86,70 +89,94 @@ std::size_t DesignReader::module(std::string module_name, std::string file_path)
   }
 }
 
+/*  Assumes that the origin of the instantiation is the
+    last elem in collection corresponding to the NetType (modules_) */
 std::size_t DesignReader::instance(NetType type, std::string instance_name,
                                    std::string definition_name)
 {
 
   // only support module type at the moment
+  if (type != NetType::module) {
+    throw std::runtime_error("InternalError : unsupported net definition type");
+  }
+
+  // Check that instance type has been defined.
   auto search = design_->module_lookup_.find(definition_name);
   if (search != design_->module_lookup_.end()) {
 
-    auto index = design_->module_lookup_[definition_name];
-
-    // create name->index lookup for instance inside module;
-    design_->modules_[index].instance_lookup_.insert(
-        {instance_name, design_->modules_[index].instance_lookup_.size()});
+    // get index to definition
+    auto definition_index = design_->module_lookup_[definition_name];
+    auto new_instance_index = design_->instances_.size();
+    // create name->index lookup for instance inside origin(module);
+    design_->modules_.back().instance_lookup_.emplace(instance_name,
+                                                     new_instance_index);
 
     // create name->index lookup for instance inside design;
     // design_->instances_module_lookup_.insert({instance_name,instances_.size()})
 
     design_->instances_.push_back({type, // todo remove
-                                   instance_name});
+                                   instance_name, definition_index});
 
-    return (design_->instances_.size() - 1);
+    return new_instance_index;
+
   } else {
     throw std::runtime_error(
         fmt::format("Declaration of {} not found.", definition_name));
   }
 }
 
-std::size_t DesignReader::command(Command param, std::string definition_name)
+std::size_t DesignReader::command(Command command, std::string definition_name)
 {
-  (void)param;
-  (void)definition_name;
-  return 0;
-  // // using T = typename std::decay<decltype(param)>::type;
+  if (std::holds_alternative<SDFAnnotateCommand>(command)) {
+    auto sdf = std::get<SDFAnnotateCommand>(command);
 
-  // // if constexpr (std::is_same_v<T, SDFAnnotateCommand>) {
-  // if (std::holds_alternative<SDFAnnotateCommand>(param)) {
-  //   auto sdf = std::get<SDFAnnotateCommand>(param);
+    // check if sdf_annotate applies to this scope or a child scope.
+    auto apply_scope = sdf.name_of_instance.has_value()
+                           ? sdf.name_of_instance.value()
+                           : definition_name;
 
-  //   // check if sdf_annotate applies to this scope or a child scope.
-  //   auto apply_scope = sdf.name_of_instance.has_value()
-  //                           ? sdf.name_of_instance.value()
-  //                           : definition_name;
-    
-  //   // find apply scope.
-  //   auto search = design_->module_lookup_.find(apply_scope);
-  //   if (search != design_->module_lookup_.end()) {
-      
-  //     auto index = design_->sdf_commands_lookup_.at(search->second);
-  //     design_->sdf_commands_.at(index).push_back(sdf);
-  //     throw std::runtime_error(
-  //        fmt::format("index {}", index));
-      
-  //     return search->second;
+    // std::cout << fmt::format("SDF ANNOTATE : apply_scope {} \n",
+    // apply_scope); for(auto&& [mn,i] : design_->module_lookup_ ){
+    //   std::cout << fmt::format(" module mn : {} -- {}\n", mn, i);
+    // }
 
-  //   } else {
-  //     throw std::runtime_error(
-  //         fmt::format("SDFAnnotationError : Module/Scope ({}) not found.",
-  //                     apply_scope));
-  //   }
-  // } else {
-  //   throw std::runtime_error("InternalError : command not supported");
-  // }
+    // find apply scope.
+    auto search = design_->module_lookup_.find(apply_scope);
+    if (search != design_->module_lookup_.end()) {
+      auto apply_scope_index = design_->module_lookup_.at(apply_scope);
+      // std::cout << fmt::format("apply_scope_index :- {}\n",
+      // apply_scope_index);
+
+      // for(auto&& [mn,i] : design_->module_lookup_ ){
+      //   std::cout << fmt::format("module mn : {} -- {}\n", mn, i);
+      // }
+      auto search_2 = design_->sdf_commands_lookup_.find(apply_scope_index);
+
+      if (search_2 != design_->sdf_commands_lookup_.end()) {
+
+        auto sdf_index = design_->sdf_commands_lookup_[apply_scope_index];
+        design_->sdf_commands_.at(sdf_index).push_back(sdf);
+
+        // throw std::runtime_error(
+        //   fmt::format("index {}", sdf_index));
+
+        return sdf_index;
+      } else {
+        auto new_sdf_index = design_->sdf_commands_.size();
+        design_->sdf_commands_.push_back({sdf});
+        design_->sdf_commands_lookup_.emplace(apply_scope_index,
+                                              std::move(new_sdf_index));
+        return new_sdf_index;
+      }
+
+    } else {
+      throw std::runtime_error(fmt::format(
+          "SDFAnnotationError : Module/Scope ({}) not found.", apply_scope));
+    }
+  } else {
+    throw std::runtime_error("InternalError : command not supported");
+  }
 }
-
 
 std::unique_ptr<Design> DesignReader::release()
 {

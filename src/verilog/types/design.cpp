@@ -47,3 +47,5 @@ Design::get_sdf_for_module(std::size_t module_index) const
 std::size_t Design::num_modules() const noexcept { return modules_.size(); }
 
 std::size_t Design::num_instances() const noexcept { return instances_.size(); }
+
+std::size_t Design::num_sdf_commands() const noexcept { return sdf_commands_.size(); }

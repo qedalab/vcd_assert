@@ -28,13 +28,13 @@
 //   return child_variables_.size();
 // }
 
-// bool Net::has_defintion_index() const noexcept
+// bool Net::has_definition_index() const noexcept
 // {
 //   return definition_index_.has_value();
 // }
 
 
-// std::size_t Net::get_defintion_index() const
+// std::size_t Net::get_definition_index() const
 // {
 //   return definition_index_.value();
 // }

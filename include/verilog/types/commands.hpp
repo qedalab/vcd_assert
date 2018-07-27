@@ -30,9 +30,12 @@ enum class CommandTypeEnum {
   sdf_annotate_task
 };
 
+// struct TimeCommand {
+//   int a;
+// };
 
 using CommandVariant = std::variant<
-  // TimeCommand
+  // TimeCommand,
   SDFAnnotateCommand
 >;
 

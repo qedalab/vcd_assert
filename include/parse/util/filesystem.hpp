@@ -1,7 +1,7 @@
 #ifndef LIBPARSE_UTIL_FILESYSTEM_HPP
 #define LIBPARSE_UTIL_FILESYSTEM_HPP
 
-using namespace Parse {
+namespace Parse::Util {
 
 #ifdef __cpp_lib_filesystem
 #include <filesystem>

@@ -50,7 +50,7 @@ TEST_CASE("Verilog.Actions.Module", "[Verilog][Events][Module]")
     REQUIRE(wanted.sdf_file == test.sdf_file);
     REQUIRE(wanted.name_of_instance == test.name_of_instance);
   }
-  SECTION("sdf annotation from module declaration action")
+  SECTION("sdf annotation from initial_block ction")
   {
     std::vector<Command> test_commands{};
     auto wanted = sdf_annotation_command;
@@ -70,10 +70,10 @@ TEST_CASE("Verilog.Actions.Module", "[Verilog][Events][Module]")
 
     using IEEE1364_2001::Actions::ModuleEvent;
     ModuleEvent test{};
-    ModuleEvent wanted{"dro", {}, {sdf_annotation_command}};
+    ModuleEvent wanted{"dro", {}, {{sdf_annotation_command}}};
 
     require_parse<__Grammar::_module_declaration_,
                   Actions::ModuleDeclarationAction>(
-        initial_block_with_sdf_example_1, test);
+        basic_annotation_example, test);
   }
 }
