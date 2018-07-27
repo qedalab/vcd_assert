@@ -15,6 +15,6 @@ using namespace Verilog;
 
 }
 
-void catch_test_design_via_reader(*design_p, dro_example);
+// void catch_test_design_via_reader(*design_p, dro_example);
 
 }

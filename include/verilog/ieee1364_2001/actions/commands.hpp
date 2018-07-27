@@ -2,8 +2,6 @@
 #define LIBVERILOG_IEEE1364_2001_ACTIONS_COMMAND_HPP
 
 #include "base.hpp"
-// #include "module.hpp"
-
 
 #include "../../types/commands.hpp"
 #include "../../types/design_reader.hpp"
@@ -17,12 +15,12 @@ namespace Verilog {
 namespace IEEE1364_2001 {
 namespace Actions {
 // clang-format off
+
 using namespace Verilog;
 
-// struct SDFAnnotateHelperAction : multi_dispatch<
 struct SDFAnnotateTaskHelperAction : multi_dispatch<
     Grammar::sdf_file, inner_action<
-      FilePathAction, 
+      FilePathSpecAction, 
       Storage::member<&SDFAnnotateCommand::sdf_file>
     >,
     Grammar::name_of_instance, inner_action<
@@ -30,11 +28,11 @@ struct SDFAnnotateTaskHelperAction : multi_dispatch<
       Storage::member<&SDFAnnotateCommand::name_of_instance>
     >,
     Grammar::config_file, inner_action<
-      FilePathAction, 
+      FilePathSpecAction, 
       Storage::member<&SDFAnnotateCommand::config_file>
     >,
     Grammar::log_file, inner_action<
-      FilePathAction, 
+      FilePathSpecAction, 
       Storage::member<&SDFAnnotateCommand::log_file>
     >,
     Grammar::mtm_spec, inner_action<
@@ -67,25 +65,11 @@ struct SDFAnnotateTaskStorage{
     outer = Command{std::move(inner)};
     
     outer.type = CommandTypeEnum::sdf_annotate_task;
+    // auto temp = std::get<SDFAnnotateCommand>(outer);
 
     return true;
   }
 };
-
-// struct ModuleDescriptionApply{
-//   template <class Rule, class ActionInput>
-//   static bool apply(const ActionInput &input, ModuleEvent data, DesignReader &reader,  
-//                     Util::InputMap &inputmap){
-
-// struct SDFAnnotateTaskApply{
-//   template <class Rule, class ActionInput>
-//   static bool apply(const ActionInput &input, Command inner, Command &outer 
-//                     Util::InputMap &inputmap){
-    
-
-//     return true;
-//   }
-// };
 
 struct SDFAnnotateTaskAction : single_dispatch<
   Grammar::sdf_annotate_task, inner_action<

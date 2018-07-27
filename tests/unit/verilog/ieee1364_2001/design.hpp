@@ -4,6 +4,61 @@
 namespace Verilog::Test{
 namespace Verilog::IEEE1364_2001{
 
+
+// Test::Design dro_example_design_test {
+//   { //vector
+//     { //module
+//       "dro",   // identifier
+//       {},      // instances
+//       {},      // variable
+//       {}       // attributes
+//     }
+//   },
+//   {},
+//   {},
+//   {},
+
+//   Test::Net { 
+//       NetType::module, //type_
+//       "dro",           //identifier_    //what to name root net ?
+//       (std::size_t)0   //definition_index_ 
+//       {
+//           // No child nets
+//       },
+//       {
+//           // No variables 
+//       }
+//   }
+// };
+
+// Test::Design tb_dro_example_design_test {
+//   { //vector
+//     { //module
+//       "dro",   // identifier
+//       {},      // instances
+//       {},      // variable
+//       {}       // attributes
+//     }
+//   },
+//   {},
+//   {},
+//   {},
+
+//   Test::Net { 
+//       NetType::module, //type_
+//       "dro",           //identifier_    //what to name root net ?
+//       (std::size_t)0   //definition_index_ 
+//       {
+//           // No child nets
+//       },
+//       {
+//           // No variables 
+//       }
+//   }
+// };
+
+
+
 constexpr auto include_statement = "include \"to_be_included\"";
 constexpr auto include_statement_no_qstring = "include to_be_included";
 constexpr auto compiler_directive = "`include \"to_be_included\"";
@@ -40,6 +95,7 @@ constexpr auto initial_block_example_2 = "initial \n\tbegin \n\t a = 1;\n\n\tend
 constexpr auto initial_block_example_3 = "initial \n\tbegin \n\t a = 1;\n\n\tend\n";
 constexpr auto initial_block_example_4 = "initial begin\n\tif(a == 1) begin\n\t\ta=0;\n\tend\nend";
 constexpr auto initial_block_example_5 = "initial begin\n\tif(a == 1) begin\n\t\ta=0;\n\tend\nend";
+
 constexpr auto initial_block_with_sdf_example_1 = 
 R"####(initial
       begin
@@ -120,6 +176,24 @@ endmodule
 
 )####";
 
+constexpr auto basic_annotation_example = R"####(
+`timescale 1ps/100fs
+module dro;
+   reg set = 0;
+   reg reset = 0;
+
+   initial
+      begin
+         $sdf_annotate("../../dro.sdf", tb_dro);
+         $dumpfile("tb_dro_example_1.vcd");
+         $dumpvars;
+
+         #10 set = !set;
+      end
+
+endmodule
+)####";
+
 constexpr auto tb_dro_example = R"####(
 // ---------------------------------------------------------------------------
 // Verilog testbench file, created with TimEx v1.00.02
@@ -156,59 +230,6 @@ module tb_dro;
 endmodule
 
 )####";
-
-
-// Test::Design dro_example_design_test {
-//   { //vector
-//     { //module
-//       "dro",   // identifier
-//       {},      // instances
-//       {},      // variable
-//       {}       // attributes
-//     }
-//   },
-//   {},
-//   {},
-//   {},
-
-//   Test::Net { 
-//       NetType::module, //type_
-//       "dro",           //identifier_    //what to name root net ?
-//       (std::size_t)0   //definition_index_ 
-//       {
-//           // No child nets
-//       },
-//       {
-//           // No variables 
-//       }
-//   }
-// };
-
-// Test::Design tb_dro_example_design_test {
-//   { //vector
-//     { //module
-//       "dro",   // identifier
-//       {},      // instances
-//       {},      // variable
-//       {}       // attributes
-//     }
-//   },
-//   {},
-//   {},
-//   {},
-
-//   Test::Net { 
-//       NetType::module, //type_
-//       "dro",           //identifier_    //what to name root net ?
-//       (std::size_t)0   //definition_index_ 
-//       {
-//           // No child nets
-//       },
-//       {
-//           // No variables 
-//       }
-//   }
-// };
 
 
 } // namespace Test::Verilog::IEEE1364_2001

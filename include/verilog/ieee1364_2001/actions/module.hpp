@@ -13,7 +13,6 @@
 #include "parse/actions/make_pegtl_template.hpp"
 #include <tao/pegtl/memory_input.hpp>
 
-
 #include <filesystem>
 // #include <stdlib.h>
 
@@ -37,7 +36,6 @@ struct ModuleInstanceAction : single_dispatch<
   using state = std::string;
 };
 
-
 struct StringStringMapping {
   std::string type;
   std::string name;
@@ -48,7 +46,6 @@ struct ModuleEvent {
   std::vector<StringStringMapping> instances; 
   std::vector<Command> commands; 
 };
-
 
 struct ModuleInstantiationAction : multi_dispatch<
     Grammar::module_identifier, inner_action<
@@ -82,23 +79,6 @@ struct CommandArrayAction : single_dispatch<
   using state = std::vector<Command>;
 };
 
-
-// struct InitialBlockAction : single_dispatch<
-//     Grammar::sdf_annotate_task, inner_action_passthrough<
-//       SDFAnnotateTaskAction,
-//     >
-// > {
-//   using state = ModuleEvent;
-// };
-
-// struct sdf_annotate_task_storage {
-//   static bool storage(ModuleEvent &outer, ModuleEvent inner ){
-    
-
-//     return true;
-//   }
-// };
-
 struct ModuleDeclarationAction : multi_dispatch<
     Grammar::module_identifier, inner_action<
       IdentifierAction, 
@@ -108,10 +88,6 @@ struct ModuleDeclarationAction : multi_dispatch<
       ModuleInstantiationArrayAction, 
       Storage::member<&ModuleEvent::instances>
     >,
-    // Grammar::sdf_annotate_task, inner_action<
-    //   CommandArrayAction, 
-    //   sdf_annotate_task_storage
-    // >
     Grammar::sdf_annotate_task, inner_action<
       CommandArrayAction, 
       Storage::member<&ModuleEvent::commands>
@@ -124,12 +100,8 @@ struct ModuleDeclarationAction : multi_dispatch<
 struct ModuleDescriptionApply{
   template <class Rule, class ActionInput>
   static bool apply(const ActionInput &input, ModuleEvent data, DesignReader &reader,  
-                    Util::InputMap &inputmap){
+                    Util::InputMap &/*inputmap*/){
 
-                      (void)inputmap;
-    //technically this does not have to happen before instances are 
-    //  added, as this module may not be instanced in itself, so the lookup doesn't
-    // require it to be present.
     reader.module(data.module_identifier, input.position().source);
     // throw std::runtime_error(fmt::format("Saving module : {} from file : {}", data.module_identifier, input.position().source));
 
@@ -138,6 +110,11 @@ struct ModuleDescriptionApply{
     for (auto&& instance : data.instances ){
       reader.instance(NetType::module,  instance.name, instance.type);
     }
+
+    for (auto&& command : data.commands ){
+      reader.command(command, data.module_identifier);
+    }
+
     return true;
    }
  };

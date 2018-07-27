@@ -14,23 +14,6 @@ namespace Actions{
 using namespace Parse;  
 
 
-
-// struct CellInstanceHierIdStorage {
-//   static bool store(HierarchicalIdentifier &hi, std::vector<std::string> ss) {
-//     hi.value = std::move(ss);
-//     return true;
-//   }
-// };
-
-// struct CellInstanceHierIdAction : single_dispatch<
-//   Grammar::hierarchical_identifier, inner_action<
-//     HierarchicalIdentifierAction,
-//     CellInstanceHierIdStorage
-//   >
-// > {
-//   using state = HierarchicalIdentifier;
-// };
-
 /*always returns star if got to this point*/
 struct StarStorage {
   static bool store(Star & /*unused*/, bool found) {
@@ -63,22 +46,6 @@ struct CellInstanceAction : multi_dispatch<
   using state = CellInstance;
 };
 
-// struct CellAction : multi_dispatch<
-//   Grammar::cell_type, inner_action<
-//     StarAction,
-//     StarStorage
-//   >,
-//   Grammar::cell_instance, inner_action<
-//     CellInstanceAction,
-//     Storage::member<&Cell::cell_instance>
-//   >,
-//   Grammar::timing_spec, inner_action<
-//     TimingSpecArrayAction,
-//     Storage::member<&Cell::timing_specs>
-//   >
-// > {
-//   using state = CellInstance;
-// };
 
 struct CellAction : multi_dispatch<
   Grammar::cell_type, inner_action<
@@ -96,6 +63,7 @@ struct CellAction : multi_dispatch<
 > {
   using state = Cell;
 };
+
 
 struct CellArrayAction : single_dispatch<
   Grammar::cell, inner_action<

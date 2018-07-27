@@ -44,9 +44,12 @@ void serialize_hierarchical_identifier(
     OutputIterator oi, int /*unused*/,
     HierarchicalIdentifier hi) noexcept(noexcept(*oi++ = '!')) {
   auto sep = hi.sep == HChar::dot ? std::string_view(".") : std::string_view("/");
+  auto size = hi.value.size();
   for(auto&& str : hi.value){
+    --size;
     ranges::copy(str, oi);
-    ranges::copy(sep, oi);    
+    if(size > 0)
+      ranges::copy(sep, oi);    
   }
 }
 

@@ -1,5 +1,6 @@
-#include "verilog/ieee1364_2001/actions/grammar.hpp"
 #include "../design.hpp"
+
+#include "verilog/ieee1364_2001/actions/grammar.hpp"
 #include "verilog/ieee1364_2001/grammar/grammar_hacked.hpp"
 #include "verilog/util/parse_input.hpp"
 
@@ -25,6 +26,7 @@ using namespace Verilog::IEEE1364_2001;
 
 namespace __Grammar = Verilog::IEEE1364_2001::Grammar;
 
+using namespace Verilog;
 
 // imported from CMAKE ENVIRONMENT
 constexpr auto project_source_dir =
@@ -38,15 +40,10 @@ constexpr auto tb_dro_file_abs_ = input_path_ + "tb_dro.v";
 TEST_CASE("Verilog.Actions.Design", "[Verilog][Events][Design]")
 {
 
-  using tao::pegtl::apply_mode;
-  using tao::pegtl::memory_input;
-  using tao::pegtl::parse;
-  using tao::pegtl::rewind_mode;
-
   SECTION("dro only, from memory")
   {
-    Verilog::DesignReader reader;
-    memory_input<> input(dro_example, "dro");
+    DesignReader reader;
+    tao::pegtl::memory_input<> input(dro_example, "dro");
 
     Verilog::Util::InputMap inputs{};
 
@@ -67,7 +64,7 @@ TEST_CASE("Verilog.Actions.Design", "[Verilog][Events][Design]")
 
     const char *test_string_p = test_string.c_str();
 
-    memory_input<> input_tb_dro(tb_dro_example, "tb_dro");
+    tao::pegtl::memory_input<> input_tb_dro(tb_dro_example, "tb_dro");
 
     Verilog::Util::InputMap inputs{};
     inputs.emplace(
@@ -87,7 +84,6 @@ TEST_CASE("Verilog.Actions.Design", "[Verilog][Events][Design]")
   SECTION("dro only, from file")
   {
     Verilog::DesignReader reader;
-    // memory_input<> input(dro_example, "dro");
 
     tao::pegtl::file_input<> input(dro_file_path_abs_.to_string_view());
 

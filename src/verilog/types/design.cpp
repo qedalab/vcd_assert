@@ -4,23 +4,6 @@
 
 using namespace Verilog;
 
-// const Variable &Design::get_var(std::size_t index) const
-// {
-//   assert(variables_.size() > index);
-//   return variables_.at(index);
-// }
-
-// const Net &Design::get_net(std::size_t index) const
-// {
-//   assert(nets_.size() > index);
-//   return nets_.at(index);
-// }
-
-// const Net &Design::get_root_net() const
-// {
-//   assert(!nets_.empty());
-//   return nets_.at(0);
-// }
 
 std::optional<std::size_t> Design::module_find(std::string module_identifier) const
 {
@@ -42,13 +25,23 @@ const Module &Design::get_module(std::size_t  index) const
 
 const Instance &Design::get_instance(std::size_t index) const
 { 
-   assert(instances_.size() > index);
+  assert(instances_.size() > index);
   return instances_.at(index);
 }
 
-// std::size_t Design::num_nets() const noexcept { return nets_.size(); }
+std::optional<std::vector<SDFAnnotateCommand>> 
+Design::get_sdf_for_module(std::size_t module_index) const
+{ 
+  assert(modules_.size() > module_index);
+  auto search = sdf_commands_lookup_.find(module_index);
+  if(search != sdf_commands_lookup_.end()){  
+    return sdf_commands_.at(sdf_commands_lookup_.at(module_index));
+  }else{
+    return {};
+  }
+}
 
-// std::size_t Design::num_variables() const noexcept { return variables_.size(); }
+
 
 
 std::size_t Design::num_modules() const noexcept { return modules_.size(); }

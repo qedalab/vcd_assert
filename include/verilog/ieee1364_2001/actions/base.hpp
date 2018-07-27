@@ -101,6 +101,11 @@ struct HierarchicalIdentifierAction : multi_dispatch<
   using state = HierarchicalIdentifier;
 };
 
+struct PathIdentifierAction : single_dispatch<
+    Grammar::path_identifier, apply<Apply::string>
+> {
+  using state = std::string;
+};
 
 struct FilePathAction : multi_dispatch<
     Grammar::path_separator, inner_action<
@@ -109,12 +114,20 @@ struct FilePathAction : multi_dispatch<
       Storage::member<&HierarchicalIdentifier::sep>
     >,
     Grammar::path_identifier, inner_action<
-      IdentifierAction, 
+      PathIdentifierAction, 
       HierarchicalIdentifierStorage
     >
 > {
   using state = HierarchicalIdentifier;
 };
+
+struct FilePathSpecAction : single_dispatch<
+    Grammar::file_path, apply<Apply::string>
+> {
+  using state = std::string;
+};
+
+
 
 }
 }

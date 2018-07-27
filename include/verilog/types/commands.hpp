@@ -16,13 +16,13 @@ namespace Verilog {
 
 
 struct SDFAnnotateCommand {
-  HierarchicalIdentifier  sdf_file;
-  std::string             name_of_instance;
-  HierarchicalIdentifier  config_file;
-  HierarchicalIdentifier  log_file;
-  std::string             mtm_spec;
-  std::string             scale_factors;
-  std::string             scale_type;
+  std::string sdf_file;
+  std::optional<std::string> name_of_instance;
+  std::optional<std::string> config_file;
+  std::optional<std::string> log_file;
+  std::optional<std::string> mtm_spec;
+  std::optional<std::string> scale_factors;
+  std::optional<std::string> scale_type;
 };
 
 enum class CommandTypeEnum {
