@@ -7,7 +7,7 @@ function(create_vcd_from_verilog vcd_target main_module input_files)
     USES_TERMINAL
     DEPENDS ${input_files}
     COMMAND find . -name "*.vcd" -delete
-    COMMAND iverilog -s ${main_module} -o run ${input_files}
+    COMMAND iverilog -gspecify -s ${main_module} -o run ${input_files}
     COMMAND ${CMAKE_BINARY_DIR}/vcd/${vcd_target}/run
     COMMAND mv *.vcd output.vcd
   )

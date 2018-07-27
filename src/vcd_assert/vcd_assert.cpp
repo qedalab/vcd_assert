@@ -62,7 +62,6 @@ int main(int argc, char **argv) {
   int verbose;
   /*CLI::Option *v_option = */cli.add_flag("--verbose,-v", verbose, "Verbosity level [1-3]");
 
-
   CLI11_PARSE(cli, argc, argv);
 
   ranges::reverse(vcd_nodes);
