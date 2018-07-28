@@ -15,8 +15,8 @@
         the `timescale command. 
         */
     (CELL
-        (CELLTYPE "dro")
-        (INSTANCE DUT)        
+        (CELLTYPE "basic_dro")
+        (INSTANCE DUT)
         (DELAY
             (ABSOLUTE
                 /*Conditional delays not supported by iverilog */
@@ -32,7 +32,7 @@
 
             (HOLD reset (COND state (posedge set)) (25)) 
             (HOLD reset (COND state (negedge set)) (25)) 
-            
+
             (HOLD set (COND not_state (posedge reset)) (25)) 
             (HOLD set (COND not_state (negedge reset)) (25)) 
         )
