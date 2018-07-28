@@ -58,9 +58,6 @@ int main(int argc, char **argv) {
 
   std::vector<std::string> sdf_files;
   auto sdf_option = cli.add_option("--sdf,-s", sdf_files, "SDF File to apply");
-  
-  int verbose;
-  /*CLI::Option *v_option = */cli.add_flag("--verbose,-v", verbose, "Verbosity level [1-3]");
 
   CLI11_PARSE(cli, argc, argv);
 
@@ -172,8 +169,8 @@ int main(int argc, char **argv) {
         Parse::make_pegtl_template<SDF::Actions::HierarchicalIdentifierAction>::type,
         Parse::capture_control
       >(path_input, path);
-    
-    for(auto&& sdf_file : sdf_files){
+
+    for(auto&& sdf_file : sdf_file_array){
 
       SDF::DelayFileReader sdf_reader{};
 
@@ -181,12 +178,12 @@ int main(int argc, char **argv) {
       tao::pegtl::parse<SDF::Grammar::delay_file, 
                         Parse::make_pegtl_template<SDF::Actions::DelayFileAction>::type,
                         Parse::capture_control>(sdf_input, sdf_reader);
-      
+
       auto delayfile_p = sdf_reader.release();
       assert(delayfile_p.operator bool());
 
       timing_checker.apply_sdf_file(/*ast,*/ std::move(delayfile_p), path.value);
-    }    
+    }
   }
 
   // Stream in vcd file
