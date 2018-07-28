@@ -179,7 +179,7 @@ struct name_of_instance : seq <
 >{};
 
 struct module_instance : seq<
-  name_of_instance, seq<one<'('>, /*opt<list_of_port_connections>,*/ until<one<')'>>>
+  name_of_instance, opt<separator>, seq<one<'('>, /*opt<list_of_port_connections>,*/ until<one<')'>>>
 >{};
 
 struct module_identifier : alias<identifier> {};
@@ -188,7 +188,8 @@ struct module_instantiation : seq<
   // opt< parameter_value_assignment> 
   module_identifier,
   plus_blank,
-  opt< list<module_instance, one<','> > >,
+  list<module_instance, one<','>, separator>,
+  // opt< list<module_instance, one<','> > >,
   opt<separator>,
   one<';'>
 > {};

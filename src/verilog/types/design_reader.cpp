@@ -38,11 +38,12 @@ void DesignReader::merge(DesignReader other)
   //   }
   // }
 
-  auto module_index = design_->modules_.size();
   auto instance_index = design_->instances_.size();
 
   for (auto &&new_module : other.design_->modules_) {
+    auto module_index = design_->modules_.size();
 
+    //if module not previously defined
     auto search = design_->module_lookup_.find(new_module.identifier);
     if (search == design_->module_lookup_.end()) {
 
@@ -50,9 +51,10 @@ void DesignReader::merge(DesignReader other)
         new_module.instance_lookup_[key] = value + instance_index;
       }
 
+      //order is important
+      design_->module_lookup_.emplace(new_module.identifier, module_index);
       design_->modules_.emplace_back(std::move(new_module));
-      design_->module_lookup_.insert({new_module.identifier, module_index++});
-
+      
     } else {
       auto found =
           design_->modules_[design_->module_lookup_[new_module.identifier]];
@@ -77,9 +79,10 @@ std::size_t DesignReader::module(std::string module_name, std::string file_path)
   auto search = design_->module_lookup_.find(module_name);
   if (search == design_->module_lookup_.end()) {
 
-    design_->modules_.emplace_back(Module{module_name, file_path, {}});
-    design_->module_lookup_.insert({module_name, module_index++});
-    return (design_->modules_.size() - 1);
+    design_->modules_.push_back(Module{module_name, file_path, {}});
+
+    design_->module_lookup_.emplace(module_name, module_index);
+    return (module_index);
 
   } else {
     auto found = design_->modules_[design_->module_lookup_[module_name]];
@@ -94,7 +97,6 @@ std::size_t DesignReader::module(std::string module_name, std::string file_path)
 std::size_t DesignReader::instance(NetType type, std::string instance_name,
                                    std::string definition_name)
 {
-
   // only support module type at the moment
   if (type != NetType::module) {
     throw std::runtime_error("InternalError : unsupported net definition type");
@@ -144,21 +146,13 @@ std::size_t DesignReader::command(Command command, std::string definition_name)
     auto search = design_->module_lookup_.find(apply_scope);
     if (search != design_->module_lookup_.end()) {
       auto apply_scope_index = design_->module_lookup_.at(apply_scope);
-      // std::cout << fmt::format("apply_scope_index :- {}\n",
-      // apply_scope_index);
 
-      // for(auto&& [mn,i] : design_->module_lookup_ ){
-      //   std::cout << fmt::format("module mn : {} -- {}\n", mn, i);
-      // }
       auto search_2 = design_->sdf_commands_lookup_.find(apply_scope_index);
 
       if (search_2 != design_->sdf_commands_lookup_.end()) {
 
         auto sdf_index = design_->sdf_commands_lookup_[apply_scope_index];
         design_->sdf_commands_.at(sdf_index).push_back(sdf);
-
-        // throw std::runtime_error(
-        //   fmt::format("index {}", sdf_index));
 
         return sdf_index;
       } else {

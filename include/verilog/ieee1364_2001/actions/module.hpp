@@ -69,7 +69,6 @@ struct ModuleInstantiationArrayAction : single_dispatch<
   using state = std::vector<StringStringMapping>;
 };
 
-
 struct CommandArrayAction : single_dispatch<
     Grammar::sdf_annotate_task, inner_action<
       SDFAnnotateTaskAction, 
@@ -97,16 +96,22 @@ struct ModuleDeclarationAction : multi_dispatch<
 };
 
 
+struct ModuleDescriptionAction: single_dispatch<
+    Grammar::_module_declaration_, 
+    inner_action_passthrough< 
+      ModuleDeclarationAction>
+> {
+  using state = ModuleEvent;
+};
+
+
 struct ModuleDescriptionApply{
   template <class Rule, class ActionInput>
   static bool apply(const ActionInput &input, ModuleEvent data, DesignReader &reader,  
                     Util::InputMap &/*inputmap*//*, Counter &*//*module_count*/){
             
-    // std::cout << fmt::format("Module count: {} \n",module_count.value++);
-
+    
     reader.module(data.module_identifier, input.position().source);
-
-    // std::cout << fmt::format("Saving module : {} from file : {} \n", data.module_identifier, input.position().source);
 
     std::vector<std::size_t> insert_indices;
     
@@ -121,16 +126,6 @@ struct ModuleDescriptionApply{
     return true;
    }
  };
-
-struct ModuleDescriptionAction: single_dispatch<
-    Grammar::_module_declaration_, 
-    inner_action_then_apply< 
-      ModuleDeclarationAction, 
-      ModuleDescriptionApply 
-    >
-> {
-  using state = DesignReader;
-};
 
 }
 }

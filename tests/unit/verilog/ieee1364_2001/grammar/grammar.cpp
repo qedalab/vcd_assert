@@ -197,12 +197,6 @@ TEST_CASE("Verilog.IEEE1364_2001.Grammar.Grammer", "[Verilog][IEEE1364_2001][Gra
     CHECK(match_exactly<Grammar::unimplemented_begin_end>(begin_end_example_4));
   }
 
-  SECTION("begin_end_example_5"){
-    CAPTURE(begin_end_example_5);
-    CHECK(match_exactly<Grammar::unimplemented_begin_end>(begin_end_example_5));
-  }
-
-
 
   SECTION("initial_block_example_1"){
     CAPTURE(initial_block_example_1);
@@ -225,10 +219,6 @@ TEST_CASE("Verilog.IEEE1364_2001.Grammar.Grammer", "[Verilog][IEEE1364_2001][Gra
     CHECK(match_exactly<Grammar::initial_block>(initial_block_example_4));
   }
 
-  SECTION("initial_block_example_5"){
-    CAPTURE(initial_block_example_5);
-    CHECK(match_exactly<Grammar::initial_block>(initial_block_example_5));
-  }
 
   SECTION("initial_block_with_sdf_example_1"){
     CAPTURE(initial_block_with_sdf_example_1);

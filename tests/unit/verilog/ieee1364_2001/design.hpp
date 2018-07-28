@@ -2,10 +2,23 @@
 #define UNIT_VERILOG_TEST_DESIGN_HPP
 
 #include "verilog/types/design.hpp"
+#include "parse/util/static_string.hpp"
 
 using namespace Verilog;
 
 namespace Verilog::Test::Verilog::IEEE1364_2001{
+
+
+inline auto sdf_annotation_command = SDFAnnotateCommand{"../../dro.sdf", "tb_dro", {}, {}, {}, {}, {}};
+
+// imported from CMAKE ENVIRONMENT
+constexpr auto project_source_dir =
+    Parse::Util::static_string(PROJECT_SOURCE_DIR);
+constexpr auto input_path_ =
+    "" + project_source_dir + "/resources/examples/vcdassert/example_1/";
+
+constexpr auto dro_file_path_abs_ = input_path_ + "dro.v";
+constexpr auto tb_dro_file_abs_ = input_path_ + "tb_dro.v";
 
 
 // clang-format off
@@ -13,7 +26,7 @@ inline DesignView dro_example_design_test {
   { //vector of module
     { //module
       "dro",   // identifier
-      "dro.v", // path
+      dro_file_path_abs_.to_string(), // path
       {}       // instances lookup
     }
   },
@@ -28,30 +41,30 @@ inline DesignView dro_example_design_test {
 
 // clang-format off
 inline DesignView tb_dro_example_design_test {
- { //vector of modules
-    Module{ //module
+  { //vector of modules
+    { //module (INCLUDED BEFORE MAIN MODULE)
+      "dro",   // identifier
+      dro_file_path_abs_.to_string(), // path      
+      {}       // instances lookup
+    },
+    { //module
       "tb_dro",   // identifier
-      "tb_dro.v", // path
+      tb_dro_file_abs_.to_string(), // path
       {// instances lookup
         {"DUT",0}
       }   
-    },
-    { //module
-      "dro",   // identifier
-      "dro.v", // path      
-      {{}}       // instances lookup
     }
   },
   { //vector of instances
     {
       NetType::module, //type_
       "DUT",            //identifier_    //what to name root net ?
-      1
+      0 // index of dro module in module list
     }
   },
   { //module lookup
-    {"tb_dro", 0},
-    {"dro", 1}
+    {"dro", 0},
+    {"tb_dro", 1}
   },
   { //sdf_commands total
     { // sdf_commands for tb_dro module
@@ -84,13 +97,8 @@ constexpr auto module_example_1 = "\nmodule dro;\nendmodule";
 
 constexpr auto module_example_2 = "\nmodule dro (set, reset, out);\nendmodule\n";
 
-constexpr auto module_example_3 = R"####(
-module dro (set, reset, out);
-endmodule
-)####";
-
 constexpr auto sdf_annotate_example = R"####($sdf_annotate("../../dro.sdf", tb_dro);)####";
-
+constexpr auto module_instantiation_example = R"####(dro DUT (set, reset, out);)####";
 
 constexpr auto begin_end_example_1 = "begin dro;\nend";
 constexpr auto begin_end_example_2 = "begin \n\t a = 1;\n\n\tend";
@@ -102,7 +110,12 @@ constexpr auto initial_block_example_1 = "initial begin dro;\nend";
 constexpr auto initial_block_example_2 = "initial \n\tbegin \n\t a = 1;\n\n\tend";
 constexpr auto initial_block_example_3 = "initial \n\tbegin \n\t a = 1;\n\n\tend\n";
 constexpr auto initial_block_example_4 = "initial begin\n\tif(a == 1) begin\n\t\ta=0;\n\tend\nend";
-constexpr auto initial_block_example_5 = "initial begin\n\tif(a == 1) begin\n\t\ta=0;\n\tend\nend";
+
+
+// constexpr auto basic_grammar_example_1 = R"####(
+// module dro (set, reset, out);
+// endmodule
+// )####";
 
 constexpr auto initial_block_with_sdf_example_1 = 
 R"####(initial
@@ -116,6 +129,22 @@ R"####(initial
          #2.4 reset = !reset; //should cause timing violation
          #10 reset = !reset;
       end)####";
+
+constexpr auto basic_annotation_example = R"####(module dro;
+   reg set = 0;
+   reg reset = 0;
+
+   initial
+      begin
+         $sdf_annotate("../../dro.sdf", tb_dro);
+         $dumpfile("tb_dro_example_1.vcd");
+         $dumpvars;
+
+         #10 set = !set;
+      end
+
+endmodule
+)####";
 
 constexpr auto dro_example = R"####(
 // ---------------------------------------------------------------------------
@@ -184,22 +213,6 @@ endmodule
 
 )####";
 
-constexpr auto basic_annotation_example = R"####(module dro;
-   reg set = 0;
-   reg reset = 0;
-
-   initial
-      begin
-         $sdf_annotate("../../dro.sdf", tb_dro);
-         $dumpfile("tb_dro_example_1.vcd");
-         $dumpvars;
-
-         #10 set = !set;
-      end
-
-endmodule
-)####";
-
 constexpr auto tb_dro_example = R"####(
 // ---------------------------------------------------------------------------
 // Verilog testbench file, created with TimEx v1.00.02
@@ -229,10 +242,10 @@ module tb_dro;
          $monitor("\t\t%0t,\t%b,\t%b,\t%b",$realtime,set,reset,out);
       end
 
-   dro DUT (set, r$sdf_annotate("../../dro.sdf", tb_dro);
+   dro DUT (set, reset, out);
 
    initial
-      #50 $finish;$sdf_annotate("../../dro.sdf", tb_dro);
+      #50 $finish;
 endmodule
 
 )####";

@@ -79,6 +79,8 @@ struct CompilerDirectiveAction: single_dispatch<
   using state = DesignReader;
 };
 
+
+
 using DesignReaderFunctionType = void (DesignReader::*)(DesignReader);
 
 struct GrammarAction : multi_dispatch<
@@ -86,9 +88,10 @@ struct GrammarAction : multi_dispatch<
       CompilerDirectiveAction, 
       Storage::function<&DesignReader::merge>
   >,
-  Grammar::_module_description_, inner_action<
+  Grammar::_module_description_, inner_action_then_apply<
       ModuleDescriptionAction, 
-      Storage::function<&DesignReader::merge>
+      // Storage::function<&DesignReader::merge>
+      ModuleDescriptionApply       
   >
 > {
   using state = DesignReader;

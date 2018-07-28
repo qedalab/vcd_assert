@@ -1,203 +1,203 @@
 
-#ifndef LIBVERILOG_IEEE1364_2001_GRAMMAR_MODULE_HPP
-#define LIBVERILOG_IEEE1364_2001_GRAMMAR_MODULE_HPP
+// #ifndef LIBVERILOG_IEEE1364_2001_GRAMMAR_MODULE_HPP
+// #define LIBVERILOG_IEEE1364_2001_GRAMMAR_MODULE_HPP
 
-#include "./attribute.hpp"
-#include "./base.hpp"
-#include "./block.hpp"
-#include "./data.hpp"
-#include "./keywords.hpp"
-#include "./ports.hpp"
-#include "./separator.hpp"
+// #include "./attribute.hpp"
+// #include "./base.hpp"
+// #include "./block.hpp"
+// #include "./data.hpp"
+// #include "./keywords.hpp"
+// #include "./ports.hpp"
+// #include "./separator.hpp"
 
-#include <parse/grammar/base.h>
-#include <parse/grammar/part.h>
+// #include <parse/grammar/base.h>
+// #include <parse/grammar/part.h>
 
-namespace Verilog {
-namespace IEEE1364_2001 {
-namespace Grammar {
-// clang-format off
+// namespace Verilog {
+// namespace IEEE1364_2001 {
+// namespace Grammar {
+// // clang-format off
 
-using namespace Parse::Grammar::Base;
-using namespace Parse::Grammar::Part;
+// using namespace Parse::Grammar::Base;
+// using namespace Parse::Grammar::Part;
  
-struct param_identifier : alias<identifier> {};
+// struct param_identifier : alias<identifier> {};
 
-struct param_assignment : op_sep_seq<
- param_identifier, one<'='>, constant_expression
-> {};
+// struct param_assignment : op_sep_seq<
+//  param_identifier, one<'='>, constant_expression
+// > {};
 
-struct list_of_param_assignments : list<
-  seq<param_assignment, opt<separator>>, one<','> 
-> {};
+// struct list_of_param_assignments : list<
+//   seq<param_assignment, opt<separator>>, one<','> 
+// > {};
 
-struct parameter_declaration : sor<
-  op_sep_seq<
-    parameter_keyword, 
-    one<'['>, signed_keyword, one<']'>, 
-    one<'['>, range, one<']'>, 
-    list_of_param_assignments
-  >,
-  op_sep_seq<
-    parameter_keyword, 
-    integer_keyword,
-    list_of_param_assignments
-  >,
-  op_sep_seq<
-    parameter_keyword, 
-    real_keyword,
-    list_of_param_assignments
-  >,
-  op_sep_seq<
-    parameter_keyword, 
-    realtime_keyword,
-    list_of_param_assignments
-  >,
-  op_sep_seq<
-    parameter_keyword, 
-    time_keyword,
-    list_of_param_assignments
-  >
-> {};
+// struct parameter_declaration : sor<
+//   op_sep_seq<
+//     parameter_keyword, 
+//     one<'['>, signed_keyword, one<']'>, 
+//     one<'['>, range, one<']'>, 
+//     list_of_param_assignments
+//   >,
+//   op_sep_seq<
+//     parameter_keyword, 
+//     integer_keyword,
+//     list_of_param_assignments
+//   >,
+//   op_sep_seq<
+//     parameter_keyword, 
+//     real_keyword,
+//     list_of_param_assignments
+//   >,
+//   op_sep_seq<
+//     parameter_keyword, 
+//     realtime_keyword,
+//     list_of_param_assignments
+//   >,
+//   op_sep_seq<
+//     parameter_keyword, 
+//     time_keyword,
+//     list_of_param_assignments
+//   >
+// > {};
 
-/*# ( parameter_declaration { , parameter_declaration } )*/
-struct module_parameter_port_list : op_sep_seq<
-  seq<one<'#'>, one<'('>>,
-  list< 
-    seq<
-      parameter_declaration, 
-      opt<separator>
-    >, 
-    one<','>
-  >,
-  one<')'>
-> {};
+// /*# ( parameter_declaration { , parameter_declaration } )*/
+// struct module_parameter_port_list : op_sep_seq<
+//   seq<one<'#'>, one<'('>>,
+//   list< 
+//     seq<
+//       parameter_declaration, 
+//       opt<separator>
+//     >, 
+//     one<','>
+//   >,
+//   one<')'>
+// > {};
 
-struct module_identifier : alias<identifier> {};
+// struct module_identifier : alias<identifier> {};
 
-struct net_declaration : seq<
-  net_keyword,
-  until<one<';'>>
->{};
-struct reg_declaration : seq<
-  reg_keyword,
-  until<one<';'>>
->{};
-struct integer_declaration : seq<
-  integer_keyword,
-  until<one<';'>>
->{};
-struct real_declaration : seq<
-  real_keyword,
-  until<one<';'>>
->{};
-struct time_declaration : seq<
-  time_keyword,
-  until<one<';'>>
->{};
-struct realtime_declaration : seq<
-  realtime_keyword,
-  until<one<';'>>
->{};
-struct event_declaration : seq<
-  event_keyword,
-  until<one<';'>>
->{};
-struct genvar_declaration : seq<
-  genvar_keyword,
-  until<one<';'>>
->{};
-struct task_declaration : seq<
-  task_keyword,
-  until<one<';'>>
->{};
-struct function_declaration : seq<
-  function_keyword,
-  until<one<';'>>
->{};
+// struct net_declaration : seq<
+//   net_keyword,
+//   until<one<';'>>
+// >{};
+// struct reg_declaration : seq<
+//   reg_keyword,
+//   until<one<';'>>
+// >{};
+// struct integer_declaration : seq<
+//   integer_keyword,
+//   until<one<';'>>
+// >{};
+// struct real_declaration : seq<
+//   real_keyword,
+//   until<one<';'>>
+// >{};
+// struct time_declaration : seq<
+//   time_keyword,
+//   until<one<';'>>
+// >{};
+// struct realtime_declaration : seq<
+//   realtime_keyword,
+//   until<one<';'>>
+// >{};
+// struct event_declaration : seq<
+//   event_keyword,
+//   until<one<';'>>
+// >{};
+// struct genvar_declaration : seq<
+//   genvar_keyword,
+//   until<one<';'>>
+// >{};
+// struct task_declaration : seq<
+//   task_keyword,
+//   until<one<';'>>
+// >{};
+// struct function_declaration : seq<
+//   function_keyword,
+//   until<one<';'>>
+// >{};
 
-struct module_or_generate_item_declaration : sor< 
-  net_declaration,
-  reg_declaration,
-  integer_declaration,
-  real_declaration,
-  time_declaration,
-  realtime_declaration,
-  event_declaration,
-  genvar_declaration,
-  task_declaration,
-  function_declaration
-> {};
+// struct module_or_generate_item_declaration : sor< 
+//   net_declaration,
+//   reg_declaration,
+//   integer_declaration,
+//   real_declaration,
+//   time_declaration,
+//   realtime_declaration,
+//   event_declaration,
+//   genvar_declaration,
+//   task_declaration,
+//   function_declaration
+// > {};
 
-struct module_instance_identifier : alias<identifier>{};
+// struct module_instance_identifier : alias<identifier>{};
 
-struct name_of_instance : seq < 
-  module_instance_identifier, 
-  one<'['>, 
-  bus_range, 
-  one<']'>
->{};
+// struct name_of_instance : seq < 
+//   module_instance_identifier, 
+//   one<'['>, 
+//   bus_range, 
+//   one<']'>
+// >{};
 
-struct module_instance : seq<
-  name_of_instance, one<'('>, opt<list_of_port_connections>, one<')'>
->{};
+// struct module_instance : seq<
+//   name_of_instance, one<'('>, opt<list_of_port_connections>, one<')'>
+// >{};
 
-struct module_instantiation : seq<
-  // opt< parameter_value_assignment> 
-  until<module_identifier>,
-  plus_blank,
-  opt<separator>,
-  list<module_instance, one<','>>,
-  one<';'>
-> {};
+// struct module_instantiation : seq<
+//   // opt< parameter_value_assignment> 
+//   until<module_identifier>,
+//   plus_blank,
+//   opt<separator>,
+//   list<module_instance, one<','>, separator>,
+//   one<';'>
+// > {};
 
 
-struct module_or_generate_item : seq<
-  star<attribute_instance>, 
-  sor<
-    module_or_generate_item_declaration,
-    module_instantiation,
-    // udp_instantiation,
-    until<one<';'>>
-    // parameter_override,
-    // continuous_assign,
-    // gate_instantiation,
-    // initial_construct,
-    // always_construct
-  >
-> {};
+// struct module_or_generate_item : seq<
+//   star<attribute_instance>, 
+//   sor<
+//     module_or_generate_item_declaration,
+//     module_instantiation,
+//     // udp_instantiation,
+//     until<one<';'>>
+//     // parameter_override,
+//     // continuous_assign,
+//     // gate_instantiation,
+//     // initial_construct,
+//     // always_construct
+//   >
+// > {};
 
-struct module_item : sor<
-  module_or_generate_item,
-  seq<port_declaration, one<';'>>,
-  seq<
-    star<attribute_instance>, 
-    sor<
-      generated_instantiation,
-      local_parameter_declaration,
-      parameter_declaration,
-      specify_block,
-      specparam_declaration
-    >
-  >
->{};
+// struct module_item : sor<
+//   module_or_generate_item,
+//   seq<port_declaration, one<';'>>,
+//   seq<
+//     star<attribute_instance>, 
+//     sor<
+//       generated_instantiation,
+//       local_parameter_declaration,
+//       parameter_declaration,
+//       specify_block,
+//       specparam_declaration
+//     >
+//   >
+// >{};
 
-struct module_declaration : seq<
-  // star<attribute_instance>,
-  if_must<
-    module_keyword,
-    module_identifier,
-    opt<module_parameter_port_list>,
-    opt<list_of_ports>,
-    one<';'>,
-    // star<module_item>,
-    endmodule_keyword
-  >
-> {};
+// struct module_declaration : seq<
+//   // star<attribute_instance>,
+//   if_must<
+//     module_keyword,
+//     module_identifier,
+//     opt<module_parameter_port_list>,
+//     opt<list_of_ports>,
+//     one<';'>,
+//     // star<module_item>,
+//     endmodule_keyword
+//   >
+// > {};
 
-// clang-format on
-} // namespace Grammar
-} // namespace IEEE1364_2001
-} // namespace Verilog
+// // clang-format on
+// } // namespace Grammar
+// } // namespace IEEE1364_2001
+// } // namespace Verilog
 
-#endif // LIBVERILOG_IEEE1364_2001_GRAMMAR_MODULE_HPP
+// #endif // LIBVERILOG_IEEE1364_2001_GRAMMAR_MODULE_HPP

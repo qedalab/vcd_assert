@@ -22,16 +22,16 @@
 
 #include <catch2/catch.hpp>
 
+#include <range/v3/view/zip.hpp>
 #include <string>
 #include <string_view>
 
-using namespace Verilog::Test::Verilog::IEEE1364_2001;
+using namespace Verilog;
 using namespace Verilog::IEEE1364_2001;
+using namespace Verilog::Test::Verilog::IEEE1364_2001;
 
 namespace __Grammar = Verilog::IEEE1364_2001::Grammar;
-using namespace Verilog;
 
-inline auto sdf_annotation_command = SDFAnnotateCommand{"../../dro.sdf", "tb_dro", {}, {}, {}, {}, {}};
 
 TEST_CASE("Verilog.Actions.Module", "[Verilog][Events][Module]")
 {
@@ -50,7 +50,7 @@ TEST_CASE("Verilog.Actions.Module", "[Verilog][Events][Module]")
     REQUIRE(wanted.sdf_file == test.sdf_file);
     REQUIRE(wanted.name_of_instance == test.name_of_instance);
   }
-  SECTION("sdf annotation from initial_block ction")
+  SECTION("sdf annotation from initial_block action")
   {
     std::vector<Command> test_commands{};
     auto wanted = sdf_annotation_command;
@@ -75,5 +75,38 @@ TEST_CASE("Verilog.Actions.Module", "[Verilog][Events][Module]")
     require_parse<__Grammar::_module_declaration_,
                   Actions::ModuleDeclarationAction>(
         basic_annotation_example, test);
+
+    REQUIRE(wanted.module_identifier == test.module_identifier);
+    // REQUIRE(wanted.instances.size(),test.instances.size());
+
+    for(auto&& [pair1,pair2] : ranges::view::zip(wanted.instances,test.instances)){
+      auto &&[str1,str2] = pair1;
+      auto &&[str3,str4] = pair2;
+      REQUIRE(str1== str3);
+      REQUIRE(str2 == str4);
+    }
+
+
+    // REQUIRE(test_commands.size() == 1);
+
+    // auto test = std::get<SDFAnnotateCommand>(test_commands[0]);
+    // REQUIRE(wanted.sdf_file == test.sdf_file);
+    // REQUIRE(wanted.name_of_instance == test.name_of_instance);
   }
+
+  SECTION("module instantiation from module declaration action")
+  {
+
+    using IEEE1364_2001::Actions::StringStringMapping;
+    StringStringMapping test{};
+    StringStringMapping wanted{"dro", "DUT"};
+
+    require_parse<__Grammar::module_instantiation,
+                  Actions::ModuleInstantiationAction>(
+        module_instantiation_example, test);
+
+    REQUIRE(wanted.type == test.type);
+    REQUIRE(wanted.name == test.name);
+  }
+
 }

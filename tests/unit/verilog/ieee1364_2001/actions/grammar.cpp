@@ -23,22 +23,14 @@
 
 using namespace Verilog;
 
-using namespace Verilog::Test::Verilog::IEEE1364_2001;
 using namespace Verilog::IEEE1364_2001;
+using namespace Verilog::Test::Verilog::IEEE1364_2001;
 
 namespace VerilogTest = Verilog::Test::Verilog::IEEE1364_2001;
 namespace VerilogGrammar = Verilog::IEEE1364_2001::Grammar;
 // namespace fs =  Parse::Util::fs;
 
 
-// imported from CMAKE ENVIRONMENT
-constexpr auto project_source_dir =
-    Parse::Util::static_string(PROJECT_SOURCE_DIR);
-constexpr auto input_path_ =
-    "" + project_source_dir + "/resources/examples/vcdassert/example_1/";
-
-constexpr auto dro_file_path_abs_ = input_path_ + "dro.v";
-constexpr auto tb_dro_file_abs_ = input_path_ + "tb_dro.v";
 
 TEST_CASE("Verilog.Actions.Design", "[Verilog][Events][Design]")
 {
@@ -131,7 +123,7 @@ TEST_CASE("Verilog.Actions.Design", "[Verilog][Events][Design]")
     // CAPTURE(*design_p);
     // FAIL();
     // Test::catch_test_design_via_reader(*design_p, dro_example);
-    // VerilogTest::catch_design(tb_dro_example_design_test, *design_p);
+    VerilogTest::catch_design(tb_dro_example_design_test, *design_p);
 
   }
 
