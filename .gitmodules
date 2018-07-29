@@ -1,4 +1,0 @@
-[submodule "external/verilog-parser"]
-	path = external/verilog-parser
-	url = https://github.com/ben-marshall/verilog-parser.git
-
