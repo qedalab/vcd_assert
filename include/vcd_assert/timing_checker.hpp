@@ -51,6 +51,7 @@ class TimingChecker
   TriggeredTimingChecker checker_;
 
   std::unordered_map<std::size_t,std::size_t> netlist_lookup_;//module_scope_lookup_;
+  std::unordered_map<std::size_t,std::size_t> netlist_reverse_lookup_;//module_scope_lookup_;
   // std::unordered_map<std::size_t,std::size_t> sdf_apply_scope_lookup_;//??Why this
   std::vector<IndexLookup> index_lookup_;
   std::vector<RegisterEventList> event_lists_;

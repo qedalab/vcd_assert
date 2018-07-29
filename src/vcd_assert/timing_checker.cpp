@@ -51,8 +51,10 @@ TimingChecker::TimingChecker(std::shared_ptr<VCD::Header> header, std::shared_pt
     auto root_net_op = design_->module_find(std::string(root_scope.get_identifier()));
     if(root_net_op.has_value()){
       netlist_lookup_.reserve(design_->num_modules());
-
+      netlist_reverse_lookup_.reserve(design_->num_modules());
+  
       netlist_lookup_.emplace(0,0);
+      netlist_reverse_lookup_.emplace(0,0);
       build_netlist_lookup(0,root_net_op.value());
     }else{
       //incorrect-design error?
@@ -81,6 +83,7 @@ void TimingChecker::build_netlist_lookup(std::size_t scope_index, std::size_t ne
         auto child_module_index = std::get<1>(*instance_iter);
 
         netlist_lookup_.emplace(scope_tup.second, child_module_index);
+        netlist_reverse_lookup_.emplace(child_module_index,scope_tup.second);
         build_netlist_lookup(scope_tup.second, child_module_index);
 
       }else{
@@ -337,7 +340,7 @@ void TimingChecker::apply_sdf_cell(SDF::Cell cell,
     if (hi.value.empty()) {
       /* for module/instance scopes in CURRENT scope ONLY: */
 
-    // For every module in *this* scope, apply.
+      // For every module in *this* scope, apply.
       for (auto &child_scope_tup : apply_scope.get_scopes()) {
         auto index = child_scope_tup.second;
 
