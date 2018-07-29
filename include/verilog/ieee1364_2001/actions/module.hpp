@@ -13,9 +13,6 @@
 #include "parse/actions/make_pegtl_template.hpp"
 #include <tao/pegtl/memory_input.hpp>
 
-// #include <filesystem>
-// #include <stdlib.h>
-
 namespace Verilog {
 namespace IEEE1364_2001 {
 namespace Actions {
@@ -111,7 +108,6 @@ struct ModuleDescriptionApply{
   static bool apply(const ActionInput &input, ModuleEvent data, DesignReader &reader,  
                     Util::InputMap &/*inputmap*//*, Counter &*//*module_count*/){
             
-    
     reader.module(data.module_identifier, input.position().source);
 
     std::vector<std::size_t> insert_indices;

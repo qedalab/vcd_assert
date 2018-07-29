@@ -5,8 +5,7 @@
 #include "commands.hpp"
 #include "module.hpp"
 
-// #include <parse/util/filesystem.hpp>
-#include <filesystem>
+#include <parse/util/filesystem.hpp>
 
 #include "../../types/design_reader.hpp"
 #include "../../util/parse_input.hpp"
@@ -27,29 +26,36 @@ struct IncludeFileApply {
   static bool apply(const ActionInput &input, DesignReader &reader,
                     Util::InputMap &inputmap/*, Counter &*//*module_count*/)
   { 
-    // namespace fs =  Parse::Util::fs;
-    namespace fs = std::filesystem;
+    namespace fs =  Parse::Util::fs;
 
-    auto next_input_identifier = input.string();
-    auto search_input = fs::path(next_input_identifier).lexically_normal();
-    auto abs_path = fs::weakly_canonical(search_input);
+    // auto next_input_rel = input.string();
+    // auto next_input_abs = fs::path(next_input_rel).lexically_normal();
+    // auto abs_path = fs::weakly_canonical(next_input_abs);
+    auto next_input_rel = input.string();
     
+    auto curr_path = fs::path(input.position().source).parent_path();
+    
+    // curr_path for memory input is ""(the empty string)
+    auto next_input_abs = fs::path(curr_path / fs::path(next_input_rel));
+    std::cout << fmt::format("curr and search path : {}, {} \nand fs::path : {}\n", curr_path,next_input_rel, next_input_abs);
 
-    auto search = inputmap.find(search_input);
-    if (search != inputmap.end()) {
-
-      auto parse_input = inputmap.at(search_input);
+    // auto next_input_abs = abs_path.relative_path(); //lexically_normal();
+    
+    auto i = inputmap.find(next_input_abs);
+    if (i != inputmap.end()) {
+      auto parse_input = i->second;
+      // auto parse_input = inputmap.at(next_input_abs);
 
       if(parse_input.type == Util::InputTypeEnum::file){
-        auto next_input = std::get<std::string>(parse_input.value);
-        tao::pegtl::file_input<> new_input(next_input);
+        auto file = std::get<std::string>(parse_input.value);
+        tao::pegtl::file_input<> new_input(file);
 
         tao::pegtl::parse_nested<Grammar::_grammar_,
                                 Parse::make_pegtl_template<GrammarAction>::type,
                                 Parse::capture_control>(input, new_input, reader, inputmap);
       }else{
         auto start = std::get<const char*>(parse_input.value);
-        tao::pegtl::memory_input<> new_input(start, next_input_identifier);
+        tao::pegtl::memory_input<> new_input(start, next_input_rel);
 
         tao::pegtl::parse_nested<Grammar::_grammar_,
                                 Parse::make_pegtl_template<GrammarAction>::type,
@@ -58,7 +64,7 @@ struct IncludeFileApply {
       
       
     } else {
-      throw std::runtime_error(fmt::format("RuntimeError : Could not find included file ({})",search_input));
+      throw std::runtime_error(fmt::format("RuntimeError : Could not find included file ({})",next_input_abs));
     }
 
     return true;

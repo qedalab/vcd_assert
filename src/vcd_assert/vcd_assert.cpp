@@ -23,15 +23,11 @@
 
 #include <parse/actions/control.hpp>
 #include <parse/actions/make_pegtl_template.hpp>
-#include <filesystem>
+#include <parse/util/filesystem.hpp>
 
 #include <tao/pegtl/file_input.hpp>
 #include <tao/pegtl/memory_input.hpp>
 #include <tao/pegtl/parse.hpp>
-
-// #include <verilog_ast.h>
-// #include <verilog_ast_util.h>
-// #include <verilog_parser.h>
 
 #include <CLI/CLI.hpp>
 #include <fmt/format.h>
@@ -47,7 +43,7 @@
 // #include <range/v3/view/foreach.hpp>
 // #include <range/v3/algorithm/remove_if.hpp>
 
-namespace fs = std::filesystem;
+namespace fs = Parse::Util::fs;
 namespace rsv = ranges::view;
 
 struct NodeApply {
@@ -132,90 +128,89 @@ int main(int argc, char **argv)
   assert(sdf_files.empty());
   assert(vcd_nodes.empty());
 
-  // Initialise the Verilog design reader
-  Verilog::DesignReader design_reader{};
+  // // Initialise the Verilog design reader
+  // Verilog::DesignReader design_reader{};
 
-  Verilog::Util::InputMap inputs{};
+  // Verilog::Util::InputMap inputs{};
 
-  // Find file containing top module and populate input map.
-  std::optional<std::size_t> starting_source_file_index_op{};
+  // // Find file containing top module and populate input map.
+  // std::optional<std::size_t> starting_source_file_index_op{};
 
 
-  for (auto && [i,file] : rsv::zip(rsv::indices, source_files)) {
+  // for (auto && [i,file] : rsv::zip(rsv::indices, source_files)) {
 
-    auto file_path_normal = fs::path(file).lexically_normal();
-    auto abs_path = fs::weakly_canonical(file_path_normal);
+  //   auto file_path_normal = fs::path(file).lexically_normal();
+  //   auto abs_path = fs::weakly_canonical(file_path_normal);
 
-    tao::pegtl::file_input<> input(abs_path);
+  //   tao::pegtl::file_input<> input(abs_path);
 
-    Verilog::IEEE1364_2001::Actions::ModuleEvent me{};
+  //   Verilog::IEEE1364_2001::Actions::ModuleEvent me{};
 
-    Parse with only Module actions, to build module map.
-    auto result = tao::pegtl::parse<
-        Verilog::IEEE1364_2001::Grammar::_grammar_,
-        Parse::make_pegtl_template<Verilog::IEEE1364_2001::Actions::
-                                       ModuleDescriptionAction>::type,
-        Parse::capture_control>(input, me);
+  //   Parse with only Module actions, to build module map.
+  //   auto result = tao::pegtl::parse<
+  //       Verilog::IEEE1364_2001::Grammar::_grammar_,
+  //       Parse::make_pegtl_template<Verilog::IEEE1364_2001::Actions::
+  //                                      ModuleDescriptionAction>::type,
+  //       Parse::capture_control>(input, me);
 
-    if (!result) {
-      fmt::print(FMT_STRING("ERROR: Failed to parse Verilog file:\n"));
-    }else{
-      if (me.module_identifier == top_module) {
-        starting_source_file_index_op = (std::size_t)i;
-      }
-    }
-  }
+  //   if (!result) {
+  //     fmt::print(FMT_STRING("ERROR: Failed to parse Verilog file:\n"));
+  //   }else{
+  //     if (me.module_identifier == top_module) {
+  //       starting_source_file_index_op = (std::size_t)i;
+  //     }
+  //   }
+  // }
 
-  if(!source_files.empty()){
+  // if(!source_files.empty()){
 
-    if (starting_source_file_index_op.has_value()) {
-      auto index = starting_source_file_index_op.value();
+  //   if (starting_source_file_index_op.has_value()) {
+  //     auto index = starting_source_file_index_op.value();
 
-      auto top_file_normal = fs::path(source_files[index]).lexically_normal();
-      auto top_file_abs_path = fs::weakly_canonical(top_file_normal);
+  //     auto top_file_normal = fs::path(source_files[index]).lexically_normal();
+  //     auto top_file_abs_path = fs::weakly_canonical(top_file_normal);
 
-      for (auto &&file : source_files) {
+  //     for (auto &&file : source_files) {
 
-        auto file_path_normal = fs::path(file).lexically_normal();
-        auto abs_path = fs::weakly_canonical(file_path_normal);
+  //       auto file_path_normal = fs::path(file).lexically_normal();
+  //       auto abs_path = fs::weakly_canonical(file_path_normal);
 
-        auto rel_to_top_file_path = fs::relative(
-            fs::path(abs_path), fs::path(top_file_abs_path).parent_path());
+  //       auto rel_to_top_file_path = fs::relative(
+  //           fs::path(abs_path), fs::path(top_file_abs_path).parent_path());
 
-        // TODO search in 'include statement' apply action, not here..
-        inputs.emplace(rel_to_top_file_path, // relative path from the test bench
-                      Verilog::Util::ParseInput{Verilog::Util::InputTypeEnum::file,
-                                                abs_path});
-      }
+  //       // TODO search in 'include statement' apply action, not here..
+  //       inputs.emplace(rel_to_top_file_path, // relative path from the test bench
+  //                     Verilog::Util::ParseInput{Verilog::Util::InputTypeEnum::file,
+  //                                               abs_path});
+  //     }
 
-      // Parse starting from top Verilog file
-      tao::pegtl::file_input<> verilog_input(source_files[index]);
+  //     // Parse starting from top Verilog file
+  //     tao::pegtl::file_input<> verilog_input(source_files[index]);
 
-      // Parse Verilog from top
-      auto result = tao::pegtl::parse<
-          Verilog::IEEE1364_2001::Grammar::_grammar_,
-          Parse::make_pegtl_template<
-              Verilog::IEEE1364_2001::Actions::GrammarAction>::type,
-          Parse::capture_control>(verilog_input, design_reader, inputs);
+  //     // Parse Verilog from top
+  //     auto result = tao::pegtl::parse<
+  //         Verilog::IEEE1364_2001::Grammar::_grammar_,
+  //         Parse::make_pegtl_template<
+  //             Verilog::IEEE1364_2001::Actions::GrammarAction>::type,
+  //         Parse::capture_control>(verilog_input, design_reader, inputs);
 
-      if (!result) {
-        throw std::runtime_error(
-            "ERROR: Unsuccessful parse of Verilog source file!\n");
-      }
+  //     if (!result) {
+  //       throw std::runtime_error(
+  //           "ERROR: Unsuccessful parse of Verilog source file!\n");
+  //     }
     
-    }else{
-      throw std::runtime_error(
-          "ERROR: Cannot find indicated top module!\n");
-    }
-  }else{
-    //TODO : optional or mandatory?
-    fmt::print(FMT_STRING("WARN: No verilog files supplied for parsing\n"));
-  }
+  //   }else{
+  //     throw std::runtime_error(
+  //         "ERROR: Cannot find indicated top module!\n");
+  //   }
+  // }else{
+  //   //TODO : optional or mandatory?
+  //   fmt::print(FMT_STRING("WARN: No verilog files supplied for parsing\n"));
+  // }
   
-
-  // Finalize verilog parsing.
-  auto design_p = design_reader.release();
-  assert(design_p.operator bool());
+  // // Finalize verilog parsing.
+  // auto design_p = design_reader.release();
+  // assert(design_p.operator bool());
 
   // Read in the VCD file header
   VCD::HeaderReader vcd_reader{};

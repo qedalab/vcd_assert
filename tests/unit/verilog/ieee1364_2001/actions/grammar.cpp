@@ -15,8 +15,8 @@
 #include <tao/pegtl/parse.hpp>
 
 #include <catch2/catch.hpp>
-// #include <parse/util/filesystem.hpp>
-#include <filesystem>
+#include <parse/util/filesystem.hpp>
+// #include <filesystem>
 
 #include <string>
 #include <string_view>
@@ -28,13 +28,12 @@ using namespace Verilog::Test::Verilog::IEEE1364_2001;
 
 namespace VerilogTest = Verilog::Test::Verilog::IEEE1364_2001;
 namespace VerilogGrammar = Verilog::IEEE1364_2001::Grammar;
-// namespace fs =  Parse::Util::fs;
+namespace fs =  Parse::Util::fs;
 
 
 
 TEST_CASE("Verilog.Actions.Design", "[Verilog][Events][Design]")
 {
-  namespace fs = std::filesystem;
 
   SECTION("dro only, from memory")
   {
@@ -84,7 +83,7 @@ TEST_CASE("Verilog.Actions.Design", "[Verilog][Events][Design]")
 
     tao::pegtl::file_input<> input(dro_file_path_abs_.to_string_view());
 
-    Verilog::Util::InputMap inputs{};
+    Verilog::Util::InputMap inputs{}; //unused
 
     REQUIRE(tao::pegtl::parse<
             VerilogGrammar::_grammar_, Parse::make_pegtl_template<Actions::GrammarAction>::type,
@@ -99,18 +98,18 @@ TEST_CASE("Verilog.Actions.Design", "[Verilog][Events][Design]")
   {
     Verilog::DesignReader reader;
 
-    auto dro_file_path_rel_ =
-        fs::relative(fs::path(dro_file_path_abs_.to_string()),
-                     fs::path(tb_dro_file_abs_.to_string()).parent_path());
+    // auto dro_file_path_rel_ =
+        // fs::relative(fs::path(dro_file_path_abs_.to_string()),
+                    //  fs::path(tb_dro_file_abs_.to_string()).parent_path());
 
     tao::pegtl::file_input<> input_tb_dro(tb_dro_file_abs_.to_string_view());
 
-    INFO(fmt::format("Input path relative to import location : {}",
-                     dro_file_path_rel_));
+    // INFO(fmt::format("Input path relative to import location : {}",
+                    //  dro_file_path_rel_));
 
     Verilog::Util::InputMap inputs{};
 
-    inputs.emplace(dro_file_path_rel_, // relative path from the test bench
+    inputs.emplace(dro_file_path_abs_.to_string(), // relative path from the test bench
                    Verilog::Util::ParseInput{Verilog::Util::InputTypeEnum::file,
                                              dro_file_path_abs_.to_string()});
 
