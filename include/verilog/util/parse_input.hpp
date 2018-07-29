@@ -19,7 +19,7 @@ struct ParseInput{
   InputType value;
 };
 
-typedef std::unordered_map<std::string, ParseInput> InputMap;
+using InputMap = std::unordered_map<std::string, ParseInput>;
 
 
 } // namespace Verilog::Util

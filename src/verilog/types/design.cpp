@@ -15,17 +15,17 @@ std::optional<std::size_t> Design::module_find(std::string module_identifier) co
   }
 }
 
-const Module &Design::get_module(std::size_t index) const
+const Module &Design::get_module(std::size_t  module_index) const
 {
   assert(!modules_.empty());
-  assert(modules_.size() > index);
-  return modules_.at(index);
+  assert(modules_.size() > module_index);
+  return modules_.at(module_index);
 }
 
-const Instance &Design::get_instance(std::size_t index) const
+const Instance &Design::get_instance(std::size_t instance_index) const
 { 
-  assert(instances_.size() > index);
-  return instances_.at(index);
+  assert(instances_.size() > instance_index);
+  return instances_.at(instance_index);
 }
 
 std::optional<std::vector<SDFAnnotateCommand>> 
