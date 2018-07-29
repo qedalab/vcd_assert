@@ -69,7 +69,7 @@ inline DesignView tb_dro_example_design_test {
   { //sdf_commands total
     { // sdf_commands for tb_dro module
       SDFAnnotateCommand{
-      "../../dro.sdf", "tb_dro", {}, {}, {}, {}, {}
+        "../../dro.sdf", "tb_dro", {}, {}, {}, {}, {}
       }
     }
   }, 

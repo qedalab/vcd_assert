@@ -186,8 +186,8 @@ int main(int argc, char **argv)
 
         // TODO search in 'include statement' apply action, not here..
         inputs.emplace(abs_path, // relative path from the test bench
-                      Verilog::Util::ParseInput{Verilog::Util::InputTypeEnum::file,
-                                                abs_path});
+                       Verilog::Util::ParseInput{Verilog::Util::InputTypeEnum::file,
+                                                 abs_path});
       }
 
       // Parse starting from top Verilog file
@@ -214,7 +214,7 @@ int main(int argc, char **argv)
     fmt::print(FMT_STRING("WARN: No verilog files supplied for parsing\n"));
   }
   
-  // Finalize verilog parsing.
+  // Finalize verilog parsing into Design object.
   auto design_p = design_reader.release();
   assert(design_p.operator bool());
 
@@ -227,7 +227,9 @@ int main(int argc, char **argv)
       Parse::capture_control>(vcd_input, vcd_reader);
 
   auto header_p = std::make_unique<VCD::Header>(vcd_reader.release());
-  auto timing_checker = VCDAssert::TimingChecker(std::move(header_p));
+
+  //Initialise the timing checker
+  auto timing_checker = VCDAssert::TimingChecker(std::move(header_p),std::move(design_p));
 
   // Read in and apply the SDF files for each node
   for (auto &&[node, sdf_file_array] : apply_nodes) {

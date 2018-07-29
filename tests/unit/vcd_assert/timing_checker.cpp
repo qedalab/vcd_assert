@@ -49,15 +49,17 @@ TEST_CASE("VCDAssert.TimingChecker") {
 
   SECTION("Empty") {
     auto header = std::make_shared<VCD::Header>();
-    TimingChecker ttc(header);
+    auto design = std::make_shared<Verilog::Design>();
+    TimingChecker ttc(header, design);
   }
 
   SECTION("No SDF") {
     HeaderReader reader;
     Test::read_in_test_header(reader, vcd_4_state_example_header);
     auto header = std::make_shared<Header>(reader.release());
+    auto design = std::make_shared<Verilog::Design>(); //required to be the same?
 
-    TimingChecker ttc(header);
+    TimingChecker ttc(header,design);
   }
 
   // TODO: Not sure how to check this in isolation

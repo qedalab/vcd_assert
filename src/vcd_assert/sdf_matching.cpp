@@ -77,12 +77,12 @@ VCDAssert::match_scope_helper(const VCD::Header &header,
             header, path, new_path_index,
             cur_scope.get_scope_index(path[new_path_index]));
       } else {
-        return {/*EMPTY*/};
+        return {};
       }
     }
   } else {
     // no match, exit.
-    return {/*EMPTY*/};
+    return {};
   }
 }
 

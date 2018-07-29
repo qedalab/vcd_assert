@@ -4,7 +4,6 @@
 
 using namespace Verilog;
 
-
 std::optional<std::size_t> Design::module_find(std::string module_identifier) const
 {
   assert(!module_lookup_.empty()); 
@@ -16,7 +15,7 @@ std::optional<std::size_t> Design::module_find(std::string module_identifier) co
   }
 }
 
-const Module &Design::get_module(std::size_t  index) const
+const Module &Design::get_module(std::size_t index) const
 {
   assert(!modules_.empty());
   assert(modules_.size() > index);

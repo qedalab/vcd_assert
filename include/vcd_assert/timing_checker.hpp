@@ -14,6 +14,9 @@
 #include "sdf/types/timing_spec.hpp"
 #include "sdf/types/values.hpp"
 
+#include "verilog/types/design.hpp"
+
+
 // #include <verilog_ast.h>
 // #include <verilog_ast_util.h>
 // #include <verilog_parser.h>
@@ -26,6 +29,8 @@
 #include <range/v3/span.hpp>
 #include <range/v3/view/indices.hpp>
 #include <variant>
+
+#include <unordered_map>
 
 // using VerilogSourceTree = verilog_source_tree;
 
@@ -41,9 +46,12 @@ class TimingChecker
 
   // Order is important
   std::shared_ptr<VCD::Header> header_;
+  std::shared_ptr<Verilog::Design> design_;
   State state_;
   TriggeredTimingChecker checker_;
 
+  std::unordered_map<std::size_t,std::size_t> netlist_lookup_;//module_scope_lookup_;
+  // std::unordered_map<std::size_t,std::size_t> sdf_apply_scope_lookup_;//??Why this
   std::vector<IndexLookup> index_lookup_;
   std::vector<RegisterEventList> event_lists_;
 
@@ -54,6 +62,8 @@ class TimingChecker
   // MinTypeMax min_typ_max_ = MinTypeMax::typ;
 
   std::vector<VCD::Value> value_buffer_;
+
+  void build_netlist_lookup(std::size_t scope_index, std::size_t net_index);
 
   [[nodiscard]] bool handle_event(const RegisterEvent &event, std::size_t index,
                                   VCD::Value from, VCD::Value to);
@@ -85,7 +95,7 @@ class TimingChecker
 
 public:
   // Claims ownership of the header
-  TimingChecker(std::shared_ptr<VCD::Header> header);
+  TimingChecker(std::shared_ptr<VCD::Header> header, std::shared_ptr<Verilog::Design> design);
 
   void apply_sdf_file(/*VerilogSourceTree *ast, */
                       std::shared_ptr<SDF::DelayFile> delayfile,
