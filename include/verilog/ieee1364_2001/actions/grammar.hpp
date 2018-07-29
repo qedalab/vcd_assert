@@ -34,7 +34,6 @@ struct IncludeFileApply {
     auto search_input = fs::path(next_input_identifier).lexically_normal();
     auto abs_path = fs::weakly_canonical(search_input);
     
-    // std::cout << fmt::format("INCLUDE : {}({}) \n",search_input,abs_path) ;
 
     auto search = inputmap.find(search_input);
     if (search != inputmap.end()) {

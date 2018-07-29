@@ -99,7 +99,8 @@ struct ModuleDeclarationAction : multi_dispatch<
 struct ModuleDescriptionAction: single_dispatch<
     Grammar::_module_declaration_, 
     inner_action_passthrough< 
-      ModuleDeclarationAction>
+      ModuleDeclarationAction
+    >
 > {
   using state = ModuleEvent;
 };
