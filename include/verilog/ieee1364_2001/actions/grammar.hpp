@@ -37,10 +37,12 @@ struct IncludeFileApply {
     
     // curr_path for memory input is ""(the empty string)
     auto next_input_abs = fs::path(curr_path / fs::path(next_input_rel));
-    std::cout << fmt::format("curr and search path : {}, {} \nand fs::path : {}\n", curr_path,next_input_rel, next_input_abs);
 
-    // auto next_input_abs = abs_path.relative_path(); //lexically_normal();
-    
+    // TODO : Actually want lexically_normal.
+    next_input_abs = fs::exists(next_input_abs) 
+                      ? fs::canonical(next_input_abs) 
+                      : next_input_abs;
+
     auto i = inputmap.find(next_input_abs);
     if (i != inputmap.end()) {
       auto parse_input = i->second;
