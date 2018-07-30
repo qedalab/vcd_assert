@@ -304,7 +304,7 @@ void TimingChecker::apply_sdf_cell_helper(SDF::Cell cell, VCD::Scope &scope)
         auto module_name = design_->get_module(
           std::get<1>(*verilog_module_index)).identifier;
 
-        if(cell.cell_type.compare(module_name)){
+        if(cell.cell_type != module_name){
           apply_sdf_timing_specs(cell, index, child_scope);
         }
 
@@ -354,7 +354,7 @@ void TimingChecker::apply_sdf_cell(SDF::Cell cell,
             auto module_name = design_->get_module(
               std::get<1>(*verilog_module_index)).identifier;
 
-            if(cell.cell_type.compare(module_name)){
+            if(cell.cell_type != module_name){
               apply_sdf_timing_specs(cell, index, child_scope);
             }
 
