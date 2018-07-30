@@ -137,11 +137,6 @@ std::size_t DesignReader::command(Command command, std::string definition_name)
                            ? sdf.name_of_instance.value()
                            : definition_name;
 
-    // std::cout << fmt::format("SDF ANNOTATE : apply_scope {} \n",
-    // apply_scope); for(auto&& [mn,i] : design_->module_lookup_ ){
-    //   std::cout << fmt::format(" module mn : {} -- {}\n", mn, i);
-    // }
-
     // find apply scope.
     auto search = design_->module_lookup_.find(apply_scope);
     if (search != design_->module_lookup_.end()) {
@@ -156,10 +151,16 @@ std::size_t DesignReader::command(Command command, std::string definition_name)
 
         return sdf_index;
       } else {
+        
         auto new_sdf_index = design_->sdf_commands_.size();
         design_->sdf_commands_.push_back({sdf});
+        
         design_->sdf_commands_lookup_.emplace(apply_scope_index,
-                                              std::move(new_sdf_index));
+                                              new_sdf_index);
+        
+        design_->sdf_commands_reverse_lookup_.emplace(new_sdf_index,
+                                              apply_scope_index);
+                                              
         return new_sdf_index;
       }
 

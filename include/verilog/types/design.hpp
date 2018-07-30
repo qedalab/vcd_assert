@@ -68,6 +68,7 @@ class Design
   //outer index corresponds with module index.
   std::vector<std::vector<SDFAnnotateCommand>> sdf_commands_;        /// SDF commands per scope
   std::unordered_map<std::size_t, std::size_t> sdf_commands_lookup_;   /// Module -> SDF commands lookup
+  std::unordered_map<std::size_t, std::size_t> sdf_commands_reverse_lookup_;   /// Module -> SDF commands lookup
 
   // //Files
   // std::vector<std::string> file_names_;      /// File Names
@@ -96,11 +97,20 @@ public:
   /// \returns the number of nets defined in the design
   const Instance& get_instance(std::size_t instance_index) const;
 
-  /// Returns the instance corresponding to the index
-  /// \param instance_index the index of the instance
+    /// Returns the set of SDF commands corresponding to the index it was stored at
+  /// \param sdf_set_index the index of the sdf command set
+  /// \returns the SDF Annotation Command set.
+  std::vector<SDFAnnotateCommand> 
+  get_sdf_commands(std::size_t sdf_set_index) const;
+
+  /// Returns the sdf_command corresponding to the index of the module it was found in.
+  /// \param id_code the identifier code string
   /// \returns the number of nets defined in the design
-  std::optional<std::vector<SDFAnnotateCommand>> 
-  get_sdf_for_module(std::size_t module_index) const;
+  std::optional<std::size_t> sdf_lookup(std::size_t module_index) const;
+
+  /// \returns the module index 
+  std::size_t sdf_reverse_lookup(std::size_t sdf_set_index) const;
+
 
   /// Returns the number of identifier codes defined in the design
   /// \returns the number of identifier code define din the design

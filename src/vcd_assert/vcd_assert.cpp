@@ -1,25 +1,21 @@
 #include "vcd_assert/actions.hpp"
 #include "vcd_assert/timing_checker.hpp"
+#include "vcd_assert/sdf_matching.hpp"
 
 #include "vcd/actions/header.hpp"
 #include "vcd/grammar/grammar.hpp"
 #include "vcd/types/header_reader.hpp"
 
 #include <sdf/actions/base.hpp>
-#include <sdf/actions/delayfile.hpp>
 #include <sdf/grammar/base.hpp>
-#include <sdf/grammar/delayfile.hpp>
-#include <sdf/grammar/grammar.hpp>
 #include <sdf/types/base.hpp>
-#include <sdf/types/delayfile.hpp>
-#include <sdf/types/delayfile_reader.hpp>
 
 #include <verilog/ieee1364_2001/actions/grammar.hpp>
 #include <verilog/ieee1364_2001/actions/module.hpp>
 #include <verilog/ieee1364_2001/grammar/grammar.hpp>
 #include <verilog/ieee1364_2001/grammar/module.hpp>
-#include <verilog/types/design_reader.hpp>
 #include <verilog/types/commands.hpp>
+#include <verilog/types/design_reader.hpp>
 #include <verilog/types/module.hpp>
 
 #include <parse/actions/control.hpp>
@@ -35,10 +31,10 @@
 #include <fmt/printf.h>
 #include <iostream>
 #include <range/v3/algorithm/reverse.hpp>
-#include <range/v3/view/indices.hpp>
-#include <range/v3/view/zip.hpp>
-#include <range/v3/view/join.hpp>
 #include <range/v3/distance.hpp>
+#include <range/v3/view/indices.hpp>
+#include <range/v3/view/join.hpp>
+#include <range/v3/view/zip.hpp>
 #include <string_view>
 
 // #include <range/v3/view/foreach.hpp>
@@ -72,8 +68,7 @@ int main(int argc, char **argv)
   auto node_option = cli.add_option("--node,-n", vcd_nodes, "VCD Node");
 
   std::vector<std::string> sdf_files;
-  auto sdf_option =
-      cli.add_option("--sdf,-s", sdf_files, "SDF File to apply");
+  auto sdf_option = cli.add_option("--sdf,-s", sdf_files, "SDF File to apply");
 
   int verbose;
   cli.add_flag("--verbose,-v", verbose, "Verbosity level [1-3]");
@@ -132,14 +127,13 @@ int main(int argc, char **argv)
   // Initialise the Verilog design reader
   Verilog::DesignReader design_reader{};
 
-  Verilog::Util::InputMap inputs{};
+  Verilog::Util::InputMap inputmap{};
 
   // Find file containing top module and populate input map.
   std::optional<std::size_t> starting_source_file_index_op{};
 
-
-  for (auto && [i,file] : rsv::zip(rsv::indices, source_files)) {
-    if(fs::exists(file)){
+  for (auto &&[i, file] : rsv::zip(rsv::indices, source_files)) {
+    if (fs::exists(file)) {
       // auto file_path_normal = fs::path(file).lexically_normal();
       auto abs_path = fs::canonical(file);
 
@@ -150,29 +144,29 @@ int main(int argc, char **argv)
       // Parse with only Module actions, to build module map.
       auto result = tao::pegtl::parse<
           Verilog::IEEE1364_2001::Grammar::_grammar_,
-          Parse::make_pegtl_template<Verilog::IEEE1364_2001::Actions::
-                                        ModuleDescriptionAction>::type,
+          Parse::make_pegtl_template<
+              Verilog::IEEE1364_2001::Actions::ModuleDescriptionAction>::type,
           Parse::capture_control>(input, me);
 
       if (!result) {
         fmt::print(FMT_STRING("ERROR: Failed to parse Verilog file:\n"));
-      }else{
+      } else {
         if (me.module_identifier == top_module) {
           starting_source_file_index_op = (std::size_t)i;
         }
       }
-    }else{
-      fmt::printf("ERROR: file not found : {}\n", file);
+    } else {
+      fmt::print("ERROR: file not found : {}\n", file);
     }
-    
   }
 
-  if(!source_files.empty()){
+  if (!source_files.empty()) {
 
     if (starting_source_file_index_op.has_value()) {
       auto index = starting_source_file_index_op.value();
 
-      auto top_file_normal = fs::path(source_files[index]);//.lexically_normal();
+      auto top_file_normal =
+          fs::path(source_files[index]); //.lexically_normal();
       auto top_file_abs_path = fs::canonical(top_file_normal);
 
       for (auto &&file : source_files) {
@@ -186,9 +180,9 @@ int main(int argc, char **argv)
         auto abs_path = fs::canonical(fs::path(file));
 
         // TODO search in 'include statement' apply action, not here..
-        inputs.emplace(abs_path, // relative path from the test bench
-                       Verilog::Util::ParseInput{Verilog::Util::InputTypeEnum::file,
-                                                 abs_path});
+        inputmap.emplace(abs_path, // relative path from the test bench
+                         Verilog::Util::ParseInput{
+                             Verilog::Util::InputTypeEnum::file, abs_path});
       }
 
       // Parse starting from top Verilog file
@@ -199,22 +193,21 @@ int main(int argc, char **argv)
           Verilog::IEEE1364_2001::Grammar::_grammar_,
           Parse::make_pegtl_template<
               Verilog::IEEE1364_2001::Actions::GrammarAction>::type,
-          Parse::capture_control>(verilog_input, design_reader, inputs);
+          Parse::capture_control>(verilog_input, design_reader, inputmap);
 
       if (!result) {
         throw std::runtime_error(
             "ERROR: Unsuccessful parse of Verilog source file!\n");
       }
-    
-    }else{
-      throw std::runtime_error(
-          "ERROR: Cannot find indicated top module!\n");
+
+    } else {
+      throw std::runtime_error("ERROR: Cannot find indicated top module!\n");
     }
-  }else{
-    //TODO : optional or mandatory?
+  } else {
+    // TODO : optional or mandatory?
     fmt::print(FMT_STRING("WARN: No verilog files supplied for parsing\n"));
   }
-  
+
   // Finalize verilog parsing into Design object.
   auto design_p = design_reader.release();
   assert(design_p.operator bool());
@@ -227,17 +220,12 @@ int main(int argc, char **argv)
       Parse::make_pegtl_template<VCD::Actions::HeaderAction>::type,
       Parse::capture_control>(vcd_input, vcd_reader);
 
-  auto header_p = std::make_unique<VCD::Header>(vcd_reader.release());
+  auto header_p = std::make_shared<VCD::Header>(vcd_reader.release());
 
-  //Initialise the timing checker
-  auto timing_checker = VCDAssert::TimingChecker(std::move(header_p),std::move(design_p));
+  // Initialise the timing checker ( applies Verilog SDFs in constructor )
+  auto timing_checker = VCDAssert::TimingChecker(header_p, std::move(design_p));
 
-  /* Process and apply the SDF files specified in Verilog file (from scope derived call location). */ 
-  // for (auto &&sdf_commands : design_p.get_sdf_commands()) {
-  //   if(std::holds_alternati)
-    
-  // }
-  // Read in and apply the SDF files for each node from COMMAND LINE 
+  // Read in and apply the SDF files for each node supplied on COMMAND LINE
   for (auto &&[node, sdf_file_array] : apply_nodes) {
 
     SDF::HierarchicalIdentifier path{};
@@ -250,21 +238,16 @@ int main(int argc, char **argv)
                           SDF::Actions::HierarchicalIdentifierAction>::type,
                       Parse::capture_control>(path_input, path);
 
-    for (auto &&sdf_file : sdf_files) {
+    for (auto &&sdf_file : sdf_file_array) {
 
-      SDF::DelayFileReader sdf_reader{};
+      auto node_scope_index_op = VCDAssert::match_scope(*header_p, path.value, 0);
 
-      tao::pegtl::file_input<> sdf_input(sdf_file);
-      tao::pegtl::parse<
-          SDF::Grammar::delay_file,
-          Parse::make_pegtl_template<SDF::Actions::DelayFileAction>::type,
-          Parse::capture_control>(sdf_input, sdf_reader);
-
-      auto delayfile_p = sdf_reader.release();
-      assert(delayfile_p.operator bool());
-
-      timing_checker.apply_sdf_file(/*ast,*/ std::move(delayfile_p),
-                                    path.value);
+      if (node_scope_index_op.has_value()) {
+        timing_checker.apply_sdf_file(sdf_file,
+                                      node_scope_index_op.value());
+      } else {
+        // could not find the supplied scope.
+      }
     }
   }
 
