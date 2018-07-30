@@ -1,6 +1,6 @@
 #include "vcd_assert/actions.hpp"
-#include "vcd_assert/timing_checker.hpp"
 #include "vcd_assert/sdf_matching.hpp"
+#include "vcd_assert/timing_checker.hpp"
 
 #include "vcd/actions/header.hpp"
 #include "vcd/grammar/grammar.hpp"
@@ -59,11 +59,16 @@ int main(int argc, char **argv)
   vcd_file_option->required();
   vcd_file_option->check(CLI::ExistingFile);
 
+  std::vector<std::string> source_files;
+  auto source_file_option = cli.add_option("verilog_source_file", source_files,
+                                           "Verilog source files");
+  source_file_option->check(CLI::ExistingFile);
+
   std::string top_module;
   cli.add_option("--top,-t", top_module, "Name of top verilog module");
 
-  std::vector<std::string> source_files;
-  cli.add_option("--include,-i", source_files, "Verilog Source Files");
+  std::vector<std::string> library_files;
+  cli.add_option("--include,-i", library_files, "Verilog library Files");
 
   std::vector<std::string> vcd_nodes;
   auto node_option = cli.add_option("--node,-n", vcd_nodes, "VCD Node");
@@ -125,6 +130,10 @@ int main(int argc, char **argv)
   assert(sdf_files.empty());
   assert(vcd_nodes.empty());
 
+  if (!library_files.empty()) {
+    fmt::print(
+        FMT_STRING("WARNING: Verilog library sources not yet supported.\n"));
+  }
   // Initialise the Verilog design reader
   Verilog::DesignReader design_reader{};
 
@@ -163,7 +172,6 @@ int main(int argc, char **argv)
       }
     }
 
-
     if (starting_source_file_index_op.has_value()) {
       auto index = starting_source_file_index_op.value();
 
@@ -171,8 +179,7 @@ int main(int argc, char **argv)
           fs::path(source_files[index]); //.lexically_normal();
       auto top_file_abs_path = fs::canonical(top_file_normal);
 
-      
-      //Create input map
+      // Create input map
       for (auto &&file : source_files) {
         auto abs_path = fs::canonical(fs::path(file));
 
@@ -182,20 +189,21 @@ int main(int argc, char **argv)
                              Verilog::Util::InputTypeEnum::file, abs_path});
       }
 
-      //Parsing first pass
+      // Parsing first pass
 
       // Parse starting from top Verilog file
       tao::pegtl::file_input<> verilog_input(source_files[index]);
-      for (auto&& pass : rsv::indices(2) ){
-        
-        bool first_pass = pass == 0? true : false;
+      for (auto &&pass : rsv::indices(2)) {
+
+        bool first_pass = pass == 0 ? true : false;
         std::cout << "starting pass : " << pass << "\n";
         // Parse Verilog from top
         auto result = tao::pegtl::parse<
             Verilog::IEEE1364_2001::Grammar::_grammar_,
             Parse::make_pegtl_template<
                 Verilog::IEEE1364_2001::Actions::GrammarAction>::type,
-            Parse::capture_control>(verilog_input, design_reader, inputmap, first_pass);
+            Parse::capture_control>(verilog_input, design_reader, inputmap,
+                                    first_pass);
 
         if (!result) {
           throw std::runtime_error(
@@ -242,18 +250,19 @@ int main(int argc, char **argv)
                       Parse::capture_control>(path_input, path);
 
     for (auto &&sdf_file : sdf_file_array) {
-      auto node_scope_index_op = VCDAssert::match_scope(*header_p, path.value, 0);
+      auto node_scope_index_op =
+          VCDAssert::match_scope(*header_p, path.value, 0);
 
       if (node_scope_index_op.has_value()) {
-        timing_checker.apply_sdf_file(sdf_file,
-                                      node_scope_index_op.value());
+        timing_checker.apply_sdf_file(sdf_file, node_scope_index_op.value());
       } else {
         // could not find the supplied scope.
       }
     }
   }
 
-  fmt::print("Num registered timing assertions: {}\n", timing_checker.num_registered_events());
+  fmt::print("Num registered timing assertions: {}\n",
+             timing_checker.num_registered_events());
 
   std::puts("Starting vcd stream");
 
