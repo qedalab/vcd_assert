@@ -72,6 +72,9 @@ void DesignReader::merge(DesignReader other)
 
 std::size_t DesignReader::module(std::string module_name, std::string file_path)
 {
+
+  std::cout << "adding module " << module_name << "\n"; 
+  
   // index to store at.
   auto module_index = design_->modules_.size();
 
@@ -92,9 +95,14 @@ std::size_t DesignReader::module(std::string module_name, std::string file_path)
   }
 }
 
-/*  Assumes that the origin of the instantiation is the
-    last elem in collection corresponding to the NetType (modules_) */
-std::size_t DesignReader::instance(NetType type, std::string instance_name,
+/*  NO LONGER Assumes that the origin of the instantiation is the
+    last elem in collection corresponding to the NetType (modules_).
+    INSTEAD, Since instance are found in parsing second pass the 
+    module name is used to look up the index in modules_ of
+    the source module where the instantiation occurred. */
+std::size_t DesignReader::instance(NetType type, 
+                                   std::string current_module_name,
+                                   std::string instance_name,
                                    std::string definition_name)
 {
   // only support module type at the moment
@@ -109,15 +117,20 @@ std::size_t DesignReader::instance(NetType type, std::string instance_name,
     // get index to definition
     auto definition_index = design_->module_lookup_[definition_name];
     auto new_instance_index = design_->instances_.size();
-    // create name->index lookup for instance inside origin(module);
-    design_->modules_.back().instance_lookup_.emplace(instance_name,
-                                                     new_instance_index);
+
+    auto current_module_index = design_->module_lookup_[current_module_name]; 
 
     // create name->index lookup for instance inside design;
     // design_->instances_module_lookup_.insert({instance_name,instances_.size()})
 
     design_->instances_.push_back({type, // todo remove
                                    instance_name, definition_index});
+
+    //INSERT INSTANCE INDEX INTO MODULE
+    design_->modules_.at(current_module_index)
+                     .instance_lookup_
+                     .emplace(instance_name, new_instance_index);
+                                   
 
     return new_instance_index;
 

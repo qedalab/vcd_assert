@@ -9,13 +9,13 @@ using namespace Verilog;
 namespace Verilog::Test::Verilog::IEEE1364_2001{
 
 
-inline auto sdf_annotation_command = SDFAnnotateCommand{"../../dro.sdf", "tb_dro", {}, {}, {}, {}, {}};
+inline auto sdf_annotation_command = SDFAnnotateCommand{"../../dro.sdf", "tb_basic_dro", {}, {}, {}, {}, {}};
 
 // imported from CMAKE ENVIRONMENT
 constexpr auto project_source_dir =
     Parse::Util::static_string(PROJECT_SOURCE_DIR);
 constexpr auto input_path_ =
-    "" + project_source_dir + "/resources/examples/vcdassert/example_1/";
+    "" + project_source_dir + "/examples/basic_dro_success/";
 
 constexpr auto dro_file_path_abs_ = input_path_ + "dro.v";
 constexpr auto tb_dro_file_abs_ = input_path_ + "tb_dro.v";
@@ -25,14 +25,14 @@ constexpr auto tb_dro_file_abs_ = input_path_ + "tb_dro.v";
 inline DesignView dro_example_design_test {
   { //vector of module
     { //module
-      "dro",   // identifier
+      "basic_dro",   // identifier
       dro_file_path_abs_.to_string(), // path
       {}       // instances lookup
     }
   },
   {}, //vector of instances
   { //module lookup
-    {"dro", 0}
+    {"basic_dro", 0}
   },
   {}, //sdf_commands
   {}  //sdf_commands_lookup_
@@ -43,12 +43,12 @@ inline DesignView dro_example_design_test {
 inline DesignView tb_dro_example_design_test {
   { //vector of modules
     { //module (INCLUDED BEFORE MAIN MODULE)
-      "dro",   // identifier
+      "basic_dro",   // identifier
       dro_file_path_abs_.to_string(), // path      
       {}       // instances lookup
     },
     { //module
-      "tb_dro",   // identifier
+      "tb_basic_dro",   // identifier
       tb_dro_file_abs_.to_string(), // path
       {// instances lookup
         {"DUT",0}
@@ -63,13 +63,13 @@ inline DesignView tb_dro_example_design_test {
     }
   },
   { //module lookup
-    {"dro", 0},
-    {"tb_dro", 1}
+    {"basic_dro", 0},
+    {"tb_basic_dro", 1}
   },
   { //sdf_commands total
     { // sdf_commands for tb_dro module
       SDFAnnotateCommand{
-        "../../dro.sdf", "tb_dro", {}, {}, {}, {}, {}
+        "../../dro.sdf", "tb_basic_dro", {}, {}, {}, {}, {}
       }
     }
   }, 
@@ -85,43 +85,43 @@ constexpr auto include_statement_no_qstring = "include to_be_included";
 constexpr auto compiler_directive = "`include \"to_be_included\"";
 
 constexpr auto module_keyword = "module";
-constexpr auto module_declaration_1 = "module dro; endmodule";
-constexpr auto module_declaration_2 = "module dro(); endmodule";
-constexpr auto module_declaration_3 = "module dro (); endmodule";
-constexpr auto module_declaration_4 = "module dro (set, reset, out);endmodule";
-constexpr auto module_declaration_5 = "module  dro (set, reset, out);endmodule";
-constexpr auto module_declaration_6 = "module dro  (set, reset, out);\nendmodule";
-constexpr auto module_declaration_7 = "module dro (set, reset, out);endmodule";
+constexpr auto module_declaration_1 = "module basic_dro; endmodule";
+constexpr auto module_declaration_2 = "module basic_dro(); endmodule";
+constexpr auto module_declaration_3 = "module basic_dro (); endmodule";
+constexpr auto module_declaration_4 = "module basic_dro (set, reset, out);endmodule";
+constexpr auto module_declaration_5 = "module  basic_dro (set, reset, out);endmodule";
+constexpr auto module_declaration_6 = "module basic_dro  (set, reset, out);\nendmodule";
+constexpr auto module_declaration_7 = "module basic_dro (set, reset, out);endmodule";
 
-constexpr auto module_example_1 = "\nmodule dro;\nendmodule";
+constexpr auto module_example_1 = "\nmodule basic_dro;\nendmodule";
 
-constexpr auto module_example_2 = "\nmodule dro (set, reset, out);\nendmodule\n";
+constexpr auto module_example_2 = "\nmodule basic_dro (set, reset, out);\nendmodule\n";
 
-constexpr auto sdf_annotate_example = R"####($sdf_annotate("../../dro.sdf", tb_dro);)####";
-constexpr auto module_instantiation_example = R"####(dro DUT (set, reset, out);)####";
+constexpr auto sdf_annotate_example = R"####($sdf_annotate("../../dro.sdf", tb_basic_dro);)####";
+constexpr auto module_instantiation_example = R"####(basic_dro DUT (set, reset, out);)####";
 
-constexpr auto begin_end_example_1 = "begin dro;\nend";
+constexpr auto begin_end_example_1 = "begin basic_dro;\nend";
 constexpr auto begin_end_example_2 = "begin \n\t a = 1;\n\n\tend";
 constexpr auto begin_end_example_3 = "begin \n\t a = 1;\n\n\tend";
 constexpr auto begin_end_example_4 = "begin\n\tif(a == 1) begin\n\t\ta=0;\n\tend\nend";
 constexpr auto begin_end_example_5 = "begin\n\tif(a == 1) begin\n\t\ta=0;\n\tend\nend";
 
-constexpr auto initial_block_example_1 = "initial begin dro;\nend";
+constexpr auto initial_block_example_1 = "initial begin basic_dro;\nend";
 constexpr auto initial_block_example_2 = "initial \n\tbegin \n\t a = 1;\n\n\tend";
 constexpr auto initial_block_example_3 = "initial \n\tbegin \n\t a = 1;\n\n\tend\n";
 constexpr auto initial_block_example_4 = "initial begin\n\tif(a == 1) begin\n\t\ta=0;\n\tend\nend";
 
 
 // constexpr auto basic_grammar_example_1 = R"####(
-// module dro (set, reset, out);
+// module basic_dro (set, reset, out);
 // endmodule
 // )####";
 
 constexpr auto initial_block_with_sdf_example_1 = 
 R"####(initial
       begin
-         $sdf_annotate("../../dro.sdf", tb_dro);
-         $dumpfile("tb_dro_example_1.vcd");
+         $sdf_annotate("../../dro.sdf", tb_basic_dro);
+         $dumpfile("tb_basic_dro.vcd");
          $dumpvars;
 
          #10 set = !set;
@@ -130,14 +130,14 @@ R"####(initial
          #10 reset = !reset;
       end)####";
 
-constexpr auto basic_annotation_example = R"####(module dro;
+constexpr auto basic_annotation_example = R"####(module basic_dro;
    reg set = 0;
    reg reset = 0;
 
    initial
       begin
-         $sdf_annotate("../../dro.sdf", tb_dro);
-         $dumpfile("tb_dro_example_1.vcd");
+         $sdf_annotate("../../dro.sdf", tb_basic_dro);
+         $dumpfile("tb_basic_dro.vcd");
          $dumpvars;
 
          #10 set = !set;
@@ -154,7 +154,7 @@ constexpr auto dro_example = R"####(
 // (c) 2016-2017 Stellenbosch University
 // ---------------------------------------------------------------------------
 `timescale 1ps/100fs
-module dro (set, reset, out);
+module basic_dro (set, reset, out);
 
 input set, reset;
 output out;
@@ -220,14 +220,14 @@ constexpr auto tb_dro_example = R"####(
 // ---------------------------------------------------------------------------
 `include "dro.v"
 `timescale 1ps/100fs
-module tb_dro;
+module tb_basic_dro;
    reg set = 0;
    reg reset = 0;
 
    initial
       begin
-         $sdf_annotate("../../dro.sdf", tb_dro);
-         $dumpfile("tb_dro_example_1.vcd");
+         $sdf_annotate("../../dro.sdf", tb_basic_dro);
+         $dumpfile("tb_basic_dro.vcd");
          $dumpvars;
 
          #10 set = !set;
@@ -242,7 +242,7 @@ module tb_dro;
          $monitor("\t\t%0t,\t%b,\t%b,\t%b",$realtime,set,reset,out);
       end
 
-   dro DUT (set, reset, out);
+   basic_dro DUT (set, reset, out);
 
    initial
       #50 $finish;

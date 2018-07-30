@@ -13,7 +13,8 @@ using namespace VCDAssert;
 using namespace ranges::view;
 namespace rsv = ranges::view;
 
-TimingChecker::TimingChecker(std::shared_ptr<VCD::Header> header, std::shared_ptr<Verilog::Design> design) :
+TimingChecker::TimingChecker(std::shared_ptr<VCD::Header> header, 
+                             std::shared_ptr<Verilog::Design> design) :
     header_(std::move(header)),
     design_(std::move(design)),
     state_(*header_),

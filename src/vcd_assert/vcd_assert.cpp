@@ -127,40 +127,41 @@ int main(int argc, char **argv)
   // Initialise the Verilog design reader
   Verilog::DesignReader design_reader{};
 
-  Verilog::Util::InputMap inputmap{};
-
-  // Find file containing top module and populate input map.
-  std::optional<std::size_t> starting_source_file_index_op{};
-
-  for (auto &&[i, file] : rsv::zip(rsv::indices, source_files)) {
-    if (fs::exists(file)) {
-      // auto file_path_normal = fs::path(file).lexically_normal();
-      auto abs_path = fs::canonical(file);
-
-      tao::pegtl::file_input<> input(abs_path);
-
-      Verilog::IEEE1364_2001::Actions::ModuleEvent me{};
-
-      // Parse with only Module actions, to build module map.
-      auto result = tao::pegtl::parse<
-          Verilog::IEEE1364_2001::Grammar::_grammar_,
-          Parse::make_pegtl_template<
-              Verilog::IEEE1364_2001::Actions::ModuleDescriptionAction>::type,
-          Parse::capture_control>(input, me);
-
-      if (!result) {
-        fmt::print(FMT_STRING("ERROR: Failed to parse Verilog file:\n"));
-      } else {
-        if (me.module_identifier == top_module) {
-          starting_source_file_index_op = (std::size_t)i;
-        }
-      }
-    } else {
-      fmt::print("ERROR: file not found : {}\n", file);
-    }
-  }
-
   if (!source_files.empty()) {
+
+    Verilog::Util::InputMap inputmap{};
+
+    // Find file containing top module and populate input map.
+    std::optional<std::size_t> starting_source_file_index_op{};
+
+    for (auto &&[i, file] : rsv::zip(rsv::indices, source_files)) {
+      if (fs::exists(file)) {
+        // auto file_path_normal = fs::path(file).lexically_normal();
+        auto abs_path = fs::canonical(file);
+
+        tao::pegtl::file_input<> input(abs_path);
+
+        Verilog::IEEE1364_2001::Actions::ModuleEvent me{};
+
+        // Parse with only Module actions, to build module map.
+        auto result = tao::pegtl::parse<
+            Verilog::IEEE1364_2001::Grammar::_grammar_,
+            Parse::make_pegtl_template<
+                Verilog::IEEE1364_2001::Actions::ModuleDescriptionAction>::type,
+            Parse::capture_control>(input, me);
+
+        if (!result) {
+          fmt::print(FMT_STRING("ERROR: Failed to parse Verilog file:\n"));
+        } else {
+          if (me.module_identifier == top_module) {
+            starting_source_file_index_op = (std::size_t)i;
+          }
+        }
+      } else {
+        fmt::print("ERROR: file not found : {}\n", file);
+      }
+    }
+
 
     if (starting_source_file_index_op.has_value()) {
       auto index = starting_source_file_index_op.value();
@@ -169,14 +170,9 @@ int main(int argc, char **argv)
           fs::path(source_files[index]); //.lexically_normal();
       auto top_file_abs_path = fs::canonical(top_file_normal);
 
+      
+      //Create input map
       for (auto &&file : source_files) {
-
-        // auto file_path_normal = fs::path(file).lexically_normal();
-        // auto abs_path = fs::weakly_canonical(file_path_normal);
-
-        // auto rel_to_top_file_path = fs::relative(
-        //     fs::path(abs_path), fs::path(top_file_abs_path).parent_path());
-
         auto abs_path = fs::canonical(fs::path(file));
 
         // TODO search in 'include statement' apply action, not here..
@@ -185,19 +181,25 @@ int main(int argc, char **argv)
                              Verilog::Util::InputTypeEnum::file, abs_path});
       }
 
+      //Parsing first pass
+
       // Parse starting from top Verilog file
       tao::pegtl::file_input<> verilog_input(source_files[index]);
+      for (auto&& pass : rsv::indices(2) ){
+        
+        bool first_pass = pass == 0? true : false;
+        std::cout << "starting pass : " << pass << "\n";
+        // Parse Verilog from top
+        auto result = tao::pegtl::parse<
+            Verilog::IEEE1364_2001::Grammar::_grammar_,
+            Parse::make_pegtl_template<
+                Verilog::IEEE1364_2001::Actions::GrammarAction>::type,
+            Parse::capture_control>(verilog_input, design_reader, inputmap, first_pass);
 
-      // Parse Verilog from top
-      auto result = tao::pegtl::parse<
-          Verilog::IEEE1364_2001::Grammar::_grammar_,
-          Parse::make_pegtl_template<
-              Verilog::IEEE1364_2001::Actions::GrammarAction>::type,
-          Parse::capture_control>(verilog_input, design_reader, inputmap);
-
-      if (!result) {
-        throw std::runtime_error(
-            "ERROR: Unsuccessful parse of Verilog source file!\n");
+        if (!result) {
+          throw std::runtime_error(
+              "ERROR: Unsuccessful parse of Verilog source file!\n");
+        }
       }
 
     } else {

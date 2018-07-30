@@ -105,19 +105,22 @@ struct ModuleDescriptionAction: single_dispatch<
 
 struct ModuleDescriptionApply{
   template <class Rule, class ActionInput>
-  static bool apply(const ActionInput &input, ModuleEvent data, DesignReader &reader,  
-                    Util::InputMap &/*inputmap*//*, Counter &*//*module_count*/){
-            
-    reader.module(data.module_identifier, input.position().source);
+  static bool apply(const ActionInput &input, ModuleEvent data, 
+                    DesignReader &reader, Util::InputMap &/*inputmap*/, 
+                    bool first_pass){
+                    
+    if(first_pass){
+      //if first pass, build only the module list and lookup. 
+      reader.module(data.module_identifier, input.position().source);
+    }else{
+      
+      for (auto&& instance : data.instances ){
+        reader.instance(NetType::module, data.module_identifier, instance.name, instance.type);
+      }
 
-    std::vector<std::size_t> insert_indices;
-    
-    for (auto&& instance : data.instances ){
-      reader.instance(NetType::module,  instance.name, instance.type);
-    }
-
-    for (auto&& command : data.commands ){
-      reader.command(command, data.module_identifier);
+      for (auto&& command : data.commands ){
+        reader.command(command, data.module_identifier);
+      }
     }
 
     return true;

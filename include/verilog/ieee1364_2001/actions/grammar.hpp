@@ -23,15 +23,17 @@ struct GrammarAction;
 
 struct IncludeFileApply {
   template <class Rule, class ActionInput>
-  static bool apply(const ActionInput &input, DesignReader &reader,
-                    Util::InputMap &inputmap/*, Counter &*//*module_count*/)
-  { 
+  static bool apply(const ActionInput &input, 
+                    DesignReader &reader, Util::InputMap &inputmap, 
+                    bool first_pass){
     namespace fs =  Parse::Util::fs;
 
+    
     // auto next_input_rel = input.string();
     // auto next_input_abs = fs::path(next_input_rel).lexically_normal();
     // auto abs_path = fs::weakly_canonical(next_input_abs);
     auto next_input_rel = input.string();
+    std::cout << "INCLUDE :" << next_input_rel << "\n"; 
     
     auto curr_path = fs::path(input.position().source).parent_path();
     
@@ -42,6 +44,10 @@ struct IncludeFileApply {
     next_input_abs = fs::exists(next_input_abs) 
                       ? fs::canonical(next_input_abs) 
                       : next_input_abs;
+
+    std::cout << "first pass " << first_pass << "\n"; 
+    // for (auto && pair : inputmap){
+    // }
 
     auto i = inputmap.find(next_input_abs);
     if (i != inputmap.end()) {
@@ -54,14 +60,16 @@ struct IncludeFileApply {
 
         tao::pegtl::parse_nested<Grammar::_grammar_,
                                 Parse::make_pegtl_template<GrammarAction>::type,
-                                Parse::capture_control>(input, new_input, reader, inputmap);
+                                Parse::capture_control>(input, new_input, reader, 
+                                                        inputmap, first_pass);
       }else{
         auto start = std::get<const char*>(parse_input.value);
         tao::pegtl::memory_input<> new_input(start, next_input_rel);
 
         tao::pegtl::parse_nested<Grammar::_grammar_,
                                 Parse::make_pegtl_template<GrammarAction>::type,
-                                Parse::capture_control>(input, new_input, reader, inputmap);
+                                Parse::capture_control>(input, new_input, reader, 
+                                                        inputmap, first_pass);
       }
       
       
@@ -87,7 +95,6 @@ struct CompilerDirectiveAction: single_dispatch<
 };
 
 
-
 using DesignReaderFunctionType = void (DesignReader::*)(DesignReader);
 
 struct GrammarAction : multi_dispatch<
@@ -97,13 +104,12 @@ struct GrammarAction : multi_dispatch<
   >,
   Grammar::_module_description_, inner_action_then_apply<
       ModuleDescriptionAction, 
-      // Storage::function<&DesignReader::merge>
       ModuleDescriptionApply       
   >
 > {
   using state = DesignReader;
 };
-      
+
 
 }
 }

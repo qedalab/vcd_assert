@@ -40,6 +40,7 @@ public:
   // void merge(std::unique_ptr<DesignReader> other);
   void merge(DesignReader other);
 
+  /// Introduces a new module into the design, and links it with a <NetType> definition  
   std::size_t module(std::string module_name, std::string file_path);
   
   /// Introduces a new instance, and links it with a <NetType> definition  
@@ -48,7 +49,8 @@ public:
   /// \param definition_name <NetType> definition identifier
   /// \return index instance is stored at if successful, throws otherwise.
   /// \exception Throws if definition is not found. (missing import statement)
-  std::size_t instance(NetType type, std::string instance_name, std::string definition_name);
+  std::size_t instance(NetType type, std::string current_module_name,
+                       std::string instance_name, std::string definition_name);
 
   /// Add a command to be applied at a specific definition scope
   /// \param command command to add

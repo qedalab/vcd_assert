@@ -70,7 +70,7 @@ TEST_CASE("Verilog.Actions.Module", "[Verilog][Events][Module]")
 
     using IEEE1364_2001::Actions::ModuleEvent;
     ModuleEvent test{};
-    ModuleEvent wanted{"dro", {}, {{sdf_annotation_command}}};
+    ModuleEvent wanted{"basic_dro", {}, {{sdf_annotation_command}}};
 
     require_parse<__Grammar::_module_declaration_,
                   Actions::ModuleDeclarationAction>(
@@ -99,7 +99,7 @@ TEST_CASE("Verilog.Actions.Module", "[Verilog][Events][Module]")
 
     using IEEE1364_2001::Actions::StringStringMapping;
     StringStringMapping test{};
-    StringStringMapping wanted{"dro", "DUT"};
+    StringStringMapping wanted{"basic_dro", "DUT"};
 
     require_parse<__Grammar::module_instantiation,
                   Actions::ModuleInstantiationAction>(
