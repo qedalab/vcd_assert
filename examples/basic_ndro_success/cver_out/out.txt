@@ -1,0 +1,19 @@
+GPLCVER_2.12a of 05/16/07 (Linux-elf).
+Copyright (c) 1991-2007 Pragmatic C Software Corp.
+  All Rights reserved.  Licensed under the GNU General Public License (GPL).
+  See the 'COPYING' file for details.  NO WARRANTY provided.
+Today is Mon Jul 30 15:01:14 2018.
+Compiling source file "../tb_ndro.v"
+Highest level modules:
+tb_basic_ndro
+
+		time,	set,	reset,	clk,	out
+                   0,	0,	0,	0,	x
+                   7,	0,	0,	0,	0
+                  20,	1,	0,	0,	0
+                  30,	0,	0,	0,	0
+                  40,	0,	1,	0,	0
+                  50,	0,	0,	0,	0
+                  60,	0,	0,	1,	0
+Halted at location **../tb_ndro.v(27) time 70000 fs from call to $finish.
+  There were 0 error(s), 0 warning(s), and 16 inform(s).
