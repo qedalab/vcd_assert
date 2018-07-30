@@ -19,6 +19,7 @@
 #include <verilog/ieee1364_2001/grammar/grammar.hpp>
 #include <verilog/ieee1364_2001/grammar/module.hpp>
 #include <verilog/types/design_reader.hpp>
+#include <verilog/types/commands.hpp>
 #include <verilog/types/module.hpp>
 
 #include <parse/actions/control.hpp>
@@ -231,7 +232,12 @@ int main(int argc, char **argv)
   //Initialise the timing checker
   auto timing_checker = VCDAssert::TimingChecker(std::move(header_p),std::move(design_p));
 
-  // Read in and apply the SDF files for each node
+  /* Process and apply the SDF files specified in Verilog file (from scope derived call location). */ 
+  // for (auto &&sdf_commands : design_p.get_sdf_commands()) {
+  //   if(std::holds_alternati)
+    
+  // }
+  // Read in and apply the SDF files for each node from COMMAND LINE 
   for (auto &&[node, sdf_file_array] : apply_nodes) {
 
     SDF::HierarchicalIdentifier path{};
