@@ -582,9 +582,9 @@ void TimingChecker::vector_value_change(
     case VCD::Value::zero: left_extend_value = VCD::Value::zero; break;
     case VCD::Value::x: left_extend_value = VCD::Value::x; break;
     case VCD::Value::z: left_extend_value = VCD::Value::z; break;
-    default:
-      puts("INTERNAL ERROR: Code should be unreachable");
-      std::abort();
+    default:                                              // LCOV_EXCL_LINE
+      puts("INTERNAL ERROR: Code should be unreachable"); // LCOV_EXCL_LINE
+      std::abort();                                       // LCOV_EXCL_LINE
     // clang-format on
   }
 
