@@ -18,7 +18,7 @@ maintain standard correctness.
    the grammar specifies `real_number` which doesn't allow numbers like '2'
    which can be exactly represented by '2' and subsequently output by `printf`
    as such. Implementation allows numbers without decimal points or exponent.
- 
+
  #### Things we are uncertain about:
  * Whether or not a variable must fall within a scope. Implementation chose to
    not allow.
@@ -31,11 +31,8 @@ maintain standard correctness.
    and `wire`'s aren't. The standard doesn't appear to offer any guidance in
    this case. Implementation chose to allow everything to alias eachother
    except `real`'s. References sharing the same identifier code always has to
-   have the same type.
- 
-These are not strictly disallowed by VCD, but adding those restriction seem
-sensible to us.
-   
+   have the same size.
+
 #### IVerilog quirks
 
  * In IVerilog generate blocks creates scopes whose identifier contain `[` and

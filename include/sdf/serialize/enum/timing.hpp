@@ -20,9 +20,9 @@ constexpr std::string_view nodetype_to_string(NodeType t) noexcept {
     return "net";
   case NodeType::unspecified:
     return "unspecified";
-  default:
-    assert(false && "Invalid enum state");
-    abort();
+  default:                                           // LCOV_EXCL_LINE
+    std::puts("INTERNAL ERROR: Invalid enum state"); // LCOV_EXCL_LINE
+    std::abort();                                    // LCOV_EXCL_LINE
   }
 }
 

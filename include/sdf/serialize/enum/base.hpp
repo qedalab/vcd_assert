@@ -18,9 +18,9 @@ constexpr std::string_view hierarchy_divider_to_string(HChar h) noexcept {
     return ".";
   case HChar::slash:
     return "/";
-  default:
-    assert(false && "Invalid enum state");
-    abort();
+  default:                                           // LCOV_EXCL_LINE
+    std::puts("INTERNAL ERROR: Invalid enum state"); // LCOV_EXCL_LINE
+    std::abort();                                    // LCOV_EXCL_LINE
   }
 }
 
@@ -46,9 +46,9 @@ constexpr std::string_view edgetype_to_string(EdgeType e) noexcept {
       return "1z";
   case EdgeType::_z0:
       return "z0";
-  default:
-    assert(false && "Invalid enum state");
-    abort();
+  default:                                           // LCOV_EXCL_LINE
+    std::puts("INTERNAL ERROR: Invalid enum state"); // LCOV_EXCL_LINE
+    std::abort();                                    // LCOV_EXCL_LINE
   }
 }
 

@@ -352,7 +352,7 @@ void TimingChecker::apply_sdf_cell_helper(SDF::Cell cell, VCD::Scope &scope)
         auto module_name = design_->get_module(
           std::get<1>(*verilog_module_index)).identifier;
 
-        if(cell.cell_type.compare(module_name)){
+        if(cell.cell_type != module_name){
           apply_sdf_timing_specs(cell, index, child_scope);
         }
 
@@ -415,7 +415,7 @@ void TimingChecker::apply_sdf_cell(SDF::Cell cell,
             auto module_name = design_->get_module(
               std::get<1>(*verilog_module_index)).identifier;
 
-            if(cell.cell_type.compare(module_name)){
+            if(cell.cell_type != module_name){
               apply_sdf_timing_specs(cell, index, child_scope);
             }
 
@@ -601,6 +601,7 @@ void TimingChecker::scalar_value_change(VCD::ScalarValueChangeView value_change)
     // TODO Timing assert message
     fmt::print("TIMING ASSERT: Timing violation occurred during parsing of "
                "scalar value change\n");
+    did_assert_ = true;
   };
 }
 
@@ -650,9 +651,9 @@ void TimingChecker::vector_value_change(
     case VCD::Value::zero: left_extend_value = VCD::Value::zero; break;
     case VCD::Value::x: left_extend_value = VCD::Value::x; break;
     case VCD::Value::z: left_extend_value = VCD::Value::z; break;
-    default:
-      puts("INTERNAL ERROR: Code should be unreachable");
-      std::abort();
+    default:                                              // LCOV_EXCL_LINE
+      puts("INTERNAL ERROR: Code should be unreachable"); // LCOV_EXCL_LINE
+      std::abort();                                       // LCOV_EXCL_LINE
     // clang-format on
   }
 
@@ -668,6 +669,7 @@ void TimingChecker::vector_value_change(
     // TODO Better timing assert message
     fmt::print("TIMING ASSERT: Timing violation occured during parsing of "
                "vector value change\n");
+    did_assert_ = true;
   };
 }
 
@@ -680,4 +682,8 @@ void TimingChecker::real_value_change(VCD::RealValueChangeView /*unused*/)
         "WARNING: Real value changes ignored in VCD file: UNIMPLEMENTED\n");
     did_warn = true;
   }
+}
+
+bool TimingChecker::did_assert() {
+  return did_assert_;
 }

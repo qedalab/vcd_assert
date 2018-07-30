@@ -2,8 +2,8 @@
 VCD Assert
 ==========
 
-.. image:: https://travis-ci.org/pleroux0/docker-ubuntu-clang6-devel.svg?branch=master
-    :target: https://travis-ci.org/pleroux0/docker-ubuntu-clang6-devel
+.. image:: https://travis-ci.org/pleroux0/vcd_assert.svg?branch=master
+  :target: https://travis-ci.org/pleroux0/vcd_assert
 
 .. image:: https://codecov.io/gh/pleroux0/vcd_assert/branch/master/graph/badge.svg
   :target: https://codecov.io/gh/pleroux0/vcd_assert

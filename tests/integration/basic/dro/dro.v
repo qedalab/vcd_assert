@@ -18,8 +18,6 @@ wire internal_state_0,
 
 assign internal_state_0 = state == 0;
 assign internal_state_1 = state == 1;
-assign internal_state_2 = state == 2;
-assign internal_state_3 = state == 3;
 
 specify
     // Output delays spec params
