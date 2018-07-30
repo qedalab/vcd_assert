@@ -533,6 +533,7 @@ void TimingChecker::scalar_value_change(VCD::ScalarValueChangeView value_change)
     // TODO Timing assert message
     fmt::print("TIMING ASSERT: Timing violation occurred during parsing of "
                "scalar value change\n");
+    did_assert_ = true;
   };
 }
 
@@ -600,6 +601,7 @@ void TimingChecker::vector_value_change(
     // TODO Better timing assert message
     fmt::print("TIMING ASSERT: Timing violation occured during parsing of "
                "vector value change\n");
+    did_assert_ = true;
   };
 }
 
@@ -612,4 +614,8 @@ void TimingChecker::real_value_change(VCD::RealValueChangeView /*unused*/)
         "WARNING: Real value changes ignored in VCD file: UNIMPLEMENTED\n");
     did_warn = true;
   }
+}
+
+bool TimingChecker::did_assert() {
+  return did_assert_;
 }

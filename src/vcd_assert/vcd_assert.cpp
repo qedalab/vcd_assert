@@ -268,5 +268,8 @@ int main(int argc, char **argv)
       Parse::make_pegtl_template<VCDAssert::TimingCheckerAction>::type,
       Parse::capture_control>(vcd_input, timing_checker);
 
-  return 0;
+  if (timing_checker.did_assert())
+    return 1;
+  else
+    return 0;
 }
