@@ -38,9 +38,9 @@ struct TimeNumberApply {
     case 3:
       tn = TimeNumber::_100;
       break;
-    default:                                                   // LCOV_EXCL_LINE
-      std::puts("INTERNAL ERROR: Code should be unreachable"); // LCOV_EXCL_LINE
-      std::abort();                                            // LCOV_EXCL_LINE
+    default:                                                  // LCOV_EXCL_LINE
+      std::puts("INTERNAL ERROR: Invalid grammar succeeded"); // LCOV_EXCL_LINE
+      std::abort();                                           // LCOV_EXCL_LINE
     }
 
     return true;

@@ -27,9 +27,9 @@ constexpr std::string_view timescale_unit_to_string(TimeScaleUnit tu) noexcept {
     return "ps";
   case TimeScaleUnit::fs:
     return "fs";
-  default:
-    assert(false && "Invalid enum state");
-    abort();
+  default:                                           // LCOV_EXCL_LINE
+    std::puts("INTERNAL ERROR: Invalid enum state"); // LCOV_EXCL_LINE
+    std::abort();                                    // LCOV_EXCL_LINE
   }
 }
 
@@ -45,9 +45,9 @@ constexpr std::string_view timescale_number_to_string(TimeScaleNumber tn) noexce
     return "10";
   case TimeScaleNumber::_100:
     return "100";
-  default:
-    assert(false && "Invalid enum state");
-    abort();
+  default:                                           // LCOV_EXCL_LINE
+    std::puts("INTERNAL ERROR: Invalid enum state"); // LCOV_EXCL_LINE
+    std::abort();                                    // LCOV_EXCL_LINE
   }
 }
 

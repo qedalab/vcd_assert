@@ -7,12 +7,15 @@
 
 #include <range/v3/view/indices.hpp>
 #include <range/v3/view/linear_distribute.hpp>
+#include <range/v3/view/zip.hpp>
 
 using namespace VCDAssert;
 using namespace ranges::view;
+namespace rsv = ranges::view;
 
-TimingChecker::TimingChecker(std::shared_ptr<VCD::Header> header) :
+TimingChecker::TimingChecker(std::shared_ptr<VCD::Header> header, std::shared_ptr<Verilog::Design> design) :
     header_(std::move(header)),
+    design_(std::move(design)),
     state_(*header_),
     checker_(state_.num_total_values()),
     event_lists_(state_.num_total_values()),
@@ -38,6 +41,56 @@ TimingChecker::TimingChecker(std::shared_ptr<VCD::Header> header) :
     index_lookup_.push_back({counter, counter + var_size});
     counter += var_size;
   };
+
+  /*
+    Module names are unique but instance names not. Thus need to traverse two 
+    trees simultaneously to match them.
+  */
+  if(design_->num_modules() != 0){
+    auto root_scope = header_->get_root_scope();
+    auto root_net_op = design_->module_find(std::string(root_scope.get_identifier()));
+    if(root_net_op.has_value()){
+      netlist_lookup_.reserve(design_->num_modules());
+      netlist_reverse_lookup_.reserve(design_->num_modules());
+  
+      netlist_lookup_.emplace(0,0);
+      netlist_reverse_lookup_.emplace(0,0);
+      build_netlist_lookup(0,root_net_op.value());
+    }else{
+      //incorrect-design error?
+    }
+  }else{
+    //no-design error?
+  }
+
+}
+
+ 
+void TimingChecker::build_netlist_lookup(std::size_t scope_index, std::size_t net_index)
+{  
+  auto child_scopes = header_->get_scope(scope_index).get_scopes();
+  auto verilog_instances = design_->get_module(net_index).instance_lookup_;
+
+  for (auto&& scope_tup : child_scopes) {
+    
+    auto child_scope = header_->get_scope(scope_tup.second);
+
+    if(child_scope.get_scope_type() == VCD::ScopeType::module){
+
+      auto instance_iter = verilog_instances.find(scope_tup.first);
+      if(instance_iter != verilog_instances.end()){
+
+        auto child_module_index = std::get<1>(*instance_iter);
+
+        netlist_lookup_.emplace(scope_tup.second, child_module_index);
+        netlist_reverse_lookup_.emplace(child_module_index,scope_tup.second);
+        build_netlist_lookup(scope_tup.second, child_module_index);
+
+      }else{
+        // scope not found error
+      }
+    }
+  }
 }
 
 std::optional<std::tuple<ConditionalValuePointer, EdgeType>>
@@ -142,7 +195,7 @@ TimingChecker::get_hold_event_range(SDF::Node port, std::size_t port_vcd_index)
 
     /* if single value only */
   } else {
-    result.push_back(port_vcd_index);
+    result.push_back(index_lookup_[port_vcd_index].from);
   }
   return result;
 }
@@ -234,26 +287,35 @@ void TimingChecker::apply_sdf_timing_specs(SDF::Cell cell,
 }
 
 // This is called when the * cell instances wildcard is supplied.
-// It cannot work without the Verilog parser+ast to convert instance-name ->
-// module-name.
+// For every module in scope tree from 'scope' downward, apply.
 void TimingChecker::apply_sdf_cell_helper(SDF::Cell cell, VCD::Scope &scope)
 {
-  for (auto &scope_pair : scope.get_scopes()) {
-    auto index = scope_pair.second;
+  for (auto &child_scope_tup : scope.get_scopes()) {
+    auto index = child_scope_tup.second;
 
     // cell instance scope
-    VCD::Scope next_scope = header_->get_scope(index);
+    VCD::Scope child_scope = header_->get_scope(index);
 
-    if (next_scope.get_scope_type() == VCD::ScopeType::module) {
-      // std::string module_name =
-      // ast->get_instance_type_name(ident);
+    if (child_scope.get_scope_type() == VCD::ScopeType::module) {
 
-      // if(cell.cell_type.compare(module_name)){
-      apply_sdf_timing_specs(cell, index, next_scope);
-      // }
+      auto verilog_module_index = netlist_lookup_.find(index);
+      if(verilog_module_index != netlist_lookup_.end()){
+      
+        auto module_name = design_->get_module(
+          std::get<1>(*verilog_module_index)).identifier;
+
+        if(cell.cell_type != module_name){
+          apply_sdf_timing_specs(cell, index, child_scope);
+        }
+
+      }else{
+        // else ignore..
+      }
+
     }
+      //TODO : GO DOWN FOR NESTED MODULE ONLY OR ALL NESTED SCOPES? 
+      apply_sdf_cell_helper(cell, child_scope); 
 
-    apply_sdf_cell_helper(cell, next_scope);
   }
 }
 
@@ -274,23 +336,32 @@ void TimingChecker::apply_sdf_cell(SDF::Cell cell,
 
     /*If a specific scope is specified, check if the scope is available
       from the current root scope. */
-
     auto hi = std::get<SDF::HierarchicalIdentifier>(cell.cell_instance);
     if (hi.value.empty()) {
       /* for module/instance scopes in CURRENT scope ONLY: */
 
-      for (auto &scope_pair : apply_scope.get_scopes()) {
-        auto index = scope_pair.second;
+      // For every module in *this* scope, apply.
+      for (auto &child_scope_tup : apply_scope.get_scopes()) {
+        auto index = child_scope_tup.second;
 
-        VCD::Scope scope = header_->get_scope(index);
+        VCD::Scope child_scope = header_->get_scope(index);
 
-        if (scope.get_scope_type() == VCD::ScopeType::module) {
-          // std::string module_name =
-          // ast->get_instance_type_name(scope.get_identifier());
+        if (child_scope.get_scope_type() == VCD::ScopeType::module) {
 
-          // if(cell.cell_type.compare(module_name)){
-          apply_sdf_timing_specs(cell, index, scope);
-          // }
+          auto verilog_module_index = netlist_lookup_.find(index);        
+          if(verilog_module_index != netlist_lookup_.end()){
+          
+            auto module_name = design_->get_module(
+              std::get<1>(*verilog_module_index)).identifier;
+
+            if(cell.cell_type != module_name){
+              apply_sdf_timing_specs(cell, index, child_scope);
+            }
+
+          }else{
+            // else ignore..
+          }
+
         }
       }
 
@@ -460,7 +531,7 @@ void TimingChecker::scalar_value_change(VCD::ScalarValueChangeView value_change)
 
   if (internal_event(index, value_change.value)) {
     // TODO Timing assert message
-    fmt::print("TIMING ASSERT: Timing violation occured during parsing of "
+    fmt::print("TIMING ASSERT: Timing violation occurred during parsing of "
                "scalar value change\n");
   };
 }
@@ -511,9 +582,9 @@ void TimingChecker::vector_value_change(
     case VCD::Value::zero: left_extend_value = VCD::Value::zero; break;
     case VCD::Value::x: left_extend_value = VCD::Value::x; break;
     case VCD::Value::z: left_extend_value = VCD::Value::z; break;
-    default:
-      puts("INTERNAL ERROR: Code should be unreachable");
-      std::abort();
+    default:                                              // LCOV_EXCL_LINE
+      puts("INTERNAL ERROR: Code should be unreachable"); // LCOV_EXCL_LINE
+      std::abort();                                       // LCOV_EXCL_LINE
     // clang-format on
   }
 

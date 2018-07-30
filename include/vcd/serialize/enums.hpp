@@ -27,9 +27,9 @@ constexpr std::string_view scope_type_to_string(ScopeType st) noexcept
     return "module";
   case ScopeType::task:
     return "task";
-  default:                                                   // LCOV_EXCL_LINE
-    std::puts("INTERNAL ERROR: Code should be unreachable"); // LCOV_EXCL_LINE
-    std::abort();                                            // LCOV_EXCL_LINE
+  default:                                           // LCOV_EXCL_LINE
+    std::puts("INTERNAL ERROR: Invalid enum state"); // LCOV_EXCL_LINE
+    std::abort();                                    // LCOV_EXCL_LINE
   }
 }
 
@@ -52,9 +52,9 @@ constexpr std::string_view time_unit_to_string(TimeUnit tu) noexcept
     return "ps";
   case TimeUnit::fs:
     return "fs";
-  default:                                                   // LCOV_EXCL_LINE
-    std::puts("INTERNAL ERROR: Code should be unreachable"); // LCOV_EXCL_LINE
-    std::abort();                                            // LCOV_EXCL_LINE
+  default:                                           // LCOV_EXCL_LINE
+    std::puts("INTERNAL ERROR: Invalid enum state"); // LCOV_EXCL_LINE
+    std::abort();                                    // LCOV_EXCL_LINE
   }
 }
 
@@ -71,9 +71,9 @@ constexpr std::string_view time_number_to_string(TimeNumber tn) noexcept
     return "10";
   case TimeNumber::_100:
     return "100";
-  default:                                                   // LCOV_EXCL_LINE
-    std::puts("INTERNAL ERROR: Code should be unreachable"); // LCOV_EXCL_LINE
-    std::abort();                                            // LCOV_EXCL_LINE
+  default:                                           // LCOV_EXCL_LINE
+    std::puts("INTERNAL ERROR: Invalid enum state"); // LCOV_EXCL_LINE
+    std::abort();                                    // LCOV_EXCL_LINE
   }
 }
 
@@ -120,9 +120,9 @@ constexpr std::string_view var_type_to_string(VarType vr) noexcept
     return "wire";
   case VarType::wor:
     return "wor";
-  default:                                                   // LCOV_EXCL_LINE
-    std::puts("INTERNAL ERROR: Code should be unreachable"); // LCOV_EXCL_LINE
-    std::abort();                                            // LCOV_EXCL_LINE
+  default:                                           // LCOV_EXCL_LINE
+    std::puts("INTERNAL ERROR: Invalid enum state"); // LCOV_EXCL_LINE
+    std::abort();                                    // LCOV_EXCL_LINE
   }
 }
 
@@ -141,9 +141,9 @@ constexpr char value_to_char(Value v) noexcept
     return 'Z';
   case Value::x:
     return 'X';
-  default:                                                   // LCOV_EXCL_LINE
-    std::puts("INTERNAL ERROR: Code should be unreachable"); // LCOV_EXCL_LINE
-    std::abort();                                            // LCOV_EXCL_LINE
+  default:                                           // LCOV_EXCL_LINE
+    std::puts("INTERNAL ERROR: Invalid enum state"); // LCOV_EXCL_LINE
+    std::abort();                                    // LCOV_EXCL_LINE
   }
 }
 
@@ -162,9 +162,9 @@ constexpr std::string_view value_to_string(Value v)
     return "Z";
   case Value::x:
     return "X";
-  default:                                                   // LCOV_EXCL_LINE
-    std::puts("INTERNAL ERROR: Code should be unreachable"); // LCOV_EXCL_LINE
-    std::abort();                                            // LCOV_EXCL_LINE
+  default:                                           // LCOV_EXCL_LINE
+    std::puts("INTERNAL ERROR: Invalid enum state"); // LCOV_EXCL_LINE
+    std::abort();                                    // LCOV_EXCL_LINE
   }
 }
 

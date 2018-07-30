@@ -1,13 +1,17 @@
 #ifndef LIBPARSE_UTIL_FILESYSTEM_HPP
 #define LIBPARSE_UTIL_FILESYSTEM_HPP
 
-using namespace Parse {
-
 #ifdef __cpp_lib_filesystem
 #include <filesystem>
-namespace fs = std::filesystem;
 #else
 #include <experimental/filesystem>
+#endif
+
+namespace Parse::Util {
+
+#ifdef __cpp_lib_filesystem
+namespace fs = std::filesystem;
+#else
 namespace fs = std::experimental::filesystem;
 #endif
 

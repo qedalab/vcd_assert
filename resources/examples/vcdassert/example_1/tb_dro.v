@@ -2,6 +2,7 @@
 // Verilog testbench file, created with TimEx v1.00.02
 // For questions about TimEx, contact CJ Fourie, coenrad@sun.ac.za
 // ---------------------------------------------------------------------------
+`include "dro.v"
 `timescale 1ps/100fs
 module tb_dro;
    reg set = 0;
@@ -9,7 +10,7 @@ module tb_dro;
 
    initial
       begin
-         $sdf_annotate("../../dro.sdf", tb_dro);
+         $sdf_annotate("dro.sdf", tb_dro);
          $dumpfile("tb_dro_example_1.vcd");
          $dumpvars;
 

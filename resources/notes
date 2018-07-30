@@ -1,0 +1,12 @@
+16.4 Multiple SDF files
+
+More than one SDF file can be annotated. Each call to the $sdf_annotate task annotates the design with timing information from an SDF file. Annotated values either modify (INCREMENT) or overwrite (ABSOLUTE) values from earlier SDF files. Different regions of a design can be annotated from different SDF files
+by specifying the region s hierarchy scope as the second argument to $sdf_annotate.
+
+The $sdf_annotate system task reads timing data from an SDF file into a specified region of the design.
+
+sdf_file :
+is a character string, or a reg containing a character string naming the file to be opened.
+
+module_instance :
+is an optional argument specifying the scope to which to annotate the information in the SDF file. The SDF annotator uses the hierarchy level of the specified instance for running the annotation. Array indices are permitted. If the module_instance not specified, the SDF Annotator uses the module containing the call to the $sdf_annotate system task as the module_instance for annotation.

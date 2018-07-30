@@ -13,7 +13,7 @@
 namespace Parse {
 
 template <typename InnerAction, typename Apply>
-struct inner_action {
+struct inner_action_then_apply {
   using rewind_mode = tao::pegtl::rewind_mode;
   using apply_mode = tao::pegtl::apply_mode;
 
