@@ -57,6 +57,7 @@ class TimingChecker
   std::vector<RegisterEventList> event_lists_;
 
   size_t sim_time_ = 0;
+  bool did_assert_ = false;
 
   enum class MinTypeMax { min, typ, max };
 
@@ -89,7 +90,8 @@ class TimingChecker
   void apply_sdf_cell(SDF::Cell cell, std::size_t apply_scope_index);
 
   [[nodiscard]] bool internal_event(std::size_t vcd_index, VCD::Value value);
-  [[nodiscard]] bool internal_event(std::size_t vcd_range_index, ranges::span<VCD::Value> values);
+  [[nodiscard]] bool internal_event(std::size_t vcd_range_index,
+                                    ranges::span<VCD::Value> values);
   // [[nodiscard]] bool event(std::size_t index, double value);
 
   void internal_update_sim_time(std::size_t sim_time);
@@ -107,6 +109,8 @@ public:
   void scalar_value_change(VCD::ScalarValueChangeView value_change);
   void vector_value_change(VCD::UncheckedVectorValueChangeView value_change);
   void real_value_change(VCD::RealValueChangeView value_change);
+
+  bool did_assert();
 };
 
 } // namespace VCDAssert

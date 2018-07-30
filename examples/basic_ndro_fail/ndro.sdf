@@ -9,32 +9,32 @@
     (PROCESS "typical")         // For documentation purposes only.
     (TEMPERATURE 1:2:4)         // For documentation purposes only.
     (TIMESCALE 100fs) 
-    /* LRM allows 1, 10, 100, 1.0, 10.0, or 100.0 
-        followed by a unit : s, ms, us, ns, ps, or fs; 
+    /* LRM allows 1, 10, 100, 1.0, 10.0, or 100.0
+        followed by a unit : s, ms, us, ns, ps, or fs;
         But both simulators will round up based on first term used in
-        the `timescale command. 
+        the `timescale command.
         */
     (CELL
-        (CELLTYPE "basic_dro")
-        (INSTANCE DUT)
+        (CELLTYPE "basic_ndro")
+        (INSTANCE *)
         (DELAY
             (ABSOLUTE
                 /*Conditional delays not supported by iverilog */
                 (COND internal_state_1
-                    (IOPATH reset out (55))
+                    (IOPATH clk out (70))
                 )
             )
         )
-        /* iVerilog does not support built-in timing checks (yet) */ 
+        /* iVerilog does not support built-in timing checks (yet) */
         (TIMINGCHECK
-            (HOLD reset (COND internal_state_0 (posedge set)) (25)) 
-            (HOLD reset (COND internal_state_0 (negedge set)) (25)) 
+            (HOLD set (COND internal_state_0 (posedge reset)) (25))
+            (HOLD set (COND internal_state_0 (negedge reset)) (25))
 
-            (HOLD reset (COND internal_state_1 (posedge set)) (25)) 
-            (HOLD reset (COND internal_state_1 (negedge set)) (25)) 
+            (HOLD set (COND internal_state_1 (posedge reset)) (25))
+            (HOLD set (COND internal_state_1 (negedge reset)) (25))
 
-            (HOLD set (COND internal_state_0 (posedge reset)) (25)) 
-            (HOLD set (COND internal_state_0 (negedge reset)) (25)) 
+            (HOLD reset (COND internal_state_1 (posedge clk)) (25))
+            (HOLD reset (COND internal_state_1 (negedge clk)) (25))
         )
     )
 )

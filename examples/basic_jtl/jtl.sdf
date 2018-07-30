@@ -1,6 +1,6 @@
 (DELAYFILE
     (SDFVERSION "4.0")
-    (DESIGN "tb_dro")
+    (DESIGN "tb_and")
     (DATE "Tuesday MAy 29 10:37:33 GMT 2018")
     (VENDOR "voldemort")        //This is fake btw.
     (PROGRAM "TimeEx")          //The program that create this file
@@ -15,26 +15,13 @@
         the `timescale command. 
         */
     (CELL
-        (CELLTYPE "basic_dro")
+        (CELLTYPE "basic_jtl")
         (INSTANCE DUT)
         (DELAY
             (ABSOLUTE
                 /*Conditional delays not supported by iverilog */
-                (COND internal_state_1
-                    (IOPATH reset out (55))
-                )
+                (IOPATH in out (35))
             )
-        )
-        /* iVerilog does not support built-in timing checks (yet) */ 
-        (TIMINGCHECK
-            (HOLD reset (COND internal_state_0 (posedge set)) (25)) 
-            (HOLD reset (COND internal_state_0 (negedge set)) (25)) 
-
-            (HOLD reset (COND internal_state_1 (posedge set)) (25)) 
-            (HOLD reset (COND internal_state_1 (negedge set)) (25)) 
-
-            (HOLD set (COND internal_state_0 (posedge reset)) (25)) 
-            (HOLD set (COND internal_state_0 (negedge reset)) (25)) 
         )
     )
 )

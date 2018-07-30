@@ -7,7 +7,11 @@ input set, reset;
 
 // Define outputs
 output out;
-reg out;
+wire out;
+
+// Internal output variables
+reg internal_out;
+assign out = internal_out;
 
 // State
 integer state; 
@@ -45,7 +49,7 @@ endspecify
 
 initial begin
     state = 0;
-    out = 0;
+    internal_out = 0;
 end
 
 always @(posedge set or negedge set)
@@ -61,7 +65,7 @@ always @(posedge reset or negedge reset)
 begin if ($time>2)
     case (state)
         1: begin 
-            out = !out;
+            internal_out = !internal_out;
         end
     endcase
 end

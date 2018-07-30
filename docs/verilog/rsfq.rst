@@ -14,7 +14,7 @@ use a voltage pulse by adding a `1` time unit delay before dropping back to
 zero puts unnecesary strain on the simulator which immediately requires twice
 the amount of events as well as twice the amount of output data. The pulse
 representation adds no benefit over the edge representation so the edge
- epresentation is prefereble because of simulation effeciency.
+representation is prefereble because of simulation effeciency.
 
 The integration tests include quite a few examples, but we are going to go
 through the `basic_and` as an example which covers everything.
@@ -128,7 +128,7 @@ final parameter is how long after the initial trigger no outputs should come.
 
 The rest of the and's assertions are as follows
 
-.. code-blocks:: verilog
+.. code-block:: verilog
 
   $hold( posedge clk &&& internal_state_0, b, ct_state0_clk_b);
   $hold( negedge clk &&& internal_state_0, b, ct_state0_clk_b);

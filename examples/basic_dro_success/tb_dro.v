@@ -4,13 +4,13 @@ module tb_basic_dro;
     reg reset = 0;
 
     initial begin
-        // $sdf_annotate("./basic_dro.sdf", tb_basic_dro);
+        $sdf_annotate("../dro.sdf", tb_basic_dro);
         $dumpfile("tb_basic_dro.vcd");
         $dumpvars;
 
         #10 set = !set;
         #10 set = !set;
-        #2 reset = !reset; //should cause timing violation
+        #10 reset = !reset;
         #10 reset = !reset;
     end
 
