@@ -688,3 +688,12 @@ void TimingChecker::real_value_change(VCD::RealValueChangeView /*unused*/)
 bool TimingChecker::did_assert() {
   return did_assert_;
 }
+
+std::size_t TimingChecker::num_registered_events() {
+  std::size_t out = 0;
+
+  for(auto &reg_event_list: this->event_lists_)
+    out += reg_event_list.events.size();
+
+  return out;
+}

@@ -50,6 +50,7 @@ struct NodeApply {
 
 int main(int argc, char **argv)
 {
+  fmt::print("Running program from : {}\n", Parse::Util::fs::current_path());
   CLI::App cli("VCDAssert: Post processing VCD files for timing violations");
   cli.failure_message(CLI::FailureMessage::help);
 
@@ -241,7 +242,6 @@ int main(int argc, char **argv)
                       Parse::capture_control>(path_input, path);
 
     for (auto &&sdf_file : sdf_file_array) {
-
       auto node_scope_index_op = VCDAssert::match_scope(*header_p, path.value, 0);
 
       if (node_scope_index_op.has_value()) {
@@ -253,11 +253,17 @@ int main(int argc, char **argv)
     }
   }
 
+  fmt::print("Num registered timing assertions: {}\n", timing_checker.num_registered_events());
+
+  std::puts("Starting vcd stream");
+
   // Stream in vcd file
   tao::pegtl::parse<
       Parse::Grammar::star<VCD::Grammar::simulation_command>,
       Parse::make_pegtl_template<VCDAssert::TimingCheckerAction>::type,
       Parse::capture_control>(vcd_input, timing_checker);
+
+  std::puts("Finished vcd stream");
 
   if (timing_checker.did_assert())
     return 1;

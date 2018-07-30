@@ -118,6 +118,7 @@ public:
   void real_value_change(VCD::RealValueChangeView value_change);
 
   bool did_assert();
+  std::size_t num_registered_events();
 };
 
 } // namespace VCDAssert
