@@ -6,24 +6,34 @@
 #include "./state.hpp"
 #include "./triggered_timing_checker.hpp"
 
-#include "sdf/actions/delayfile.hpp"
-#include "sdf/grammar/grammar.hpp"
-#include "sdf/types/delayfile.hpp"
-#include "sdf/types/enums.hpp"
-#include "sdf/types/timing_check.hpp"
-#include "sdf/types/timing_spec.hpp"
-#include "sdf/types/values.hpp"
+#include <sdf/actions/base.hpp>
+#include <sdf/actions/delayfile.hpp>
+#include <sdf/grammar/base.hpp>
+#include <sdf/grammar/delayfile.hpp>
+#include <sdf/grammar/grammar.hpp>
+#include <sdf/types/base.hpp>
+#include <sdf/types/enums.hpp>
+#include <sdf/types/delayfile.hpp>
+#include <sdf/types/delayfile_reader.hpp>
+#include <sdf/types/timing_check.hpp>
+#include <sdf/types/timing_spec.hpp>
+#include <sdf/types/values.hpp>
 
-#include "verilog/types/design.hpp"
+#include <parse/actions/control.hpp>
+#include <parse/actions/make_pegtl_template.hpp>
+#include <parse/util/filesystem.hpp>
+
+#include <tao/pegtl/file_input.hpp>
+#include <tao/pegtl/memory_input.hpp>
+#include <tao/pegtl/parse.hpp>
 
 
-// #include <verilog_ast.h>
-// #include <verilog_ast_util.h>
-// #include <verilog_parser.h>
+#include <verilog/types/design.hpp>
+#include <verilog/types/commands.hpp>
 
-#include "vcd/types/header.hpp"
-#include "vcd/types/simulation_time.hpp"
-#include "vcd/types/value_change.hpp"
+#include <vcd/types/header.hpp>
+#include <vcd/types/simulation_time.hpp>
+#include <vcd/types/value_change.hpp>
 
 #include <optional>
 #include <range/v3/span.hpp>
@@ -31,8 +41,6 @@
 #include <variant>
 
 #include <unordered_map>
-
-// using VerilogSourceTree = verilog_source_tree;
 
 namespace VCDAssert {
 
@@ -50,8 +58,9 @@ class TimingChecker
   State state_;
   TriggeredTimingChecker checker_;
 
-  std::unordered_map<std::size_t,std::size_t> netlist_lookup_;//module_scope_lookup_;
-  std::unordered_map<std::size_t,std::size_t> netlist_reverse_lookup_;//module_scope_lookup_;
+  std::unordered_map<std::size_t,std::size_t> netlist_lookup_;//scope -> module 
+  std::unordered_map<std::size_t,std::size_t> netlist_reverse_lookup_; // module -> scope
+
   // std::unordered_map<std::size_t,std::size_t> sdf_apply_scope_lookup_;//??Why this
   std::vector<IndexLookup> index_lookup_;
   std::vector<RegisterEventList> event_lists_;
@@ -100,9 +109,7 @@ public:
   // Claims ownership of the header
   TimingChecker(std::shared_ptr<VCD::Header> header, std::shared_ptr<Verilog::Design> design);
 
-  void apply_sdf_file(/*VerilogSourceTree *ast, */
-                      std::shared_ptr<SDF::DelayFile> delayfile,
-                      std::vector<std::string> vcd_node_path);
+  void apply_sdf_file(std::string delayfile_path, std::size_t vcd_node_scope_index);
 
   void simulation_time(VCD::SimulationTime simulation_time);
 
@@ -111,6 +118,7 @@ public:
   void real_value_change(VCD::RealValueChangeView value_change);
 
   bool did_assert();
+  std::size_t num_registered_events();
 };
 
 } // namespace VCDAssert

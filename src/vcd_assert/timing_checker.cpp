@@ -57,12 +57,60 @@ TimingChecker::TimingChecker(std::shared_ptr<VCD::Header> header, std::shared_pt
       netlist_reverse_lookup_.emplace(0,0);
       build_netlist_lookup(0,root_net_op.value());
     }else{
-      //incorrect-design error?
+      // incorrect-design error?
     }
   }else{
-    //no-design error?
+    // no-design error?
   }
 
+  /* Process and apply the SDF files specified in Verilog file (from scope derived call location). */ 
+  // ONLY IF DESIGN WAS GIVEN
+  if((design_->num_modules() != 0) && (design_->num_sdf_commands() != 0)){
+    for (auto &&sdf_set_index : indices(design_->num_sdf_commands())) {
+      
+      // get commands
+      auto sdf_command_set = design_->get_sdf_commands(sdf_set_index);
+
+      // get apply scope as hierarchical identifier
+      auto source_module_index = design_->sdf_reverse_lookup(sdf_set_index);
+      auto module_identifier = design_->get_module(source_module_index).identifier;
+     
+      auto scope_path_index = netlist_reverse_lookup_.at(source_module_index);
+      auto scope_path_str = header_->get_scope(source_module_index);
+
+      // apply each sdf found to the scope.
+      for (auto &&sdf_command : sdf_command_set) {
+
+        // narrow down the scope at which to apply based on command
+        std::optional<std::size_t> local_scope_index_op = scope_path_index;
+        SDF::HierarchicalIdentifier local_scope_path{};
+
+        // EITHER APPLY TO THIS SCOPE, A CHILD SCOPE.
+        if(sdf_command.name_of_instance.has_value()){
+          if(sdf_command.name_of_instance.value() != module_identifier){
+
+            auto stem_path_str = sdf_command.name_of_instance.value();
+            
+            //SHOULD BE ADDITIVE, TODO TEST.
+            tao::pegtl::memory_input<> stem_path_input(stem_path_str, stem_path_str);
+            tao::pegtl::parse<SDF::Grammar::hierarchical_identifier,
+                              Parse::make_pegtl_template<
+                                  SDF::Actions::HierarchicalIdentifierAction>::type,
+                              Parse::capture_control>(stem_path_input, local_scope_path);
+            
+            local_scope_index_op = match_scope(*header_, local_scope_path.value, scope_path_index);
+          }
+        }
+
+        // apply
+        if(local_scope_index_op.has_value()){
+          apply_sdf_file(sdf_command.sdf_file, local_scope_index_op.value());
+        }else{
+          // Error : annotate command specidies instance that could not be found.
+        }
+      }
+    }
+  }
 }
 
  
@@ -243,7 +291,7 @@ void TimingChecker::apply_sdf_hold(SDF::Hold hold, std::size_t scope_index,
                 std::move(reg_conditional_cvp), reg_edge,
                 TriggeredEvent{std::move(trig_conditional_cvp), trig_edge,
                                (std::size_t)0,
-                               (std::size_t)(sdf_value.value() * 1000)}});
+                               (std::size_t)(sdf_value.value() * 1000)}}); //TODO timescale
           }
         } else {
           // failed to get applicable range
@@ -329,10 +377,23 @@ void TimingChecker::apply_sdf_cell(SDF::Cell cell,
       verilog scopes of 'cell_type' among the available VCD scopes. */
   if (std::holds_alternative<SDF::Star>(cell.cell_instance)) {
 
+    static bool did_warn = false;
+    if (!did_warn) {
+      fmt::print(
+          "WARNING: No Verilog design supplied. All SDF cells with (CELLINSTANCE *) ignored.\n");
+      did_warn = true;
+    }
     // for module/instance scopes FROM applied scope DOWN:
     apply_sdf_cell_helper(cell, apply_scope);
 
   } else {
+
+    static bool did_warn = false;
+    if (!did_warn) {
+      fmt::print(
+          "WARNING: No Verilog design supplied. All SDF cells with (CELLINSTANCE ) ignored.\n");
+      did_warn = true;
+    }
 
     /*If a specific scope is specified, check if the scope is available
       from the current root scope. */
@@ -383,6 +444,7 @@ void TimingChecker::apply_sdf_cell(SDF::Cell cell,
   }
 }
 
+
 /*
 
 For every application scope(appscope), find its node in the verilog ast.
@@ -410,26 +472,32 @@ through the assertions in the cell and map each to the variables.
 //    [voltage]
 //    [temperature]
 */
-void TimingChecker::apply_sdf_file(/*VerilogSourceTree *ast, */
-                                   std::shared_ptr<SDF::DelayFile> delayfile,
-                                   std::vector<std::string> vcd_node_path)
+void TimingChecker::apply_sdf_file(std::string delayfile_path,
+                                   std::size_t vcd_node_scope_index)
 {
-  std::optional<std::size_t> apply_at_index = match_scope(*header_, vcd_node_path, 0);
 
-  // TODO: Should always match the SDF file timescale with that of the VCD.
+  SDF::DelayFileReader sdf_reader{};
+
+  tao::pegtl::file_input<> sdf_input(delayfile_path);
+  tao::pegtl::parse<
+      SDF::Grammar::delay_file,
+      Parse::make_pegtl_template<SDF::Actions::DelayFileAction>::type,
+      Parse::capture_control>(sdf_input, sdf_reader);
+
+  auto delayfile_p = sdf_reader.release();
+  assert(delayfile_p.operator bool());
+
+  // TODO: Should match the SDF file timescale with that of the VCD.
   // ..which could require conversion of the value.
-
   // auto timescale = delayfile->get_timescale();
-  std::vector<SDF::Cell> cells = delayfile->get_cells();
+
+  std::vector<SDF::Cell> cells = delayfile_p->get_cells();
   /*etc*/
 
-  if (apply_at_index.has_value()) {
-    for (auto &cell : cells) {
-      apply_sdf_cell(cell, apply_at_index.value());
-    }
-  } else {
-    // could not find the supplied scope.
+  for (auto &cell : cells) {
+    apply_sdf_cell(cell, vcd_node_scope_index);
   }
+
 }
 
 [[nodiscard]] bool TimingChecker::handle_event(const RegisterEvent &event,
@@ -618,4 +686,13 @@ void TimingChecker::real_value_change(VCD::RealValueChangeView /*unused*/)
 
 bool TimingChecker::did_assert() {
   return did_assert_;
+}
+
+std::size_t TimingChecker::num_registered_events() {
+  std::size_t out = 0;
+
+  for(auto &reg_event_list: this->event_lists_)
+    out += reg_event_list.events.size();
+
+  return out;
 }
