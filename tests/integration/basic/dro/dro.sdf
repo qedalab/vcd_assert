@@ -15,26 +15,26 @@
         the `timescale command. 
         */
     (CELL
-        (CELLTYPE "dro")
+        (CELLTYPE "basic_dro")
         (INSTANCE DUT)        
         (DELAY
             (ABSOLUTE
                 /*Conditional delays not supported by iverilog */
-                (COND state == 1
+                (COND internal_state_1
                     (IOPATH reset out (55))
                 )
             )
         )
         /* iVerilog does not support built-in timing checks (yet) */ 
         (TIMINGCHECK
-            (HOLD reset (COND not_state (posedge set)) (55)) 
-            (HOLD reset (COND not_state (negedge set)) (55)) 
+            (HOLD reset (COND internal_state_0 (posedge set)) (25)) 
+            (HOLD reset (COND internal_state_0 (negedge set)) (25)) 
 
-            (HOLD reset (COND state (posedge set)) (25)) 
-            (HOLD reset (COND state (negedge set)) (25)) 
-            
-            (HOLD set (COND not_state (posedge reset)) (25)) 
-            (HOLD set (COND not_state (negedge reset)) (25)) 
+            (HOLD reset (COND internal_state_1 (posedge set)) (25)) 
+            (HOLD reset (COND internal_state_1 (negedge set)) (25)) 
+
+            (HOLD set (COND internal_state_0 (posedge reset)) (25)) 
+            (HOLD set (COND internal_state_0 (negedge reset)) (25)) 
         )
     )
 )
