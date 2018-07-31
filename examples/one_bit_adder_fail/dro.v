@@ -1,5 +1,8 @@
 // Adapted from TimEx generated files for vcd_assert testing
+`ifndef begin_time
 `define begin_time 8
+`endif
+
 `timescale 1ps/100fs
 module basic_dro (set, reset, out);
 
@@ -21,8 +24,8 @@ integer state;
 wire internal_state_0,
      internal_state_1;
 
-assign internal_state_0 = state == 0;
-assign internal_state_1 = state == 1;
+assign internal_state_0 = state === 0;
+assign internal_state_1 = state === 1;
 
 specify
     // Output delays spec params

@@ -1,5 +1,8 @@
 // Adapted from TimEx generated files for vcd_assert
+`ifndef begin_time
 `define begin_time 8
+`endif
+
 `timescale 1ps/100fs
 module basic_and (a, b, clk, out);
 
@@ -11,7 +14,7 @@ output out;
 wire out;
 
 // Internal output variables
-reg internal_out;
+reg internal_out = 0;
 assign out = internal_out;
 
 // Define state

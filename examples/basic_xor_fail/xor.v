@@ -1,4 +1,5 @@
 // Adapted from TimEx generated files for vcd_assert
+`define begin_time 8
 `timescale 1ps/100fs
 module basic_xor (a, b, clk, out);
 
@@ -73,46 +74,41 @@ specify
 endspecify
 
 initial begin
-    state = 0;
+    state = 1'bX;
     internal_out = 0;
+    #`begin_time state = 0;
 end
 
 always @(posedge a or negedge a)
-begin if ($time>2)
-    case (state)
-        0: begin
-            state = 1;
-        end
-        2: begin
-            state = 0;
-        end
-    endcase
-end
+case (state)
+    0: begin
+        state = 1;
+    end
+    2: begin
+        state = 0;
+    end
+endcase
 
 always @(posedge b or negedge b)
-begin if ($time>2)
-    case (state)
-        0: begin
-            state = 2;
-        end
-        1: begin
-            state = 0;
-        end
-    endcase
-end
+case (state)
+    0: begin
+        state = 2;
+    end
+    1: begin
+        state = 0;
+    end
+endcase
 
 always @(posedge clk or negedge clk)
-begin if ($time>2)
-    case (state)
-        1: begin
-            internal_out = !internal_out;
-            state = 0;
-        end
-        2: begin
-            internal_out = !internal_out;
-            state = 0;
-        end
-    endcase
-end
+case (state)
+    1: begin
+        internal_out = !internal_out;
+        state = 0;
+    end
+    2: begin
+        internal_out = !internal_out;
+        state = 0;
+    end
+endcase
 
 endmodule

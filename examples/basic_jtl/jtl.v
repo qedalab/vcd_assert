@@ -34,7 +34,7 @@ initial begin
 end
 
 always @(posedge in or negedge in)
-begin if($time>2)
+begin
     internal_out = !internal_out;
 end
 
