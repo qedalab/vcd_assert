@@ -112,9 +112,9 @@ TEST_CASE("Verilog.Actions.Design", "[Verilog][Events][Design]")
 
     tao::pegtl::file_input<> input_tb_dro(tb_dro_file_path_abs_.to_string_view());
     tao::pegtl::file_input<> input_dro(dro_file_path_abs_.to_string_view());
+  
 
-
-    Verilog::Util::InputMap inputs{};
+    Verilog::Util::InputMap inputs{}; // no library files.
       
     REQUIRE(tao::pegtl::parse<
             VerilogGrammar::_grammar_,

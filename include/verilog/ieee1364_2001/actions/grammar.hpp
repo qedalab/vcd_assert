@@ -30,6 +30,7 @@ struct IncludeFileApply {
     namespace fs =  Parse::Util::fs;
 
     
+    std::cout << "DEBUG: include statement: first pass: " << first_pass << "\n"; 
     // auto next_input_rel = input.string();
     // auto next_input_abs = fs::path(next_input_rel).lexically_normal();
     // auto abs_path = fs::weakly_canonical(next_input_abs);
@@ -48,7 +49,6 @@ struct IncludeFileApply {
                       ? fs::canonical(next_input_abs) 
                       : next_input_abs;
 
-    std::cout << "first pass " << first_pass << "\n"; 
     // for (auto && pair : inputmap){
     // }
 

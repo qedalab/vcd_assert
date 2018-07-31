@@ -109,7 +109,9 @@ struct ModuleDescriptionApply{
   static bool apply(const ActionInput &input, ModuleEvent data, 
                     DesignReader &reader, Util::InputMap &/*inputmap*/, 
                     bool first_pass){
-                    
+
+    std::cout << "DEBUG: module descript: first pass: " << first_pass << "\n"; 
+
     if(first_pass){
       Parse::Util::debug_puts("DEBUG: first pass : found module");
       //if first pass, build only the module list and lookup. 
