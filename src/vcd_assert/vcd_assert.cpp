@@ -285,6 +285,8 @@ int main(int argc, char **argv)
   fmt::print("Num registered timing assertions: {}\n",
              timing_checker.num_registered_events());
 
+  timing_checker.dump_registered_event_list();
+
   std::puts("Starting vcd stream");
 
   // Stream in vcd file

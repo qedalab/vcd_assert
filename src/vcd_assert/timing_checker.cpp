@@ -744,3 +744,43 @@ std::size_t TimingChecker::num_registered_events() {
 
   return out;
 }
+
+void TimingChecker::dump_registered_event_list() {
+  fmt::print("RegistedEventLists dump\n");
+  fmt::print("=======================\n");
+
+  for(auto i: ranges::view::indices(event_lists_.size())) {
+    fmt::print("{}:", i);
+    auto &event_list = event_lists_[i];
+
+    if(event_list.events.size() == 0) {
+      std::puts(" {}");
+      continue;
+
+    }
+
+    std::puts(" {");
+
+    for(auto j: ranges::view::indices(event_list.events.size())) {
+      fmt::print("  {}:", j);
+      auto &reg_event = event_list.events[j];
+      auto &trig_event = reg_event.triggered;
+
+      std::puts(" {");
+
+
+      fmt::print("    Register Condition: TODO");
+      fmt::print("    Register EdgeType : {}", get_edge_type_string(reg_event.edge_type));
+      fmt::print("    Trigger Condition : TODO");
+      fmt::print("    Trigger Assertion : {}", trig_event.assertion_index);
+      fmt::print("    Trigger EdgeType  : {}", get_edge_type_string(trig_event.edge_type));
+      fmt::print("    Trigger hold time : {}", trig_event.hold_time);
+      
+      std::puts("  }");
+    }
+
+    std::puts("}");
+  }
+
+  fmt::print("=======================\n");
+}

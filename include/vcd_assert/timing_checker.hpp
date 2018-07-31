@@ -120,6 +120,8 @@ public:
 
   bool did_assert();
   std::size_t num_registered_events();
+
+  void dump_registered_event_list();
 };
 
 } // namespace VCDAssert
