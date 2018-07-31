@@ -154,38 +154,50 @@ TimingChecker::apply_sdf_hold_port_tchk_helper(SDF::PortTimingCheck port_tchk,
 
   EdgeType edge{};
 
-  if (port_tchk.port.edge.has_value()) {
+  if (port_tchk.port.edge.has_value()) {    
+    std::puts("DEBUG : edge found");
+  
     switch (port_tchk.port.edge.value()) {
     case SDF::EdgeType::posedge:
       edge = VCDAssert::EdgeType::PosEdge;
+      std::puts("DEBUG : port check edgetype : (PosEdge)");  
       break;
     case SDF::EdgeType::_01:
       edge = VCDAssert::EdgeType::_01;
+      std::puts("DEBUG : port check edgetype : (_01)");  
       break;
     case SDF::EdgeType::negedge:
       edge = VCDAssert::EdgeType::NegEdge;
+      std::puts("DEBUG : port check edgetype : (NegEdge)");  
       break;
     case SDF::EdgeType::_10:
       edge = VCDAssert::EdgeType::_10;
+      std::puts("DEBUG : port check edgetype : (_10)");  
       break;
     case SDF::EdgeType::_z0:
       edge = VCDAssert::EdgeType::_z0;
+      std::puts("DEBUG : port check edgetype : (_z0)");  
       break;
     case SDF::EdgeType::_0z:
       edge = VCDAssert::EdgeType::_0z;
+      std::puts("DEBUG : port check edgetype : (_0z)");  
       break;
     case SDF::EdgeType::_z1:
       edge = VCDAssert::EdgeType::_z1;
+      std::puts("DEBUG : port check edgetype : (_z1)");  
       break;
     case SDF::EdgeType::_1z:
       edge = VCDAssert::EdgeType::_1z;
+      std::puts("DEBUG : port check edgetype : (_1z)");  
       break;
     default:
       throw std::runtime_error("InternalError : unsupported edgetype");
     }
   } else {
     edge = VCDAssert::EdgeType::Edge;
+      std::puts("DEBUG : port check edgetype : (Edge)");
   }
+  
 
   if (port_tchk.timing_check_condition.has_value()) {
     auto cond_cvd_option = get_sdf_conditional_ptr(*header_, state_,

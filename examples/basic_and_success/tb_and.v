@@ -6,6 +6,7 @@ module tb_basic_and;
     reg clk = 0;
 
     initial begin
+        $sdf_annotate("../and.sdf", tb_basic_and);    
         $dumpfile("tb_basic_and.vcd");
         $dumpvars;
 

@@ -73,14 +73,14 @@ add_test(
 add_test(
   NAME basic_and_fail
   WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/examples/basic_and_fail/iverilog_out/
-  COMMAND vcd_assert tb_basic_and.vcd ../tb_and.v ../and.v -t tb_basic_and --node tb_basic_and 
+  COMMAND vcd_assert tb_basic_and.vcd ../tb_and.v ../and.v -t tb_basic_and 
 )
 
 # Basic and succeed
 add_test(
   NAME basic_and_success
   WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/examples/basic_and_success/iverilog_out/
-  COMMAND vcd_assert tb_basic_and.vcd ../tb_and.v ../and.v -t tb_basic_and --node tb_basic_and
+  COMMAND vcd_assert tb_basic_and.vcd ../tb_and.v ../and.v -t tb_basic_and 
 )
 
 ############## VERILOG SDF WITH CELLINSTANCE <*>
@@ -88,14 +88,14 @@ add_test(
 add_test(
   NAME basic_ndro_fail
   WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/examples/basic_ndro_fail/iverilog_out/
-  COMMAND vcd_assert tb_basic_ndro.vcd ../tb_ndro.v ../ndro.v -t tb_basic_ndro --node tb_basic_ndro --sdf ../ndro.sdf
+  COMMAND vcd_assert tb_basic_ndro.vcd ../tb_ndro.v ../ndro.v -t tb_basic_ndro
 )
 
 # Basic ndro succeed
 add_test(
   NAME basic_ndro_success
   WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/examples/basic_ndro_success/iverilog_out/
-  COMMAND vcd_assert tb_basic_ndro.vcd ../tb_ndro.v ../ndro.v -t tb_basic_ndro --node tb_basic_ndro --sdf ../ndro.sdf
+  COMMAND vcd_assert tb_basic_ndro.vcd ../tb_ndro.v ../ndro.v -t tb_basic_ndro 
 )
 
 
@@ -104,7 +104,6 @@ set_tests_properties(
   basic_dro_fail
   basic_and_fail
   basic_ndro_fail
-  basic_xor_fail
   PROPERTIES WILL_FAIL TRUE
 )
 
