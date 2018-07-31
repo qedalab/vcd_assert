@@ -69,6 +69,8 @@ class TimingChecker
   std::vector<IndexLookup> index_lookup_;
   std::vector<RegisterEventList> event_lists_;
 
+  std::unordered_map<VCD::Value*, std::size_t> pointer_to_index_;
+
   size_t sim_time_ = 0;
   bool did_assert_ = false;
 
@@ -108,6 +110,8 @@ class TimingChecker
   // [[nodiscard]] bool event(std::size_t index, double value);
 
   void internal_update_sim_time(std::size_t sim_time);
+
+  std::string serialize_conditional(const ConditionalValuePointer &cvp);
 
 public:
   // Claims ownership of the header

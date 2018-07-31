@@ -33,3 +33,7 @@ operator=(ConditionalValuePointer &&other)
 }
 
 ConditionalValuePointer::~ConditionalValuePointer() = default;
+
+const ConditionalValuePointerVariant& ConditionalValuePointer::inner() const noexcept {
+  return value_;
+}

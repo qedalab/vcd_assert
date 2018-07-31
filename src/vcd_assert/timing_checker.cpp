@@ -1,4 +1,5 @@
 #include "vcd_assert/timing_checker.hpp"
+#include "vcd/serialize/enums.hpp"
 
 #include "vcd_assert/edge_type.hpp"
 #include "vcd_assert/sdf_matching.hpp"
@@ -33,11 +34,25 @@ TimingChecker::TimingChecker(std::shared_ptr<VCD::Header> header,
     auto var_size = var_id_code_view.get_size();
     auto var_type = var_id_code_view.get_type();
 
+    fmt::print("VarIdCode: {} start at index {}\n", var_id_code_view.get_id_code(), counter);
+
     // If single value
     if (var_type == VCD::VarType::real) {
       index_lookup_.push_back({counter, counter + 1});
       counter += 1;
       continue;
+    }
+
+    if (var_size == 1) {
+      // Scalar values
+      pointer_to_index_[std::get<VCD::Value*>(state_.get_value_pointer(i))] = counter;
+    } else {
+      // array value
+      auto value_range = std::get<ranges::span<VCD::Value>>(state_.get_value_pointer(i));
+
+      for(auto jj: indices(value_range.size())) {
+        pointer_to_index_[std::addressof(value_range[i])] = counter + jj;
+      }
     }
 
     // Else Vector
@@ -570,7 +585,7 @@ void TimingChecker::apply_sdf_file(std::string delayfile_path,
   if (!(event.condition.value() == VCD::Value::one))
     return out;
 
-  checker_.hold(event.triggered, index);
+  checker_.hold(event.triggered, event.trigger_index);
 
   return out;
 }
@@ -759,6 +774,40 @@ std::size_t TimingChecker::num_registered_events() {
   return out;
 }
 
+std::string TimingChecker::serialize_conditional(const ConditionalValuePointer &cvp) {
+  return std::visit([&](auto& value) -> std::string {
+    using T = typename std::decay<decltype(value)>::type;
+
+    if constexpr(std::is_same_v<T, VCD::Value>) {
+      return std::string(VCD::value_to_string(value));
+    } else if constexpr(std::is_same_v<T, VCD::Value*>) {
+      return fmt::format("VCD[{}]", pointer_to_index_.at(value));
+    } else {
+      auto out = std::string("(");
+      out.append(serialize_conditional(value->inner_left()));
+
+      if (value->get_operator() == EqualityOperator::case_equal) {
+        out.append(" === ");
+      } else if (value->get_operator() == EqualityOperator::case_not_equal) {
+        out.append(" !== ");
+      } else if (value->get_operator() == EqualityOperator::logical_equal) {
+        out.append(" == ");
+      } else if (value->get_operator() == EqualityOperator::logical_not_equal) {
+        out.append(" != ");
+      } else {
+        std::puts("INTERNAL ERROR: Invalid enum");
+        std::abort();
+      }
+
+      out.append(serialize_conditional(value->inner_right()));
+      out.append(")");
+
+      return out;
+    }
+
+  }, cvp.inner());
+}
+
 void TimingChecker::dump_registered_event_list() {
   fmt::print("RegistedEventLists dump\n");
   fmt::print("=======================\n");
@@ -782,12 +831,13 @@ void TimingChecker::dump_registered_event_list() {
 
       std::puts(" {");
 
-      fmt::print("    Register Condition: TODO");
-      fmt::print("    Register EdgeType : {}", edge_type_to_string(reg_event.edge_type));
-      fmt::print("    Trigger Condition : TODO");
-      fmt::print("    Trigger Assertion : {}", trig_event.assertion_index);
-      fmt::print("    Trigger EdgeType  : {}", edge_type_to_string(trig_event.edge_type));
-      fmt::print("    Trigger hold time : {}", trig_event.hold_time);
+      fmt::print("    Register Condition     : {}\n", serialize_conditional(reg_event.condition));
+      fmt::print("    Register EdgeType      : {}\n", edge_type_to_string(reg_event.edge_type));
+      fmt::print("    Register Trigger index : {}\n", reg_event.trigger_index);
+      fmt::print("    Trigger Condition      : {}\n", serialize_conditional(trig_event.condition));
+      fmt::print("    Trigger Assertion      : {}\n", trig_event.assertion_index);
+      fmt::print("    Trigger EdgeType       : {}\n", edge_type_to_string(trig_event.edge_type));
+      fmt::print("    Trigger hold time      : {}\n", trig_event.hold_time);
       
       std::puts("  }");
     }

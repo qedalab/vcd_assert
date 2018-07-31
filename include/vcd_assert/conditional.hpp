@@ -51,6 +51,8 @@ public:
   ConditionalValuePointer& operator=(ConditionalValuePointer&& other);
   ~ConditionalValuePointer();
 
+  const ConditionalValuePointerVariant& inner() const noexcept;
+
   VCD::Value value() const noexcept;
 };
 
@@ -65,6 +67,18 @@ public:
                       ConditionalValuePointer right) :
       left_(std::move(left)),
       right_(std::move(right)) {}
+
+  constexpr EqualityOperator get_operator() const noexcept {
+    return Op;
+  }
+
+  const ConditionalValuePointer& inner_left() const noexcept {
+    return left_;
+  }
+
+  const ConditionalValuePointer& inner_right() const noexcept {
+    return right_;
+  }
 
   VCD::Value call() {
     VCD::Value left = left_.value();

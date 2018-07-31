@@ -27,6 +27,7 @@ struct TriggeredEventList {
 struct RegisterEvent {
   ConditionalValuePointer condition;
   EdgeType edge_type;
+  std::size_t trigger_index;
   TriggeredEvent triggered;
 };
 
