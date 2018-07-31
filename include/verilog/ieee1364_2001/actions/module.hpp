@@ -9,8 +9,9 @@
 #include "../../util/parse_input.hpp"
 #include "../grammar/grammar_hacked.hpp"
 
-#include "parse/actions/command/inner_action_then_apply.hpp"
-#include "parse/actions/make_pegtl_template.hpp"
+#include <parse/util/debug_printing.hpp>
+#include <parse/actions/command/inner_action_then_apply.hpp>
+#include <parse/actions/make_pegtl_template.hpp>
 #include <tao/pegtl/memory_input.hpp>
 
 namespace Verilog {
@@ -110,9 +111,12 @@ struct ModuleDescriptionApply{
                     bool first_pass){
                     
     if(first_pass){
+      Parse::Util::debug_puts("DEBUG: first pass : found module");
       //if first pass, build only the module list and lookup. 
       reader.module(data.module_identifier, input.position().source);
     }else{
+
+      Parse::Util::debug_puts("DEBUG: second pass : found instance/command");
       
       for (auto&& instance : data.instances ){
         reader.instance(NetType::module, data.module_identifier, instance.name, instance.type);

@@ -352,20 +352,20 @@ void TimingChecker::apply_sdf_hold(SDF::DelayFile &d, SDF::Hold hold,
         auto &&[reg_cond_cvp, reg_edge] = reg_apply_data_option.value();
         auto &&[trig_cond_cvp, trig_edge] = trig_apply_data_option.value();
 
-        // trigger_event_assertion_index
-        auto trig_event_idx_range = get_hold_event_range(trig.port, trig_port_idx);
-
         // get event_list indexes of the reg event port
         auto reg_event_idx_range = get_hold_event_range(reg.port, reg_port_idx);
+
+        // get event_list indexes of the trig event port
+        auto trig_event_idx_range = get_hold_event_range(trig.port, trig_port_idx);
 
         if (!reg_event_idx_range.empty() && !trig_event_idx_range.empty()) {
           Parse::Util::debug_puts("DEBUG: hold reg port successfully matched.");
 
           for (auto &&reg_event_idx: reg_event_idx_range) {
-            for (auto &&trig_event_idx: reg_event_idx_range) {
+            for (auto &&trig_event_idx: trig_event_idx_range) {
               event_lists_[reg_event_idx].events.emplace_back(RegisterEvent{
                   std::move(reg_cond_cvp), reg_edge,
-                  (std::size_t)0, /* TRIGGER INDEX HERE */
+                  (std::size_t)trig_event_idx,
 
                   TriggeredEvent{
                       std::move(trig_cond_cvp), trig_edge,

@@ -8,7 +8,8 @@
 namespace Verilog::Util {
 
 enum class InputTypeEnum {
-  file,
+  source_file,
+  library_file,
   const_char_pointer
 };
 

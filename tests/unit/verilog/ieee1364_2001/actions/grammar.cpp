@@ -34,77 +34,77 @@ namespace rsv = ranges::view;
 TEST_CASE("Verilog.Actions.Design", "[Verilog][Events][Design]")
 {
 
-  SECTION("dro only, from memory")
-  {
-    DesignReader reader;
-    tao::pegtl::memory_input<> input(dro_example, "dro");
+  // SECTION("dro only, from memory")
+  // {
+  //   DesignReader reader;
+  //   tao::pegtl::memory_input<> input(dro_example, "dro");
 
-    Verilog::Util::InputMap inputs{};
+  //   Verilog::Util::InputMap inputs{};
 
-    for (auto &&pass : rsv::indices(2)) {
-      bool first_pass = pass == 0? true : false;
-      REQUIRE(tao::pegtl::parse<
-              VerilogGrammar::_grammar_,
-              Parse::make_pegtl_template<Actions::GrammarAction>::type,
-              Parse::capture_control>(input, reader, inputs, first_pass));
-    }
+  //   for (auto &&pass : rsv::indices(2)) {
+  //     bool first_pass = pass == 0? true : false;
+  //     REQUIRE(tao::pegtl::parse<
+  //             VerilogGrammar::_grammar_,
+  //             Parse::make_pegtl_template<Actions::GrammarAction>::type,
+  //             Parse::capture_control>(input, reader, inputs, first_pass));
+  //   }
 
-    auto design_p = reader.release();
-    REQUIRE(design_p.operator bool());
-    // Test::catch_test_design(*design_p, dro_example);
-  }
+  //   auto design_p = reader.release();
+  //   REQUIRE(design_p.operator bool());
+  //   // Test::catch_test_design(*design_p, dro_example);
+  // }
 
-  SECTION("both tb_dro and dro from memory")
-  {
-    Verilog::DesignReader reader{};
+  // SECTION("both tb_dro and dro from memory")
+  // {
+  //   Verilog::DesignReader reader{};
 
-    std::string test_string{dro_example};
-    const char *test_string_p = test_string.c_str();
+  //   std::string test_string{dro_example};
+  //   const char *test_string_p = test_string.c_str();
 
-    tao::pegtl::memory_input<> input_tb_dro(tb_dro_example, "tb_dro");
+  //   tao::pegtl::memory_input<> input_tb_dro(tb_dro_example, "tb_dro");
 
-    Verilog::Util::InputMap inputs{};
-    inputs.emplace(
-        "dro.v", // include_string
-        Verilog::Util::ParseInput{
-            Verilog::Util::InputTypeEnum::const_char_pointer, test_string_p});
+  //   Verilog::Util::InputMap inputs{};
+  //   inputs.emplace(
+  //       "dro.v", // include_string
+  //       Verilog::Util::ParseInput{
+  //           Verilog::Util::InputTypeEnum::const_char_pointer, test_string_p});
 
-    for (auto &&pass : rsv::indices(2)) {
+  //   for (auto &&pass : rsv::indices(2)) {
 
-      bool first_pass = (pass == 0);
-      REQUIRE(tao::pegtl::parse<
-              VerilogGrammar::_grammar_,
-              Parse::make_pegtl_template<Actions::GrammarAction>::type,
-              Parse::capture_control>(input_tb_dro, reader, inputs, first_pass));
-    }
+  //     bool first_pass = (pass == 0);
+  //     REQUIRE(tao::pegtl::parse<
+  //             VerilogGrammar::_grammar_,
+  //             Parse::make_pegtl_template<Actions::GrammarAction>::type,
+  //             Parse::capture_control>(input_tb_dro, reader, inputs, first_pass));
+  //   }
 
-    auto design_p = reader.release();
-    REQUIRE(design_p.operator bool());
-    // VerilogTest::catch_design(tb_dro_example_design_test, *design_p);
-    // // Test::catch_test_design(*design_p, dro_example);
-  }
+  //   auto design_p = reader.release();
+  //   REQUIRE(design_p.operator bool());
+  //   // VerilogTest::catch_design(tb_dro_example_design_test, *design_p);
+  //   // // Test::catch_test_design(*design_p, dro_example);
+  // }
 
-  SECTION("dro only, from file")
-  {
-    Verilog::DesignReader reader{};
+  // SECTION("dro only, from file")
+  // {
+  //   Verilog::DesignReader reader{};
 
-    tao::pegtl::file_input<> input(dro_file_path_abs_.to_string_view());
+  //   tao::pegtl::file_input<> input(dro_file_path_abs_.to_string_view());
 
-    Verilog::Util::InputMap inputs{}; // unused
+  //   Verilog::Util::InputMap inputs{}; // unused
 
-    for (auto &&pass : rsv::indices(2)) {
+  //   for (auto &&pass : rsv::indices(2)) {
 
-      bool first_pass = pass == 0? true : false;
-      REQUIRE(tao::pegtl::parse<
-              VerilogGrammar::_grammar_,
-              Parse::make_pegtl_template<Actions::GrammarAction>::type,
-              Parse::capture_control>(input, reader, inputs, first_pass));
-    }
+  //     bool first_pass = pass == 0? true : false;
+  //     REQUIRE(tao::pegtl::parse<
+  //             VerilogGrammar::_grammar_,
+  //             Parse::make_pegtl_template<Actions::GrammarAction>::type,
+  //             Parse::capture_control>(input, reader, inputs, first_pass));
+  //   }
     
-    auto design_p = reader.release();
-    REQUIRE(design_p.operator bool());
-    // Test::catch_test_design(*design_p, dro_example);
-  }
+  //   auto design_p = reader.release();
+  //   REQUIRE(design_p.operator bool());
+  //   // Test::catch_test_design(*design_p, dro_example);
+  // }
 
   SECTION("both tb_dro and dro from file")
   {
@@ -112,34 +112,47 @@ TEST_CASE("Verilog.Actions.Design", "[Verilog][Events][Design]")
 
     // auto dro_file_path_rel_ =
     // fs::relative(fs::path(dro_file_path_abs_.to_string()),
-    //  fs::path(tb_dro_file_abs_.to_string()).parent_path());
+    //  fs::path(tb_dro_file_path_abs_.to_string()).parent_path());
 
-    tao::pegtl::file_input<> input_tb_dro(tb_dro_file_abs_.to_string_view());
+    tao::pegtl::file_input<> input_tb_dro(tb_dro_file_path_abs_.to_string_view());
+    tao::pegtl::file_input<> input_dro(dro_file_path_abs_.to_string_view());
 
     // INFO(fmt::format("Input path relative to import location : {}",
     //  dro_file_path_rel_));
 
     Verilog::Util::InputMap inputs{};
 
-    inputs.emplace(
-        dro_file_path_abs_.to_string(), // relative path from the test bench
-        Verilog::Util::ParseInput{Verilog::Util::InputTypeEnum::file,
-                                  dro_file_path_abs_.to_string()});
+    /*INPUT MAP ONLY FOR LIBRARY FILES*/
+    // inputs.emplace(
+    //     dro_file_path_abs_.to_string(), // relative path from the test bench
+    //     Verilog::Util::ParseInput{Verilog::Util::InputTypeEnum::library_file,
+    //                               dro_file_path_abs_.to_string()});
 
-    for (auto &&pass : rsv::indices(2)) {
-      INFO("test pass : " << pass);
-      bool first_pass = pass == 0 ? true : false;
-      REQUIRE(tao::pegtl::parse<
-              VerilogGrammar::_grammar_,
-              Parse::make_pegtl_template<Actions::GrammarAction>::type,
-              Parse::capture_control>(input_tb_dro, reader, inputs, first_pass));
-    }
+      
+    REQUIRE(tao::pegtl::parse<
+            VerilogGrammar::_grammar_,
+            Parse::make_pegtl_template<Actions::GrammarAction>::type,
+            Parse::capture_control>(input_dro, reader, inputs, true));
+    
+    REQUIRE(tao::pegtl::parse<
+            VerilogGrammar::_grammar_,
+            Parse::make_pegtl_template<Actions::GrammarAction>::type,
+            Parse::capture_control>(input_tb_dro, reader, inputs, true));
+
+    REQUIRE(tao::pegtl::parse<
+            VerilogGrammar::_grammar_,
+            Parse::make_pegtl_template<Actions::GrammarAction>::type,
+            Parse::capture_control>(input_dro, reader, inputs, false));
+    
+    REQUIRE(tao::pegtl::parse<
+            VerilogGrammar::_grammar_,
+            Parse::make_pegtl_template<Actions::GrammarAction>::type,
+            Parse::capture_control>(input_tb_dro, reader, inputs, false));
+
 
     auto design_p = reader.release();
     REQUIRE(design_p.operator bool());
-    // CAPTURE(*design_p);
-    // FAIL();
-    // Test::catch_test_design_via_reader(*design_p, dro_example);
+
     VerilogTest::catch_design(tb_dro_example_design_test, *design_p);
   }
 

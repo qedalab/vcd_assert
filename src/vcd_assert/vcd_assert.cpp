@@ -193,7 +193,7 @@ int main(int argc, char **argv)
         // TODO search in 'include statement' apply action, not here..
         inputmap.emplace(abs_path, // relative path from the test bench
                          Verilog::Util::ParseInput{
-                             Verilog::Util::InputTypeEnum::file, abs_path});
+                             Verilog::Util::InputTypeEnum::library_file, abs_path});
       }
 
       // Parsing first pass
@@ -203,7 +203,7 @@ int main(int argc, char **argv)
       bool result = false;
       for (auto &&pass : rsv::indices(2)) {
 
-        bool first_pass = pass == 0 ? true : false;
+        bool first_pass = (pass == 0);
         Parse::Util::debug_print("DEBUG: starting pass : {}\n", pass);
         // Parse Verilog from top
         result = tao::pegtl::parse<

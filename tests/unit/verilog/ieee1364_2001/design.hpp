@@ -18,7 +18,7 @@ constexpr auto input_path_ =
     "" + project_source_dir + "/examples/basic_dro_success/";
 
 constexpr auto dro_file_path_abs_ = input_path_ + "dro.v";
-constexpr auto tb_dro_file_abs_ = input_path_ + "tb_dro.v";
+constexpr auto tb_dro_file_path_abs_ = input_path_ + "tb_dro.v";
 
 
 // clang-format off
@@ -49,7 +49,7 @@ inline DesignView tb_dro_example_design_test {
     },
     { //module
       "tb_basic_dro",   // identifier
-      tb_dro_file_abs_.to_string(), // path
+      tb_dro_file_path_abs_.to_string(), // path
       {// instances lookup
         {"DUT",0}
       }   

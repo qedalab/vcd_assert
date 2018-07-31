@@ -11,7 +11,8 @@
 #include "../../util/parse_input.hpp"
 #include "../grammar/grammar_hacked.hpp"
 
-#include "parse/actions/make_pegtl_template.hpp"
+#include <parse/util/debug_printing.hpp>
+#include <parse/actions/make_pegtl_template.hpp>
 #include <tao/pegtl/memory_input.hpp>
 
 namespace Verilog {
@@ -33,12 +34,14 @@ struct IncludeFileApply {
     // auto next_input_abs = fs::path(next_input_rel).lexically_normal();
     // auto abs_path = fs::weakly_canonical(next_input_abs);
     auto next_input_rel = input.string();
-    std::cout << "INCLUDE :" << next_input_rel << "\n"; 
+    Parse::Util::debug_print("DEBUG: import: next_input_rel: {}\n",next_input_rel);
     
     auto curr_path = fs::path(input.position().source).parent_path();
     
     // curr_path for memory input is ""(the empty string)
     auto next_input_abs = fs::path(curr_path / fs::path(next_input_rel));
+
+    Parse::Util::debug_print("DEBUG: import: next_input_abs: {}\n",next_input_abs);
 
     // TODO : Actually want lexically_normal.
     next_input_abs = fs::exists(next_input_abs) 
@@ -54,7 +57,15 @@ struct IncludeFileApply {
       auto parse_input = i->second;
       // auto parse_input = inputmap.at(next_input_abs);
 
-      if(parse_input.type == Util::InputTypeEnum::file){
+      if(parse_input.type == Util::InputTypeEnum::const_char_pointer){
+        auto start = std::get<const char*>(parse_input.value);
+        tao::pegtl::memory_input<> new_input(start, next_input_rel);
+
+        tao::pegtl::parse_nested<Grammar::_grammar_,
+                                Parse::make_pegtl_template<GrammarAction>::type,
+                                Parse::capture_control>(input, new_input, reader, 
+                                                        inputmap, first_pass);
+      }else if(parse_input.type == Util::InputTypeEnum::library_file){
         auto file = std::get<std::string>(parse_input.value);
         tao::pegtl::file_input<> new_input(file);
 
@@ -63,17 +74,11 @@ struct IncludeFileApply {
                                 Parse::capture_control>(input, new_input, reader, 
                                                         inputmap, first_pass);
       }else{
-        auto start = std::get<const char*>(parse_input.value);
-        tao::pegtl::memory_input<> new_input(start, next_input_rel);
-
-        tao::pegtl::parse_nested<Grammar::_grammar_,
-                                Parse::make_pegtl_template<GrammarAction>::type,
-                                Parse::capture_control>(input, new_input, reader, 
-                                                        inputmap, first_pass);
+        Parse::Util::debug_puts("DEBUG: redundant source file include, ignored.\n");
       }
       
       
-    } else {
+    } else {  
       throw std::runtime_error(fmt::format("RuntimeError : Could not find included file ({})",next_input_abs));
     }
 
@@ -97,7 +102,7 @@ struct CompilerDirectiveAction: single_dispatch<
 
 using DesignReaderFunctionType = void (DesignReader::*)(DesignReader);
 
-struct GrammarAction : multi_dispatch<
+struct PassGrammarAction : multi_dispatch<
   Grammar::compiler_directive, inner_action<
       CompilerDirectiveAction, 
       Storage::function<&DesignReader::merge>
@@ -109,7 +114,6 @@ struct GrammarAction : multi_dispatch<
 > {
   using state = DesignReader;
 };
-
 
 }
 }

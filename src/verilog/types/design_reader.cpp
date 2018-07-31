@@ -1,6 +1,7 @@
 #include "verilog/types/design_reader.hpp"
 
 #include "parse/util/dependent_value.hpp"
+#include "parse/util/debug_printing.hpp"
 #include <cassert>
 
 using namespace Verilog;
@@ -10,6 +11,7 @@ DesignReader::DesignReader() { design_ = std::make_unique<Design>(); }
 // void DesignReader::merge(std::unique_ptr<DesignReader> other)
 void DesignReader::merge(DesignReader other)
 {
+
   // Files
   // std::vector<std::string> file_names_;      /// File Names
 
@@ -73,7 +75,8 @@ void DesignReader::merge(DesignReader other)
 std::size_t DesignReader::module(std::string module_name, std::string file_path)
 {
 
-  std::cout << "adding module " << module_name << "\n"; 
+  Parse::Util::debug_print("DEBUG: module_name : {}\n",module_name);
+  Parse::Util::debug_print("DEBUG: file_path : {}\n",file_path);
   
   // index to store at.
   auto module_index = design_->modules_.size();
@@ -88,6 +91,7 @@ std::size_t DesignReader::module(std::string module_name, std::string file_path)
     return (module_index);
 
   } else {
+    
     auto found = design_->modules_[design_->module_lookup_[module_name]];
     throw std::runtime_error(
         fmt::format("Module {} multiply defined! Already defined in ({}) !",
