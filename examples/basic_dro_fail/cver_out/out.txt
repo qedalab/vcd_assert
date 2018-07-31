@@ -1,0 +1,21 @@
+GPLCVER_2.12a of 05/16/07 (Linux-elf).
+Copyright (c) 1991-2007 Pragmatic C Software Corp.
+  All Rights reserved.  Licensed under the GNU General Public License (GPL).
+  See the 'COPYING' file for details.  NO WARRANTY provided.
+Today is Tue Jul 31 21:39:58 2018.
+Compiling source file "../tb_dro.v"
+Highest level modules:
+tb_basic_dro
+
+		time,	set,	reset,	out
+		0,	0,	0,	x
+		55,	0,	0,	0
+		100,	1,	0,	0
+		200,	0,	0,	0
+**../dro.v(44) WARN** now 22000 fs [566] timing violation in tb_basic_dro.DUT (diff. 2000 fs)
+ $hold((negedge set &&& internal_state_1):20000 fs, reset:22000 fs, 2500 fs);
+		220,	0,	1,	0
+		275,	0,	1,	1
+		320,	0,	0,	1
+Halted at location **../tb_dro.v(24) time 50000 fs from call to $finish.
+  There were 0 error(s), 1 warning(s), and 7 inform(s).
