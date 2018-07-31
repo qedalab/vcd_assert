@@ -110,24 +110,11 @@ TEST_CASE("Verilog.Actions.Design", "[Verilog][Events][Design]")
   {
     Verilog::DesignReader reader{};
 
-    // auto dro_file_path_rel_ =
-    // fs::relative(fs::path(dro_file_path_abs_.to_string()),
-    //  fs::path(tb_dro_file_path_abs_.to_string()).parent_path());
-
     tao::pegtl::file_input<> input_tb_dro(tb_dro_file_path_abs_.to_string_view());
     tao::pegtl::file_input<> input_dro(dro_file_path_abs_.to_string_view());
 
-    // INFO(fmt::format("Input path relative to import location : {}",
-    //  dro_file_path_rel_));
 
     Verilog::Util::InputMap inputs{};
-
-    /*INPUT MAP ONLY FOR LIBRARY FILES*/
-    // inputs.emplace(
-    //     dro_file_path_abs_.to_string(), // relative path from the test bench
-    //     Verilog::Util::ParseInput{Verilog::Util::InputTypeEnum::library_file,
-    //                               dro_file_path_abs_.to_string()});
-
       
     REQUIRE(tao::pegtl::parse<
             VerilogGrammar::_grammar_,

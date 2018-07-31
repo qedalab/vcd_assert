@@ -102,7 +102,7 @@ struct CompilerDirectiveAction: single_dispatch<
 
 using DesignReaderFunctionType = void (DesignReader::*)(DesignReader);
 
-struct PassGrammarAction : multi_dispatch<
+struct GrammarAction : multi_dispatch<
   Grammar::compiler_directive, inner_action<
       CompilerDirectiveAction, 
       Storage::function<&DesignReader::merge>
