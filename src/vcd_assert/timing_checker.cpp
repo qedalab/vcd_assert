@@ -744,7 +744,7 @@ void TimingChecker::dump_registered_event_list() {
     fmt::print("{}:", i);
     auto &event_list = event_lists_[i];
 
-    if(event_list.events.size() == 0) {
+    if(event_list.events.empty()) {
       std::puts(" {}");
       continue;
 
