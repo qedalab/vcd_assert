@@ -48,13 +48,13 @@ void SDF::Test::catch_test_timingcheckcondition(TimingCheckCondition wanted,
     CAPTURE(wanted.get_enum_type());
     CAPTURE(test.get_enum_type());      
     switch (wanted.get_enum_type()) {
-    case ConditionalType::none:
+    case SDF::ConditionalType::simple:
       catch_test_node(std::get<Node>(wanted.value), std::get<Node>(test.value));
       break; 
-    case ConditionalType::inverted:
+    case SDF::ConditionalType::inverted:
       catch_test_invertednode(std::get<InvertedNode>(wanted.value), std::get<InvertedNode>(test.value));
       break; 
-    case ConditionalType::equality:
+    case SDF::ConditionalType::equality:
       catch_test_nodeconstantequality(std::get<NodeConstantEquality>(wanted.value),
                                       std::get<NodeConstantEquality>(test.value));
       break; 

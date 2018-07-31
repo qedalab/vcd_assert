@@ -62,7 +62,7 @@ struct TimingCheckCondition  {
                         -> ConditionalType {
       using T = typename std::decay<decltype(param)>::type;
       if constexpr (std::is_same_v<T,Node>) {
-          return ConditionalType::none;
+          return ConditionalType::simple;
       } else if constexpr (std::is_same_v<T,InvertedNode>) {
           return ConditionalType::inverted;
       } else if constexpr (std::is_same_v<T,NodeConstantEquality>) {

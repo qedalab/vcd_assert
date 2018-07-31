@@ -46,7 +46,7 @@ enum class HChar {
 };
 
 enum class ConditionalType {
-  none,
+  simple,
   inverted,
   equality
 };

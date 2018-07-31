@@ -26,6 +26,7 @@ TEST_CASE("SDF.Types.DelayFile") {
     CHECK(test.num_cells() > 0);
     SDF::Test::catch_test_delayfile(test_delayfile_1, test);
   }
+
 }
 
 void SDF::Test::catch_test_delayfile(SDF::DelayFileView  wanted, SDF::DelayFile &test)

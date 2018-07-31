@@ -9,6 +9,7 @@
 #include <sdf/actions/base.hpp>
 #include <sdf/grammar/base.hpp>
 #include <sdf/types/base.hpp>
+#include <sdf/serialize/base.hpp>
 
 #include <verilog/ieee1364_2001/actions/grammar.hpp>
 #include <verilog/ieee1364_2001/actions/module.hpp>
@@ -171,8 +172,11 @@ int main(int argc, char **argv)
         fmt::print("ERROR: file not found : {}\n", file);
       }
     }
+      std::puts("Top module found");
 
     if (starting_source_file_index_op.has_value()) {
+      std::puts("Start Verilog parsing");
+
       auto index = starting_source_file_index_op.value();
 
       auto top_file_normal =
@@ -193,12 +197,13 @@ int main(int argc, char **argv)
 
       // Parse starting from top Verilog file
       tao::pegtl::file_input<> verilog_input(source_files[index]);
+      bool result = false;
       for (auto &&pass : rsv::indices(2)) {
 
         bool first_pass = pass == 0 ? true : false;
-        std::cout << "starting pass : " << pass << "\n";
+        fmt::print("starting pass : {}", pass);
         // Parse Verilog from top
-        auto result = tao::pegtl::parse<
+        result = tao::pegtl::parse<
             Verilog::IEEE1364_2001::Grammar::_grammar_,
             Parse::make_pegtl_template<
                 Verilog::IEEE1364_2001::Actions::GrammarAction>::type,
@@ -209,7 +214,9 @@ int main(int argc, char **argv)
           throw std::runtime_error(
               "ERROR: Unsuccessful parse of Verilog source file!\n");
         }
-      }
+      }     
+      
+      std::puts("Verilog parse successful");
 
     } else {
       throw std::runtime_error("ERROR: Cannot find indicated top module!\n");
@@ -222,6 +229,9 @@ int main(int argc, char **argv)
   // Finalize verilog parsing into Design object.
   auto design_p = design_reader.release();
   assert(design_p.operator bool());
+
+  
+  std::puts("INFO: Start VCD parsing");
 
   // Read in the VCD file header
   VCD::HeaderReader vcd_reader{};
@@ -239,6 +249,8 @@ int main(int argc, char **argv)
   // Read in and apply the SDF files for each node supplied on COMMAND LINE
   for (auto &&[node, sdf_file_array] : apply_nodes) {
 
+    fmt::print("DEBUG: Applying SDF files to node ({})\n", node);
+
     SDF::HierarchicalIdentifier path{};
 
     // if the node specifed on CMD is a path, parse it, even if single
@@ -249,15 +261,24 @@ int main(int argc, char **argv)
                           SDF::Actions::HierarchicalIdentifierAction>::type,
                       Parse::capture_control>(path_input, path);
 
-    for (auto &&sdf_file : sdf_file_array) {
-      auto node_scope_index_op =
-          VCDAssert::match_scope(*header_p, path.value, 0);
+    // std::string hi_output;
+    // SDF::serialize_hierarchical_identifier(ranges::back_inserter(hi_output), 0, path);
 
-      if (node_scope_index_op.has_value()) {
+    std::puts("DEBUG: trying to find node in vcd header");  
+    // std::puts("node_scope_index_op found");
+
+    auto node_scope_index_op = VCDAssert::match_scope(*header_p, path.value, 0);
+    if (node_scope_index_op.has_value()) {
+      std::puts("DEBUG: node(scope) found");
+
+      for (auto &&sdf_file : sdf_file_array) {
+        fmt::print("DEBUG: applying sdf file ({}) to vcd scope\n", sdf_file);
         timing_checker.apply_sdf_file(sdf_file, node_scope_index_op.value());
-      } else {
-        // could not find the supplied scope.
       }
+
+    } else {
+      fmt::print("WARN: supplied node not matched (node : {})\n",node);
+      // could not find the supplied scope.
     }
   }
 

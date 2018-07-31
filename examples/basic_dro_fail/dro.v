@@ -17,7 +17,7 @@ assign out = internal_out;
 integer state; 
 
 // Internal state variables
-wire internal_state_0,
+reg internal_state_0,
      internal_state_1;
 
 assign internal_state_0 = state == 0;

@@ -4,6 +4,7 @@
 #include "./conditional.hpp"
 #include "./event.hpp"
 #include "./state.hpp"
+#include "./sdf_matching.hpp"
 #include "./triggered_timing_checker.hpp"
 
 #include <sdf/actions/base.hpp>
@@ -47,10 +48,10 @@ namespace VCDAssert {
 class TimingChecker
 {
 
-  struct IndexLookup {
-    std::size_t from;
-    std::size_t to;
-  };
+  // struct IndexLookup {
+  //   std::size_t from;
+  //   std::size_t to;
+  // };
 
   // Order is important
   std::shared_ptr<VCD::Header> header_;

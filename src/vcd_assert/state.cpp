@@ -65,24 +65,28 @@ State::State(VCD::Header &header)
 }
 
 StateValuePointer State::get_value_pointer(std::size_t index)
-{
-  StateValue &state_value = values_.at(index);
+{ 
+  if(values_.size() > index){
+    StateValue &state_value = values_.at(index);
 
-  // Return the StateValuePointer where the data is stored
-  return std::visit(
-      [](auto &value) -> StateValuePointer {
-        using T = std::decay_t<decltype(value)>;
+    // Return the StateValuePointer where the data is stored
+    return std::visit(
+        [](auto &value) -> StateValuePointer {
+          using T = std::decay_t<decltype(value)>;
 
-        if constexpr (std::is_same_v<T, VCD::Value>)
-          return &value;
-        else if constexpr (std::is_same_v<T, ranges::span<VCD::Value>>)
-          return value;
-        else if constexpr (std::is_same_v<T, double>)
-          return &value;
-        else
-          static_assert(Parse::Util::dependent_value<false, T>);
-      },
-      state_value);
+          if constexpr (std::is_same_v<T, VCD::Value>)
+            return &value;
+          else if constexpr (std::is_same_v<T, ranges::span<VCD::Value>>)
+            return value;
+          else if constexpr (std::is_same_v<T, double>)
+            return &value;
+          else
+            static_assert(Parse::Util::dependent_value<false, T>);
+        },
+        state_value);
+  }else{
+    throw std::runtime_error("InternalError: index out of range");
+  }
 }
 
 VCD::Value State::get_scalar_value(std::size_t index) const

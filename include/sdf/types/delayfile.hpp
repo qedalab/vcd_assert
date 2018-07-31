@@ -195,7 +195,7 @@ public:
 namespace Test {
   // using namespace SDF;
   struct DelayFileTester{
-    SDF::DelayFile get_test_delayfile(SDF::DelayFileView dfw){
+    SDF::DelayFile get_test_delayfile(SDF::DelayFileView dfw) const{
       return SDF::DelayFile(dfw);
     }
   };

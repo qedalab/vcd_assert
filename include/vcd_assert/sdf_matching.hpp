@@ -8,14 +8,23 @@
 #include "sdf/types/timing.hpp"
 #include "sdf/types/timing_check.hpp"
 
+
 namespace VCDAssert {
 
+struct IndexLookup {
+  std::size_t from;
+  std::size_t to;
+};
+
+
 ConditionalValuePointer
-get_sdf_conditional_ptr_helper(SDF::EqualityOperator op,
+get_sdf_conditional_ptr_helper(SDF::EqualityOperator op, 
                                ConditionalValuePointer left,
                                ConditionalValuePointer right);
 
-ConditionalValuePointer get_sdf_node_ptr(State &state, std::size_t var_index);
+ConditionalValuePointer get_sdf_node_ptr(State &state, 
+                                        std::vector<IndexLookup> &index_lookup, 
+                                        std::size_t vcd_var_index);
 
 std::optional<std::size_t> match_scope(const VCD::Header &header,
                                        std::vector<std::string> path,
@@ -33,8 +42,9 @@ std::optional<std::size_t> get_sdf_node_index(const VCD::Header &header,
 
 std::optional<ConditionalValuePointer>
 get_sdf_conditional_ptr(const VCD::Header &header, State &state,
-                        SDF::TimingCheckCondition cond, std::size_t scope_index,
-                        VCD::Scope &scope);
+                        SDF::TimingCheckCondition cond, 
+                        std::vector<IndexLookup> &index_lookup, 
+                        std::size_t scope_index, VCD::Scope &scope);
 
 } // namespace VCDAssert
 
