@@ -8,6 +8,7 @@
 #include <sdf/types/delayfile.hpp>
 #include <sdf/types/timing.hpp>
 #include <sdf/types/timing_check.hpp>
+#include <parse/util/debug_printing.hpp>
 
 
 namespace VCDAssert {

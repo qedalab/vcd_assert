@@ -170,47 +170,47 @@ TimingChecker::apply_sdf_hold_port_tchk_helper(SDF::PortTimingCheck port_tchk,
   EdgeType edge{};
 
   if (port_tchk.port.edge.has_value()) {    
-    std::puts("DEBUG : edge found");
+    Parse::Util::debug_puts("DEBUG: edge found");
   
     switch (port_tchk.port.edge.value()) {
     case SDF::EdgeType::posedge:
       edge = VCDAssert::EdgeType::PosEdge;
-      std::puts("DEBUG : port check edgetype : (PosEdge)");  
+      Parse::Util::debug_puts("DEBUG: port check edgetype : (PosEdge)");  
       break;
     case SDF::EdgeType::_01:
       edge = VCDAssert::EdgeType::_01;
-      std::puts("DEBUG : port check edgetype : (_01)");  
+      Parse::Util::debug_puts("DEBUG: port check edgetype : (_01)");  
       break;
     case SDF::EdgeType::negedge:
       edge = VCDAssert::EdgeType::NegEdge;
-      std::puts("DEBUG : port check edgetype : (NegEdge)");  
+      Parse::Util::debug_puts("DEBUG: port check edgetype : (NegEdge)");  
       break;
     case SDF::EdgeType::_10:
       edge = VCDAssert::EdgeType::_10;
-      std::puts("DEBUG : port check edgetype : (_10)");  
+      Parse::Util::debug_puts("DEBUG: port check edgetype : (_10)");  
       break;
     case SDF::EdgeType::_z0:
       edge = VCDAssert::EdgeType::_z0;
-      std::puts("DEBUG : port check edgetype : (_z0)");  
+      Parse::Util::debug_puts("DEBUG: port check edgetype : (_z0)");  
       break;
     case SDF::EdgeType::_0z:
       edge = VCDAssert::EdgeType::_0z;
-      std::puts("DEBUG : port check edgetype : (_0z)");  
+      Parse::Util::debug_puts("DEBUG: port check edgetype : (_0z)");  
       break;
     case SDF::EdgeType::_z1:
       edge = VCDAssert::EdgeType::_z1;
-      std::puts("DEBUG : port check edgetype : (_z1)");  
+      Parse::Util::debug_puts("DEBUG: port check edgetype : (_z1)");  
       break;
     case SDF::EdgeType::_1z:
       edge = VCDAssert::EdgeType::_1z;
-      std::puts("DEBUG : port check edgetype : (_1z)");  
+      Parse::Util::debug_puts("DEBUG: port check edgetype : (_1z)");  
       break;
     default:
       throw std::runtime_error("InternalError : unsupported edgetype");
     }
   } else {
     edge = VCDAssert::EdgeType::Edge;
-      std::puts("DEBUG : port check edgetype : (Edge)");
+      Parse::Util::debug_puts("DEBUG: port check edgetype : (Edge)");
   }
   
 
@@ -288,15 +288,16 @@ void TimingChecker::apply_sdf_hold(SDF::DelayFile &d, SDF::Hold hold,
                                    std::size_t scope_index,
                                    VCD::Scope &scope)
 {
-  std::puts("DEBUG: applying hold timing check to scope.");
+  Parse::Util::debug_puts("DEBUG: applying hold timing check to scope.");
 
   auto sdf_value = hold.value.content(); // chooses TYP for now.
-
+  
+  #ifdef VERBOSE_DEBUG_OUTPUT
   std::string out;
   serialize_hold_check(ranges::back_inserter(out), 0, hold);
-
   fmt::print(out);
-
+  #endif
+  
   auto reg = hold.reg;
   auto trig = hold.trig;
 
@@ -311,7 +312,7 @@ void TimingChecker::apply_sdf_hold(SDF::DelayFile &d, SDF::Hold hold,
     if (reg_port_index_option.has_value() &&
         trig_port_index_option.has_value()) {
 
-      std::puts("DEBUG: hold port nodes successfully found.");
+      Parse::Util::debug_puts("DEBUG: hold port nodes successfully found.");
 
       auto reg_port_index = reg_port_index_option.value();
 
@@ -324,7 +325,7 @@ void TimingChecker::apply_sdf_hold(SDF::DelayFile &d, SDF::Hold hold,
       if (reg_apply_data_option.has_value() &&
           trig_apply_data_option.has_value()) {
   
-        std::puts("DEBUG: hold port check conditionals successfully matched.");
+        Parse::Util::debug_puts("DEBUG: hold port check conditionals successfully matched.");
 
         auto &&[reg_conditional_cvp, reg_edge] = reg_apply_data_option.value();
         auto &&[trig_conditional_cvp, trig_edge] =
@@ -333,7 +334,7 @@ void TimingChecker::apply_sdf_hold(SDF::DelayFile &d, SDF::Hold hold,
         auto reg_event_range = get_hold_event_range(reg.port, reg_port_index);
 
         if (!reg_event_range.empty()) {
-          std::puts("DEBUG: hold reg port successfully matched.");
+          Parse::Util::debug_puts("DEBUG: hold reg port successfully matched.");
 
           for (auto &&index : reg_event_range) {
             event_lists_[index].events.emplace_back(RegisterEvent{
@@ -349,7 +350,7 @@ void TimingChecker::apply_sdf_hold(SDF::DelayFile &d, SDF::Hold hold,
       }
     }
   }else{
-    std::puts("DEBUG: hold value empty, ignoring.");
+    Parse::Util::debug_puts("DEBUG: hold value empty, ignoring.");
 
   }
 }
@@ -431,7 +432,7 @@ void TimingChecker::apply_sdf_cell(SDF::DelayFile &d, SDF::Cell cell,
   /* IF the cell instance is blank or *, then look for
       verilog scopes of 'cell_type' among the available VCD scopes. */
   if (std::holds_alternative<SDF::Star>(cell.cell_instance)) {
-    std::puts("DEBUG: star cell instance");
+    Parse::Util::debug_puts("DEBUG: star cell instance");
     static bool did_warn = false;
     if (!did_warn) {
       fmt::print(
@@ -450,7 +451,7 @@ void TimingChecker::apply_sdf_cell(SDF::DelayFile &d, SDF::Cell cell,
     auto hi = std::get<SDF::HierarchicalIdentifier>(cell.cell_instance);
     if (hi.value.empty()) {
       /* for module/instance scopes in CURRENT scope ONLY: */
-      std::puts("DEBUG: blank cell instance");
+      Parse::Util::debug_puts("DEBUG: blank cell instance");
 
       static bool did_warn = false;
       if (!did_warn) {
@@ -467,7 +468,7 @@ void TimingChecker::apply_sdf_cell(SDF::DelayFile &d, SDF::Cell cell,
 
         if (child_scope.get_scope_type() == VCD::ScopeType::module) {
 
-          fmt::print("DEBUG : applying cell at scope {}\n", child_scope_tup.first);  
+          Parse::Util::debug_print("DEBUG: applying cell at scope {}\n", child_scope_tup.first);  
           auto verilog_module_index = netlist_lookup_.find(index);        
           if(verilog_module_index != netlist_lookup_.end()){
           
@@ -486,11 +487,11 @@ void TimingChecker::apply_sdf_cell(SDF::DelayFile &d, SDF::Cell cell,
       }
 
     } else {
-      fmt::print("DEBUG: matching : {} \n", hi.to_string() );
+      Parse::Util::debug_print("DEBUG: matching : {} \n", hi.to_string() );
       
 
       if(apply_scope.contains_scope(hi.value[0])){
-        fmt::print("DEBUG : parent index ({}) child index ({})\n", 
+        Parse::Util::debug_print("DEBUG: parent index ({}) child index ({})\n", 
             apply_scope_index,  apply_scope.get_scope_index(hi.value[0]));  
 
         // ONLY the module/instance scope supplied:
@@ -498,18 +499,18 @@ void TimingChecker::apply_sdf_cell(SDF::DelayFile &d, SDF::Cell cell,
 
         if (index.has_value()) {
 
-          fmt::print("DEBUG : found scope index ({}) \n",index.value());  
+          Parse::Util::debug_print("DEBUG: found scope index ({}) \n",index.value());  
           VCD::Scope scope = header_->get_scope(index.value());
 
           // apply sdf timing specs withing cell instance
           apply_sdf_timing_specs(d, cell, index.value(), scope);
 
         } else {
-          // std::puts("DEBUG: cell instance was not found.");
-          std::puts("DEBUG: scope does not contain cell instance.");
+          // Parse::Util::debug_puts("DEBUG: cell instance was not found.");
+          Parse::Util::debug_puts("DEBUG: scope does not contain cell instance.");
         }
       }else{
-        std::puts("DEBUG: scope does not contain cell instance.");
+        Parse::Util::debug_puts("DEBUG: scope does not contain cell instance.");
       }
     }
   }
@@ -546,7 +547,7 @@ through the assertions in the cell and map each to the variables.
 void TimingChecker::apply_sdf_file(std::string delayfile_path,
                                    std::size_t vcd_node_scope_index)
 {
-  fmt::print("delayfile_path : {}\n",delayfile_path);
+  Parse::Util::debug_print("DEBUG: delayfile_path : {}\n",delayfile_path);
   SDF::DelayFileReader sdf_reader{};
 
   tao::pegtl::file_input<> sdf_input(delayfile_path);

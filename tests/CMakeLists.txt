@@ -102,6 +102,7 @@ add_test(
 # Failing tests
 set_tests_properties(
   basic_dro_fail
+  basic_xor_fail
   basic_and_fail
   basic_ndro_fail
   PROPERTIES WILL_FAIL TRUE
