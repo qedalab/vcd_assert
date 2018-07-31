@@ -40,7 +40,7 @@ std::optional<std::size_t> match_scope_helper(const VCD::Header &header,
                                               std::size_t path_index,
                                               std::size_t scope_index);
 
-std::optional<std::size_t> get_sdf_node_index(const VCD::Header &header,
+std::optional<std::size_t> get_sdf_node_scope_index(const VCD::Header &header,
                                               SDF::Node node,
                                               std::size_t scope_index,
                                               const VCD::Scope &scope);

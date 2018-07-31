@@ -16,7 +16,7 @@ using namespace VCDAssert;
 using namespace ranges::view;
 namespace rsv = ranges::view;
 
-TimingChecker::TimingChecker(std::shared_ptr<VCD::Header> header, 
+TimingChecker::TimingChecker(std::shared_ptr<VCD::Header> header,
                              std::shared_ptr<Verilog::Design> design) :
     header_(std::move(header)),
     design_(std::move(design)),
@@ -34,7 +34,8 @@ TimingChecker::TimingChecker(std::shared_ptr<VCD::Header> header,
     auto var_size = var_id_code_view.get_size();
     auto var_type = var_id_code_view.get_type();
 
-    fmt::print("VarIdCode: {} start at index {}\n", var_id_code_view.get_id_code(), counter);
+    fmt::print("VarIdCode: {} start at index {}\n",
+               var_id_code_view.get_id_code(), counter);
 
     // If single value
     if (var_type == VCD::VarType::real) {
@@ -45,12 +46,14 @@ TimingChecker::TimingChecker(std::shared_ptr<VCD::Header> header,
 
     if (var_size == 1) {
       // Scalar values
-      pointer_to_index_[std::get<VCD::Value*>(state_.get_value_pointer(i))] = counter;
+      pointer_to_index_[std::get<VCD::Value *>(state_.get_value_pointer(i))] =
+          counter;
     } else {
       // array value
-      auto value_range = std::get<ranges::span<VCD::Value>>(state_.get_value_pointer(i));
+      auto value_range =
+          std::get<ranges::span<VCD::Value>>(state_.get_value_pointer(i));
 
-      for(auto jj: indices(value_range.size())) {
+      for (auto jj : indices(value_range.size())) {
         pointer_to_index_[std::addressof(value_range[i])] = counter + jj;
       }
     }
@@ -64,38 +67,41 @@ TimingChecker::TimingChecker(std::shared_ptr<VCD::Header> header,
   assert(index_lookup_.size() == state_.num_values());
 
   /*
-    Module names are unique but instance names not. Thus need to traverse two 
+    Module names are unique but instance names not. Thus need to traverse two
     trees simultaneously to match them.
   */
-  if(design_->num_modules() != 0){
+  if (design_->num_modules() != 0) {
     auto root_scope = header_->get_root_scope();
-    auto root_net_op = design_->module_find(std::string(root_scope.get_identifier()));
-    if(root_net_op.has_value()){
+    auto root_net_op =
+        design_->module_find(std::string(root_scope.get_identifier()));
+    if (root_net_op.has_value()) {
       netlist_lookup_.reserve(design_->num_modules());
       netlist_reverse_lookup_.reserve(design_->num_modules());
-  
-      netlist_lookup_.emplace(0,0);
-      netlist_reverse_lookup_.emplace(0,0);
-      build_netlist_lookup(0,root_net_op.value());
-    }else{
+
+      netlist_lookup_.emplace(0, 0);
+      netlist_reverse_lookup_.emplace(0, 0);
+      build_netlist_lookup(0, root_net_op.value());
+    } else {
       // incorrect-design error?
     }
-  }else{
+  } else {
     // no-design error?
   }
 
-  /* Process and apply the SDF files specified in Verilog file (from scope derived call location). */ 
+  /* Process and apply the SDF files specified in Verilog file (from scope
+   * derived call location). */
   // ONLY IF DESIGN WAS GIVEN
-  if((design_->num_modules() != 0) && (design_->num_sdf_commands() != 0)){
+  if ((design_->num_modules() != 0) && (design_->num_sdf_commands() != 0)) {
     for (auto &&sdf_set_index : indices(design_->num_sdf_commands())) {
-      
+
       // get commands
       auto sdf_command_set = design_->get_sdf_commands(sdf_set_index);
 
       // get apply scope as hierarchical identifier
       auto source_module_index = design_->sdf_reverse_lookup(sdf_set_index);
-      auto module_identifier = design_->get_module(source_module_index).identifier;
-     
+      auto module_identifier =
+          design_->get_module(source_module_index).identifier;
+
       auto scope_path_index = netlist_reverse_lookup_.at(source_module_index);
       auto scope_path_str = header_->get_scope(source_module_index);
 
@@ -107,56 +113,61 @@ TimingChecker::TimingChecker(std::shared_ptr<VCD::Header> header,
         SDF::HierarchicalIdentifier local_scope_path{};
 
         // EITHER APPLY TO THIS SCOPE, A CHILD SCOPE.
-        if(sdf_command.name_of_instance.has_value()){
-          if(sdf_command.name_of_instance.value() != module_identifier){
+        if (sdf_command.name_of_instance.has_value()) {
+          if (sdf_command.name_of_instance.value() != module_identifier) {
 
             auto stem_path_str = sdf_command.name_of_instance.value();
-            
-            //SHOULD BE ADDITIVE, TODO TEST.
-            tao::pegtl::memory_input<> stem_path_input(stem_path_str, stem_path_str);
-            tao::pegtl::parse<SDF::Grammar::hierarchical_identifier,
-                              Parse::make_pegtl_template<
-                                  SDF::Actions::HierarchicalIdentifierAction>::type,
-                              Parse::capture_control>(stem_path_input, local_scope_path);
-            
-            local_scope_index_op = match_scope(*header_, local_scope_path.value, scope_path_index);
+
+            // SHOULD BE ADDITIVE, TODO TEST.
+            tao::pegtl::memory_input<> stem_path_input(stem_path_str,
+                                                       stem_path_str);
+            tao::pegtl::parse<
+                SDF::Grammar::hierarchical_identifier,
+                Parse::make_pegtl_template<
+                    SDF::Actions::HierarchicalIdentifierAction>::type,
+                Parse::capture_control>(stem_path_input, local_scope_path);
+
+            local_scope_index_op =
+                match_scope(*header_, local_scope_path.value, scope_path_index);
           }
         }
 
         // apply
-        if(local_scope_index_op.has_value()){
-          fmt::print("found local scope index : ({})\n",local_scope_index_op.value());
+        if (local_scope_index_op.has_value()) {
+          fmt::print("found local scope index : ({})\n",
+                     local_scope_index_op.value());
           apply_sdf_file(sdf_command.sdf_file, local_scope_index_op.value());
-        }else{
-          // Error : annotate command specidies instance that could not be found.
+        } else {
+          // Error : annotate command specidies instance that could not be
+          // found.
         }
       }
     }
   }
 }
 
- 
-void TimingChecker::build_netlist_lookup(std::size_t scope_index, std::size_t net_index)
-{  
+void TimingChecker::build_netlist_lookup(std::size_t scope_index,
+                                         std::size_t net_index)
+{
   auto child_scopes = header_->get_scope(scope_index).get_scopes();
   auto verilog_instances = design_->get_module(net_index).instance_lookup_;
 
-  for (auto&& scope_tup : child_scopes) {
-    
+  for (auto &&scope_tup : child_scopes) {
+
     auto child_scope = header_->get_scope(scope_tup.second);
 
-    if(child_scope.get_scope_type() == VCD::ScopeType::module){
+    if (child_scope.get_scope_type() == VCD::ScopeType::module) {
 
       auto instance_iter = verilog_instances.find(scope_tup.first);
-      if(instance_iter != verilog_instances.end()){
+      if (instance_iter != verilog_instances.end()) {
 
         auto child_module_index = std::get<1>(*instance_iter);
 
         netlist_lookup_.emplace(scope_tup.second, child_module_index);
-        netlist_reverse_lookup_.emplace(child_module_index,scope_tup.second);
+        netlist_reverse_lookup_.emplace(child_module_index, scope_tup.second);
         build_netlist_lookup(scope_tup.second, child_module_index);
 
-      }else{
+      } else {
         // scope not found error
       }
     }
@@ -171,72 +182,71 @@ TimingChecker::apply_sdf_hold_port_tchk_helper(SDF::PortTimingCheck port_tchk,
 
   EdgeType edge{};
 
-  if (port_tchk.port.edge.has_value()) {    
+  if (port_tchk.port.edge.has_value()) {
     Parse::Util::debug_puts("DEBUG: edge found");
-  
+
     switch (port_tchk.port.edge.value()) {
     case SDF::EdgeType::posedge:
       edge = VCDAssert::EdgeType::PosEdge;
-      Parse::Util::debug_puts("DEBUG: port check edgetype : (PosEdge)");  
+      Parse::Util::debug_puts("DEBUG: port check edgetype : (PosEdge)");
       break;
     case SDF::EdgeType::_01:
       edge = VCDAssert::EdgeType::_01;
-      Parse::Util::debug_puts("DEBUG: port check edgetype : (_01)");  
+      Parse::Util::debug_puts("DEBUG: port check edgetype : (_01)");
       break;
     case SDF::EdgeType::negedge:
       edge = VCDAssert::EdgeType::NegEdge;
-      Parse::Util::debug_puts("DEBUG: port check edgetype : (NegEdge)");  
+      Parse::Util::debug_puts("DEBUG: port check edgetype : (NegEdge)");
       break;
     case SDF::EdgeType::_10:
       edge = VCDAssert::EdgeType::_10;
-      Parse::Util::debug_puts("DEBUG: port check edgetype : (_10)");  
+      Parse::Util::debug_puts("DEBUG: port check edgetype : (_10)");
       break;
     case SDF::EdgeType::_z0:
       edge = VCDAssert::EdgeType::_z0;
-      Parse::Util::debug_puts("DEBUG: port check edgetype : (_z0)");  
+      Parse::Util::debug_puts("DEBUG: port check edgetype : (_z0)");
       break;
     case SDF::EdgeType::_0z:
       edge = VCDAssert::EdgeType::_0z;
-      Parse::Util::debug_puts("DEBUG: port check edgetype : (_0z)");  
+      Parse::Util::debug_puts("DEBUG: port check edgetype : (_0z)");
       break;
     case SDF::EdgeType::_z1:
       edge = VCDAssert::EdgeType::_z1;
-      Parse::Util::debug_puts("DEBUG: port check edgetype : (_z1)");  
+      Parse::Util::debug_puts("DEBUG: port check edgetype : (_z1)");
       break;
     case SDF::EdgeType::_1z:
       edge = VCDAssert::EdgeType::_1z;
-      Parse::Util::debug_puts("DEBUG: port check edgetype : (_1z)");  
+      Parse::Util::debug_puts("DEBUG: port check edgetype : (_1z)");
       break;
     default:
       throw std::runtime_error("InternalError : unsupported edgetype");
     }
   } else {
     edge = VCDAssert::EdgeType::Edge;
-      Parse::Util::debug_puts("DEBUG: port check edgetype : (Edge)");
+    Parse::Util::debug_puts("DEBUG: port check edgetype : (Edge)");
   }
-  
 
   if (port_tchk.timing_check_condition.has_value()) {
-    auto cond_cvd_option = get_sdf_conditional_ptr(*header_, state_,
-        port_tchk.timing_check_condition.value(), index_lookup_, scope_index, scope);
+    auto cond_cvd_option = get_sdf_conditional_ptr(
+        *header_, state_, port_tchk.timing_check_condition.value(),
+        index_lookup_, scope_index, scope);
 
     if (cond_cvd_option.has_value()) {
       return {{std::move(cond_cvd_option.value()), edge}};
     } else {
-      std::puts("InternalError : could not convert conditional to conditional value pointer.");
+      std::puts("InternalError : could not convert conditional to conditional "
+                "value pointer.");
       return {};
     }
 
   } else {
     return {{std::move(VCD::Value::one), edge}};
   }
-
 }
 
-
-
 std::vector<std::size_t>
-TimingChecker::get_hold_event_range(SDF::Node port, std::size_t port_vcd_index)
+TimingChecker::get_hold_event_range(SDF::Node port,
+                                    std::size_t port_vcd_var_index)
 {
   std::vector<std::size_t> result{};
 
@@ -247,17 +257,20 @@ TimingChecker::get_hold_event_range(SDF::Node port, std::size_t port_vcd_index)
       auto sdf_port_start = port.start.value();
       auto sdf_port_end = port.end.value();
 
-      auto [vcd_val_start, vcd_val_end] = index_lookup_[port_vcd_index];
+      auto vcd_var = header_->get_var(port_vcd_var_index);
+      auto vcd_id_index = vcd_var.get_id_code_index();
+
+      auto [event_indx_start, event_inx_end] = index_lookup_[vcd_id_index];
 
       // verify range size corresponds
-      if (vcd_val_start + sdf_port_end > vcd_val_end) {
+      if (event_indx_start + sdf_port_end > event_inx_end) {
         fmt::printf("WARN : Ignoring extra indices specified for signal : {}",
                     port.basename_identifier);
       }
 
-      if (vcd_val_start + sdf_port_start <= vcd_val_end) {
+      if (event_indx_start + sdf_port_start <= event_inx_end) {
         for (auto &&index : indices(sdf_port_start, sdf_port_end)) {
-          result.push_back(vcd_val_start + index);
+          result.push_back(event_indx_start + index);
         }
       } else {
         // Specified starting index out of bounds.
@@ -270,53 +283,59 @@ TimingChecker::get_hold_event_range(SDF::Node port, std::size_t port_vcd_index)
 
     auto sdf_port_start = port.start.value();
 
-    auto [vcd_val_start, vcd_val_end] = index_lookup_[port_vcd_index];
+    auto vcd_var = header_->get_var(port_vcd_var_index);
+    auto vcd_id_index = vcd_var.get_id_code_index();
 
-    if (vcd_val_start + sdf_port_start <= vcd_val_end) {
-      result.push_back(vcd_val_start + sdf_port_start);
+    auto [event_indx_start, event_inx_end] = index_lookup_[vcd_id_index];
+
+    if (event_indx_start + sdf_port_start <= event_inx_end) {
+      result.push_back(event_indx_start + sdf_port_start);
     } else {
       // Specified index does not exist.
       // Ignore the HOLD.
+      fmt::print("WARNING: Port range index out of bounds, ignoring HOLD!\n");
     }
 
     /* if single value only */
   } else {
-    result.push_back(index_lookup_[port_vcd_index].from);
+    auto vcd_var = header_->get_var(port_vcd_var_index);
+    auto vcd_id_index = vcd_var.get_id_code_index();
+    result.push_back(index_lookup_[vcd_id_index].from);
   }
   return result;
 }
 
-void TimingChecker::apply_sdf_hold(SDF::DelayFile &d, SDF::Hold hold, 
-                                   std::size_t scope_index,
-                                   VCD::Scope &scope)
+void TimingChecker::apply_sdf_hold(SDF::DelayFile &d, SDF::Hold hold,
+                                   std::size_t scope_index, VCD::Scope &scope)
 {
   Parse::Util::debug_puts("DEBUG: applying hold timing check to scope.");
 
   auto sdf_value = hold.value.content(); // chooses TYP for now.
-  
-  #ifdef VERBOSE_DEBUG_OUTPUT
+
+#ifdef VERBOSE_DEBUG_OUTPUT
   std::string out;
   serialize_hold_check(ranges::back_inserter(out), 0, hold);
   fmt::print(out);
-  #endif
-  
+#endif
+
   auto reg = hold.reg;
   auto trig = hold.trig;
 
   if (sdf_value.has_value()) {
 
     // get the indexes to reg and trig port in header
-    auto reg_port_index_option =
-        get_sdf_node_index(*header_, reg.port, scope_index, scope);
-    auto trig_port_index_option =
-        get_sdf_node_index(*header_, trig.port, scope_index, scope);
+    auto reg_port_idx_option =
+        get_sdf_node_scope_index(*header_, reg.port, scope_index, scope);
+    auto trig_port_idx_option =
+        get_sdf_node_scope_index(*header_, trig.port, scope_index, scope);
 
-    if (reg_port_index_option.has_value() &&
-        trig_port_index_option.has_value()) {
+    if (reg_port_idx_option.has_value() &&
+        trig_port_idx_option.has_value()) {
 
       Parse::Util::debug_puts("DEBUG: hold port nodes successfully found.");
 
-      auto reg_port_index = reg_port_index_option.value();
+      auto reg_port_idx = reg_port_idx_option.value();
+      auto trig_port_idx = trig_port_idx_option.value();
 
       auto reg_apply_data_option =
           apply_sdf_hold_port_tchk_helper(reg, scope_index, scope);
@@ -326,35 +345,43 @@ void TimingChecker::apply_sdf_hold(SDF::DelayFile &d, SDF::Hold hold,
 
       if (reg_apply_data_option.has_value() &&
           trig_apply_data_option.has_value()) {
-  
-        Parse::Util::debug_puts("DEBUG: hold port check conditionals successfully matched.");
 
-        auto &&[reg_conditional_cvp, reg_edge] = reg_apply_data_option.value();
-        auto &&[trig_conditional_cvp, trig_edge] =
-            trig_apply_data_option.value();
+        Parse::Util::debug_puts(
+            "DEBUG: hold port check conditionals successfully matched.");
 
-        auto reg_event_range = get_hold_event_range(reg.port, reg_port_index);
+        auto &&[reg_cond_cvp, reg_edge] = reg_apply_data_option.value();
+        auto &&[trig_cond_cvp, trig_edge] = trig_apply_data_option.value();
 
-        if (!reg_event_range.empty()) {
+        // trigger_event_assertion_index
+        auto trig_event_idx_range = get_hold_event_range(trig.port, trig_port_idx);
+
+        // get event_list indexes of the reg event port
+        auto reg_event_idx_range = get_hold_event_range(reg.port, reg_port_idx);
+
+        if (!reg_event_idx_range.empty() && !trig_event_idx_range.empty()) {
           Parse::Util::debug_puts("DEBUG: hold reg port successfully matched.");
 
-          for (auto &&index : reg_event_range) {
-            event_lists_[index].events.emplace_back(RegisterEvent{
-                std::move(reg_conditional_cvp), reg_edge,
-                /* TRIGGER INDEX HERE */
-                TriggeredEvent{std::move(trig_conditional_cvp), trig_edge,
-                               (std::size_t)0,
-                               (std::size_t)(get_scaled_sdf_value(
-                                                *header_,d,sdf_value.value()))}}); //TODO timescale 1000
+          for (auto &&reg_event_idx: reg_event_idx_range) {
+            for (auto &&trig_event_idx: reg_event_idx_range) {
+              event_lists_[reg_event_idx].events.emplace_back(RegisterEvent{
+                  std::move(reg_cond_cvp), reg_edge,
+                  (std::size_t)0, /* TRIGGER INDEX HERE */
+
+                  TriggeredEvent{
+                      std::move(trig_cond_cvp), trig_edge,
+                      trig_event_idx,
+                      (std::size_t)(get_scaled_sdf_value(
+                          *header_, d,
+                          sdf_value.value()))}}); // TODO timescale 1000
+            }
           }
         } else {
           // failed to get applicable range
         }
       }
     }
-  }else{
+  } else {
     Parse::Util::debug_puts("DEBUG: hold value empty, ignoring.");
-
   }
 }
 
@@ -376,7 +403,8 @@ void TimingChecker::apply_sdf_timing_specs(SDF::DelayFile &d, SDF::Cell cell,
       for (auto &&check : std::get<SDF::TimingCheckSpec>(spec.value)) {
         switch (check.get_enum_type()) {
         case SDF::TimingCheckType::hold: {
-          apply_sdf_hold(d, std::get<SDF::Hold>(check.value), scope_index, scope);
+          apply_sdf_hold(d, std::get<SDF::Hold>(check.value), scope_index,
+                         scope);
           // auto var_svp = state_.get_value_pointer(0);
           // auto var_cvp = ConditionalValuePointer(var_svp);
         } break;
@@ -394,7 +422,7 @@ void TimingChecker::apply_sdf_timing_specs(SDF::DelayFile &d, SDF::Cell cell,
 
 // This is called when the * cell instances wildcard is supplied.
 // For every module in scope tree from 'scope' downward, apply.
-void TimingChecker::apply_sdf_cell_helper(SDF::DelayFile &d, SDF::Cell cell, 
+void TimingChecker::apply_sdf_cell_helper(SDF::DelayFile &d, SDF::Cell cell,
                                           VCD::Scope &scope)
 {
   for (auto &child_scope_tup : scope.get_scopes()) {
@@ -406,23 +434,21 @@ void TimingChecker::apply_sdf_cell_helper(SDF::DelayFile &d, SDF::Cell cell,
     if (child_scope.get_scope_type() == VCD::ScopeType::module) {
 
       auto verilog_module_index = netlist_lookup_.find(index);
-      if(verilog_module_index != netlist_lookup_.end()){
-      
-        auto module_name = design_->get_module(
-          std::get<1>(*verilog_module_index)).identifier;
+      if (verilog_module_index != netlist_lookup_.end()) {
 
-        if(cell.cell_type != module_name){
+        auto module_name =
+            design_->get_module(std::get<1>(*verilog_module_index)).identifier;
+
+        if (cell.cell_type != module_name) {
           apply_sdf_timing_specs(d, cell, index, child_scope);
         }
 
-      }else{
+      } else {
         // else ignore..
       }
-
     }
-      //TODO : GO DOWN FOR NESTED MODULE ONLY OR ALL NESTED SCOPES? 
-      apply_sdf_cell_helper(d, cell, child_scope); 
-
+    // TODO : GO DOWN FOR NESTED MODULE ONLY OR ALL NESTED SCOPES?
+    apply_sdf_cell_helper(d, cell, child_scope);
   }
 }
 
@@ -438,12 +464,11 @@ void TimingChecker::apply_sdf_cell(SDF::DelayFile &d, SDF::Cell cell,
     Parse::Util::debug_puts("DEBUG: star cell instance");
     static bool did_warn = false;
     if (!did_warn) {
-      fmt::print(
-          "WARNING: No Verilog design supplied. All SDF cells with (CELLINSTANCE *) ignored.\n");
+      fmt::print("WARNING: No Verilog design supplied. All SDF cells with "
+                 "(CELLINSTANCE *) ignored.\n");
       did_warn = true;
     }
     // for module/instance scopes FROM applied scope DOWN:
-    
 
     apply_sdf_cell_helper(d, cell, apply_scope);
 
@@ -458,51 +483,54 @@ void TimingChecker::apply_sdf_cell(SDF::DelayFile &d, SDF::Cell cell,
 
       static bool did_warn = false;
       if (!did_warn) {
-        fmt::print(
-            "WARNING: No Verilog design supplied. All SDF cells with (CELLINSTANCE ) ignored.\n");
+        fmt::print("WARNING: No Verilog design supplied. All SDF cells with "
+                   "(CELLINSTANCE ) ignored.\n");
         did_warn = true;
       }
 
       // For every module in *this* scope, apply.
       for (auto &child_scope_tup : apply_scope.get_scopes()) {
         auto index = child_scope_tup.second;
-        
+
         VCD::Scope child_scope = header_->get_scope(index);
 
         if (child_scope.get_scope_type() == VCD::ScopeType::module) {
 
-          Parse::Util::debug_print("DEBUG: applying cell at scope {}\n", child_scope_tup.first);  
-          auto verilog_module_index = netlist_lookup_.find(index);        
-          if(verilog_module_index != netlist_lookup_.end()){
-          
-            auto module_name = design_->get_module(
-              std::get<1>(*verilog_module_index)).identifier;
+          Parse::Util::debug_print("DEBUG: applying cell at scope {}\n",
+                                   child_scope_tup.first);
+          auto verilog_module_index = netlist_lookup_.find(index);
+          if (verilog_module_index != netlist_lookup_.end()) {
 
-            if(cell.cell_type != module_name){
+            auto module_name =
+                design_->get_module(std::get<1>(*verilog_module_index))
+                    .identifier;
+
+            if (cell.cell_type != module_name) {
               apply_sdf_timing_specs(d, cell, index, child_scope);
             }
 
-          }else{
+          } else {
             // else ignore..
           }
-
         }
       }
 
     } else {
-      Parse::Util::debug_print("DEBUG: matching : {} \n", hi.to_string() );
-      
+      Parse::Util::debug_print("DEBUG: matching : {} \n", hi.to_string());
 
-      if(apply_scope.contains_scope(hi.value[0])){
-        Parse::Util::debug_print("DEBUG: parent index ({}) child index ({})\n", 
-            apply_scope_index,  apply_scope.get_scope_index(hi.value[0]));  
+      if (apply_scope.contains_scope(hi.value[0])) {
+        Parse::Util::debug_print("DEBUG: parent index ({}) child index ({})\n",
+                                 apply_scope_index,
+                                 apply_scope.get_scope_index(hi.value[0]));
 
         // ONLY the module/instance scope supplied:
-        std::optional<size_t> index = match_scope(*header_, hi.value, apply_scope.get_scope_index(hi.value[0]));
+        std::optional<size_t> index = match_scope(
+            *header_, hi.value, apply_scope.get_scope_index(hi.value[0]));
 
         if (index.has_value()) {
 
-          Parse::Util::debug_print("DEBUG: found scope index ({}) \n",index.value());  
+          Parse::Util::debug_print("DEBUG: found scope index ({}) \n",
+                                   index.value());
           VCD::Scope scope = header_->get_scope(index.value());
 
           // apply sdf timing specs withing cell instance
@@ -510,15 +538,15 @@ void TimingChecker::apply_sdf_cell(SDF::DelayFile &d, SDF::Cell cell,
 
         } else {
           // Parse::Util::debug_puts("DEBUG: cell instance was not found.");
-          Parse::Util::debug_puts("DEBUG: scope does not contain cell instance.");
+          Parse::Util::debug_puts(
+              "DEBUG: scope does not contain cell instance.");
         }
-      }else{
+      } else {
         Parse::Util::debug_puts("DEBUG: scope does not contain cell instance.");
       }
     }
   }
 }
-
 
 /*
 
@@ -550,7 +578,7 @@ through the assertions in the cell and map each to the variables.
 void TimingChecker::apply_sdf_file(std::string delayfile_path,
                                    std::size_t vcd_node_scope_index)
 {
-  Parse::Util::debug_print("DEBUG: delayfile_path : {}\n",delayfile_path);
+  Parse::Util::debug_print("DEBUG: delayfile_path : {}\n", delayfile_path);
   SDF::DelayFileReader sdf_reader{};
 
   tao::pegtl::file_input<> sdf_input(delayfile_path);
@@ -572,7 +600,6 @@ void TimingChecker::apply_sdf_file(std::string delayfile_path,
   for (auto &cell : cells) {
     apply_sdf_cell(*delayfile_p, cell, vcd_node_scope_index);
   }
-
 }
 
 [[nodiscard]] bool TimingChecker::handle_event(const RegisterEvent &event,
@@ -762,84 +789,93 @@ void TimingChecker::real_value_change(VCD::RealValueChangeView /*unused*/)
   }
 }
 
-bool TimingChecker::did_assert() {
-  return did_assert_;
-}
+bool TimingChecker::did_assert() { return did_assert_; }
 
-std::size_t TimingChecker::num_registered_events() {
+std::size_t TimingChecker::num_registered_events()
+{
   std::size_t out = 0;
 
-  for(auto &reg_event_list: this->event_lists_)
+  for (auto &reg_event_list : this->event_lists_)
     out += reg_event_list.events.size();
 
   return out;
 }
 
-std::string TimingChecker::serialize_conditional(const ConditionalValuePointer &cvp) {
-  return std::visit([&](auto& value) -> std::string {
-    using T = typename std::decay<decltype(value)>::type;
+std::string
+TimingChecker::serialize_conditional(const ConditionalValuePointer &cvp)
+{
+  return std::visit(
+      [&](auto &value) -> std::string {
+        using T = typename std::decay<decltype(value)>::type;
 
-    if constexpr(std::is_same_v<T, VCD::Value>) {
-      return std::string(VCD::value_to_string(value));
-    } else if constexpr(std::is_same_v<T, VCD::Value*>) {
-      return fmt::format("VCD[{}]", pointer_to_index_.at(value));
-    } else {
-      auto out = std::string("(");
-      out.append(serialize_conditional(value->inner_left()));
+        if constexpr (std::is_same_v<T, VCD::Value>) {
+          return std::string(VCD::value_to_string(value));
+        } else if constexpr (std::is_same_v<T, VCD::Value *>) {
+          return fmt::format("VCD[{}]", pointer_to_index_.at(value));
+        } else {
+          auto out = std::string("(");
+          out.append(serialize_conditional(value->inner_left()));
 
-      if (value->get_operator() == EqualityOperator::case_equal) {
-        out.append(" === ");
-      } else if (value->get_operator() == EqualityOperator::case_not_equal) {
-        out.append(" !== ");
-      } else if (value->get_operator() == EqualityOperator::logical_equal) {
-        out.append(" == ");
-      } else if (value->get_operator() == EqualityOperator::logical_not_equal) {
-        out.append(" != ");
-      } else {
-        std::puts("INTERNAL ERROR: Invalid enum");
-        std::abort();
-      }
+          if (value->get_operator() == EqualityOperator::case_equal) {
+            out.append(" === ");
+          } else if (value->get_operator() ==
+                     EqualityOperator::case_not_equal) {
+            out.append(" !== ");
+          } else if (value->get_operator() == EqualityOperator::logical_equal) {
+            out.append(" == ");
+          } else if (value->get_operator() ==
+                     EqualityOperator::logical_not_equal) {
+            out.append(" != ");
+          } else {
+            std::puts("INTERNAL ERROR: Invalid enum");
+            std::abort();
+          }
 
-      out.append(serialize_conditional(value->inner_right()));
-      out.append(")");
+          out.append(serialize_conditional(value->inner_right()));
+          out.append(")");
 
-      return out;
-    }
-
-  }, cvp.inner());
+          return out;
+        }
+      },
+      cvp.inner());
 }
 
-void TimingChecker::dump_registered_event_list() {
+void TimingChecker::dump_registered_event_list()
+{
   fmt::print("RegistedEventLists dump\n");
   fmt::print("=======================\n");
 
-  for(auto i: ranges::view::indices(event_lists_.size())) {
+  for (auto i : ranges::view::indices(event_lists_.size())) {
     fmt::print("{}:", i);
     auto &event_list = event_lists_[i];
 
-    if(event_list.events.empty()) {
+    if (event_list.events.empty()) {
       std::puts(" {}");
       continue;
-
     }
 
     std::puts(" {");
 
-    for(auto j: ranges::view::indices(event_list.events.size())) {
+    for (auto j : ranges::view::indices(event_list.events.size())) {
       fmt::print("  {}:", j);
       auto &reg_event = event_list.events[j];
       auto &trig_event = reg_event.triggered;
 
       std::puts(" {");
 
-      fmt::print("    Register Condition     : {}\n", serialize_conditional(reg_event.condition));
-      fmt::print("    Register EdgeType      : {}\n", edge_type_to_string(reg_event.edge_type));
+      fmt::print("    Register Condition     : {}\n",
+                 serialize_conditional(reg_event.condition));
+      fmt::print("    Register EdgeType      : {}\n",
+                 edge_type_to_string(reg_event.edge_type));
       fmt::print("    Register Trigger index : {}\n", reg_event.trigger_index);
-      fmt::print("    Trigger Condition      : {}\n", serialize_conditional(trig_event.condition));
-      fmt::print("    Trigger Assertion      : {}\n", trig_event.assertion_index);
-      fmt::print("    Trigger EdgeType       : {}\n", edge_type_to_string(trig_event.edge_type));
+      fmt::print("    Trigger Condition      : {}\n",
+                 serialize_conditional(trig_event.condition));
+      fmt::print("    Trigger Assertion      : {}\n",
+                 trig_event.assertion_index);
+      fmt::print("    Trigger EdgeType       : {}\n",
+                 edge_type_to_string(trig_event.edge_type));
       fmt::print("    Trigger hold time      : {}\n", trig_event.hold_time);
-      
+
       std::puts("  }");
     }
 

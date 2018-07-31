@@ -162,7 +162,7 @@ VCDAssert::get_sdf_conditional_ptr_helper(SDF::EqualityOperator op,
 }
 
 std::optional<std::size_t>
-VCDAssert::get_sdf_node_index(const VCD::Header &header, SDF::Node node,
+VCDAssert::get_sdf_node_scope_index(const VCD::Header &header, SDF::Node node,
                               std::size_t /*scope_index*/,
                               const VCD::Scope &scope)
 {
@@ -225,7 +225,7 @@ VCDAssert::get_sdf_conditional_ptr(const VCD::Header &header, State &state,
     SDF::Node node = std::get<SDF::Node>(cond.value);
 
     // get the conditional value pointer of the variable
-    auto left_index_option = get_sdf_node_index(header, node, scope_index, scope);
+    auto left_index_option = get_sdf_node_scope_index(header, node, scope_index, scope);
 
     if (left_index_option.has_value()) {
       Parse::Util::debug_puts("DEBUG: found conditional node vcd index.");
@@ -252,7 +252,7 @@ VCDAssert::get_sdf_conditional_ptr(const VCD::Header &header, State &state,
     Parse::Util::debug_puts("DEBUG: conditionals of type inverted node");
 
     // get the conditional value pointer of the variable
-    auto left_index_option = get_sdf_node_index(header, node, scope_index, scope);
+    auto left_index_option = get_sdf_node_scope_index(header, node, scope_index, scope);
 
     if (left_index_option.has_value()) {
       Parse::Util::debug_puts("DEBUG: found conditional node vcd index.");
@@ -281,7 +281,7 @@ VCDAssert::get_sdf_conditional_ptr(const VCD::Header &header, State &state,
     SDF::Node node = equality.left;
 
     // get the conditional value pointer of the variable
-    auto left_index_option = get_sdf_node_index(header, node, scope_index, scope);
+    auto left_index_option = get_sdf_node_scope_index(header, node, scope_index, scope);
 
     if (left_index_option.has_value()) {
 

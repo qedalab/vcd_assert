@@ -145,6 +145,7 @@ int main(int argc, char **argv)
 
     // Find file containing top module and populate input map.
     std::optional<std::size_t> starting_source_file_index_op{};
+    Parse::Util::debug_print("DEBUG: starting pass : -1\n");
 
     for (auto &&[i, file] : rsv::zip(rsv::indices, source_files)) {
       if (fs::exists(file)) {
@@ -154,7 +155,6 @@ int main(int argc, char **argv)
         tao::pegtl::file_input<> input(abs_path);
 
         Verilog::IEEE1364_2001::Actions::ModuleEvent me{};
-        Parse::Util::debug_print("DEBUG: starting pass : -1");
 
         // Parse with only Module actions, to build module map.
         auto result = tao::pegtl::parse<
@@ -204,7 +204,7 @@ int main(int argc, char **argv)
       for (auto &&pass : rsv::indices(2)) {
 
         bool first_pass = pass == 0 ? true : false;
-        Parse::Util::debug_print("DEBUG: starting pass : {}", pass);
+        Parse::Util::debug_print("DEBUG: starting pass : {}\n", pass);
         // Parse Verilog from top
         result = tao::pegtl::parse<
             Verilog::IEEE1364_2001::Grammar::_grammar_,
