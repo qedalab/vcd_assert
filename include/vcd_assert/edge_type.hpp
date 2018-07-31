@@ -22,31 +22,32 @@ enum class EdgeType {
   _z0
 };
 
-constexpr std::string_view get_edge_type_string(EdgeType e) {
-  switch(e) {
-    case EdgeType::NoEdge:
-      return "NoEdge";
-    case EdgeType::PosEdge:
-      return "PosEdge";
-    case EdgeType::NegEdge:
-      return "NegEdge";
-    case EdgeType::Edge:
-      return "Edge";
-    case EdgeType::_01:
-      return "01";
-    case EdgeType::_10:
-      return "10";
-    case EdgeType::_0z:
-      return "0z";
-    case EdgeType::_z1:
-      return "z1";
-    case EdgeType::_1z:
-      return "1z";
-    case EdgeType::_z0:
-      return "01";
-    default:
-      std::puts("UNREACHABLE CODE: Invalid enum state");
-      std::abort();
+constexpr std::string_view edge_type_to_string(EdgeType et)
+{
+  switch (et) {
+  case EdgeType::NoEdge:
+    return "NoEdge";
+  case EdgeType::PosEdge:
+    return "PosEdge";
+  case EdgeType::NegEdge:
+    return "NegEdge";
+  case EdgeType::Edge:
+    return "Edge";
+  case EdgeType::_01:
+    return "01";
+  case EdgeType::_10:
+    return "10";
+  case EdgeType::_0z:
+    return "0z";
+  case EdgeType::_z1:
+    return "z1";
+  case EdgeType::_1z:
+    return "1z";
+  case EdgeType::_z0:
+    return "z0";
+  default:                                             // LCOV_EXCL_LINE
+    std::puts("UNREACHABLE CODE: Invalid enum state"); // LCOV_EXCL_LINE
+    std::abort();                                      // LCOV_EXCL_LINE
   }
 }
 

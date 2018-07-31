@@ -690,30 +690,33 @@ void TimingChecker::vector_value_change(
   for (auto i : indices(values.size())) {
     char value_char = values[i];
     auto buffer_index = i + padded;
-    switch (value_char) {
     // clang-format off
+    switch (value_char) {
       case 'x': case 'X': value_buffer_[buffer_index] = VCD::Value::x; break;
       case 'z': case 'Z': value_buffer_[buffer_index] = VCD::Value::z; break;
       case '1': value_buffer_[buffer_index] = VCD::Value::one; break;
       case '0': value_buffer_[buffer_index] = VCD::Value::x; break;
-      // clang-format on
+      default:                                       // LCOV_EXCL_LINE
+        puts("INTERNAL ERROR: Invalid value match"); // LCOV_EXCL_LINE
+        std::abort();                                // LCOV_EXCL_LINE
     }
+    // clang-format on
   }
 
   // Do left extention
   VCD::Value left_extend_value;
 
+  // clang-format off
   switch (value_buffer_[padded]) {
-    // clang-format off
     case VCD::Value::one: left_extend_value = VCD::Value::zero; break;
     case VCD::Value::zero: left_extend_value = VCD::Value::zero; break;
     case VCD::Value::x: left_extend_value = VCD::Value::x; break;
     case VCD::Value::z: left_extend_value = VCD::Value::z; break;
-    default:                                              // LCOV_EXCL_LINE
-      puts("INTERNAL ERROR: Code should be unreachable"); // LCOV_EXCL_LINE
-      std::abort();                                       // LCOV_EXCL_LINE
-    // clang-format on
+    default:                                      // LCOV_EXCL_LINE
+      puts("INTERNAL ERROR: Invalid enum state"); // LCOV_EXCL_LINE
+      std::abort();                               // LCOV_EXCL_LINE
   }
+  // clang-format on
 
   for (auto i : indices(padded)) {
     value_buffer_[i] = left_extend_value;
@@ -763,7 +766,7 @@ void TimingChecker::dump_registered_event_list() {
     fmt::print("{}:", i);
     auto &event_list = event_lists_[i];
 
-    if(event_list.events.size() == 0) {
+    if(event_list.events.empty()) {
       std::puts(" {}");
       continue;
 
@@ -778,12 +781,11 @@ void TimingChecker::dump_registered_event_list() {
 
       std::puts(" {");
 
-
       fmt::print("    Register Condition: TODO");
-      fmt::print("    Register EdgeType : {}", get_edge_type_string(reg_event.edge_type));
+      fmt::print("    Register EdgeType : {}", edge_type_to_string(reg_event.edge_type));
       fmt::print("    Trigger Condition : TODO");
       fmt::print("    Trigger Assertion : {}", trig_event.assertion_index);
-      fmt::print("    Trigger EdgeType  : {}", get_edge_type_string(trig_event.edge_type));
+      fmt::print("    Trigger EdgeType  : {}", edge_type_to_string(trig_event.edge_type));
       fmt::print("    Trigger hold time : {}", trig_event.hold_time);
       
       std::puts("  }");
