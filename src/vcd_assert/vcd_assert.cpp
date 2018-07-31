@@ -154,6 +154,7 @@ int main(int argc, char **argv)
         tao::pegtl::file_input<> input(abs_path);
 
         Verilog::IEEE1364_2001::Actions::ModuleEvent me{};
+        Parse::Util::debug_print("DEBUG: starting pass : -1");
 
         // Parse with only Module actions, to build module map.
         auto result = tao::pegtl::parse<

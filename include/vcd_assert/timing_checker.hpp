@@ -42,6 +42,7 @@
 #include <range/v3/span.hpp>
 #include <range/v3/view/indices.hpp>
 #include <variant>
+#include <fmt/format.h>
 
 #include <unordered_map>
 

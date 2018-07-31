@@ -71,7 +71,7 @@ TEST_CASE("Verilog.Actions.Design", "[Verilog][Events][Design]")
 
     for (auto &&pass : rsv::indices(2)) {
 
-      bool first_pass = pass == 0? true : false;
+      bool first_pass = (pass == 0);
       REQUIRE(tao::pegtl::parse<
               VerilogGrammar::_grammar_,
               Parse::make_pegtl_template<Actions::GrammarAction>::type,
@@ -127,7 +127,7 @@ TEST_CASE("Verilog.Actions.Design", "[Verilog][Events][Design]")
                                   dro_file_path_abs_.to_string()});
 
     for (auto &&pass : rsv::indices(2)) {
-      std::cout << "pass : " << pass << "\n";
+      INFO("test pass : " << pass);
       bool first_pass = pass == 0 ? true : false;
       REQUIRE(tao::pegtl::parse<
               VerilogGrammar::_grammar_,

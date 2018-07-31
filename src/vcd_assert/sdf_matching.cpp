@@ -12,13 +12,6 @@ int VCDAssert::get_scaled_sdf_value(const VCD::Header &header, const SDF::DelayF
     auto number_scale = static_cast<int>(sdf_ts.get_number()) / static_cast<int>(vcd_ts.get_number());
     auto unit_scale = static_cast<int>(sdf_ts.get_unit()) - static_cast<int>(vcd_ts.get_unit());
 
-    // Parse::Util::debug_print("DEBUG: sdf number  : {}\n",  static_cast<int>(sdf_ts.get_number()) );
-    // Parse::Util::debug_print("DEBUG: sdf unit  : {}\n", static_cast<int>(sdf_ts.get_unit()) );
-    // Parse::Util::debug_print("DEBUG: vcd number  : {}\n",  static_cast<int>(vcd_ts.get_number()) );
-    // Parse::Util::debug_print("DEBUG: vcd unit  : {}\n", static_cast<int>(vcd_ts.get_unit()) );
-    // Parse::Util::debug_print("DEBUG: timescale number dif : {}\n", number_scale);
-    // Parse::Util::debug_print("DEBUG: timescale unit dif : {}\n", unit_scale);
-
     return input * number_scale * pow(10,unit_scale) *  1;
   }else if (header.has_time_scale()){
 
@@ -39,11 +32,9 @@ ConditionalValuePointer VCDAssert::get_sdf_node_ptr(const VCD::Header &header,
                                                     std::vector<IndexLookup> &index_lookup,
                                                     std::size_t vcd_var_index)
 {
-  // get the conditional value pointer of the variable
 
   auto vcd_var = header.get_var(vcd_var_index);
   auto vcd_id_index = vcd_var.get_id_code_index();
-  // if(header.num_id_codes() > vcd_var_index ){
     
   auto state_var_index = index_lookup.at(vcd_id_index).from;
   auto var_svp = state.get_value_pointer(state_var_index);
@@ -58,9 +49,7 @@ ConditionalValuePointer VCDAssert::get_sdf_node_ptr(const VCD::Header &header,
     throw std::runtime_error("InternalError");
   }
 
-  // }else{
-  //   throw std::runtime_error("InternalError : index out of bounds");
-  // }
+
 }
 
 
@@ -202,7 +191,8 @@ VCDAssert::get_sdf_node_index(const VCD::Header &header, SDF::Node node,
       }
     }
   }else{
-    Parse::Util::debug_print("DEBUG: trying to get vcd variable index of sdf node (node: {})\n", node.basename_identifier );
+    Parse::Util::debug_print("DEBUG: trying to get vcd variable index of sdf node (node: {})\n", 
+                              node.basename_identifier );
   }
 
   // for(auto &&child_var : inner_scope.get_variables() ){

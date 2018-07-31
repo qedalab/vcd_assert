@@ -1,15 +1,19 @@
 #ifndef LIBPARSE_UTIL_DEBUG_PRINTING_HPP
 #define LIBPARSE_UTIL_DEBUG_PRINTING_HPP
 
-#ifdef VERBOSE_DEBUG_OUPUT
-#include <fmt/print.h>
+// #ifndef VERBOSE_DEBUG_OUTPUT
+// #define VERBOSE_DEBUG_OUTPUT
+// #endif
+
+#ifdef VERBOSE_DEBUG_OUTPUT
+#include <fmt/format.h>
 #endif
 
 namespace Parse::Util {
 
 template<typename Input>
 void debug_puts(Input input){
-#ifdef VERBOSE_DEBUG_OUPUT
+#ifdef VERBOSE_DEBUG_OUTPUT
   std::puts(input);
 #else
   (void)input;
@@ -17,7 +21,7 @@ void debug_puts(Input input){
 }
 
 template<typename... Args>
-#ifdef VERBOSE_DEBUG_OUPUT
+#ifdef VERBOSE_DEBUG_OUTPUT
 void debug_print(Args... args){
   fmt::print(args...);
 #else
