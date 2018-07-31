@@ -16,8 +16,10 @@ module tb_basic_ndro;
       #10 set = !set;
       #10 reset = !reset;
       #10 reset = !reset;
+      #10 set = !set;
       #10 clk = !clk;
       #2 reset = !reset; // timing violation
+      #10 $finish;
   end
 
   initial begin
@@ -26,6 +28,4 @@ module tb_basic_ndro;
   end
 
   basic_ndro DUT (set, reset, clk, out);
-
-  initial #70 $finish;
 endmodule
