@@ -23,6 +23,8 @@
 #include <parse/actions/control.hpp>
 #include <parse/actions/make_pegtl_template.hpp>
 #include <parse/util/filesystem.hpp>
+#include <parse/util/debug_printing.hpp>
+
 
 #include <tao/pegtl/file_input.hpp>
 #include <tao/pegtl/memory_input.hpp>

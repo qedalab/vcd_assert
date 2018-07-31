@@ -22,6 +22,7 @@
 #include <parse/actions/control.hpp>
 #include <parse/actions/make_pegtl_template.hpp>
 #include <parse/util/filesystem.hpp>
+#include <parse/util/debug_printing.hpp>
 
 #include <tao/pegtl/file_input.hpp>
 #include <tao/pegtl/memory_input.hpp>
@@ -172,7 +173,8 @@ int main(int argc, char **argv)
         fmt::print("ERROR: file not found : {}\n", file);
       }
     }
-      std::puts("Top module found");
+    
+    Parse::Util::debug_puts("DEBUG: Top module found");
 
     if (starting_source_file_index_op.has_value()) {
       std::puts("Start Verilog parsing");
@@ -201,7 +203,7 @@ int main(int argc, char **argv)
       for (auto &&pass : rsv::indices(2)) {
 
         bool first_pass = pass == 0 ? true : false;
-        fmt::print("starting pass : {}", pass);
+        Parse::Util::debug_print("DEBUG: starting pass : {}", pass);
         // Parse Verilog from top
         result = tao::pegtl::parse<
             Verilog::IEEE1364_2001::Grammar::_grammar_,
@@ -249,7 +251,7 @@ int main(int argc, char **argv)
   // Read in and apply the SDF files for each node supplied on COMMAND LINE
   for (auto &&[node, sdf_file_array] : apply_nodes) {
 
-    fmt::print("DEBUG: Applying SDF files to node ({})\n", node);
+    Parse::Util::debug_print("DEBUG: Applying SDF files to node ({})\n", node);
 
     SDF::HierarchicalIdentifier path{};
 
@@ -264,15 +266,15 @@ int main(int argc, char **argv)
     // std::string hi_output;
     // SDF::serialize_hierarchical_identifier(ranges::back_inserter(hi_output), 0, path);
 
-    std::puts("DEBUG: trying to find node in vcd header");  
+    Parse::Util::debug_puts("DEBUG: trying to find node in vcd header");  
     // std::puts("node_scope_index_op found");
 
     auto node_scope_index_op = VCDAssert::match_scope(*header_p, path.value, 0);
     if (node_scope_index_op.has_value()) {
-      std::puts("DEBUG: node(scope) found");
+      Parse::Util::debug_puts("DEBUG: node(scope) found");
 
       for (auto &&sdf_file : sdf_file_array) {
-        fmt::print("DEBUG: applying sdf file ({}) to vcd scope\n", sdf_file);
+        Parse::Util::debug_print("DEBUG: applying sdf file ({}) to vcd scope\n", sdf_file);
         timing_checker.apply_sdf_file(sdf_file, node_scope_index_op.value());
       }
 

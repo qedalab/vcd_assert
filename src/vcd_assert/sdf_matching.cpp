@@ -1,6 +1,7 @@
 #include "vcd_assert/sdf_matching.hpp"
 #include <math.h>       /* pow */
 
+
 using namespace VCDAssert;
 
 int VCDAssert::get_scaled_sdf_value(const VCD::Header &header, const SDF::DelayFile &d, double input){
@@ -11,12 +12,12 @@ int VCDAssert::get_scaled_sdf_value(const VCD::Header &header, const SDF::DelayF
     auto number_scale = static_cast<int>(sdf_ts.get_number()) / static_cast<int>(vcd_ts.get_number());
     auto unit_scale = static_cast<int>(sdf_ts.get_unit()) - static_cast<int>(vcd_ts.get_unit());
 
-    // fmt::print("DEBUG: sdf number  : {}\n",  static_cast<int>(sdf_ts.get_number()) );
-    // fmt::print("DEBUG: sdf unit  : {}\n", static_cast<int>(sdf_ts.get_unit()) );
-    // fmt::print("DEBUG: vcd number  : {}\n",  static_cast<int>(vcd_ts.get_number()) );
-    // fmt::print("DEBUG: vcd unit  : {}\n", static_cast<int>(vcd_ts.get_unit()) );
-    // fmt::print("DEBUG: timescale number dif : {}\n", number_scale);
-    // fmt::print("DEBUG: timescale unit dif : {}\n", unit_scale);
+    // Parse::Util::debug_print("DEBUG: sdf number  : {}\n",  static_cast<int>(sdf_ts.get_number()) );
+    // Parse::Util::debug_print("DEBUG: sdf unit  : {}\n", static_cast<int>(sdf_ts.get_unit()) );
+    // Parse::Util::debug_print("DEBUG: vcd number  : {}\n",  static_cast<int>(vcd_ts.get_number()) );
+    // Parse::Util::debug_print("DEBUG: vcd unit  : {}\n", static_cast<int>(vcd_ts.get_unit()) );
+    // Parse::Util::debug_print("DEBUG: timescale number dif : {}\n", number_scale);
+    // Parse::Util::debug_print("DEBUG: timescale unit dif : {}\n", unit_scale);
 
     return input * number_scale * pow(10,unit_scale) *  1;
   }else if (header.has_time_scale()){
@@ -47,7 +48,7 @@ ConditionalValuePointer VCDAssert::get_sdf_node_ptr(const VCD::Header &header,
   auto state_var_index = index_lookup.at(vcd_id_index).from;
   auto var_svp = state.get_value_pointer(state_var_index);
   
-  std::puts("DEBUG: found variable state value pointer");
+  Parse::Util::debug_puts("DEBUG: found variable state value pointer");
   
   if (std::holds_alternative<VCD::Value *>(var_svp)) {
     auto var_svp_val = std::get<VCD::Value *>(var_svp);
@@ -72,17 +73,17 @@ std::optional<std::size_t> VCDAssert::match_scope(const VCD::Header &header,
 {
   auto starting_scope = header.get_scope(scope_index);
   auto base_scope_identifier = starting_scope.get_identifier();
-  fmt::print("DEBUG: scope identifier : ({})\n", base_scope_identifier);
-  fmt::print("DEBUG: (path.size() == 1) : ({})\n", (path.size() == 1));
+  Parse::Util::debug_print("DEBUG: scope identifier : ({})\n", base_scope_identifier);
+  Parse::Util::debug_print("DEBUG: (path.size() == 1) : ({})\n", (path.size() == 1));
 
   // Find index of application scope as supplied on cmd line. if possible.
   if (path.empty()) {
-    std::puts("DEBUG: size == 0");
+    Parse::Util::debug_puts("DEBUG: size == 0");
 
     return scope_index; // Implicitly applied at root.
 
   } else if (path.size() == 1) {
-    std::puts("DEBUG: size == 1");
+    Parse::Util::debug_puts("DEBUG: size == 1");
     if (path[0] == base_scope_identifier) {
       return scope_index; // Explicitly applied at root.
     } else {
@@ -92,7 +93,7 @@ std::optional<std::size_t> VCDAssert::match_scope(const VCD::Header &header,
     }
 
   } else {
-    std::puts("DEBUG: size > 1");
+    Parse::Util::debug_puts("DEBUG: size > 1");
     // Not applied at root, try to find where it is applied:
     if (path[0] == base_scope_identifier) {
       return {}; // path specified not applicable/valid.
@@ -182,10 +183,10 @@ VCDAssert::get_sdf_node_index(const VCD::Header &header, SDF::Node node,
   if (node.hierarchical_identifier.has_value()) {
     auto hi = node.hierarchical_identifier.value();
     
-    fmt::print("DEBUG: trying to get vcd variable index of");
-    fmt::printf(" sdf node (node: {}{})\n", hi.to_string(), node.basename_identifier );
+    Parse::Util::debug_print("DEBUG: trying to get vcd variable index of");
+    Parse::Util::debug_print(" sdf node (node: {}{})\n", hi.to_string(), 
+                              node.basename_identifier );
 
-    // (void)header;
 
     if(!hi.value.empty() && inner_scope.contains_scope(hi.value[0])){
 
@@ -201,11 +202,11 @@ VCDAssert::get_sdf_node_index(const VCD::Header &header, SDF::Node node,
       }
     }
   }else{
-    fmt::print("DEBUG: trying to get vcd variable index of sdf node (node: {})\n", node.basename_identifier );
+    Parse::Util::debug_print("DEBUG: trying to get vcd variable index of sdf node (node: {})\n", node.basename_identifier );
   }
 
   // for(auto &&child_var : inner_scope.get_variables() ){
-  //   fmt::print("DEBUG: child var :{}\n", child_var.first);
+  //   Parse::Util::debug_print("DEBUG: child var :{}\n", child_var.first);
   // }
 
   // get the variable from the scope
@@ -224,25 +225,24 @@ VCDAssert::get_sdf_conditional_ptr(const VCD::Header &header, State &state,
 {
   (void)state;
   auto inner_scope = scope;
-  fmt::print("DEBUG: current scope (scope: {})\n", inner_scope.get_identifier() );
+  Parse::Util::debug_print("DEBUG: current scope (scope: {})\n", inner_scope.get_identifier() );
 
   switch (cond.get_enum_type()) {
   case SDF::ConditionalType::simple: /* node==1 is condition */
   {
     
-    std::puts("DEBUG: conditionals of type node");
+    Parse::Util::debug_puts("DEBUG: conditionals of type node");
     SDF::Node node = std::get<SDF::Node>(cond.value);
 
     // get the conditional value pointer of the variable
     auto left_index_option = get_sdf_node_index(header, node, scope_index, scope);
 
     if (left_index_option.has_value()) {
-      std::puts("DEBUG: found conditional node vcd index.");
-// 
+      Parse::Util::debug_puts("DEBUG: found conditional node vcd index.");
+
       auto left_cvp = get_sdf_node_ptr(header, state, index_lookup, left_index_option.value());
 
-      // auto left_cvp = ConditionalValuePointer(VCD::Value::zero); /// <<<<
-      auto right_cvp = ConditionalValuePointer(VCD::Value::zero); /// <<<<
+      auto right_cvp = ConditionalValuePointer(VCD::Value::one); /// <<<<
 
       auto cond_op = ConditionalOperator<EqualityOperator::logical_equal>(
           std::move(left_cvp), std::move(right_cvp));
@@ -250,7 +250,7 @@ VCDAssert::get_sdf_conditional_ptr(const VCD::Header &header, State &state,
       return ConditionalValuePointer(std::move(cond_op));
 
     } else {
-      std::puts("DEBUG: conditional node vcd index not found.");
+      Parse::Util::debug_puts("DEBUG: conditional node vcd index not found.");
       return {}; // not found
     }
 
@@ -259,13 +259,13 @@ VCDAssert::get_sdf_conditional_ptr(const VCD::Header &header, State &state,
   {
 
     SDF::InvertedNode node = std::get<SDF::InvertedNode>(cond.value);
-    std::puts("DEBUG: conditionals of type inverted node");
+    Parse::Util::debug_puts("DEBUG: conditionals of type inverted node");
 
     // get the conditional value pointer of the variable
     auto left_index_option = get_sdf_node_index(header, node, scope_index, scope);
 
     if (left_index_option.has_value()) {
-      std::puts("DEBUG: found conditional node vcd index.");
+      Parse::Util::debug_puts("DEBUG: found conditional node vcd index.");
 
       auto left_cvp = get_sdf_node_ptr(header, state, index_lookup, left_index_option.value());
 
@@ -285,7 +285,7 @@ VCDAssert::get_sdf_conditional_ptr(const VCD::Header &header, State &state,
   {
 
     auto equality = std::get<SDF::NodeConstantEquality>(cond.value);
-    std::puts("DEBUG: conditionals of type equality");
+    Parse::Util::debug_puts("DEBUG: conditionals of type equality");
     
     // std::size_t var_index;
     SDF::Node node = equality.left;
