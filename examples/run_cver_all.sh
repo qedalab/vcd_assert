@@ -10,3 +10,5 @@ cd ./basic_ndro_fail/; ./run_cver.sh; cd ..
 cd ./basic_splitter/; ./run_cver.sh; cd ..
 cd ./basic_xor_fail/; ./run_cver.sh; cd ..
 cd ./basic_xor_success/; ./run_cver.sh; cd ..
+cd ./one_bit_adder_success; ./run_cver.sh; cd ..
+cd ./one_bit_adder_fail; ./run_cver.sh; cd ..

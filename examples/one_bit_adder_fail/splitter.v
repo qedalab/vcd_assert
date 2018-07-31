@@ -1,5 +1,10 @@
 // Adapted from TimEx generated files for vcd_assert testing
+`ifndef begin_time
+`define begin_time 8
+`endif
+
 `timescale 1ps/100fs
+
 module basic_splitter (in, out1, out2);
 
 // Define inputs
@@ -15,6 +20,9 @@ assign out1 = internal_out1;
 assign out2 = internal_out2;
 
 // Single state
+integer state;
+wire internal_state_0;
+assign internal_state_0 = state === 0;
 
 specify
     // Output delays spec params
@@ -38,7 +46,7 @@ initial begin
 end
 
 always @(posedge in or negedge in)
-begin
+if($time > `begin_time) begin
     internal_out1 = !internal_out1;
     internal_out2 = !internal_out2;
 end

@@ -10,3 +10,5 @@ cd ./basic_ndro_fail/; ./clean.sh; cd ..
 cd ./basic_splitter/; ./clean.sh; cd ..
 cd ./basic_xor_fail/; ./clean.sh; cd ..
 cd ./basic_xor_success/; ./clean.sh; cd ..
+cd ./one_bit_adder_success; ./clean.sh; cd ..
+cd ./one_bit_adder_fail; ./clean.sh; cd ..

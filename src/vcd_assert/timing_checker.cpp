@@ -32,7 +32,7 @@ TimingChecker::TimingChecker(std::shared_ptr<VCD::Header> header,
     auto var_type = var_id_code_view.get_type();
 
     // If single value
-    if (var_type == VCD::VarType::real || var_size == 1) {
+    if (var_type == VCD::VarType::real) {
       index_lookup_.push_back({counter, counter + 1});
       counter += 1;
       continue;
@@ -42,6 +42,9 @@ TimingChecker::TimingChecker(std::shared_ptr<VCD::Header> header,
     index_lookup_.push_back({counter, counter + var_size});
     counter += var_size;
   };
+
+  assert(index_lookup_.size() == header_->num_id_codes());
+  assert(index_lookup_.size() == state_.num_values());
 
   /*
     Module names are unique but instance names not. Thus need to traverse two 

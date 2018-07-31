@@ -10,3 +10,5 @@ cd ./basic_jtl/; ./run_iverilog.sh; cd ..
 cd ./basic_splitter/; ./run_iverilog.sh; cd ..
 cd ./basic_xor_fail/; ./run_iverilog.sh; cd ..
 cd ./basic_xor_success/; ./run_iverilog.sh; cd ..
+cd ./one_bit_adder_success; ./run_iverilog.sh; cd ..
+cd ./one_bit_adder_fail; ./run_iverilog.sh; cd ..

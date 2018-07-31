@@ -1,4 +1,5 @@
 // Adapted from TimEx genrated files for vcd_assert testing
+`define begin_time 8
 `timescale 1ps/100fs
 module basic_ndro (set, reset, clk, out);
 
@@ -46,35 +47,30 @@ endspecify
 
 // Set initial state
 initial begin
-    state = 0;
+    state = 1'bX;
     internal_out = 0;
+    #`begin_time state = 0;
 end
 
 always @(posedge set or negedge set)
-begin if ($time>2)
-    case (state)
-        0: begin
-            state = 1;
-        end
-    endcase
-end
+case (state)
+    0: begin
+        state = 1;
+    end
+endcase
 
 always @(posedge reset or negedge reset)
-begin if ($time>2)
-    case (state)
-        1: begin
-            state = 0;
-        end
-    endcase
-end
+case (state)
+    1: begin
+        state = 0;
+    end
+endcase
 
 always @(posedge clk or negedge clk)
-begin if ($time>2)
-    case (state)
-        1: begin
-            internal_out = !internal_out;
-        end
-    endcase
-end
+case (state)
+    1: begin
+        internal_out = !internal_out;
+    end
+endcase
 
 endmodule

@@ -1,7 +1,11 @@
 // Adapted from TimEx generated files for vcd_assert
+`ifndef begin_time
 `define begin_time 8
+`endif
+
 `timescale 1ps/100fs
-module basic_and (a, b, clk, out);
+
+module basic_or (a, b, clk, out);
 
 // Define inputs
 input a, b, clk;
@@ -15,7 +19,7 @@ reg internal_out;
 assign out = internal_out;
 
 // Define state
-integer state;
+integer state = 1'bX;
 
 // Internal state variables
 wire internal_state_0,
@@ -23,10 +27,10 @@ wire internal_state_0,
      internal_state_2,
      internal_state_3;
 
-assign internal_state_0 = state == 0;
-assign internal_state_1 = state == 1;
-assign internal_state_2 = state == 2;
-assign internal_state_3 = state == 3;
+assign internal_state_0 = state === 0;
+assign internal_state_1 = state === 1;
+assign internal_state_2 = state === 2;
+assign internal_state_3 = state === 3;
 
 specify
     // Output delays
@@ -119,9 +123,11 @@ endcase
 always @(posedge clk or negedge clk)
 case (state)
     1: begin
+        internal_out = !internal_out;
         state = 0;
     end
     2: begin
+        internal_out = !internal_out;
         state = 0;
     end
     3: begin
