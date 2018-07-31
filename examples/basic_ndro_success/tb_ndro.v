@@ -6,7 +6,9 @@ module tb_basic_ndro;
   reg clk = 0;
 
   initial begin
+      `ifndef IVERILOG_WORKAROUND
       $sdf_annotate( "../ndro.sdf", tb_basic_ndro);
+      `endif
       $dumpfile("tb_basic_ndro.vcd");
       $dumpvars;
 
