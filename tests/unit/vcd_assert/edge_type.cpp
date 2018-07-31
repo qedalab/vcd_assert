@@ -27,6 +27,19 @@ TEST_CASE("VCDAssert::edge_type")
   constexpr auto _1z = EdgeType::_1z;
   constexpr auto _10 = EdgeType::_10;
 
+  SECTION("edge_type_to_string") {
+    CHECK(edge_type_to_string(NoEdge) == "NoEdge");
+    CHECK(edge_type_to_string(PosEdge) == "PosEdge");
+    CHECK(edge_type_to_string(NegEdge) == "NegEdge");
+    CHECK(edge_type_to_string(Edge) == "Edge");
+    CHECK(edge_type_to_string(_01) == "01");
+    CHECK(edge_type_to_string(_0z) == "0z");
+    CHECK(edge_type_to_string(_z1) == "z1");
+    CHECK(edge_type_to_string(_z0) == "z0");
+    CHECK(edge_type_to_string(_1z) == "1z");
+    CHECK(edge_type_to_string(_10) == "10");
+  }
+
   SECTION("get_edge_type")
   {
     CHECK(get_edge_type(zero, zero) == NoEdge);
