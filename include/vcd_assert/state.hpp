@@ -7,7 +7,6 @@
 
 #include <variant>
 
-
 namespace VCDAssert {
 
 using StateValuePointer = std::variant<
