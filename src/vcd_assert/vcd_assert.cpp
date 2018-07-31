@@ -62,7 +62,7 @@ int main(int argc, char **argv)
 
   std::vector<std::string> source_files;
   auto source_file_option = cli.add_option("verilog_source_file", source_files,
-                                           "Verilog source files");
+                                           "Verilog source file");
   source_file_option->check(CLI::ExistingFile);
 
   std::string top_module;

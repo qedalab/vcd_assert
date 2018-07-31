@@ -66,53 +66,53 @@ TimingChecker::TimingChecker(std::shared_ptr<VCD::Header> header,
 
   /* Process and apply the SDF files specified in Verilog file (from scope derived call location). */ 
   // ONLY IF DESIGN WAS GIVEN
-  // if((design_->num_modules() != 0) && (design_->num_sdf_commands() != 0)){
-  //   for (auto &&sdf_set_index : indices(design_->num_sdf_commands())) {
+  if((design_->num_modules() != 0) && (design_->num_sdf_commands() != 0)){
+    for (auto &&sdf_set_index : indices(design_->num_sdf_commands())) {
       
-  //     // get commands
-  //     auto sdf_command_set = design_->get_sdf_commands(sdf_set_index);
+      // get commands
+      auto sdf_command_set = design_->get_sdf_commands(sdf_set_index);
 
-  //     // get apply scope as hierarchical identifier
-  //     auto source_module_index = design_->sdf_reverse_lookup(sdf_set_index);
-  //     auto module_identifier = design_->get_module(source_module_index).identifier;
+      // get apply scope as hierarchical identifier
+      auto source_module_index = design_->sdf_reverse_lookup(sdf_set_index);
+      auto module_identifier = design_->get_module(source_module_index).identifier;
      
-  //     auto scope_path_index = netlist_reverse_lookup_.at(source_module_index);
-  //     auto scope_path_str = header_->get_scope(source_module_index);
+      auto scope_path_index = netlist_reverse_lookup_.at(source_module_index);
+      auto scope_path_str = header_->get_scope(source_module_index);
 
-  //     // apply each sdf found to the scope.
-  //     for (auto &&sdf_command : sdf_command_set) {
+      // apply each sdf found to the scope.
+      for (auto &&sdf_command : sdf_command_set) {
 
-  //       // narrow down the scope at which to apply based on command
-  //       std::optional<std::size_t> local_scope_index_op = scope_path_index;
-  //       SDF::HierarchicalIdentifier local_scope_path{};
+        // narrow down the scope at which to apply based on command
+        std::optional<std::size_t> local_scope_index_op = scope_path_index;
+        SDF::HierarchicalIdentifier local_scope_path{};
 
-  //       // EITHER APPLY TO THIS SCOPE, A CHILD SCOPE.
-  //       if(sdf_command.name_of_instance.has_value()){
-  //         if(sdf_command.name_of_instance.value() != module_identifier){
+        // EITHER APPLY TO THIS SCOPE, A CHILD SCOPE.
+        if(sdf_command.name_of_instance.has_value()){
+          if(sdf_command.name_of_instance.value() != module_identifier){
 
-  //           auto stem_path_str = sdf_command.name_of_instance.value();
+            auto stem_path_str = sdf_command.name_of_instance.value();
             
-  //           //SHOULD BE ADDITIVE, TODO TEST.
-  //           tao::pegtl::memory_input<> stem_path_input(stem_path_str, stem_path_str);
-  //           tao::pegtl::parse<SDF::Grammar::hierarchical_identifier,
-  //                             Parse::make_pegtl_template<
-  //                                 SDF::Actions::HierarchicalIdentifierAction>::type,
-  //                             Parse::capture_control>(stem_path_input, local_scope_path);
+            //SHOULD BE ADDITIVE, TODO TEST.
+            tao::pegtl::memory_input<> stem_path_input(stem_path_str, stem_path_str);
+            tao::pegtl::parse<SDF::Grammar::hierarchical_identifier,
+                              Parse::make_pegtl_template<
+                                  SDF::Actions::HierarchicalIdentifierAction>::type,
+                              Parse::capture_control>(stem_path_input, local_scope_path);
             
-  //           local_scope_index_op = match_scope(*header_, local_scope_path.value, scope_path_index);
-  //         }
-  //       }
+            local_scope_index_op = match_scope(*header_, local_scope_path.value, scope_path_index);
+          }
+        }
 
-  //       // apply
-  //       if(local_scope_index_op.has_value()){
-  //         fmt::print("found local scope index : ({})\n",local_scope_index_op.value());
-  //         apply_sdf_file(sdf_command.sdf_file, local_scope_index_op.value());
-  //       }else{
-  //         // Error : annotate command specidies instance that could not be found.
-  //       }
-  //     }
-  //   }
-  // }
+        // apply
+        if(local_scope_index_op.has_value()){
+          fmt::print("found local scope index : ({})\n",local_scope_index_op.value());
+          apply_sdf_file(sdf_command.sdf_file, local_scope_index_op.value());
+        }else{
+          // Error : annotate command specidies instance that could not be found.
+        }
+      }
+    }
+  }
 }
 
  
@@ -277,8 +277,7 @@ void TimingChecker::apply_sdf_hold(SDF::Hold hold, std::size_t scope_index,
 
       std::puts("DEBUG: hold port nodes successfully found.");
 
-      // auto trig_port_index = trig_port_index_option.value();
-      // auto reg_port_index = reg_port_index_option.value();
+      auto reg_port_index = reg_port_index_option.value();
 
       auto reg_apply_data_option =
           apply_sdf_hold_port_tchk_helper(reg, scope_index, scope);
@@ -291,25 +290,25 @@ void TimingChecker::apply_sdf_hold(SDF::Hold hold, std::size_t scope_index,
   
         std::puts("DEBUG: hold port check conditionals successfully matched.");
 
-        // auto &&[reg_conditional_cvp, reg_edge] = reg_apply_data_option.value();
-        // auto &&[trig_conditional_cvp, trig_edge] =
-        //     trig_apply_data_option.value();
+        auto &&[reg_conditional_cvp, reg_edge] = reg_apply_data_option.value();
+        auto &&[trig_conditional_cvp, trig_edge] =
+            trig_apply_data_option.value();
 
-        // auto reg_event_range = get_hold_event_range(reg.port, reg_port_index);
+        auto reg_event_range = get_hold_event_range(reg.port, reg_port_index);
 
-        // if (!reg_event_range.empty()) {
-        //   std::puts("DEBUG: hold reg port successfully matched.");
+        if (!reg_event_range.empty()) {
+          std::puts("DEBUG: hold reg port successfully matched.");
 
-        //   for (auto &&index : reg_event_range) {
-        //     event_lists_[index].events.emplace_back(RegisterEvent{
-        //         std::move(reg_conditional_cvp), reg_edge,
-        //         TriggeredEvent{std::move(trig_conditional_cvp), trig_edge,
-        //                        (std::size_t)0,
-        //                        (std::size_t)(sdf_value.value() * 1000)}}); //TODO timescale
-        //   }
-        // } else {
-        //   // failed to get applicable range
-        // }
+          for (auto &&index : reg_event_range) {
+            event_lists_[index].events.emplace_back(RegisterEvent{
+                std::move(reg_conditional_cvp), reg_edge,
+                TriggeredEvent{std::move(trig_conditional_cvp), trig_edge,
+                               (std::size_t)0,
+                               (std::size_t)(sdf_value.value() * 1000)}}); //TODO timescale
+          }
+        } else {
+          // failed to get applicable range
+        }
       }
     }
   }else{

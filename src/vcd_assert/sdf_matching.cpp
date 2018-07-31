@@ -2,29 +2,33 @@
 
 using namespace VCDAssert;
 
-ConditionalValuePointer VCDAssert::get_sdf_node_ptr(State &state,
+ConditionalValuePointer VCDAssert::get_sdf_node_ptr(const VCD::Header &header,
+                                                    State &state,
                                                     std::vector<IndexLookup> &index_lookup,
                                                     std::size_t vcd_var_index)
 {
   // get the conditional value pointer of the variable
-  if(index_lookup.size() > vcd_var_index ){
-    
-    auto state_var_index = index_lookup.at(vcd_var_index).from;
-    auto var_svp = state.get_value_pointer(state_var_index);
-    
-    std::puts("DEBUG: found variable state value pointer");
-    
-    if (std::holds_alternative<VCD::Value *>(var_svp)) {
-      auto var_svp_val = std::get<VCD::Value *>(var_svp);
-      auto var_cvp = ConditionalValuePointer(var_svp_val);
-      return var_cvp;
-    } else {
-      throw std::runtime_error("InternalError");
-    }
 
-  }else{
-    throw std::runtime_error("InternalError : index out of bounds");
+  auto vcd_var = header.get_var(vcd_var_index);
+  auto vcd_id_index = vcd_var.get_id_code_index();
+  // if(header.num_id_codes() > vcd_var_index ){
+    
+  auto state_var_index = index_lookup.at(vcd_id_index).from;
+  auto var_svp = state.get_value_pointer(state_var_index);
+  
+  std::puts("DEBUG: found variable state value pointer");
+  
+  if (std::holds_alternative<VCD::Value *>(var_svp)) {
+    auto var_svp_val = std::get<VCD::Value *>(var_svp);
+    auto var_cvp = ConditionalValuePointer(var_svp_val);
+    return var_cvp;
+  } else {
+    throw std::runtime_error("InternalError");
   }
+
+  // }else{
+  //   throw std::runtime_error("InternalError : index out of bounds");
+  // }
 }
 
 
@@ -195,7 +199,7 @@ VCDAssert::get_sdf_conditional_ptr(const VCD::Header &header, State &state,
   case SDF::ConditionalType::simple: /* node==1 is condition */
   {
     
-    std::puts("DEBUG: conditionals of type node state");
+    std::puts("DEBUG: conditionals of type node");
     SDF::Node node = std::get<SDF::Node>(cond.value);
 
     // get the conditional value pointer of the variable
@@ -204,7 +208,7 @@ VCDAssert::get_sdf_conditional_ptr(const VCD::Header &header, State &state,
     if (left_index_option.has_value()) {
       std::puts("DEBUG: found conditional node vcd index.");
 // 
-      auto left_cvp = get_sdf_node_ptr(state, index_lookup, left_index_option.value());
+      auto left_cvp = get_sdf_node_ptr(header, state, index_lookup, left_index_option.value());
 
       // auto left_cvp = ConditionalValuePointer(VCD::Value::zero); /// <<<<
       auto right_cvp = ConditionalValuePointer(VCD::Value::zero); /// <<<<
@@ -220,55 +224,59 @@ VCDAssert::get_sdf_conditional_ptr(const VCD::Header &header, State &state,
     }
 
   } break;
-  // case SDF::ConditionalType::inverted: /* ~node or node~=1 is condition */
-  // {
+  case SDF::ConditionalType::inverted: /* ~node or node~=1 is condition */
+  {
 
-  //   SDF::InvertedNode node = std::get<SDF::InvertedNode>(cond.value);
+    SDF::InvertedNode node = std::get<SDF::InvertedNode>(cond.value);
+    std::puts("DEBUG: conditionals of type inverted node");
 
-  //   // get the conditional value pointer of the variable
-  //   auto left_index_option = get_sdf_node_index(header, node, scope_index, scope);
+    // get the conditional value pointer of the variable
+    auto left_index_option = get_sdf_node_index(header, node, scope_index, scope);
 
-  //   if (left_index_option.has_value()) {
+    if (left_index_option.has_value()) {
+      std::puts("DEBUG: found conditional node vcd index.");
 
-  //     auto left_cvp = get_sdf_node_ptr(state, index_lookup, left_index_option.value());
+      auto left_cvp = get_sdf_node_ptr(header, state, index_lookup, left_index_option.value());
 
-  //     auto right_cvp = ConditionalValuePointer(VCD::Value::zero); /// <<<<
+      auto right_cvp = ConditionalValuePointer(VCD::Value::zero); /// <<<<
 
-  //     auto cond_op = ConditionalOperator<EqualityOperator::logical_equal>(
-  //         std::move(left_cvp), std::move(right_cvp));
+      auto cond_op = ConditionalOperator<EqualityOperator::logical_equal>(
+          std::move(left_cvp), std::move(right_cvp));
 
-  //     return ConditionalValuePointer(std::move(cond_op));
+      return ConditionalValuePointer(std::move(cond_op));
 
-  //   } else {
-  //     return {}; // not found
-  //   }
+    } else {
+      return {}; // not found
+    }
 
-  // } break;
-  // case SDF::ConditionalType::equality: /* node <operator> <constant> */
-  // {
+  } break;
+  case SDF::ConditionalType::equality: /* node <operator> <constant> */
+  {
 
-  //   auto equality = std::get<SDF::NodeConstantEquality>(cond.value);
-  //   // std::size_t var_index;
-  //   SDF::Node node = equality.left;
+    auto equality = std::get<SDF::NodeConstantEquality>(cond.value);
+    std::puts("DEBUG: conditionals of type equality");
+    
+    // std::size_t var_index;
+    SDF::Node node = equality.left;
 
-  //   // get the conditional value pointer of the variable
-  //   auto left_index_option = get_sdf_node_index(header, node, scope_index, scope);
+    // get the conditional value pointer of the variable
+    auto left_index_option = get_sdf_node_index(header, node, scope_index, scope);
 
-  //   if (left_index_option.has_value()) {
+    if (left_index_option.has_value()) {
 
-  //     auto left_cvp = get_sdf_node_ptr(state, index_lookup, left_index_option.value());
+      auto left_cvp = get_sdf_node_ptr(header, state, index_lookup, left_index_option.value());
 
-  //     auto right_cvp = equality.right
-  //                          ? ConditionalValuePointer(VCD::Value::one)
-  //                          : ConditionalValuePointer(VCD::Value::zero);
+      auto right_cvp = equality.right
+                           ? ConditionalValuePointer(VCD::Value::one)
+                           : ConditionalValuePointer(VCD::Value::zero);
 
-  //     return {get_sdf_conditional_ptr_helper(equality.op, std::move(left_cvp), std::move(right_cvp))};
+      return {get_sdf_conditional_ptr_helper(equality.op, std::move(left_cvp), std::move(right_cvp))};
 
-  //   } else {
-  //     return {}; // not found
-  //   }
+    } else {
+      return {}; // not found
+    }
 
-  // } break;
+  } break;
   default:
     break;
   }

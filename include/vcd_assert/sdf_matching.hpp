@@ -22,9 +22,10 @@ get_sdf_conditional_ptr_helper(SDF::EqualityOperator op,
                                ConditionalValuePointer left,
                                ConditionalValuePointer right);
 
-ConditionalValuePointer get_sdf_node_ptr(State &state, 
-                                        std::vector<IndexLookup> &index_lookup, 
-                                        std::size_t vcd_var_index);
+ConditionalValuePointer get_sdf_node_ptr(const VCD::Header &header,
+                                         State &state, 
+                                         std::vector<IndexLookup> &index_lookup, 
+                                         std::size_t vcd_var_index);
 
 std::optional<std::size_t> match_scope(const VCD::Header &header,
                                        std::vector<std::string> path,
