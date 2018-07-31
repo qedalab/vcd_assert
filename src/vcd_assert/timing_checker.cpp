@@ -701,8 +701,11 @@ void TimingChecker::scalar_value_change(VCD::ScalarValueChangeView value_change)
 
   if (internal_event(index, value_change.value)) {
     // TODO Timing assert message
+    const auto marker = value_change.marker;
     fmt::print("TIMING ASSERT: Timing violation occurred during parsing of "
-               "scalar value change\n");
+               "scalar value change\n"
+               "               at time {} by line {} and col {}\n",
+               sim_time_, marker.line, marker.byte_in_line);
     did_assert_ = true;
   };
 }
@@ -772,8 +775,11 @@ void TimingChecker::vector_value_change(
 
   if (internal_event(vcd_index, range)) {
     // TODO Better timing assert message
+    const auto marker = value_change.marker;
     fmt::print("TIMING ASSERT: Timing violation occured during parsing of "
-               "vector value change\n");
+               "vector value change\n"
+               "               at time {} by line {} and col {}\n",
+               sim_time_, marker.line, marker.byte_in_line);
     did_assert_ = true;
   };
 }
