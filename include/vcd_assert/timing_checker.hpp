@@ -86,7 +86,7 @@ class TimingChecker
                                   VCD::Value from, VCD::Value to);
 
   std::vector<std::size_t> get_hold_event_range(SDF::Node port,
-                                                std::size_t port_vcd_index);
+                                                std::size_t port_vcd_var_index);
 
   std::optional<std::tuple<ConditionalValuePointer, EdgeType>>
   apply_sdf_hold_port_tchk_helper(SDF::PortTimingCheck port_tchk,
