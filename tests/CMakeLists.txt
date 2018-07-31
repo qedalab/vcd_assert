@@ -53,48 +53,49 @@ add_test(
   COMMAND vcd_assert tb_basic_dro.vcd --node tb_basic_dro --sdf ../dro.sdf
 )
 
-############## VERILOG SDF WITH CELLINSTANCE <path>
-# Basic and fail
-add_test(
-  NAME basic_and_fail
-  WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/examples/basic_and_fail/iverilog_out/
-  COMMAND vcd_assert tb_basic_and.vcd ../tb_and.v ../and.v --node tb_basic_and 
-)
-
-# Basic and succeed
-add_test(
-  NAME basic_and_success
-  WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/examples/basic_and_success/iverilog_out/
-  COMMAND vcd_assert tb_basic_and.vcd ../tb_and.v ../and.v --node tb_basic_and
-)
-
-############## VERILOG SDF WITH CELLINSTANCE *
-# Basic ndro fail
-add_test(
-  NAME basic_ndro_fail
-  WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/examples/basic_ndro_fail/iverilog_out/
-  COMMAND vcd_assert tb_basic_ndro.vcd ../tb_ndro.v ../ndro.v --node tb_basic_ndro --sdf ../ndro.sdf
-)
-
-# Basic ndro succeed
-add_test(
-  NAME basic_ndro_success
-  WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/examples/basic_ndro_success/iverilog_out/
-  COMMAND vcd_assert tb_basic_ndro.vcd ../tb_ndro.v ../ndro.v --node tb_basic_ndro --sdf ../ndro.sdf
-)
-
+############## EXTERNALLY SUPPLIED SDF WITH CELLINSTANCE <*>
 # Basic xor fail
 add_test(
   NAME basic_xor_fail
   WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/examples/basic_xor_fail/iverilog_out/
-  COMMAND vcd_assert tb_basic_xor.vcd ../tb_xor.v ../xor.v --node tb_basic_xor --sdf ../xor.sdf
+  COMMAND vcd_assert tb_basic_xor.vcd --node tb_basic_xor --sdf ../xor.sdf
 )
 
 # Basic xor succeed
 add_test(
   NAME basic_xor_success
   WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/examples/basic_xor_success/iverilog_out/
-  COMMAND vcd_assert tb_basic_xor.vcd ../tb_xor.v ../xor.v --node tb_basic_xor --sdf ../xor.sdf
+  COMMAND vcd_assert tb_basic_xor.vcd --node tb_basic_xor --sdf ../xor.sdf
+)
+
+############## VERILOG SDF WITH CELLINSTANCE <path>
+# Basic and fail
+add_test(
+  NAME basic_and_fail
+  WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/examples/basic_and_fail/iverilog_out/
+  COMMAND vcd_assert tb_basic_and.vcd ../tb_and.v ../and.v -t tb_basic_and --node tb_basic_and 
+)
+
+# Basic and succeed
+add_test(
+  NAME basic_and_success
+  WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/examples/basic_and_success/iverilog_out/
+  COMMAND vcd_assert tb_basic_and.vcd ../tb_and.v ../and.v -t tb_basic_and --node tb_basic_and
+)
+
+############## VERILOG SDF WITH CELLINSTANCE <*>
+# Basic ndro fail
+add_test(
+  NAME basic_ndro_fail
+  WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/examples/basic_ndro_fail/iverilog_out/
+  COMMAND vcd_assert tb_basic_ndro.vcd ../tb_ndro.v ../ndro.v -t tb_basic_ndro --node tb_basic_ndro --sdf ../ndro.sdf
+)
+
+# Basic ndro succeed
+add_test(
+  NAME basic_ndro_success
+  WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/examples/basic_ndro_success/iverilog_out/
+  COMMAND vcd_assert tb_basic_ndro.vcd ../tb_ndro.v ../ndro.v -t tb_basic_ndro --node tb_basic_ndro --sdf ../ndro.sdf
 )
 
 
