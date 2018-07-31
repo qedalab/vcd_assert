@@ -83,7 +83,7 @@ struct NodeAction : multi_dispatch<
   using state = Node;
 };
 
-struct PortStorage {
+struct PortNodeStorage {
   static bool store(Node &parent, Node child) {
     parent.basename_identifier = std::move(child.basename_identifier);
     if(child.start.has_value()){
@@ -122,17 +122,36 @@ struct PortStorage {
 
 
 struct PortAction : multi_dispatch<
-    Grammar::scalar_port, inner_action< NodeAction, PortStorage >,
-    Grammar::bus_port, inner_action< NodeAction, PortStorage >
+    Grammar::scalar_port, inner_action< NodeAction, PortNodeStorage >,
+    Grammar::bus_port, inner_action< NodeAction, PortNodeStorage >
 >{
   using state = Node;
 };
 
-struct PortInstanceStorage {
+struct PortStorage {
   //Taking care not to overwrite the HierarchicalIdentifier
   static bool store(Node &parent, Node child) {
     parent.type = std::move(child.type);
+
+    if(!parent.edge.has_value()){
+      parent.edge = std::move(child.edge);
+    }
+    
     parent.basename_identifier = std::move(child.basename_identifier);
+    
+    if(parent.hierarchical_identifier.has_value()){
+      if(child.hierarchical_identifier.has_value()){
+        auto p_hi = parent.hierarchical_identifier.value();
+        auto c_hi = child.hierarchical_identifier.value();
+        for(auto && cv : c_hi.value){
+          p_hi.value.emplace_back(std::move(cv));
+        }
+      }
+    }else{
+      parent.hierarchical_identifier = std::move(child.hierarchical_identifier);
+    }
+
+
     if(child.start.has_value())
       parent.start = std::move(child.start);
     if(child.end.has_value())
@@ -142,7 +161,7 @@ struct PortInstanceStorage {
 };
 
 struct PortInstanceAction : multi_dispatch<
-    Grammar::port, inner_action<PortAction,PortInstanceStorage>,
+    Grammar::port, inner_action<PortAction,PortStorage>,
     Grammar::hierarchical_identifier, inner_action<
       HierarchicalIdentifierAction, 
       Storage::member<&Node::hierarchical_identifier>
@@ -150,6 +169,7 @@ struct PortInstanceAction : multi_dispatch<
 >{
   using state = Node;
 };
+
 
 struct PortEdgeStorage {
   static bool store(Node &parent, EdgeType edge) {
@@ -176,7 +196,7 @@ struct EdgeTypeAction : all_dispatch<apply0<Apply::rule_value>> {
 
 struct PortEdgeAction : multi_dispatch<
     Grammar::edge_identifier, inner_action<EdgeTypeAction, PortEdgeStorage>,
-    Grammar::port_instance, inner_action_passthrough<PortInstanceAction>
+    Grammar::port_instance, inner_action<PortInstanceAction, PortStorage>
 >{
   using state = Node;
 };

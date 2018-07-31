@@ -1,6 +1,37 @@
 #include "vcd_assert/sdf_matching.hpp"
+#include <math.h>       /* pow */
 
 using namespace VCDAssert;
+
+int VCDAssert::get_scaled_sdf_value(const VCD::Header &header, const SDF::DelayFile &d, double input){
+  if(d.has_timescale() && header.has_time_scale()){
+    auto sdf_ts = d.get_timescale().value();
+    auto vcd_ts = header.get_time_scale().value();
+
+    auto number_scale = static_cast<int>(sdf_ts.get_number()) / static_cast<int>(vcd_ts.get_number());
+    auto unit_scale = static_cast<int>(sdf_ts.get_unit()) - static_cast<int>(vcd_ts.get_unit());
+
+    // fmt::print("DEBUG: sdf number  : {}\n",  static_cast<int>(sdf_ts.get_number()) );
+    // fmt::print("DEBUG: sdf unit  : {}\n", static_cast<int>(sdf_ts.get_unit()) );
+    // fmt::print("DEBUG: vcd number  : {}\n",  static_cast<int>(vcd_ts.get_number()) );
+    // fmt::print("DEBUG: vcd unit  : {}\n", static_cast<int>(vcd_ts.get_unit()) );
+    // fmt::print("DEBUG: timescale number dif : {}\n", number_scale);
+    // fmt::print("DEBUG: timescale unit dif : {}\n", unit_scale);
+
+    return input * number_scale * pow(10,unit_scale) *  1;
+  }else if (header.has_time_scale()){
+
+    static bool did_warn = false;
+    if (!did_warn) {
+      fmt::print(
+          "WARNING: No timescale supplied in SDF. Assuming same as in VCD\n");
+      did_warn = true;
+    }
+    return input * 1;
+  }else{
+    return input * 1;
+  }
+}
 
 ConditionalValuePointer VCDAssert::get_sdf_node_ptr(const VCD::Header &header,
                                                     State &state,
@@ -173,9 +204,9 @@ VCDAssert::get_sdf_node_index(const VCD::Header &header, SDF::Node node,
     fmt::print("DEBUG: trying to get vcd variable index of sdf node (node: {})\n", node.basename_identifier );
   }
 
-  for(auto &&child_var : inner_scope.get_variables() ){
-    fmt::print("DEBUG: child var :{}\n", child_var.first);
-  }
+  // for(auto &&child_var : inner_scope.get_variables() ){
+  //   fmt::print("DEBUG: child var :{}\n", child_var.first);
+  // }
 
   // get the variable from the scope
   if (inner_scope.contains_variable(node.basename_identifier)) {

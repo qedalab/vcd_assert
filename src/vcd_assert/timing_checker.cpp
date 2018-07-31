@@ -9,6 +9,8 @@
 #include <range/v3/view/linear_distribute.hpp>
 #include <range/v3/view/zip.hpp>
 
+#include <sdf/serialize/timing_check.hpp>
+
 using namespace VCDAssert;
 using namespace ranges::view;
 namespace rsv = ranges::view;
@@ -269,12 +271,18 @@ TimingChecker::get_hold_event_range(SDF::Node port, std::size_t port_vcd_index)
   return result;
 }
 
-void TimingChecker::apply_sdf_hold(SDF::Hold hold, std::size_t scope_index,
+void TimingChecker::apply_sdf_hold(SDF::DelayFile &d, SDF::Hold hold, 
+                                   std::size_t scope_index,
                                    VCD::Scope &scope)
 {
   std::puts("DEBUG: applying hold timing check to scope.");
 
   auto sdf_value = hold.value.content(); // chooses TYP for now.
+
+  std::string out;
+  serialize_hold_check(ranges::back_inserter(out), 0, hold);
+
+  fmt::print(out);
 
   auto reg = hold.reg;
   auto trig = hold.trig;
@@ -319,7 +327,8 @@ void TimingChecker::apply_sdf_hold(SDF::Hold hold, std::size_t scope_index,
                 std::move(reg_conditional_cvp), reg_edge,
                 TriggeredEvent{std::move(trig_conditional_cvp), trig_edge,
                                (std::size_t)0,
-                               (std::size_t)(sdf_value.value() * 1000)}}); //TODO timescale
+                               (std::size_t)(get_scaled_sdf_value(
+                                                *header_,d,sdf_value.value()))}}); //TODO timescale 1000
           }
         } else {
           // failed to get applicable range
@@ -338,7 +347,7 @@ void TimingChecker::apply_sdf_hold(SDF::Hold hold, std::size_t scope_index,
       for all hold timing checks
         create hold or conditional hold for the port/values/events involved.
 */
-void TimingChecker::apply_sdf_timing_specs(SDF::Cell cell,
+void TimingChecker::apply_sdf_timing_specs(SDF::DelayFile &d, SDF::Cell cell,
                                            std::size_t scope_index, // remove
                                            VCD::Scope &scope)
 {
@@ -350,7 +359,7 @@ void TimingChecker::apply_sdf_timing_specs(SDF::Cell cell,
       for (auto &&check : std::get<SDF::TimingCheckSpec>(spec.value)) {
         switch (check.get_enum_type()) {
         case SDF::TimingCheckType::hold: {
-          apply_sdf_hold(std::get<SDF::Hold>(check.value), scope_index, scope);
+          apply_sdf_hold(d, std::get<SDF::Hold>(check.value), scope_index, scope);
           // auto var_svp = state_.get_value_pointer(0);
           // auto var_cvp = ConditionalValuePointer(var_svp);
         } break;
@@ -368,7 +377,8 @@ void TimingChecker::apply_sdf_timing_specs(SDF::Cell cell,
 
 // This is called when the * cell instances wildcard is supplied.
 // For every module in scope tree from 'scope' downward, apply.
-void TimingChecker::apply_sdf_cell_helper(SDF::Cell cell, VCD::Scope &scope)
+void TimingChecker::apply_sdf_cell_helper(SDF::DelayFile &d, SDF::Cell cell, 
+                                          VCD::Scope &scope)
 {
   for (auto &child_scope_tup : scope.get_scopes()) {
     auto index = child_scope_tup.second;
@@ -385,7 +395,7 @@ void TimingChecker::apply_sdf_cell_helper(SDF::Cell cell, VCD::Scope &scope)
           std::get<1>(*verilog_module_index)).identifier;
 
         if(cell.cell_type != module_name){
-          apply_sdf_timing_specs(cell, index, child_scope);
+          apply_sdf_timing_specs(d, cell, index, child_scope);
         }
 
       }else{
@@ -394,12 +404,12 @@ void TimingChecker::apply_sdf_cell_helper(SDF::Cell cell, VCD::Scope &scope)
 
     }
       //TODO : GO DOWN FOR NESTED MODULE ONLY OR ALL NESTED SCOPES? 
-      apply_sdf_cell_helper(cell, child_scope); 
+      apply_sdf_cell_helper(d, cell, child_scope); 
 
   }
 }
 
-void TimingChecker::apply_sdf_cell(SDF::Cell cell,
+void TimingChecker::apply_sdf_cell(SDF::DelayFile &d, SDF::Cell cell,
                                    std::size_t apply_scope_index)
 {
 
@@ -418,7 +428,7 @@ void TimingChecker::apply_sdf_cell(SDF::Cell cell,
     // for module/instance scopes FROM applied scope DOWN:
     
 
-    apply_sdf_cell_helper(cell, apply_scope);
+    apply_sdf_cell_helper(d, cell, apply_scope);
 
   } else {
 
@@ -452,7 +462,7 @@ void TimingChecker::apply_sdf_cell(SDF::Cell cell,
               std::get<1>(*verilog_module_index)).identifier;
 
             if(cell.cell_type != module_name){
-              apply_sdf_timing_specs(cell, index, child_scope);
+              apply_sdf_timing_specs(d, cell, index, child_scope);
             }
 
           }else{
@@ -474,12 +484,12 @@ void TimingChecker::apply_sdf_cell(SDF::Cell cell,
         std::optional<size_t> index = match_scope(*header_, hi.value, apply_scope.get_scope_index(hi.value[0]));
 
         if (index.has_value()) {
+
           fmt::print("DEBUG : found scope index ({}) \n",index.value());  
           VCD::Scope scope = header_->get_scope(index.value());
-          std::puts("DEBUG: cell instance scope found.");
 
           // apply sdf timing specs withing cell instance
-          apply_sdf_timing_specs(cell, index.value(), scope);
+          apply_sdf_timing_specs(d, cell, index.value(), scope);
 
         } else {
           // std::puts("DEBUG: cell instance was not found.");
@@ -543,7 +553,7 @@ void TimingChecker::apply_sdf_file(std::string delayfile_path,
   /*etc*/
 
   for (auto &cell : cells) {
-    apply_sdf_cell(cell, vcd_node_scope_index);
+    apply_sdf_cell(*delayfile_p, cell, vcd_node_scope_index);
   }
 
 }

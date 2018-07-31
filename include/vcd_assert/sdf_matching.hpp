@@ -4,9 +4,10 @@
 #include "./conditional.hpp"
 #include "./state.hpp"
 
-#include "sdf/types/enums.hpp"
-#include "sdf/types/timing.hpp"
-#include "sdf/types/timing_check.hpp"
+#include <sdf/types/enums.hpp>
+#include <sdf/types/delayfile.hpp>
+#include <sdf/types/timing.hpp>
+#include <sdf/types/timing_check.hpp>
 
 
 namespace VCDAssert {
@@ -21,6 +22,8 @@ ConditionalValuePointer
 get_sdf_conditional_ptr_helper(SDF::EqualityOperator op, 
                                ConditionalValuePointer left,
                                ConditionalValuePointer right);
+
+int get_scaled_sdf_value(const VCD::Header &header, const SDF::DelayFile &d, double input);
 
 ConditionalValuePointer get_sdf_node_ptr(const VCD::Header &header,
                                          State &state, 

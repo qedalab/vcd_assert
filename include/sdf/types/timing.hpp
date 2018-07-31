@@ -30,6 +30,7 @@ struct Node {
 
   bool operator==(const Node &other) const noexcept {
     if ((basename_identifier == other.basename_identifier) &&
+        (edge == other.edge) &&
         (hierarchical_identifier == other.hierarchical_identifier) &&
         (type == other.type) && (start == other.start) && (end == other.end)){
       return true;

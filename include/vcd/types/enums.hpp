@@ -15,7 +15,7 @@ enum class TimeNumber {
 
 /// VCD Time unit enum
 enum class TimeUnit {
-  s, ms, us, ns, ps, fs
+  s=15, ms=12, us=9, ns=6, ps=3, fs=0
 };
 
 /// VCD Variable type enum

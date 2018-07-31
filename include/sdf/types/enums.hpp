@@ -21,11 +21,11 @@ enum class EqualityOperator {
 };
 
 enum class TimeScaleUnit {
-  s, ms, us, ns, ps, fs
+  s=15, ms=12, us=9, ns=6, ps=3, fs=0
 };
 
 enum class TimeScaleNumber {
-  _1, _10, _100
+  _1=1, _10=10, _100=100
 };
 
 enum class TimingSpecType {

@@ -88,16 +88,16 @@ class TimingChecker
                                   std::size_t scope_index, VCD::Scope &scope);
   
 
-  void apply_sdf_hold(SDF::Hold hold, std::size_t scope_index,
+  void apply_sdf_hold(SDF::DelayFile &d, SDF::Hold hold, std::size_t scope_index,
                       VCD::Scope &scope);
 
-  void apply_sdf_timing_specs(SDF::Cell cell,
+  void apply_sdf_timing_specs(SDF::DelayFile &d, SDF::Cell cell,
                               std::size_t scope_index, // remove
                               VCD::Scope &scope);
 
-  void apply_sdf_cell_helper(SDF::Cell cell, VCD::Scope &scope);
+  void apply_sdf_cell_helper(SDF::DelayFile &d, SDF::Cell cell, VCD::Scope &scope);
 
-  void apply_sdf_cell(SDF::Cell cell, std::size_t apply_scope_index);
+  void apply_sdf_cell(SDF::DelayFile &d, SDF::Cell cell, std::size_t apply_scope_index);
 
   [[nodiscard]] bool internal_event(std::size_t vcd_index, VCD::Value value);
   [[nodiscard]] bool internal_event(std::size_t vcd_range_index,

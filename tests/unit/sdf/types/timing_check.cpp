@@ -66,15 +66,18 @@ void SDF::Test::catch_test_timingcheckcondition(TimingCheckCondition wanted,
   }
 
 }
-//   if(test.port.edge.has_value()){
-//     REQUIRE(pt.port.edge.has_value());
-//     REQUIRE(test.port.edge == pt.port.edge) ;
-//   }
+
 void SDF::Test::catch_test_porttimingcheck(PortTimingCheck wanted,
                                            PortTimingCheck test) {
   INFO("PortCheck");
 
   SECTION("Port should be equal") { 
+    
+    if(wanted.port.edge.has_value()){
+      REQUIRE(test.port.edge.has_value());
+      REQUIRE(wanted.port.edge == test.port.edge) ;
+    }
+   
     CHECK(wanted.port==test.port);
   }
 
