@@ -341,6 +341,7 @@ void TimingChecker::apply_sdf_hold(SDF::DelayFile &d, SDF::Hold hold,
           for (auto &&index : reg_event_range) {
             event_lists_[index].events.emplace_back(RegisterEvent{
                 std::move(reg_conditional_cvp), reg_edge,
+                /* TRIGGER INDEX HERE */
                 TriggeredEvent{std::move(trig_conditional_cvp), trig_edge,
                                (std::size_t)0,
                                (std::size_t)(get_scaled_sdf_value(
