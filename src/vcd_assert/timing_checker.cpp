@@ -34,6 +34,8 @@ TimingChecker::TimingChecker(std::shared_ptr<VCD::Header> header,
     auto var_size = var_id_code_view.get_size();
     auto var_type = var_id_code_view.get_type();
 
+    fmt::print("VarIdCode: {} start at index {}\n", var_id_code_view.get_id_code(), counter);
+
     // If single value
     if (var_type == VCD::VarType::real) {
       index_lookup_.push_back({counter, counter + 1});
@@ -583,7 +585,7 @@ void TimingChecker::apply_sdf_file(std::string delayfile_path,
   if (!(event.condition.value() == VCD::Value::one))
     return out;
 
-  checker_.hold(event.triggered, index);
+  checker_.hold(event.triggered, event.trigger_index);
 
   return out;
 }
@@ -829,12 +831,13 @@ void TimingChecker::dump_registered_event_list() {
 
       std::puts(" {");
 
-      fmt::print("    Register Condition: {}\n", serialize_conditional(reg_event.condition));
-      fmt::print("    Register EdgeType : {}\n", edge_type_to_string(reg_event.edge_type));
-      fmt::print("    Trigger Condition : {}\n", serialize_conditional(trig_event.condition));
-      fmt::print("    Trigger Assertion : {}\n", trig_event.assertion_index);
-      fmt::print("    Trigger EdgeType  : {}\n", edge_type_to_string(trig_event.edge_type));
-      fmt::print("    Trigger hold time : {}\n", trig_event.hold_time);
+      fmt::print("    Register Condition     : {}\n", serialize_conditional(reg_event.condition));
+      fmt::print("    Register EdgeType      : {}\n", edge_type_to_string(reg_event.edge_type));
+      fmt::print("    Register Trigger index : {}\n", reg_event.trigger_index);
+      fmt::print("    Trigger Condition      : {}\n", serialize_conditional(trig_event.condition));
+      fmt::print("    Trigger Assertion      : {}\n", trig_event.assertion_index);
+      fmt::print("    Trigger EdgeType       : {}\n", edge_type_to_string(trig_event.edge_type));
+      fmt::print("    Trigger hold time      : {}\n", trig_event.hold_time);
       
       std::puts("  }");
     }
