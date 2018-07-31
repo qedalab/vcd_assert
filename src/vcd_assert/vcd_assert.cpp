@@ -143,10 +143,11 @@ int main(int argc, char **argv)
 
     Verilog::Util::InputMap inputmap{};
 
-    // Find file containing top module and populate input map.
     std::optional<std::size_t> starting_source_file_index_op{};
     Parse::Util::debug_print("DEBUG: starting pass : -1\n");
 
+    // Find file containing top module and populate input map. 
+    // (not using top module at the moment, but MUST be given non the less)
     for (auto &&[i, file] : rsv::zip(rsv::indices, source_files)) {
       if (fs::exists(file)) {
         // auto file_path_normal = fs::path(file).lexically_normal();
@@ -186,36 +187,40 @@ int main(int argc, char **argv)
           fs::path(source_files[index]); //.lexically_normal();
       auto top_file_abs_path = fs::canonical(top_file_normal);
 
-      // Create input map
-      for (auto &&file : source_files) {
+      // Create input map of library files.
+      for (auto &&file : library_files) {
         auto abs_path = fs::canonical(fs::path(file));
 
         // TODO search in 'include statement' apply action, not here..
         inputmap.emplace(abs_path, // relative path from the test bench
                          Verilog::Util::ParseInput{
-                             Verilog::Util::InputTypeEnum::library_file, abs_path});
+                         Verilog::Util::InputTypeEnum::library_file, abs_path});
       }
 
-      // Parsing first pass
+      // First pass builds module map.
+      // Second pass does rest.
+      // Both follow includes pass does rest.
 
       // Parse starting from top Verilog file
-      tao::pegtl::file_input<> verilog_input(source_files[index]);
       bool result = false;
       for (auto &&pass : rsv::indices(2)) {
+        for (auto &&file : source_files) {
+          tao::pegtl::file_input<> verilog_input(file);
 
-        bool first_pass = (pass == 0);
-        Parse::Util::debug_print("DEBUG: starting pass : {}\n", pass);
-        // Parse Verilog from top
-        result = tao::pegtl::parse<
-            Verilog::IEEE1364_2001::Grammar::_grammar_,
-            Parse::make_pegtl_template<
-                Verilog::IEEE1364_2001::Actions::GrammarAction>::type,
-            Parse::capture_control>(verilog_input, design_reader, inputmap,
-                                    first_pass);
+          bool first_pass = (pass == 0);
+          Parse::Util::debug_print("DEBUG: starting pass : {}\n", pass);
+          // Parse Verilog from top
+          result = tao::pegtl::parse<
+              Verilog::IEEE1364_2001::Grammar::_grammar_,
+              Parse::make_pegtl_template<
+                  Verilog::IEEE1364_2001::Actions::GrammarAction>::type,
+              Parse::capture_control>(verilog_input, design_reader, inputmap,
+                                      first_pass);
 
-        if (!result) {
-          throw std::runtime_error(
-              "ERROR: Unsuccessful parse of Verilog source file!\n");
+          if (!result) {
+            throw std::runtime_error(
+                "ERROR: Unsuccessful parse of Verilog source file!\n");
+          }
         }
       }     
       
