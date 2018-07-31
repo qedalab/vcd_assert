@@ -47,14 +47,14 @@ target_add_warnings(libvcd)
 add_library(libsdf "src/sdf")
 target_include_directories(libsdf PUBLIC "${PROJECT_SOURCE_DIR}/include/")
 target_link_libraries(libsdf PUBLIC libparse fmt::fmt)
-target_compile_definitions(libsdf PUBLIC -DVERBOSE_DEBUG_OUTPUT=1)
+# target_compile_definitions(libsdf PUBLIC -DVERBOSE_DEBUG_OUTPUT=1)
 target_add_warnings(libsdf)
 
 #Add libverilog library
 add_library(libverilog "src/verilog")
 target_include_directories(libverilog PUBLIC "${PROJECT_SOURCE_DIR}/include/")
 target_link_libraries(libverilog PUBLIC libparse fmt::fmt)
-target_compile_definitions(libverilog PUBLIC -DVERBOSE_DEBUG_OUTPUT=1)
+# target_compile_definitions(libverilog PUBLIC -DVERBOSE_DEBUG_OUTPUT=1)
 target_add_warnings(libverilog)
 
 #Add vcd_assert library

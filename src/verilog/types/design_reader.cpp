@@ -1,7 +1,6 @@
 #include "verilog/types/design_reader.hpp"
 
 #include "parse/util/dependent_value.hpp"
-#include "parse/util/debug_printing.hpp"
 #include <cassert>
 
 using namespace Verilog;
@@ -39,7 +38,7 @@ void DesignReader::merge(DesignReader other)
   //     new_module.file_path));
   //   }
   // }
-
+  std::puts("DEBUG$: merging DesignReader");
   auto instance_index = design_->instances_.size();
 
   for (auto &&new_module : other.design_->modules_) {
@@ -83,9 +82,9 @@ std::size_t DesignReader::module(std::string module_name, std::string file_path)
 
   // check that module not already defined
   auto search = design_->module_lookup_.find(module_name);
-  if (search == design_->module_lookup_.end()) {
+  if (search == design_->module_lookup_.end()) { //IF NOT FOUND > INSERT
 
-    design_->modules_.push_back(Module{module_name, file_path, {}});
+    design_->modules_.emplace_back(Module{module_name, file_path, {}});
 
     design_->module_lookup_.emplace(module_name, module_index);
     return (module_index);
@@ -109,6 +108,10 @@ std::size_t DesignReader::instance(NetType type,
                                    std::string instance_name,
                                    std::string definition_name)
 {
+
+  Parse::Util::debug_print("DEBUG: current_module_name : {}\n",current_module_name);
+  Parse::Util::debug_print("DEBUG: instance_name : {}\n",instance_name);
+  Parse::Util::debug_print("DEBUG: definition_name : {}\n",definition_name);
   // only support module type at the moment
   if (type != NetType::module) {
     throw std::runtime_error("InternalError : unsupported net definition type");

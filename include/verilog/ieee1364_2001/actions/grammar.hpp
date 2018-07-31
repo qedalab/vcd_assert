@@ -25,21 +25,21 @@ struct GrammarAction;
 struct IncludeFileApply {
   template <class Rule, class ActionInput>
   static bool apply(const ActionInput &input, 
-                    DesignReader &reader, Util::InputMap &inputmap, 
+                    DesignReader &/*reader*/, Util::InputMap &/*inputmap*/, 
                     bool first_pass){
     namespace fs =  Parse::Util::fs;
 
-    
-    std::cout << "DEBUG: include statement: first pass: " << first_pass << "\n"; 
+    // BETTER WAY
     // auto next_input_rel = input.string();
     // auto next_input_abs = fs::path(next_input_rel).lexically_normal();
     // auto abs_path = fs::weakly_canonical(next_input_abs);
+
+    std::cout << "DEBUG: include statement: first pass: " << first_pass << "\n"; 
     auto next_input_rel = input.string();
     Parse::Util::debug_print("DEBUG: import: next_input_rel: {}\n",next_input_rel);
     
     auto curr_path = fs::path(input.position().source).parent_path();
     
-    // curr_path for memory input is ""(the empty string)
     auto next_input_abs = fs::path(curr_path / fs::path(next_input_rel));
 
     Parse::Util::debug_print("DEBUG: import: next_input_abs: {}\n",next_input_abs);
@@ -52,35 +52,35 @@ struct IncludeFileApply {
     // for (auto && pair : inputmap){
     // }
 
-    auto i = inputmap.find(next_input_abs);
-    if (i != inputmap.end()) {
-      auto parse_input = i->second;
-      // auto parse_input = inputmap.at(next_input_abs);
+    // auto i = inputmap.find(next_input_abs);
+    // if (i != inputmap.end()) {
+    //   auto parse_input = i->second;
+    //   // auto parse_input = inputmap.at(next_input_abs);
 
-      if(parse_input.type == Util::InputTypeEnum::const_char_pointer){
-        auto start = std::get<const char*>(parse_input.value);
-        tao::pegtl::memory_input<> new_input(start, next_input_rel);
+    //   if(parse_input.type == Util::InputTypeEnum::const_char_pointer){
+    //     auto start = std::get<const char*>(parse_input.value);
+    //     tao::pegtl::memory_input<> new_input(start, next_input_rel);
 
-        tao::pegtl::parse_nested<Grammar::_grammar_,
-                                Parse::make_pegtl_template<GrammarAction>::type,
-                                Parse::capture_control>(input, new_input, reader, 
-                                                        inputmap, first_pass);
-      }else if(parse_input.type == Util::InputTypeEnum::library_file){
-        auto file = std::get<std::string>(parse_input.value);
-        tao::pegtl::file_input<> new_input(file);
+    //     tao::pegtl::parse_nested<Grammar::_grammar_,
+    //                             Parse::make_pegtl_template<GrammarAction>::type,
+    //                             Parse::capture_control>(input, new_input, reader, 
+    //                                                     inputmap, first_pass);
+    //   }else if(parse_input.type == Util::InputTypeEnum::library_file){
+    //     auto file = std::get<std::string>(parse_input.value);
+    //     tao::pegtl::file_input<> new_input(file);
 
-        tao::pegtl::parse_nested<Grammar::_grammar_,
-                                Parse::make_pegtl_template<GrammarAction>::type,
-                                Parse::capture_control>(input, new_input, reader, 
-                                                        inputmap, first_pass);
-      }else{
-        Parse::Util::debug_puts("DEBUG: redundant source file include, ignored.\n");
-      }
+    //     tao::pegtl::parse_nested<Grammar::_grammar_,
+    //                             Parse::make_pegtl_template<GrammarAction>::type,
+    //                             Parse::capture_control>(input, new_input, reader, 
+    //                                                     inputmap, first_pass);
+    //   }else{
+    //     Parse::Util::debug_puts("DEBUG: redundant source file include, ignored.\n");
+    //   }
       
       
-    } else {  
-      throw std::runtime_error(fmt::format("RuntimeError : Could not find included file ({})",next_input_abs));
-    }
+    // } else {  
+    //   throw std::runtime_error(fmt::format("RuntimeError : Could not find included file ({})",next_input_abs));
+    // }
 
     return true;
   }

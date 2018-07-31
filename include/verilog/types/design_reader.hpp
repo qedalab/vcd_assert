@@ -8,6 +8,7 @@
 #include <memory>
 #include <vector>
 #include <fmt/format.h>
+#include <parse/util/debug_printing.hpp>
 
 // #include <pegtl/input/>
 
