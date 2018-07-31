@@ -146,10 +146,11 @@ int main(int argc, char **argv)
     std::optional<std::size_t> starting_source_file_index_op{};
     Parse::Util::debug_print("DEBUG: starting pass : -1\n");
 
-    // Find file containing top module and populate input map. 
+    // Find file containing top module
     // (not using top module at the moment, but MUST be given non the less)
     for (auto &&[i, file] : rsv::zip(rsv::indices, source_files)) {
       if (fs::exists(file)) {
+
         // auto file_path_normal = fs::path(file).lexically_normal();
         auto abs_path = fs::canonical(file);
 
@@ -199,7 +200,7 @@ int main(int argc, char **argv)
 
       // First pass builds module map.
       // Second pass does rest.
-      // Both follow includes pass does rest.
+      // Both follow includes.
 
       // Parse starting from top Verilog file
       bool result = false;

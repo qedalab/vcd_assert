@@ -462,12 +462,12 @@ void TimingChecker::apply_sdf_cell(SDF::DelayFile &d, SDF::Cell cell,
       verilog scopes of 'cell_type' among the available VCD scopes. */
   if (std::holds_alternative<SDF::Star>(cell.cell_instance)) {
     Parse::Util::debug_puts("DEBUG: star cell instance");
-    static bool did_warn = false;
-    if (!did_warn) {
-      fmt::print("WARNING: No Verilog design supplied. All SDF cells with "
-                 "(CELLINSTANCE *) ignored.\n");
-      did_warn = true;
-    }
+    // static bool did_warn = false;
+    // if (!did_warn) {
+    //   fmt::print("WARNING: No Verilog design supplied. All SDF cells with "
+    //              "(CELLINSTANCE *) ignored.\n");
+    //   did_warn = true;
+    // }
     // for module/instance scopes FROM applied scope DOWN:
 
     apply_sdf_cell_helper(d, cell, apply_scope);
@@ -481,12 +481,12 @@ void TimingChecker::apply_sdf_cell(SDF::DelayFile &d, SDF::Cell cell,
       /* for module/instance scopes in CURRENT scope ONLY: */
       Parse::Util::debug_puts("DEBUG: blank cell instance");
 
-      static bool did_warn = false;
-      if (!did_warn) {
-        fmt::print("WARNING: No Verilog design supplied. All SDF cells with "
-                   "(CELLINSTANCE ) ignored.\n");
-        did_warn = true;
-      }
+      // static bool did_warn = false;
+      // if (!did_warn) {
+      //   fmt::print("WARNING: No Verilog design supplied. All SDF cells with "
+      //              "(CELLINSTANCE ) ignored.\n");
+      //   did_warn = true;
+      // }
 
       // For every module in *this* scope, apply.
       for (auto &child_scope_tup : apply_scope.get_scopes()) {
