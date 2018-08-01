@@ -69,8 +69,8 @@ int main(int argc, char **argv)
   std::string top_module;
   cli.add_option("--top,-t", top_module, "Name of top verilog module");
 
-  std::vector<std::string> library_files;
-  cli.add_option("--include,-i", library_files, "Verilog library Files");
+//   std::vector<std::string> library_files;
+//   cli.add_option("--include,-i", library_files, "Verilog library Files");
 
   std::vector<std::string> vcd_nodes;
   auto node_option = cli.add_option("--node,-n", vcd_nodes, "VCD Node");
@@ -124,18 +124,19 @@ int main(int argc, char **argv)
     apply_nodes.pop_back();
   }
 
-  if (apply_nodes.empty()) {
-    fmt::print(FMT_STRING("ERROR: No timing checks to match!\n"));
-    // return 1;
-  }
-
   assert(sdf_files.empty());
   assert(vcd_nodes.empty());
 
-  if (!library_files.empty()) {
-    fmt::print(
-        FMT_STRING("WARNING: Verilog library sources not yet supported.\n"));
+//   if (!library_files.empty()) {
+//     fmt::print(
+//         FMT_STRING("WARNING: Verilog library sources not yet supported.\n"));
+//   }
+
+  if (apply_nodes.empty() && source_files.empty()) {
+    fmt::print(FMT_STRING("ERROR: No timing checks to match!\n"));
+    return 1;
   }
+
   // Initialise the Verilog design reader
   Verilog::DesignReader design_reader{};
 
@@ -189,14 +190,14 @@ int main(int argc, char **argv)
       auto top_file_abs_path = fs::canonical(top_file_normal);
 
       // Create input map of library files.
-      for (auto &&file : library_files) {
-        auto abs_path = fs::canonical(fs::path(file));
+//       for (auto &&file : library_files) {
+//         auto abs_path = fs::canonical(fs::path(file));
 
-        // TODO search in 'include statement' apply action, not here..
-        inputmap.emplace(abs_path, // relative path from the test bench
-                         Verilog::Util::ParseInput{
-                         Verilog::Util::InputTypeEnum::library_file, abs_path});
-      }
+//         // TODO search in 'include statement' apply action, not here..
+//         inputmap.emplace(abs_path, // relative path from the test bench
+//                          Verilog::Util::ParseInput{
+//                          Verilog::Util::InputTypeEnum::library_file, abs_path});
+//       }
 
       // First pass builds module map.
       // Second pass does rest.
@@ -239,8 +240,8 @@ int main(int argc, char **argv)
   auto design_p = design_reader.release();
   assert(design_p.operator bool());
 
-  
-  std::puts("INFO: Start VCD parsing");
+  std::puts("INFO: Starting VCD parsing");
+  std::puts("INFO: Parsing VCD header");
 
   // Read in the VCD file header
   VCD::HeaderReader vcd_reader{};
@@ -250,9 +251,12 @@ int main(int argc, char **argv)
       Parse::make_pegtl_template<VCD::Actions::HeaderAction>::type,
       Parse::capture_control>(vcd_input, vcd_reader);
 
+  std::puts("INFO: Finished parsing VCD header");
+
   auto header_p = std::make_shared<VCD::Header>(vcd_reader.release());
 
   // Initialise the timing checker ( applies Verilog SDFs in constructor )
+  std::puts("INFO: Initializing TimingChecker");
   auto timing_checker = VCDAssert::TimingChecker(header_p, std::move(design_p));
 
   // Read in and apply the SDF files for each node supplied on COMMAND LINE
@@ -286,17 +290,20 @@ int main(int argc, char **argv)
       }
 
     } else {
-      fmt::print("WARN: supplied node not matched (node : {})\n",node);
+      fmt::print("WARNING: supplied node not matched (node : {})\n",node);
       // could not find the supplied scope.
     }
   }
 
-  fmt::print("Num registered timing assertions: {}\n",
+  fmt::print("INFO: Num registered timing assertions: {}\n",
              timing_checker.num_registered_events());
 
+// Print event dump when debugging verbose output
+#ifdef VERBOSE_DEBUG_OUTPUT
   timing_checker.dump_registered_event_list();
+#endif
 
-  std::puts("Starting vcd stream");
+  std::puts("INFO: Starting vcd stream");
 
   // Stream in vcd file
   tao::pegtl::parse<
@@ -304,10 +311,13 @@ int main(int argc, char **argv)
       Parse::make_pegtl_template<VCDAssert::TimingCheckerAction>::type,
       Parse::capture_control>(vcd_input, timing_checker);
 
-  std::puts("Finished vcd stream");
+  std::puts("INFO: Finished vcd stream");
 
-  if (timing_checker.did_assert())
+  if (timing_checker.did_assert()) {
+    std::puts("FINISHED: Timing violation(s) did occur");
     return 1;
-  else
+  } else {
+    std::puts("FINISHED: No timing violations occured");
     return 0;
+  }
 }

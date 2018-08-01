@@ -42,7 +42,7 @@ TEST_CASE("Verilog.Actions.Design", "[Verilog][Events][Design]")
     Verilog::Util::InputMap inputs{};
 
     for (auto &&pass : rsv::indices(2)) {
-      bool first_pass = pass == 0? true : false;
+      bool first_pass = pass == 0;
       REQUIRE(tao::pegtl::parse<
               VerilogGrammar::_grammar_,
               Parse::make_pegtl_template<Actions::GrammarAction>::type,
@@ -94,7 +94,7 @@ TEST_CASE("Verilog.Actions.Design", "[Verilog][Events][Design]")
 
     for (auto &&pass : rsv::indices(2)) {
 
-      bool first_pass = pass == 0? true : false;
+      bool first_pass = pass == 0;
       REQUIRE(tao::pegtl::parse<
               VerilogGrammar::_grammar_,
               Parse::make_pegtl_template<Actions::GrammarAction>::type,

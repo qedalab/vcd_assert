@@ -9,7 +9,7 @@ TEST_CASE("VCD.Serialize.ValueChange", "[Serialize]") {
   SECTION("Scalar") {
     std::string output;
     VCD::serialize_value_change(ranges::back_inserter(output),
-                                {Value::z, "my_id_code"} );
+                                ScalarValueChangeView{Value::z, "my_id_code"} );
     CHECK(output == "Zmy_id_code\n");
   }
 
@@ -17,7 +17,7 @@ TEST_CASE("VCD.Serialize.ValueChange", "[Serialize]") {
     std::string output;
     Value data[] = {Value::z, Value::x, Value::one, Value::zero};
     VCD::serialize_value_change(ranges::back_inserter(output),
-                                {data, "my_id_code"} );
+                                VectorValueChangeView{data, "my_id_code"} );
     CHECK(output == "bZX10 my_id_code\n");
   }
 
@@ -27,7 +27,7 @@ TEST_CASE("VCD.Serialize.ValueChange", "[Serialize]") {
     std::string expected = std::string("r") + std::to_string(value) + std::string(" my_id_code\n");
 
     VCD::serialize_value_change(ranges::back_inserter(output),
-                                {value, "my_id_code"} );
+                                RealValueChangeView{value, "my_id_code"} );
     CHECK(output == expected);
   }
 }
