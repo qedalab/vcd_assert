@@ -106,33 +106,31 @@ struct ModuleDescriptionAction: single_dispatch<
 
 struct ModuleDescriptionApply{ // clang-format on
   template <class Rule, class ActionInput>
-  static bool apply(const ActionInput &input, ModuleEvent data,
-                    DesignReader &reader, Util::InputMap & /*inputmap*/,
-                    bool first_pass)
-  {
+  static bool apply(const ActionInput &input, ModuleEvent data, 
+                    DesignReader &reader, Util::InputMap &/*inputmap*/, 
+                    bool first_pass){
 
-    std::cout << "DEBUG: module descript: first pass: " << first_pass << "\n";
+    if(first_pass){
 
-    if (first_pass) {
       Parse::Util::debug_puts("DEBUG: first pass : found module");
-      // if first pass, build only the module list and lookup.
+
       reader.module(data.module_identifier, input.position().source);
-    } else {
+
+    }else{
 
       Parse::Util::debug_puts("DEBUG: second pass : found instance/command");
-
-      for (auto &&instance : data.instances) {
-        reader.instance(NetType::module, data.module_identifier, instance.name,
-                        instance.type);
+      
+      for (auto&& instance : data.instances ){
+        reader.instance(NetType::module, data.module_identifier, instance.name, instance.type);
       }
 
-      for (auto &&command : data.commands) {
+      for (auto&& command : data.commands ){
         reader.command(command, data.module_identifier);
       }
     }
 
     return true;
-  }
+    }
 }; // clang-format off
 
 // clang-format on

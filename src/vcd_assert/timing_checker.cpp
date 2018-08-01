@@ -398,7 +398,7 @@ void TimingChecker::apply_sdf_timing_specs(SDF::DelayFile &d, SDF::Cell cell,
                                            std::size_t scope_index, // remove
                                            VCD::Scope &scope)
 {
-  fmt::format("DEBUG: applying cell to scope.");
+  Parse::Util::debug_puts("DEBUG: applying cell to scope.");
   for (auto &&spec : cell.timing_specs) {
     switch (spec.get_enum_type()) {
     case SDF::TimingSpecType::timing_check:
@@ -408,8 +408,6 @@ void TimingChecker::apply_sdf_timing_specs(SDF::DelayFile &d, SDF::Cell cell,
         case SDF::TimingCheckType::hold: {
           apply_sdf_hold(d, std::get<SDF::Hold>(check.value), scope_index,
                          scope);
-          // auto var_svp = state_.get_value_pointer(0);
-          // auto var_cvp = ConditionalValuePointer(var_svp);
         } break;
         default:
           throw std::runtime_error("InternalError");

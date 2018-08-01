@@ -9,12 +9,8 @@ namespace Parse::Util {
 
 template<typename Input>
 #ifdef VERBOSE_DEBUG_OUTPUT
-<<<<<<< HEAD
   fmt::print(input);
-=======
-void debug_puts(Input input) {
-  std::puts(input);
->>>>>>> origin/master
+  fmt::print("\n");
 #else
 void debug_puts(Input /*unused*/) {
 #endif
