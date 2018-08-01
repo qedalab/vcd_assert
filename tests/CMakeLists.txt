@@ -98,6 +98,20 @@ add_test(
   COMMAND vcd_assert tb_basic_ndro.vcd ../tb_ndro.v ../ndro.v -t tb_basic_ndro 
 )
 
+############## COMPLEX EXAMPLE (SMALL) 
+# Full adder 1bit fail
+add_test(
+  NAME full_adder_1bit_fail
+  WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/examples/full_adder_1bit_fail/iverilog_out/
+  COMMAND vcd_assert tb_full_adder_1bit.vcd ../tb_full_adder_1bit.v ../full_adder_1bit.v -t tb_full_adder_1bit
+)
+
+# Full adder 1bit succeed
+add_test(
+  NAME full_adder_1bit_success
+  WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/examples/full_adder_1bit_success/iverilog_out/
+  COMMAND vcd_assert tb_full_adder_1bit.vcd ../tb_full_adder_1bit.v ../full_adder_1bit.v -t tb_full_adder_1bit
+)
 
 # Failing tests
 set_tests_properties(
