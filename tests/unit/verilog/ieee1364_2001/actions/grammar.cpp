@@ -104,26 +104,20 @@ TEST_CASE("Verilog.Actions.Design", "[Verilog][Events][Design]")
     auto design_p = reader.release();
     REQUIRE(design_p.operator bool());
     // Test::catch_test_design(*design_p, dro_example);
+    // VerilogTest::catch_design(tb_dro_example_design_test, *design_p);
+    
   }
 
   SECTION("both tb_dro and dro from file")
   {
     Verilog::DesignReader reader{};
+    Verilog::Util::InputMap inputmap{}; // no library files.
    
    
     tao::pegtl::file_input<> input_tb_dro(tb_dro_file_path_abs_.to_string_view());
     tao::pegtl::file_input<> input_dro(dro_file_path_abs_.to_string_view());
 
-    // std::vector<decltype(input_tb_dro)> inputs{};
-    // inputs.emplace_back(input_tb_dro);
-    // inputs.emplace_back(input_dro);
-
-    Verilog::Util::InputMap inputmap{}; // no library files.
       
-    // for(auto &&run : rsv::indices(2)){
-    //   for(auto &&input : inputs){
- 
-    // }
     REQUIRE(tao::pegtl::parse<
         VerilogGrammar::_grammar_,
         Parse::make_pegtl_template<Actions::GrammarAction>::type,

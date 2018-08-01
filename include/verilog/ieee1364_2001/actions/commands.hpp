@@ -79,6 +79,7 @@ struct SDFAnnotateTaskAction : single_dispatch<
   using state = Command;
 };
 
+// clang-format on
 }
 }
 }

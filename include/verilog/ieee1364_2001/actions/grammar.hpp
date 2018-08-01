@@ -11,8 +11,8 @@
 #include "../../util/parse_input.hpp"
 #include "../grammar/grammar_hacked.hpp"
 
-#include <parse/util/debug_printing.hpp>
 #include <parse/actions/make_pegtl_template.hpp>
+#include <parse/util/debug_printing.hpp>
 #include <tao/pegtl/memory_input.hpp>
 
 namespace Verilog {
@@ -22,35 +22,34 @@ namespace Actions {
 
 struct GrammarAction;
 
-struct IncludeFileApply {
+struct IncludeFileApply { // clang-format on
   template <class Rule, class ActionInput>
-  static bool apply(const ActionInput &input, 
-                    DesignReader &/*reader*/, Util::InputMap &/*inputmap*/, 
-                    bool first_pass){
-    namespace fs =  Parse::Util::fs;
+  static bool apply(const ActionInput &input, DesignReader & /*reader*/,
+                    Util::InputMap & /*inputmap*/, bool first_pass)
+  {
+    namespace fs = Parse::Util::fs;
 
     // BETTER WAY
     // auto next_input_rel = input.string();
     // auto next_input_abs = fs::path(next_input_rel).lexically_normal();
     // auto abs_path = fs::weakly_canonical(next_input_abs);
 
-    std::cout << "DEBUG: include statement: first pass: " << first_pass << "\n"; 
     auto next_input_rel = input.string();
-    Parse::Util::debug_print("DEBUG: import: next_input_rel: {}\n",next_input_rel);
-    
+
     auto curr_path = fs::path(input.position().source).parent_path();
-    
     auto next_input_abs = fs::path(curr_path / fs::path(next_input_rel));
 
-    Parse::Util::debug_print("DEBUG: import: next_input_abs: {}\n",next_input_abs);
+    Parse::Util::debug_print("DEBUG: include statement: first pass: {}\n",
+                             first_pass);
+    Parse::Util::debug_print("DEBUG: import: next_input_rel: {}\n",
+                             next_input_rel);
+    Parse::Util::debug_print("DEBUG: import: next_input_abs: {}\n",
+                             next_input_abs);
 
+    // Normalize the include, for ID purposes.
     // TODO : Actually want lexically_normal.
-    next_input_abs = fs::exists(next_input_abs) 
-                      ? fs::canonical(next_input_abs) 
-                      : next_input_abs;
-
-    // for (auto && pair : inputmap){
-    // }
+    next_input_abs = fs::exists(next_input_abs) ? fs::canonical(next_input_abs)
+                                                : next_input_abs;
 
     // auto i = inputmap.find(next_input_abs);
     // if (i != inputmap.end()) {
@@ -63,28 +62,33 @@ struct IncludeFileApply {
 
     //     tao::pegtl::parse_nested<Grammar::_grammar_,
     //                             Parse::make_pegtl_template<GrammarAction>::type,
-    //                             Parse::capture_control>(input, new_input, reader, 
-    //                                                     inputmap, first_pass);
+    //                             Parse::capture_control>(input, new_input,
+    //                             reader,
+    //                                                     inputmap,
+    //                                                     first_pass);
     //   }else if(parse_input.type == Util::InputTypeEnum::library_file){
     //     auto file = std::get<std::string>(parse_input.value);
     //     tao::pegtl::file_input<> new_input(file);
 
     //     tao::pegtl::parse_nested<Grammar::_grammar_,
     //                             Parse::make_pegtl_template<GrammarAction>::type,
-    //                             Parse::capture_control>(input, new_input, reader, 
-    //                                                     inputmap, first_pass);
+    //                             Parse::capture_control>(input, new_input,
+    //                             reader,
+    //                                                     inputmap,
+    //                                                     first_pass);
     //   }else{
-    //     Parse::Util::debug_puts("DEBUG: redundant source file include, ignored.\n");
+    //     Parse::Util::debug_puts("DEBUG: redundant source file include,
+    //     ignored.\n");
     //   }
-      
-      
-    // } else {  
-    //   throw std::runtime_error(fmt::format("RuntimeError : Could not find included file ({})",next_input_abs));
+
+    // } else {
+    //   throw std::runtime_error(fmt::format("RuntimeError : Could not find
+    //   included file ({})",next_input_abs));
     // }
 
     return true;
   }
-};
+}; // clang-format off
 
 struct IncludeStatementAction: single_dispatch<
     Grammar::file_path_spec, apply<IncludeFileApply>
@@ -115,6 +119,7 @@ struct GrammarAction : multi_dispatch<
   using state = DesignReader;
 };
 
+// clang-format on
 }
 }
 }

@@ -28,33 +28,7 @@ using namespace Parse;
 
 namespace Verilog {
 namespace IEEE1364_2001 {
-
-
-// struct HCharAction : all_dispatch<apply0<Apply::rule_value>> {
-//   using state = HChar;
-// };
-
-// struct IdentifierAction : single_dispatch<
-//     Grammar::identifier, apply<Apply::string>
-// > {
-//   using state = std::string;
-// };
-
-// struct IdentifierArrayAction : single_dispatch<
-//     Grammar::identifier, inner_action<
-//       IdentifierAction, 
-//       Storage::push_back
-//     >
-// > {
-//   using state = std::vector<std::string>;
-// };
-
-// struct PathIdentifierStorage{
-//   static bool store(HierarchicalIdentifier &hi, std::string s) {
-//      hi.value.push_back(std::move(s));
-//      return true;
-//    }
-//  };
+// clang-format off
 
 struct QStringAction : single_dispatch<
     Grammar::qstring_content, apply<Apply::string>
@@ -127,8 +101,7 @@ struct FilePathSpecAction : single_dispatch<
   using state = std::string;
 };
 
-
-
+// clang-format on
 }
 }
 
