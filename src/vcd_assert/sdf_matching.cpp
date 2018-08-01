@@ -1,6 +1,5 @@
 #include "vcd_assert/sdf_matching.hpp"
-#include <math.h>       /* pow */
-
+#include <cmath>       /* pow */
 
 using namespace VCDAssert;
 

@@ -68,6 +68,7 @@ class TimingChecker
   // std::unordered_map<std::size_t,std::size_t> sdf_apply_scope_lookup_;//??Why this
   std::vector<IndexLookup> index_lookup_;
   std::vector<RegisterEventList> event_lists_;
+  std::vector<std::string> assertion_string_list_;
 
   std::unordered_map<VCD::Value*, std::size_t> pointer_to_index_;
 
@@ -82,11 +83,10 @@ class TimingChecker
 
   void build_netlist_lookup(std::size_t scope_index, std::size_t net_index);
 
-  [[nodiscard]] bool handle_event(const RegisterEvent &event, std::size_t index,
-                                  VCD::Value from, VCD::Value to);
+  void handle_event(const RegisterEvent &event, VCD::Value from, VCD::Value to);
 
   std::vector<std::size_t> get_hold_event_range(SDF::Node port,
-                                                std::size_t port_vcd_index);
+                                                std::size_t port_vcd_var_index);
 
   std::optional<std::tuple<ConditionalValuePointer, EdgeType>>
   apply_sdf_hold_port_tchk_helper(SDF::PortTimingCheck port_tchk,

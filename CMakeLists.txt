@@ -47,7 +47,6 @@ target_add_warnings(libvcd)
 add_library(libsdf "src/sdf")
 target_include_directories(libsdf PUBLIC "${PROJECT_SOURCE_DIR}/include/")
 target_link_libraries(libsdf PUBLIC libparse fmt::fmt)
-# target_compile_definitions(libsdf PUBLIC -DVERBOSE_DEBUG_OUTPUT=1)
 target_add_warnings(libsdf)
 
 #Add libverilog library

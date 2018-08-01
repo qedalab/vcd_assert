@@ -6,6 +6,7 @@
 
 #include <parse/grammar/base.h>
 #include <parse/grammar/part.h>
+#include <parse/grammar/marker.hpp>
 
 namespace VCD::Grammar {
 
@@ -14,6 +15,7 @@ using namespace Parse::Grammar::Base;
 // clang-format off
 
 struct scalar_value_change : seq<
+  Parse::Grammar::marker,
   value,
   identifier_code,
   command_separator
@@ -23,6 +25,7 @@ struct scalar_value_change : seq<
 ///   binary_number has a 'b' inside it and there is clearly not
 ///   a double 'b' in the VCD examples
 struct binary_value_change : seq<
+  Parse::Grammar::marker,
   one<'b','B'>,
   must<
     binary_value,
@@ -35,6 +38,7 @@ struct binary_value_change : seq<
 /// TODO: investigate if real_number is correct since binary_number
 ///       was not.
 struct real_value_change : seq<
+  Parse::Grammar::marker,
   one<'r','R'>,
   must<
     real_number,

@@ -5,6 +5,7 @@
 #include "vcd_assert/sdf_matching.hpp"
 
 #include "vcd/util/size.hpp"
+#include "vcd/util/time.hpp"
 
 #include <range/v3/view/indices.hpp>
 #include <range/v3/view/linear_distribute.hpp>
@@ -34,8 +35,10 @@ TimingChecker::TimingChecker(std::shared_ptr<VCD::Header> header,
     auto var_size = var_id_code_view.get_size();
     auto var_type = var_id_code_view.get_type();
 
+#ifdef VERBOSE_DEBUG_OUTPUT
     fmt::print("VarIdCode: {} start at index {}\n",
                var_id_code_view.get_id_code(), counter);
+#endif // VERBOSE_DEBUG_OUTPUT
 
     // If single value
     if (var_type == VCD::VarType::real) {
@@ -183,8 +186,6 @@ TimingChecker::apply_sdf_hold_port_tchk_helper(SDF::PortTimingCheck port_tchk,
   EdgeType edge{};
 
   if (port_tchk.port.edge.has_value()) {
-    Parse::Util::debug_puts("DEBUG: edge found");
-
     switch (port_tchk.port.edge.value()) {
     case SDF::EdgeType::posedge:
       edge = VCDAssert::EdgeType::PosEdge;
@@ -312,12 +313,6 @@ void TimingChecker::apply_sdf_hold(SDF::DelayFile &d, SDF::Hold hold,
 
   auto sdf_value = hold.value.content(); // chooses TYP for now.
 
-#ifdef VERBOSE_DEBUG_OUTPUT
-  std::string out;
-  serialize_hold_check(ranges::back_inserter(out), 0, hold);
-  fmt::print(out);
-#endif
-
   auto reg = hold.reg;
   auto trig = hold.trig;
 
@@ -329,8 +324,7 @@ void TimingChecker::apply_sdf_hold(SDF::DelayFile &d, SDF::Hold hold,
     auto trig_port_idx_option =
         get_sdf_node_scope_index(*header_, trig.port, scope_index, scope);
 
-    if (reg_port_idx_option.has_value() &&
-        trig_port_idx_option.has_value()) {
+    if (reg_port_idx_option.has_value() && trig_port_idx_option.has_value()) {
 
       Parse::Util::debug_puts("DEBUG: hold port nodes successfully found.");
 
@@ -356,20 +350,29 @@ void TimingChecker::apply_sdf_hold(SDF::DelayFile &d, SDF::Hold hold,
         auto reg_event_idx_range = get_hold_event_range(reg.port, reg_port_idx);
 
         // get event_list indexes of the trig event port
-        auto trig_event_idx_range = get_hold_event_range(trig.port, trig_port_idx);
+        auto trig_event_idx_range =
+            get_hold_event_range(trig.port, trig_port_idx);
 
         if (!reg_event_idx_range.empty() && !trig_event_idx_range.empty()) {
           Parse::Util::debug_puts("DEBUG: hold reg port successfully matched.");
 
-          for (auto &&reg_event_idx: reg_event_idx_range) {
-            for (auto &&trig_event_idx: trig_event_idx_range) {
+          std::string serialized;
+          serialize_hold_check(ranges::back_inserter(serialized), 0, hold);
+
+          Parse::Util::debug_puts("DEBUG: Adding hold assertion:");
+          Parse::Util::debug_puts(serialized);
+
+          assertion_string_list_.emplace_back(std::move(serialized));
+          std::string_view ser_sv = assertion_string_list_.back();
+
+          for (auto &&reg_event_idx : reg_event_idx_range) {
+            for (auto &&trig_event_idx : trig_event_idx_range) {
               event_lists_[reg_event_idx].events.emplace_back(RegisterEvent{
-                  std::move(reg_cond_cvp), reg_edge,
+                  std::move(reg_cond_cvp), reg_edge, 
                   (std::size_t)trig_event_idx,
 
                   TriggeredEvent{
-                      std::move(trig_cond_cvp), trig_edge,
-                      trig_event_idx,
+                      std::move(trig_cond_cvp), trig_edge, ser_sv,
                       (std::size_t)(get_scaled_sdf_value(
                           *header_, d,
                           sdf_value.value()))}}); // TODO timescale 1000
@@ -395,7 +398,7 @@ void TimingChecker::apply_sdf_timing_specs(SDF::DelayFile &d, SDF::Cell cell,
                                            std::size_t scope_index, // remove
                                            VCD::Scope &scope)
 {
-  fmt::format("DEBUG: applying cell to scope.");
+  Parse::Util::debug_puts("DEBUG: applying cell to scope.");
   for (auto &&spec : cell.timing_specs) {
     switch (spec.get_enum_type()) {
     case SDF::TimingSpecType::timing_check:
@@ -405,8 +408,6 @@ void TimingChecker::apply_sdf_timing_specs(SDF::DelayFile &d, SDF::Cell cell,
         case SDF::TimingCheckType::hold: {
           apply_sdf_hold(d, std::get<SDF::Hold>(check.value), scope_index,
                          scope);
-          // auto var_svp = state_.get_value_pointer(0);
-          // auto var_cvp = ConditionalValuePointer(var_svp);
         } break;
         default:
           throw std::runtime_error("InternalError");
@@ -602,33 +603,30 @@ void TimingChecker::apply_sdf_file(std::string delayfile_path,
   }
 }
 
-[[nodiscard]] bool TimingChecker::handle_event(const RegisterEvent &event,
-                                               std::size_t index,
+void TimingChecker::handle_event(const RegisterEvent &event,
                                                VCD::Value from, VCD::Value to) {
-  bool out = checker_.event(index, from, to);
 
   if (!edge_type_matches(event.edge_type, from, to))
-    return out;
+    return;
 
   if (!(event.condition.value() == VCD::Value::one))
-    return out;
+    return;
 
   checker_.hold(event.triggered, event.trigger_index);
-
-  return out;
 }
 
-    [[nodiscard]] bool TimingChecker::internal_event(std::size_t vcd_index,
-                                                     VCD::Value value)
-{
+[[nodiscard]] bool TimingChecker::internal_event(std::size_t vcd_index,
+                                                 VCD::Value value) {
   auto prev_value = state_.get_scalar_value(vcd_index);
   auto index = index_lookup_[vcd_index].from;
   auto &events = event_lists_.at(vcd_index).events;
 
   // Check for timing violation
-  bool timing_violation = false;
+  bool timing_violation = checker_.event(index, prev_value, value);
+
+  // Check for new register events;
   for (const auto &event : events)
-    timing_violation |= handle_event(event, index, prev_value, value);
+    handle_event(event, prev_value, value);
 
   // Update state
   state_.set_value(index, value);
@@ -636,9 +634,9 @@ void TimingChecker::apply_sdf_file(std::string delayfile_path,
   return timing_violation;
 }
 
-[[nodiscard]] bool
-TimingChecker::internal_event(std::size_t vcd_range_index,
-                              ranges::span<VCD::Value> values) {
+[[nodiscard]] bool TimingChecker::internal_event(
+    std::size_t vcd_range_index, ranges::span<VCD::Value> values)
+{
   auto prev_values = state_.get_vector_value(vcd_range_index);
   assert(values.size() == prev_values.size());
 
@@ -654,8 +652,11 @@ TimingChecker::internal_event(std::size_t vcd_range_index,
     auto &events = event_lists_.at(index).events;
 
     // Check for timing violation
+    timing_violation |= checker_.event(index, prev_value, value);
+
+    // Check for new register events
     for (const auto &event : events)
-      timing_violation |= handle_event(event, index, prev_value, value);
+      handle_event(event, prev_value, value);
   }
 
   // Update values
@@ -700,9 +701,20 @@ void TimingChecker::scalar_value_change(VCD::ScalarValueChangeView value_change)
   auto index = header_->get_var_id_code_index(identifier_code_str);
 
   if (internal_event(index, value_change.value)) {
-    // TODO Timing assert message
-    fmt::print("TIMING ASSERT: Timing violation occurred during parsing of "
-               "scalar value change\n");
+    // Generate pretty time string if possible
+    std::string sim_time_string;
+    if(header_->has_time_scale()) {
+      auto ts = header_->get_time_scale().value();
+      sim_time_string = VCD::Util::time_string(ts, sim_time_);
+    } else {
+      sim_time_string = std::to_string(sim_time_);
+    }
+
+    const auto marker = value_change.marker;
+    fmt::print("ASSERT: Timing violation(s) occurred "
+               "during scalar value change\n"
+               "        at time {} from line {} and col {}\n",
+               sim_time_string, marker.line, marker.byte_in_line);
     did_assert_ = true;
   };
 }
@@ -772,8 +784,11 @@ void TimingChecker::vector_value_change(
 
   if (internal_event(vcd_index, range)) {
     // TODO Better timing assert message
-    fmt::print("TIMING ASSERT: Timing violation occured during parsing of "
-               "vector value change\n");
+    const auto marker = value_change.marker;
+    fmt::print("ASSERT : Timing violation(s) occured "
+               "during vector value change\n"
+               "         at time {} from line {} and col {}\n",
+               sim_time_, marker.line, marker.byte_in_line);
     did_assert_ = true;
   };
 }
@@ -871,7 +886,7 @@ void TimingChecker::dump_registered_event_list()
       fmt::print("    Trigger Condition      : {}\n",
                  serialize_conditional(trig_event.condition));
       fmt::print("    Trigger Assertion      : {}\n",
-                 trig_event.assertion_index);
+                 trig_event.assertion_sv);
       fmt::print("    Trigger EdgeType       : {}\n",
                  edge_type_to_string(trig_event.edge_type));
       fmt::print("    Trigger hold time      : {}\n", trig_event.hold_time);

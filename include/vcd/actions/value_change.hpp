@@ -5,19 +5,23 @@
 #include "../types/value_change.hpp"
 #include "./identifier_code.hpp"
 
-#include "parse/actions/apply/rule_value.hpp"
 #include "parse/actions/apply/float.hpp"
+#include "parse/actions/apply/marker.hpp"
+#include "parse/actions/apply/rule_value.hpp"
 #include "parse/actions/apply/string_view.hpp"
-#include "parse/actions/command/inner_action.hpp"
 #include "parse/actions/command/apply0.hpp"
+#include "parse/actions/command/apply.hpp"
+#include "parse/actions/command/inner_action.hpp"
 #include "parse/actions/dispatch.hpp"
+#include "parse/actions/marker.hpp"
 #include "parse/actions/storage/member.hpp"
+#include "parse/util/marker.hpp"
 
 namespace VCD::Actions {
 
 // clang-format off
 struct RealAction : Parse::single_dispatch <
-  Grammar::real_number, apply<Parse::Apply::float_value>
+  Grammar::real_number, Parse::apply<Parse::Apply::float_value>
 > {
   using state = double;
 };
@@ -31,6 +35,8 @@ struct UncheckedVectorValueAction : Parse::all_dispatch<Parse::apply<Apply::stri
 };
 
 struct RealValueChangeAction : Parse::multi_dispatch<
+  Parse::Grammar::marker, Parse::inner_action<Parse::MarkerAction,
+    Parse::Storage::member<&RealValueChangeView::marker>>,
   Grammar::identifier_code, Parse::inner_action<IdentifierCodeAction,
     Parse::Storage::member<&RealValueChangeView::identifier_code>>,
   Grammar::real_number, Parse::inner_action<RealAction,
@@ -40,6 +46,8 @@ struct RealValueChangeAction : Parse::multi_dispatch<
 };
 
 struct ScalarValueChangeAction : Parse::multi_dispatch<
+  Parse::Grammar::marker, Parse::inner_action<Parse::MarkerAction,
+    Parse::Storage::member<&ScalarValueChangeView::marker>>,
   Grammar::identifier_code, Parse::inner_action<IdentifierCodeAction,
     Parse::Storage::member<&ScalarValueChangeView::identifier_code>>,
   Grammar::value, Parse::inner_action<ValueAction,
@@ -49,6 +57,8 @@ struct ScalarValueChangeAction : Parse::multi_dispatch<
 };
 
 struct UncheckedVectorValueChangeAction : Parse::multi_dispatch<
+  Parse::Grammar::marker, Parse::inner_action<Parse::MarkerAction,
+    Parse::Storage::member<&UncheckedVectorValueChangeView::marker>>,
   Grammar::identifier_code, Parse::inner_action<IdentifierCodeAction,
     Parse::Storage::member<&UncheckedVectorValueChangeView::identifier_code>>,
   Grammar::binary_value, Parse::inner_action<UncheckedVectorValueAction,

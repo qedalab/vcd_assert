@@ -109,7 +109,7 @@ void serialize_hold_check(OutputIterator oi, int indent,
   serialize_port_tchk(oi, 0, hold.reg);
   ranges::copy(std::string_view(" "), oi);
   serialize_value(oi, 0, hold.value);
-  ranges::copy(std::string_view(")\n"), oi);
+  ranges::copy(std::string_view(")"), oi);
 }
 
 /// Serialize SDF timing check definition
@@ -138,7 +138,7 @@ void serialize_timing_check(OutputIterator oi, int indent,
   }
 
   // serialize_indent(oi, indent);
-  // ranges::copy(")\n"sv, oi);
+  ranges::copy(std::string_view("\n"), oi);
 }
 
 /// Serialize SDF timing check specification

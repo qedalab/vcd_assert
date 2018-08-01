@@ -11,7 +11,7 @@ DesignReader::DesignReader() { design_ = std::make_unique<Design>(); }
 void DesignReader::merge(DesignReader other)
 {
 
-  // Files
+  /* TODO : Revise file name list merge */
   // std::vector<std::string> file_names_;      /// File Names
 
   /// 'module index' <-> 'file index' lookup
@@ -38,7 +38,8 @@ void DesignReader::merge(DesignReader other)
   //     new_module.file_path));
   //   }
   // }
-  std::puts("DEBUG$: merging DesignReader");
+
+  Parse::Util::debug_puts("DEBUG: merging DesignReader");
   auto instance_index = design_->instances_.size();
 
   for (auto &&new_module : other.design_->modules_) {

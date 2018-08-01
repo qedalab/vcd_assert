@@ -39,7 +39,7 @@ bool TriggeredTimingChecker::event(std::size_t index, VCD::Value from, VCD::Valu
     // if it actually triggered
     if (item.condition.get().value() == VCD::Value::one) {
       // TODO print usefull information
-      fmt::print("Timing Assertion: Violated (TODO TYPE) from (TODO WHERE) at {}\n", sim_time_);
+      fmt::print("ASSERT: Triggered {}\n", item.assertion_sv);
       out |= true;
     }
   }
@@ -54,7 +54,7 @@ void TriggeredTimingChecker::hold(const TriggeredEvent &event, std::size_t index
   TriggeredItem triggered_item {
     event.condition,
     event.edge_type,
-    event.assertion_index,
+    event.assertion_sv,
     sim_time_ + event.hold_time
   };
 
