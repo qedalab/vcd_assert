@@ -5,6 +5,7 @@
 #include "vcd_assert/sdf_matching.hpp"
 
 #include "vcd/util/size.hpp"
+#include "vcd/util/time.hpp"
 
 #include <range/v3/view/indices.hpp>
 #include <range/v3/view/linear_distribute.hpp>
@@ -34,8 +35,10 @@ TimingChecker::TimingChecker(std::shared_ptr<VCD::Header> header,
     auto var_size = var_id_code_view.get_size();
     auto var_type = var_id_code_view.get_type();
 
+#ifdef VERBOSE_DEBUG_OUTPUT
     fmt::print("VarIdCode: {} start at index {}\n",
                var_id_code_view.get_id_code(), counter);
+#endif // VERBOSE_DEBUG_OUTPUT
 
     // If single value
     if (var_type == VCD::VarType::real) {
@@ -602,33 +605,30 @@ void TimingChecker::apply_sdf_file(std::string delayfile_path,
   }
 }
 
-[[nodiscard]] bool TimingChecker::handle_event(const RegisterEvent &event,
-                                               std::size_t index,
+void TimingChecker::handle_event(const RegisterEvent &event,
                                                VCD::Value from, VCD::Value to) {
-  bool out = checker_.event(index, from, to);
 
   if (!edge_type_matches(event.edge_type, from, to))
-    return out;
+    return;
 
   if (!(event.condition.value() == VCD::Value::one))
-    return out;
+    return;
 
   checker_.hold(event.triggered, event.trigger_index);
-
-  return out;
 }
 
-    [[nodiscard]] bool TimingChecker::internal_event(std::size_t vcd_index,
-                                                     VCD::Value value)
-{
+[[nodiscard]] bool TimingChecker::internal_event(std::size_t vcd_index,
+                                                 VCD::Value value) {
   auto prev_value = state_.get_scalar_value(vcd_index);
   auto index = index_lookup_[vcd_index].from;
   auto &events = event_lists_.at(vcd_index).events;
 
   // Check for timing violation
-  bool timing_violation = false;
+  bool timing_violation = checker_.event(index, prev_value, value);
+
+  // Check for new register events;
   for (const auto &event : events)
-    timing_violation |= handle_event(event, index, prev_value, value);
+    handle_event(event, prev_value, value);
 
   // Update state
   state_.set_value(index, value);
@@ -636,9 +636,9 @@ void TimingChecker::apply_sdf_file(std::string delayfile_path,
   return timing_violation;
 }
 
-[[nodiscard]] bool
-TimingChecker::internal_event(std::size_t vcd_range_index,
-                              ranges::span<VCD::Value> values) {
+[[nodiscard]] bool TimingChecker::internal_event(
+    std::size_t vcd_range_index, ranges::span<VCD::Value> values)
+{
   auto prev_values = state_.get_vector_value(vcd_range_index);
   assert(values.size() == prev_values.size());
 
@@ -654,8 +654,11 @@ TimingChecker::internal_event(std::size_t vcd_range_index,
     auto &events = event_lists_.at(index).events;
 
     // Check for timing violation
+    timing_violation |= checker_.event(index, prev_value, value);
+
+    // Check for new register events
     for (const auto &event : events)
-      timing_violation |= handle_event(event, index, prev_value, value);
+      handle_event(event, prev_value, value);
   }
 
   // Update values
@@ -700,12 +703,20 @@ void TimingChecker::scalar_value_change(VCD::ScalarValueChangeView value_change)
   auto index = header_->get_var_id_code_index(identifier_code_str);
 
   if (internal_event(index, value_change.value)) {
-    // TODO Timing assert message
+    // Generate pretty time string if possible
+    std::string sim_time_string;
+    if(header_->has_time_scale()) {
+      auto ts = header_->get_time_scale().value();
+      sim_time_string = VCD::Util::time_string(ts, sim_time_);
+    } else {
+      sim_time_string = std::to_string(sim_time_);
+    }
+
     const auto marker = value_change.marker;
-    fmt::print("TIMING ASSERT: Timing violation occurred during parsing of "
-               "scalar value change\n"
-               "               at time {} by line {} and col {}\n",
-               sim_time_, marker.line, marker.byte_in_line);
+    fmt::print("ASSERT: Timing violation(s) occurred "
+               "during scalar value change\n"
+               "        at time {} from line {} and col {}\n",
+               sim_time_string, marker.line, marker.byte_in_line);
     did_assert_ = true;
   };
 }
@@ -776,9 +787,9 @@ void TimingChecker::vector_value_change(
   if (internal_event(vcd_index, range)) {
     // TODO Better timing assert message
     const auto marker = value_change.marker;
-    fmt::print("TIMING ASSERT: Timing violation occured during parsing of "
-               "vector value change\n"
-               "               at time {} by line {} and col {}\n",
+    fmt::print("ASSERT : Timing violation(s) occured "
+               "during vector value change\n"
+               "         at time {} from line {} and col {}\n",
                sim_time_, marker.line, marker.byte_in_line);
     did_assert_ = true;
   };

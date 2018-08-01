@@ -82,8 +82,7 @@ class TimingChecker
 
   void build_netlist_lookup(std::size_t scope_index, std::size_t net_index);
 
-  [[nodiscard]] bool handle_event(const RegisterEvent &event, std::size_t index,
-                                  VCD::Value from, VCD::Value to);
+  void handle_event(const RegisterEvent &event, VCD::Value from, VCD::Value to);
 
   std::vector<std::size_t> get_hold_event_range(SDF::Node port,
                                                 std::size_t port_vcd_var_index);
