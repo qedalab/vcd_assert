@@ -157,7 +157,7 @@ void State::update_sim_time() noexcept {
 
   while(!vector_buffer_.empty()) {
     auto& back = vector_buffer_.back();
-    internal_set_value(back.index, std::move(back.values));
+    internal_set_value(back.index, back.values);
     vector_buffer_.pop_back();
   }
 }
