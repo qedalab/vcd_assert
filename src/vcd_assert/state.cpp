@@ -107,19 +107,19 @@ double State::get_real_value(std::size_t index) const
   return std::get<double>(state_value);
 }
 
-void State::set_value(std::size_t index, VCD::Value value)
+void State::internal_set_value(std::size_t index, VCD::Value value)
 {
   StateValue &state_value = values_.at(index);
   std::get<VCD::Value>(state_value) = value;
 }
 
-void State::set_value(std::size_t index, double value)
+void State::internal_set_value(std::size_t index, double value)
 {
   StateValue &state_value = values_.at(index);
   std::get<double>(state_value) = value;
 }
 
-void State::set_value(std::size_t index, ranges::span<VCD::Value> values)
+void State::internal_set_value(std::size_t index, ranges::span<VCD::Value> values)
 {
   StateValue &state_value = values_.at(index);
   auto old_values = std::get<ranges::span<VCD::Value>>(state_value);
@@ -128,6 +128,38 @@ void State::set_value(std::size_t index, ranges::span<VCD::Value> values)
     throw std::runtime_error("State: Vector value size mismatch");
 
   ranges::copy(values, ranges::begin(old_values));
+}
+
+void State::set_value(std::size_t index, VCD::Value value) {
+  scalar_buffer_.emplace_back(ScalarValueChange{index, value});
+}
+
+void State::set_value(std::size_t index, double value) {
+  real_buffer_.emplace_back(RealValueChange{index, value});
+}
+
+void State::set_value(std::size_t index, ranges::span<VCD::Value> values) {
+  vector_buffer_.emplace_back(VectorValueChange{index, std::vector<VCD::Value>(values)});
+}
+
+void State::update_sim_time() noexcept {
+  while(!scalar_buffer_.empty()) {
+    auto& back = scalar_buffer_.back();
+    internal_set_value(back.index, back.value);
+    scalar_buffer_.pop_back();
+  }
+
+  while(!real_buffer_.empty()) {
+    auto& back = real_buffer_.back();
+    internal_set_value(back.index, back.value);
+    real_buffer_.pop_back();
+  }
+
+  while(!vector_buffer_.empty()) {
+    auto& back = vector_buffer_.back();
+    internal_set_value(back.index, std::move(back.values));
+    vector_buffer_.pop_back();
+  }
 }
 
 std::size_t State::num_values() { return values_.size(); }

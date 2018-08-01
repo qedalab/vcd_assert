@@ -1,5 +1,7 @@
 #include "vcd_assert/triggered_timing_checker.hpp"
 
+#include <parse/util/debug_printing.hpp>
+
 #include <range/v3/view/reverse.hpp>
 #include <fmt/format.h>
 
@@ -13,6 +15,7 @@ TriggeredTimingChecker::TriggeredTimingChecker(std::size_t size) :
 }
 
 void TriggeredTimingChecker::set_sim_time(std::size_t sim_time) {
+  Parse::Util::debug_print("DEBUG: Updating TriggeredTimingChecker sim time to {}\n", sim_time);
   sim_time_ = sim_time;
 }
 
@@ -25,14 +28,19 @@ bool TriggeredTimingChecker::event(std::size_t index, VCD::Value from, VCD::Valu
   bool out = false;
 
   for(auto &item : ranges::view::reverse(ref.items.as_range())) {
+    Parse::Util::debug_print("DEBUG: Checking Triggered Event: {}\n", item.assertion_sv);
+
     // If the assertion no longer needs to be checked
     if (sim_time_ >= item.until) {
       ref.items.remove(std::addressof(item));
+      Parse::Util::debug_print("DEBUG: Triggered event expired: {}\n", item.assertion_sv);
+      Parse::Util::debug_print("       sim_time_={}, item.until={}\n", sim_time_, item.until);
       continue;
     }
 
     // If edge type doesn't match it doesn't matter
     if (!edge_type_matches(item.edge_type, from, to)) {
+      Parse::Util::debug_print("DEBUG: Edge type doesn't match: {}\n", item.assertion_sv);
       continue;
     }
     
@@ -43,12 +51,14 @@ bool TriggeredTimingChecker::event(std::size_t index, VCD::Value from, VCD::Valu
       out |= true;
     }
   }
-
+  
   return out;
 }
 
 void TriggeredTimingChecker::hold(const TriggeredEvent &event, std::size_t index)
 {
+  Parse::Util::debug_print("DEBUG: Registering Event: {} until {}\n", event.assertion_sv, sim_time_+event.hold_time);
+
   auto& ref = triggered_item_list_[index];
 
   TriggeredItem triggered_item {

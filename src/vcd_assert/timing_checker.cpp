@@ -1,5 +1,6 @@
 #include "vcd_assert/timing_checker.hpp"
 #include "vcd/serialize/enums.hpp"
+#include "vcd/serialize/value_change.hpp"
 
 #include "vcd_assert/edge_type.hpp"
 #include "vcd_assert/sdf_matching.hpp"
@@ -667,8 +668,10 @@ void TimingChecker::handle_event(const RegisterEvent &event,
 
 void TimingChecker::internal_update_sim_time(std::size_t sim_time)
 {
+  Parse::Util::debug_print("DEBUG: Update sim time to {}\n", sim_time);
   this->sim_time_ = sim_time;
   this->checker_.set_sim_time(sim_time_);
+  this->state_.update_sim_time();
 }
 
 void TimingChecker::simulation_time(VCD::SimulationTime simulation_time)
@@ -691,6 +694,11 @@ void TimingChecker::simulation_time(VCD::SimulationTime simulation_time)
 void TimingChecker::scalar_value_change(VCD::ScalarValueChangeView value_change)
 {
   std::string identifier_code_str{value_change.identifier_code};
+
+  std::string buffer;
+  VCD::serialize_value_change(ranges::back_inserter(buffer), value_change);
+
+  Parse::Util::debug_print("DEBUG: Scalar value change: {}", buffer);
 
   if (!header_->has_var_id_code(identifier_code_str)) {
     fmt::print("ERROR: Unknown identifier code\n"

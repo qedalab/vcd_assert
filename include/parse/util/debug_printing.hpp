@@ -9,6 +9,7 @@ namespace Parse::Util {
 
 template<typename Input>
 #ifdef VERBOSE_DEBUG_OUTPUT
+void debug_puts(Input input) {
   fmt::print(input);
   fmt::print("\n");
 #else
@@ -25,9 +26,6 @@ void debug_print(Args... /*args*/){
   // (void)args;
 #endif
 }
-
-
-
 
 } // namespace Parse::Util
 
