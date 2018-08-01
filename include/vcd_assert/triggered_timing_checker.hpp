@@ -14,7 +14,7 @@ namespace VCDAssert {
 struct TriggeredItem {
   std::reference_wrapper<const ConditionalValuePointer> condition;
   EdgeType edge_type;
-  std::size_t assertion_index;
+  std::string_view assertion_sv;
   std::size_t until;
 };
 

@@ -39,15 +39,19 @@ struct IncludeFileApply { // clang-format on
     auto curr_path = fs::path(input.position().source).parent_path();
     auto next_input_abs = fs::path(curr_path / fs::path(next_input_rel));
 
-    Parse::Util::debug_print("DEBUG: include statement: first pass: {}\n",
-                             first_pass);
+    if (first_pass) {
+      Parse::Util::debug_puts("DEBUG: include statement first pass\n");
+    } else {
+      Parse::Util::debug_puts("DEBUG: include statement second pass\n");
+    }
+
     Parse::Util::debug_print("DEBUG: import: next_input_rel: {}\n",
                              next_input_rel);
     Parse::Util::debug_print("DEBUG: import: next_input_abs: {}\n",
                              next_input_abs);
 
-    // Normalize the include, for ID purposes.
     // TODO : Actually want lexically_normal.
+    // Normalize the include, for ID purposes.
     next_input_abs = fs::exists(next_input_abs) ? fs::canonical(next_input_abs)
                                                 : next_input_abs;
 
@@ -120,8 +124,8 @@ struct GrammarAction : multi_dispatch<
 };
 
 // clang-format on
-}
-}
-}
+} // namespace Actions
+} // namespace IEEE1364_2001
+} // namespace Verilog
 
 #endif // LIBVERILOG_IEEE1364_2001_ACTIONS_GRAMMAR_HPP

@@ -38,14 +38,14 @@ TEST_CASE("VCDAssert.TriggeredTimingChecker")
     TriggeredEvent trigger_one {
       VCD::Value::zero,
       EdgeType::PosEdge,
-      0,
+      "0",
       5
     };
 
     TriggeredEvent trigger_two {
       VCD::Value::one,
       EdgeType::PosEdge,
-      1,
+      "1",
       6
     };
 

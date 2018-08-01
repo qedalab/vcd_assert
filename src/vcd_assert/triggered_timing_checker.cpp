@@ -54,7 +54,7 @@ void TriggeredTimingChecker::hold(const TriggeredEvent &event, std::size_t index
   TriggeredItem triggered_item {
     event.condition,
     event.edge_type,
-    event.assertion_index,
+    event.assertion_sv,
     sim_time_ + event.hold_time
   };
 

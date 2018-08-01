@@ -14,7 +14,7 @@ namespace Parse::Util {
 template<typename Input>
 void debug_puts(Input input){
 #ifdef VERBOSE_DEBUG_OUTPUT
-  std::puts(input);
+  fmt::print(input);
 #else
   (void)input;
 #endif

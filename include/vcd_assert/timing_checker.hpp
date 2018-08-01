@@ -68,6 +68,7 @@ class TimingChecker
   // std::unordered_map<std::size_t,std::size_t> sdf_apply_scope_lookup_;//??Why this
   std::vector<IndexLookup> index_lookup_;
   std::vector<RegisterEventList> event_lists_;
+  std::vector<std::string> assertion_string_list_;
 
   std::unordered_map<VCD::Value*, std::size_t> pointer_to_index_;
 

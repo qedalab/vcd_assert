@@ -183,8 +183,6 @@ TimingChecker::apply_sdf_hold_port_tchk_helper(SDF::PortTimingCheck port_tchk,
   EdgeType edge{};
 
   if (port_tchk.port.edge.has_value()) {
-    Parse::Util::debug_puts("DEBUG: edge found");
-
     switch (port_tchk.port.edge.value()) {
     case SDF::EdgeType::posedge:
       edge = VCDAssert::EdgeType::PosEdge;
@@ -312,12 +310,6 @@ void TimingChecker::apply_sdf_hold(SDF::DelayFile &d, SDF::Hold hold,
 
   auto sdf_value = hold.value.content(); // chooses TYP for now.
 
-#ifdef VERBOSE_DEBUG_OUTPUT
-  std::string out;
-  serialize_hold_check(ranges::back_inserter(out), 0, hold);
-  fmt::print(out);
-#endif
-
   auto reg = hold.reg;
   auto trig = hold.trig;
 
@@ -329,8 +321,7 @@ void TimingChecker::apply_sdf_hold(SDF::DelayFile &d, SDF::Hold hold,
     auto trig_port_idx_option =
         get_sdf_node_scope_index(*header_, trig.port, scope_index, scope);
 
-    if (reg_port_idx_option.has_value() &&
-        trig_port_idx_option.has_value()) {
+    if (reg_port_idx_option.has_value() && trig_port_idx_option.has_value()) {
 
       Parse::Util::debug_puts("DEBUG: hold port nodes successfully found.");
 
@@ -356,20 +347,29 @@ void TimingChecker::apply_sdf_hold(SDF::DelayFile &d, SDF::Hold hold,
         auto reg_event_idx_range = get_hold_event_range(reg.port, reg_port_idx);
 
         // get event_list indexes of the trig event port
-        auto trig_event_idx_range = get_hold_event_range(trig.port, trig_port_idx);
+        auto trig_event_idx_range =
+            get_hold_event_range(trig.port, trig_port_idx);
 
         if (!reg_event_idx_range.empty() && !trig_event_idx_range.empty()) {
           Parse::Util::debug_puts("DEBUG: hold reg port successfully matched.");
 
-          for (auto &&reg_event_idx: reg_event_idx_range) {
-            for (auto &&trig_event_idx: trig_event_idx_range) {
+          std::string serialized;
+          serialize_hold_check(ranges::back_inserter(serialized), 0, hold);
+
+          Parse::Util::debug_puts("DEBUG: Adding hold assertion:");
+          Parse::Util::debug_puts(serialized);
+
+          assertion_string_list_.emplace_back(std::move(serialized));
+          std::string_view ser_sv = assertion_string_list_.back();
+
+          for (auto &&reg_event_idx : reg_event_idx_range) {
+            for (auto &&trig_event_idx : trig_event_idx_range) {
               event_lists_[reg_event_idx].events.emplace_back(RegisterEvent{
-                  std::move(reg_cond_cvp), reg_edge,
+                  std::move(reg_cond_cvp), reg_edge, 
                   (std::size_t)trig_event_idx,
 
                   TriggeredEvent{
-                      std::move(trig_cond_cvp), trig_edge,
-                      trig_event_idx,
+                      std::move(trig_cond_cvp), trig_edge, ser_sv,
                       (std::size_t)(get_scaled_sdf_value(
                           *header_, d,
                           sdf_value.value()))}}); // TODO timescale 1000
@@ -871,7 +871,7 @@ void TimingChecker::dump_registered_event_list()
       fmt::print("    Trigger Condition      : {}\n",
                  serialize_conditional(trig_event.condition));
       fmt::print("    Trigger Assertion      : {}\n",
-                 trig_event.assertion_index);
+                 trig_event.assertion_sv);
       fmt::print("    Trigger EdgeType       : {}\n",
                  edge_type_to_string(trig_event.edge_type));
       fmt::print("    Trigger hold time      : {}\n", trig_event.hold_time);

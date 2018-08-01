@@ -16,7 +16,7 @@ namespace VCDAssert {
 struct TriggeredEvent {
   ConditionalValuePointer condition;
   EdgeType edge_type;
-  std::size_t assertion_index;
+  std::string_view assertion_sv;
   std::size_t hold_time;
 };
 
