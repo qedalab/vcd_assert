@@ -3,6 +3,7 @@
 #include <parse/util/debug_printing.hpp>
 
 #include <range/v3/view/reverse.hpp>
+#include <range/v3/view/indices.hpp>
 #include <fmt/format.h>
 
 using namespace VCDAssert;
@@ -27,14 +28,15 @@ bool TriggeredTimingChecker::event(std::size_t index, VCD::Value from, VCD::Valu
   auto& ref = triggered_item_list_[index];
   bool out = false;
 
-  for(auto &item : ranges::view::reverse(ref.items.as_range())) {
+  for(auto i : ranges::view::reverse(ranges::view::indices(ref.items.get_size()))) {
+    auto &item = ref.items.as_range().at(i);
     Parse::Util::debug_print("DEBUG: Checking Triggered Event: {}\n", item.assertion_sv);
 
     // If the assertion no longer needs to be checked
     if (sim_time_ >= item.until) {
-      ref.items.remove(std::addressof(item));
       Parse::Util::debug_print("DEBUG: Triggered event expired: {}\n", item.assertion_sv);
       Parse::Util::debug_print("       sim_time_={}, item.until={}\n", sim_time_, item.until);
+      ref.items.remove(i);
       continue;
     }
 
