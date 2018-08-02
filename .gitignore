@@ -5,6 +5,7 @@
 build*
 build*
 external
+*out
 *extra*
 .idea
 match_all_exactly.cpp
