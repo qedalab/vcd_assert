@@ -2,7 +2,7 @@
 
 mkdir -p iverilog_out
 cd iverilog_out
-iverilog -Dbegin_time=20 -gspecify \
+iverilog -Dbegin_time=20 -DIVERILOG_WORKAROUND -gspecify \
   -s tb_full_adder_1bit            \
   -o run                           \
   ../tb_full_adder_1bit.v          \
