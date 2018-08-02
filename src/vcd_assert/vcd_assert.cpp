@@ -27,6 +27,7 @@
 #include "vcd_assert/actions.hpp"
 #include "vcd_assert/sdf_matching.hpp"
 #include "vcd_assert/timing_checker.hpp"
+#include "vcd_assert/version.hpp"
 
 #include "vcd/actions/header.hpp"
 #include "vcd/grammar/grammar.hpp"
@@ -78,8 +79,9 @@ struct NodeApply {
 
 int main(int argc, char **argv)
 {
-  fmt::print("Running program from : {}\n", Parse::Util::fs::current_path());
-  CLI::App cli("VCDAssert: Post processing VCD files for timing violations");
+  VCDAssert::print_version_preamble();
+
+  CLI::App cli("");
   cli.failure_message(CLI::FailureMessage::help);
 
   std::string vcd_file;
@@ -88,8 +90,8 @@ int main(int argc, char **argv)
   vcd_file_option->check(CLI::ExistingFile);
 
   std::vector<std::string> source_files;
-  auto source_file_option = cli.add_option("verilog_source_file", source_files,
-                                           "Verilog source file");
+  auto source_file_option = cli.add_option("verilog_files", source_files,
+                                           "Verilog source file(s)");
   source_file_option->check(CLI::ExistingFile);
 
   std::string top_module;

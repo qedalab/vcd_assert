@@ -1,5 +1,6 @@
 cmake_minimum_required (VERSION 3.2)
-project (Parse)
+
+project (vcd_assert VERSION 1.0.0)
 
 #Options
 option(BUILD_TESTS "Build tests" FALSE)
