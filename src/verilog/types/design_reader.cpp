@@ -109,10 +109,11 @@ std::size_t DesignReader::instance(NetType type,
                                    std::string instance_name,
                                    std::string definition_name)
 {
+  Parse::Util::debug_puts("DEBUG: second pass : found instance :");
 
-  Parse::Util::debug_print("DEBUG: current_module_name : {}\n",current_module_name);
-  Parse::Util::debug_print("DEBUG: instance_name : {}\n",instance_name);
-  Parse::Util::debug_print("DEBUG: definition_name : {}\n",definition_name);
+  Parse::Util::debug_print("DEBUG: second pass : current_module_name : {}\n",current_module_name);
+  Parse::Util::debug_print("DEBUG: second pass : instance_name : {}\n",instance_name);
+  Parse::Util::debug_print("DEBUG: second pass : definition_name : {}\n",definition_name);
   // only support module type at the moment
   if (type != NetType::module) {
     throw std::runtime_error("InternalError : unsupported net definition type");
@@ -150,8 +151,11 @@ std::size_t DesignReader::instance(NetType type,
 
 std::size_t DesignReader::command(Command command, std::string definition_name)
 {
+  Parse::Util::debug_puts("DEBUG: second pass : found command :");
+  
   if (std::holds_alternative<SDFAnnotateCommand>(command)) {
     auto sdf = std::get<SDFAnnotateCommand>(command);
+      Parse::Util::debug_puts("DEBUG: \t\tSDF annotate command");
 
     // check if sdf_annotate applies to this scope or a child scope.
     auto apply_scope = sdf.name_of_instance.has_value()
@@ -161,12 +165,14 @@ std::size_t DesignReader::command(Command command, std::string definition_name)
     // find apply scope.
     auto search = design_->module_lookup_.find(apply_scope);
     if (search != design_->module_lookup_.end()) {
+      
       auto apply_scope_index = design_->module_lookup_.at(apply_scope);
 
       auto search_2 = design_->sdf_commands_lookup_.find(apply_scope_index);
 
       if (search_2 != design_->sdf_commands_lookup_.end()) {
 
+        Parse::Util::debug_print("DEBUG: \t\t apply scope : {}\n", apply_scope);
         auto sdf_index = design_->sdf_commands_lookup_[apply_scope_index];
         design_->sdf_commands_.at(sdf_index).push_back(sdf);
 

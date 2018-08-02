@@ -1,4 +1,7 @@
 // Adapted from TimEx generated files for vcd_assert testing
+`ifndef basic_dro_
+`define basic_dro_
+
 `define begin_time 8
 `timescale 1ps/100fs
 module basic_dro (set, reset, out);
@@ -70,3 +73,5 @@ case (state)
 endcase
 
 endmodule
+
+`endif // basic_dro_

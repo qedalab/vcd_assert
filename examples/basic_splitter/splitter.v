@@ -1,4 +1,7 @@
 // Adapted from TimEx generated files for vcd_assert testing
+`ifndef basic_splitter_
+`define basic_splitter_
+
 `timescale 1ps/100fs
 module basic_splitter (in, out1, out2);
 
@@ -44,3 +47,5 @@ begin
 end
 
 endmodule
+
+`endif // basic_splitter_

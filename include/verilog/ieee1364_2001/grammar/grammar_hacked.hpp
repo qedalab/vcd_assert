@@ -223,11 +223,13 @@ struct _module_declaration_ : if_must<
   until<one<';'>>,
   opt<separator>,
   star<
-    until<
+    tao::pegtl::until<
       sor<
+        // separator, 
         initial_block,
         module_instantiation
-      >
+      >,
+      seq<not_at<comment>, tao::pegtl::any>
     >
   >,
   until<endmodule_keyword>
@@ -241,10 +243,10 @@ struct _module_description_ : sor<
 struct _grammar_ : must<
   opt<separator>,
   opt<list<
-    until<
-      sor<compiler_directive,_module_description_>
+    tao::pegtl::until<
+      sor<separator, compiler_directive,_module_description_>, seq<not_at<comment>, tao::pegtl::any>
     >,
-    opt<separator>
+    opt<blank>
   >>,
   opt<separator>
   

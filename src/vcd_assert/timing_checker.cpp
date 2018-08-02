@@ -36,9 +36,10 @@ TimingChecker::TimingChecker(std::shared_ptr<VCD::Header> header,
     auto var_type = var_id_code_view.get_type();
 
 #ifdef VERBOSE_DEBUG_OUTPUT
-    fmt::print("VarIdCode: {} start at index {}\n",
+    fmt::print("DEBUG: VarIdCode: {} start at index {}\n",
                var_id_code_view.get_id_code(), counter);
 #endif // VERBOSE_DEBUG_OUTPUT
+
 
     // If single value
     if (var_type == VCD::VarType::real) {
@@ -68,6 +69,8 @@ TimingChecker::TimingChecker(std::shared_ptr<VCD::Header> header,
 
   assert(index_lookup_.size() == header_->num_id_codes());
   assert(index_lookup_.size() == state_.num_values());
+
+  Parse::Util::debug_print("reached here\n");
 
   /*
     Module names are unique but instance names not. Thus need to traverse two

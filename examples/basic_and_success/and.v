@@ -1,4 +1,7 @@
 // Adapted from TimEx generated files for vcd_assert
+`ifndef basic_and_
+`define basic_and_
+
 `define begin_time 8
 `timescale 1ps/100fs
 module basic_and (a, b, clk, out);
@@ -131,3 +134,5 @@ case (state)
 endcase
 
 endmodule
+
+`endif // basic_and_
