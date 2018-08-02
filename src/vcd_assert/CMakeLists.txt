@@ -12,6 +12,16 @@ target_sources(libvcd_assert PRIVATE
 
 add_executable(vcd_assert
   ${DIR}/vcd_assert.cpp
+  ${DIR}/version.cpp
+)
+
+add_custom_command(
+  TARGET vcd_assert
+  PRE_BUILD COMMAND touch ${DIR}/version.cpp
+)
+
+target_compile_options(vcd_assert
+  PRIVATE -DVCD_ASSERT_VERSION_MACRO="${PROJECT_VERSION} ${CMAKE_BUILD_TYPE}"
 )
 
 target_add_warnings(vcd_assert)
