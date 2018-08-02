@@ -70,11 +70,11 @@ Library dependencies
 
 VCD Assert depends on the following libraries.
 
- * PEGTL_ (2.6.0) - Parse Expression Grammar Template Library
- * Range-V3_ (0.3.6) - Experimental range library for C++11/14/17
- * fmt_ (5.0 or newer) - A modern formatting library
- * Catch2_ (master branch) - A modern, C++-native, header-only, test framework for unit-tests
- * CLI11_ (1.5.6 or newer)- Command line parser for C++11
+* PEGTL_ (2.7.0 or newer) - Parse Expression Grammar Template Library
+* Range-V3_ (0.3.6) - Experimental range library for C++11/14/17
+* fmt_ (5.0 or newer) - A modern formatting library
+* Catch2_ (2.3.0 or newer) - A modern, C++-native, header-only, test framework for unit-tests
+* CLI11_ (1.6.0 or newer)- Command line parser for C++11
 
 The recommended way of handling library dependencies is through conan_, but the
 correct versions can also be installed manually in a place where cmake_ can
@@ -103,14 +103,14 @@ Use conan to fetch and setup dependencies (recommended)
 .. code-block:: bash
 
   conan remote add pleroux0 "https://api.bintray.com/conan/pleroux0/pleroux0"
-  conan install .. -s build_type=Release
+  conan install .. -s build_type=Release --build=missing
 
 You might have to specify the compiler and version in the install step if
 conan's defaults are not correct
 
 .. code-block:: bash
 
-  conan install .. -s build_type=Release -s compiler.version=7 -s compiler=gcc
+  conan install .. -s build_type=Release -s compiler.version=7 -s compiler=gcc --build=missing
 
 Or manually install them where cmake can find them
 
@@ -150,8 +150,8 @@ Still inside the build directory
 
 Build FAQ:
 ~~~~~~~~~~
- * To compile with clang you need to using libc++ version 6 or newer
- * Compiling with clang and trying to use libstdc++ triggers `a bug in clang <https://bugs.llvm.org/show_bug.cgi?id=31852>`_
+* To compile with clang you need to using libc++ version 6 or newer
+* Compiling with clang and trying to use libstdc++ triggers `a bug in clang <https://bugs.llvm.org/show_bug.cgi?id=31852>`_
 
 .. _cmake: https://cmake.org/
 .. _g++: https://gcc.gnu.org/

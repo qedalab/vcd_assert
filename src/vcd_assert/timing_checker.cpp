@@ -1,5 +1,32 @@
+// ============================================================================
+// Copyright 2018 Paul le Roux and Calvin Maree
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions are met:
+//
+// 1. Redistributions of source code must retain the above copyright notice,
+//    this list of conditions and the following disclaimer.
+//
+// 2. Redistributions in binary form must reproduce the above copyright notice,
+//    this list of conditions and the following disclaimer in the documentation
+//    and/or other materials provided with the distribution.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+// ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+// LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+// CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+// SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+// INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+// CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+// POSSIBILITY OF SUCH DAMAGE.
+// ============================================================================
+
 #include "vcd_assert/timing_checker.hpp"
 #include "vcd/serialize/enums.hpp"
+#include "vcd/serialize/value_change.hpp"
 
 #include "vcd_assert/edge_type.hpp"
 #include "vcd_assert/sdf_matching.hpp"
@@ -670,8 +697,10 @@ void TimingChecker::handle_event(const RegisterEvent &event,
 
 void TimingChecker::internal_update_sim_time(std::size_t sim_time)
 {
+  Parse::Util::debug_print("DEBUG: Update sim time to {}\n", sim_time);
   this->sim_time_ = sim_time;
   this->checker_.set_sim_time(sim_time_);
+  this->state_.update_sim_time();
 }
 
 void TimingChecker::simulation_time(VCD::SimulationTime simulation_time)
@@ -694,6 +723,11 @@ void TimingChecker::simulation_time(VCD::SimulationTime simulation_time)
 void TimingChecker::scalar_value_change(VCD::ScalarValueChangeView value_change)
 {
   std::string identifier_code_str{value_change.identifier_code};
+
+  std::string buffer;
+  VCD::serialize_value_change(ranges::back_inserter(buffer), value_change);
+
+  Parse::Util::debug_print("DEBUG: Scalar value change: {}", buffer);
 
   if (!header_->has_var_id_code(identifier_code_str)) {
     fmt::print("ERROR: Unknown identifier code\n"

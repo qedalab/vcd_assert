@@ -43,9 +43,6 @@ void debug_print(Args... /*args*/){
 #endif
 }
 
-
-
-
 } // namespace Parse::Util
 
 #endif // LIBPARSE_UTIL_DEBUG_PRINTING_HPP

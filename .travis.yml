@@ -66,7 +66,7 @@ matrix:
       - docker exec runner mkdir "repo/travis-build"
       - docker exec runner conan remote add pleroux0 "https://api.bintray.com/conan/pleroux0/pleroux0"
       script:
-      - docker exec runner bash -c "cd repo/travis-build && conan install .. --build=missing -s build_type=Debug -s compiler=clang -s compiler.libcxx=libc++ -s compiler.version=6.0 -e CXXFLAGS='-fsanitize=address -stdlib=libc++' -e CC=clang -e CXX=clang++"
+      - docker exec runner bash -c "cd repo/travis-build && conan install .. --build=missing -s build_type=Debug -s compiler=clang -s compiler.libcxx=libc++ -s compiler.version=6.0 -e CXXFLAGS='-fsanitize=address -stdlib=libc++' -e CC=clang -e CXX=clang++ -e ASAN_OPTIONS=symbolize=1 -e ASAN_SYMBOLIZER_PATH=$(shell which llvm-symbolizer)"
       - docker exec runner bash -c "cd repo/travis-build && conan build .."
 
     - env:

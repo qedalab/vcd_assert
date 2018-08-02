@@ -1,3 +1,29 @@
+// ============================================================================
+// Copyright 2018 Paul le Roux and Calvin Maree
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions are met:
+//
+// 1. Redistributions of source code must retain the above copyright notice,
+//    this list of conditions and the following disclaimer.
+//
+// 2. Redistributions in binary form must reproduce the above copyright notice,
+//    this list of conditions and the following disclaimer in the documentation
+//    and/or other materials provided with the distribution.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+// ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+// LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+// CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+// SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+// INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+// CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+// POSSIBILITY OF SUCH DAMAGE.
+// ============================================================================
+
 #include "vcd_assert/state.hpp"
 #include "parse/util/dependent_value.hpp"
 
@@ -107,19 +133,19 @@ double State::get_real_value(std::size_t index) const
   return std::get<double>(state_value);
 }
 
-void State::set_value(std::size_t index, VCD::Value value)
+void State::internal_set_value(std::size_t index, VCD::Value value)
 {
   StateValue &state_value = values_.at(index);
   std::get<VCD::Value>(state_value) = value;
 }
 
-void State::set_value(std::size_t index, double value)
+void State::internal_set_value(std::size_t index, double value)
 {
   StateValue &state_value = values_.at(index);
   std::get<double>(state_value) = value;
 }
 
-void State::set_value(std::size_t index, ranges::span<VCD::Value> values)
+void State::internal_set_value(std::size_t index, ranges::span<VCD::Value> values)
 {
   StateValue &state_value = values_.at(index);
   auto old_values = std::get<ranges::span<VCD::Value>>(state_value);
@@ -128,6 +154,38 @@ void State::set_value(std::size_t index, ranges::span<VCD::Value> values)
     throw std::runtime_error("State: Vector value size mismatch");
 
   ranges::copy(values, ranges::begin(old_values));
+}
+
+void State::set_value(std::size_t index, VCD::Value value) {
+  scalar_buffer_.emplace_back(ScalarValueChange{index, value});
+}
+
+void State::set_value(std::size_t index, double value) {
+  real_buffer_.emplace_back(RealValueChange{index, value});
+}
+
+void State::set_value(std::size_t index, ranges::span<VCD::Value> values) {
+  vector_buffer_.emplace_back(VectorValueChange{index, std::vector<VCD::Value>(values)});
+}
+
+void State::update_sim_time() noexcept {
+  while(!scalar_buffer_.empty()) {
+    auto& back = scalar_buffer_.back();
+    internal_set_value(back.index, back.value);
+    scalar_buffer_.pop_back();
+  }
+
+  while(!real_buffer_.empty()) {
+    auto& back = real_buffer_.back();
+    internal_set_value(back.index, back.value);
+    real_buffer_.pop_back();
+  }
+
+  while(!vector_buffer_.empty()) {
+    auto& back = vector_buffer_.back();
+    internal_set_value(back.index, back.values);
+    vector_buffer_.pop_back();
+  }
 }
 
 std::size_t State::num_values() { return values_.size(); }

@@ -58,14 +58,14 @@ add_test(
 add_test(
   NAME basic_xor_fail
   WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/examples/basic_xor_fail/iverilog_out/
-  COMMAND vcd_assert tb_basic_xor.vcd --node tb_basic_xor --sdf ../xor.sdf
+  COMMAND vcd_assert tb_basic_xor.vcd ../tb_xor.v ../xor.v -t tb_basic_xor --node tb_basic_xor --sdf ../xor.sdf
 )
 
 # Basic xor succeed
 add_test(
   NAME basic_xor_success
   WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/examples/basic_xor_success/iverilog_out/
-  COMMAND vcd_assert tb_basic_xor.vcd --node tb_basic_xor --sdf ../xor.sdf
+  COMMAND vcd_assert tb_basic_xor.vcd ../tb_xor.v ../xor.v -t tb_basic_xor --node tb_basic_xor --sdf ../xor.sdf
 )
 
 ############## VERILOG SDF WITH CELLINSTANCE <path>
@@ -116,7 +116,7 @@ add_test(
 # Failing tests
 set_tests_properties(
   basic_dro_fail
-  # basic_xor_fail # case cant be supported without verilog.
+  basic_xor_fail # case cant be supported without verilog.
   basic_and_fail
   basic_ndro_fail
   PROPERTIES WILL_FAIL TRUE
