@@ -109,8 +109,8 @@ add_test(
 # Full adder 1bit succeed
 add_test(
   NAME full_adder_1bit
-  WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/examples/full_adder_1bit_success/iverilog_out/
-  COMMAND vcd_assert tb_full_adder_1bit.vcd ../tb_full_adder_1bit.v ../full_adder_1bit.v ../../examples_cell_library.v -t tb_full_adder_1bit
+  WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/examples/full_adder_1bit/iverilog_out/
+  COMMAND vcd_assert tb_full_adder_1bit.vcd ../tb_full_adder_1bit_success.v ../full_adder_1bit.v ../../examples_cell_library.v -t tb_full_adder_1bit
 )
 
 # Failing tests

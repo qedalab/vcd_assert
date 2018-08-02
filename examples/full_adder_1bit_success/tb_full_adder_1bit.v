@@ -13,6 +13,8 @@ module tb_full_adder_1bit;
 
     initial begin
         $dumpfile("tb_full_adder_1bit.vcd");
+        $sdf_annotate("../../examples_cell_library_typ.sdf", tb_full_adder_1bit);
+        
         $dumpvars;
 
         #`begin_time

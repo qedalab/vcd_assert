@@ -38,6 +38,6 @@ module full_adder_1bit (cin, a, b, clk, sum, cout);
   basic_xor xor_2 (internal_8, internal_9, clk_internal[2], internal_7);
   basic_and and_1 (internal_10, internal_11, clk_internal[4], internal_12);
   basic_and and_2 (internal_4, internal_6, clk_internal[3], internal_14);
-  // basic_or or_1 (internal_13, internal_14, clk_internal[7], cout);
+  basic_or or_1 (internal_13, internal_14, clk_internal[7], cout);
 endmodule
 

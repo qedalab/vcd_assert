@@ -97,7 +97,6 @@ TimingChecker::TimingChecker(std::shared_ptr<VCD::Header> header,
   assert(index_lookup_.size() == header_->num_id_codes());
   assert(index_lookup_.size() == state_.num_values());
 
-  Parse::Util::debug_print("reached here\n");
 
   /*
     Module names are unique but instance names not. Thus need to traverse two
@@ -121,10 +120,13 @@ TimingChecker::TimingChecker(std::shared_ptr<VCD::Header> header,
     // no-design error?
   }
 
+  auto num_modules = design_->num_modules();
+  auto num_sdf_commands = design_->num_sdf_commands();
+
   /* Process and apply the SDF files specified in Verilog file (from scope
    * derived call location). */
   // ONLY IF DESIGN WAS GIVEN
-  if ((design_->num_modules() != 0) && (design_->num_sdf_commands() != 0)) {
+  if ( num_modules != 0 && num_sdf_commands != 0) {
     for (auto &&sdf_set_index : indices(design_->num_sdf_commands())) {
 
       // get commands

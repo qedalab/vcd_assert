@@ -171,7 +171,6 @@ int main(int argc, char **argv)
     Verilog::Util::InputMap inputmap{};
 
     std::optional<std::size_t> starting_source_file_index_op{};
-    Parse::Util::debug_print("DEBUG: starting pass : -1\n");
 
     // Find file containing top module
     // (not using top module at the moment, but MUST be given non the less)
@@ -232,11 +231,12 @@ int main(int argc, char **argv)
       // Parse starting from top Verilog file
       bool result = false;
       for (auto &&pass : rsv::indices(2)) {
+        Parse::Util::debug_print("DEBUG: starting pass : {}\n", pass+1);
+        
         for (auto &&file : source_files) {
           tao::pegtl::file_input<> verilog_input(file);
 
           bool first_pass = (pass == 0);
-          Parse::Util::debug_print("DEBUG: starting pass : {}\n", pass);
           // Parse Verilog from top
           result = tao::pegtl::parse<
               Verilog::IEEE1364_2001::Grammar::_grammar_,
