@@ -85,7 +85,7 @@ TimingChecker::TimingChecker(std::shared_ptr<VCD::Header> header,
           std::get<ranges::span<VCD::Value>>(state_.get_value_pointer(i));
 
       for (auto jj : indices(value_range.size())) {
-        pointer_to_index_[std::addressof(value_range[i])] = counter + jj;
+        pointer_to_index_[std::addressof(value_range[jj])] = counter + jj;
       }
     }
 
@@ -661,7 +661,7 @@ void TimingChecker::handle_event(const RegisterEvent &event,
     handle_event(event, prev_value, value);
 
   // Update state
-  state_.set_value(index, value);
+  state_.set_value(vcd_index, value);
 
   return timing_violation;
 }
