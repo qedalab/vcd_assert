@@ -90,8 +90,8 @@ int main(int argc, char **argv)
   vcd_file_option->check(CLI::ExistingFile);
 
   std::vector<std::string> source_files;
-  auto source_file_option = cli.add_option("verilog_source_file", source_files,
-                                           "Verilog source file");
+  auto source_file_option = cli.add_option("verilog_files", source_files,
+                                           "Verilog source file(s)");
   source_file_option->check(CLI::ExistingFile);
 
   std::string top_module;
