@@ -213,6 +213,68 @@ endmodule
 
 )####";
 
+constexpr auto tb_xor_module = 
+R"####(module tb_basic_xor;
+   reg a = 0;
+   reg b = 0;
+   reg clk = 0;
+   initial
+      begin
+         $dumpfile("tb_basic_xor.vcd");
+         $dumpvars;
+
+         #20 a = !a;
+         #10 a = !a;
+         #10 b = !b;
+         #10 b = !b;
+         #10 a = !a;
+         #10 clk = !clk;
+         #10 a = !a;
+         #10 clk = !clk;
+         #10 b = !b;
+         #10 clk = !clk;
+      end
+
+   initial
+      begin
+         $display("\t\ttime,\ta,\tb,\tclk,\tout");
+         $monitor("%d,\t%b,\t%b,\t%b,\t%b",$time,a,b,clk,out);
+      end
+
+   basic_xor DUT (a, b, clk, out);
+
+   initial
+      #120 $finish;
+endmodule)####";
+
+constexpr auto tb_dro_module = R"####(module tb_basic_dro;
+   reg set = 0;
+   reg reset = 0;
+
+   initial
+      begin
+         $sdf_annotate("../../dro.sdf", tb_basic_dro);
+         $dumpfile("tb_basic_dro.vcd");
+         $dumpvars;
+
+         #10 set = !set;
+         #10 set = !set;
+         #2.4 reset = !reset; //should cause timing violation
+         #10 reset = !reset;
+      end
+
+   initial
+      begin
+         $display("\t\ttime,\tset,\treset,\tout");
+         $monitor("\t\t%0t,\t%b,\t%b,\t%b",$realtime,set,reset,out);
+      end
+
+   basic_dro DUT (set, reset, out);
+
+   initial
+      #50 $finish;
+endmodule)####";
+
 constexpr auto tb_dro_example = R"####(
 // ---------------------------------------------------------------------------
 // Verilog testbench file, created with TimEx v1.00.02

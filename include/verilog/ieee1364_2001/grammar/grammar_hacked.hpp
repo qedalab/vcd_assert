@@ -226,10 +226,12 @@ struct at_least_blank_separator : seq<
 >{};
 
 struct initial_block : seq < //causes parse errors when if_must
-  initial_keyword,
-  // at_least_blank_separator,
-  separator,
-  begin_keyword,
+  seq<
+    initial_keyword,
+   // at_least_blank_separator,
+    separator,
+    begin_keyword
+  >,
   star<
     until<
       sor<
@@ -250,14 +252,19 @@ struct _module_declaration_ : if_must<
   star<
     tao::pegtl::until<
       sor<
-        // separator, 
         initial_block,
         module_instantiation
       >,
-      seq<not_at<comment>, tao::pegtl::any>
+      seq<not_at<initial_block, module_instantiation>, tao::pegtl::any>
     >
   >,
-  until<endmodule_keyword>
+  // until<endmodule_keyword>
+  tao::pegtl::until<
+    endmodule_keyword, 
+    must<
+      not_at<endmodule_keyword, initial_block,module_instantiation>, 
+      tao::pegtl::any>
+    >
 > {};
 
 struct _module_description_ : sor<

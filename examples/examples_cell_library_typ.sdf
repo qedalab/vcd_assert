@@ -107,7 +107,7 @@
             (HOLD reset (COND internal_state_1 (negedge clk)) (25)) 
         )
     )
-    /*(CELL
+    (CELL
         (CELLTYPE "basic_or")
         (INSTANCE *)
         (DELAY
@@ -148,7 +148,7 @@
             (HOLD b (COND internal_state_3 (posedge clk)) (25)) 
             (HOLD b (COND internal_state_3 (negedge clk)) (25)) 
         )
-    )*/
+    )
     (CELL
         (CELLTYPE "basic_xor")
         (INSTANCE *)

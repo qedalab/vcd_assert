@@ -10,5 +10,5 @@ cd ./basic_ndro_fail/; ./run_iverilog.sh; cd ..
 cd ./basic_splitter/; ./run_iverilog.sh; cd ..
 cd ./basic_xor_fail/; ./run_iverilog.sh; cd ..
 cd ./basic_xor_success/; ./run_iverilog.sh; cd ..
-cd ./full_adder_1bit_success; ./run_iverilog.sh; cd ..
-cd ./full_adder_1bit_fail; ./run_iverilog.sh; cd ..
+cd ./full_adder_1bit; ./run_iverilog_success.sh; cd ..
+cd ./full_adder_1bit; ./run_iverilog_fail.sh; cd ..

@@ -197,12 +197,14 @@ std::size_t DesignReader::command(Command command, std::string definition_name)
       auto sdf_index_it = design_->sdf_commands_lookup_.find(apply_scope_index);
       if (sdf_index_it != design_->sdf_commands_lookup_.end()) {
 
-        Parse::Util::debug_print("DEBUG: \t\t apply scope index : {}\n", sdf_index_it->second);
+        Parse::Util::debug_print("DEBUG: apply scope index : {}\n", 
+                                 sdf_index_it->second);
+                                  
         design_->sdf_commands_.at(sdf_index_it->second).push_back(sdf);
 
         return sdf_index_it->second;
       } else {
-        Parse::Util::debug_print("DEBUG: \t\t apply scope : {}\n", apply_scope);
+        Parse::Util::debug_print("DEBUG: apply scope : {}\n", apply_scope);
         
         auto new_sdf_index = design_->sdf_commands_.size();
         design_->sdf_commands_.push_back({sdf});

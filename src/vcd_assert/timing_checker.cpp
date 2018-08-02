@@ -187,16 +187,25 @@ void TimingChecker::build_netlist_lookup(std::size_t scope_index,
   auto child_scopes = header_->get_scope(scope_index).get_scopes();
   auto verilog_instances = design_->get_module(net_index).instance_lookup_;
 
+  Parse::Util::debug_print("DEBUG: importing Verilog instance data :\n");
+  for(auto && vi : verilog_instances){
+    Parse::Util::debug_print("DEBUG: instance ({}:{})\n",vi.first,vi.second);
+  }
+
   for (auto &&scope_tup : child_scopes) {
 
     auto child_scope = header_->get_scope(scope_tup.second);
 
     if (child_scope.get_scope_type() == VCD::ScopeType::module) {
 
+                               
       auto instance_iter = verilog_instances.find(scope_tup.first);
       if (instance_iter != verilog_instances.end()) {
 
-        auto child_module_index = std::get<1>(*instance_iter);
+        auto child_module_index = instance_iter->second;
+        
+        Parse::Util::debug_print("DEBUG: storing ({}:{})\n", scope_tup.second, 
+                                 child_module_index); 
 
         netlist_lookup_.emplace(scope_tup.second, child_module_index);
         netlist_reverse_lookup_.emplace(child_module_index, scope_tup.second);
@@ -458,27 +467,41 @@ void TimingChecker::apply_sdf_timing_specs(SDF::DelayFile &d, SDF::Cell cell,
 void TimingChecker::apply_sdf_cell_helper(SDF::DelayFile &d, SDF::Cell cell,
                                           VCD::Scope &scope)
 {
+  Parse::Util::debug_print("DEBUG: cur scope : {} \n",scope.get_identifier());
+  
   for (auto &child_scope_tup : scope.get_scopes()) {
     auto index = child_scope_tup.second;
+    Parse::Util::debug_print("DEBUG: child scope : \n");
+    Parse::Util::debug_print("DEBUG: ({}:{})\n", child_scope_tup.first,child_scope_tup.second);
 
     // cell instance scope
     VCD::Scope child_scope = header_->get_scope(index);
+    Parse::Util::debug_print("DEBUG: (id={})\n", child_scope.get_identifier());
 
     if (child_scope.get_scope_type() == VCD::ScopeType::module) {
+
+      for (auto && net_tup : netlist_lookup_){
+        fmt::print("DEBUG: net_tup: ({}:{})\n",net_tup.first, net_tup.second);
+      }
 
       auto verilog_module_index = netlist_lookup_.find(index);
       if (verilog_module_index != netlist_lookup_.end()) {
 
         auto module_name =
             design_->get_module(std::get<1>(*verilog_module_index)).identifier;
+        Parse::Util::debug_print("DEBUG: scope definition ({})\n", module_name);
 
         if (cell.cell_type != module_name) {
           apply_sdf_timing_specs(d, cell, index, child_scope);
         }
 
       } else {
+        Parse::Util::debug_print("DEBUG: scope index not found\n");    
         // else ignore..
       }
+    }else{
+      Parse::Util::debug_print("DEBUG: not a module type\n");    
+
     }
     // TODO : GO DOWN FOR NESTED MODULE ONLY OR ALL NESTED SCOPES?
     apply_sdf_cell_helper(d, cell, child_scope);
@@ -495,13 +518,6 @@ void TimingChecker::apply_sdf_cell(SDF::DelayFile &d, SDF::Cell cell,
       verilog scopes of 'cell_type' among the available VCD scopes. */
   if (std::holds_alternative<SDF::Star>(cell.cell_instance)) {
     Parse::Util::debug_puts("DEBUG: star cell instance");
-    // static bool did_warn = false;
-    // if (!did_warn) {
-    //   fmt::print("WARNING: No Verilog design supplied. All SDF cells with "
-    //              "(CELLINSTANCE *) ignored.\n");
-    //   did_warn = true;
-    // }
-    // for module/instance scopes FROM applied scope DOWN:
 
     apply_sdf_cell_helper(d, cell, apply_scope);
 
@@ -513,13 +529,6 @@ void TimingChecker::apply_sdf_cell(SDF::DelayFile &d, SDF::Cell cell,
     if (hi.value.empty()) {
       /* for module/instance scopes in CURRENT scope ONLY: */
       Parse::Util::debug_puts("DEBUG: blank cell instance");
-
-      // static bool did_warn = false;
-      // if (!did_warn) {
-      //   fmt::print("WARNING: No Verilog design supplied. All SDF cells with "
-      //              "(CELLINSTANCE ) ignored.\n");
-      //   did_warn = true;
-      // }
 
       // For every module in *this* scope, apply.
       for (auto &child_scope_tup : apply_scope.get_scopes()) {

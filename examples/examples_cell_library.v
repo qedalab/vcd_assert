@@ -6,6 +6,8 @@
 `define begin_time 8
 `endif
 
+`timescale 1ps/100fs
+
 `celldefine
 module basic_and (a, b, clk, out);
 
@@ -141,7 +143,6 @@ endmodule
 
 
 //////////////////////////////////////////////////////////////////////
-`timescale 1ps/100fs
 `celldefine
 module basic_dro (set, reset, out);
 
@@ -215,7 +216,6 @@ endmodule
 `endcelldefine
 
 //////////////////////////////////////////////////////////////////////
-`timescale 1ps/100fs
 `celldefine
 module basic_jtl (in, out);
 
@@ -259,7 +259,6 @@ endmodule
 `endcelldefine
 
 //////////////////////////////////////////////////////////////////////
-`timescale 1ps/100fs
 `celldefine
 module basic_ndro (set, reset, clk, out);
 
@@ -341,7 +340,6 @@ endmodule
     
 
 //////////////////////////////////////////////////////////////////////
-`timescale 1ps/100fs
 `celldefine
 module basic_or (a, b, clk, out);
 
@@ -478,7 +476,6 @@ endmodule
 `endcelldefine
 
 //////////////////////////////////////////////////////////////////////
-`timescale 1ps/100fs
 `celldefine
 module basic_splitter (in, out1, out2);
 
@@ -527,7 +524,6 @@ endmodule
 `endcelldefine
 
 //////////////////////////////////////////////////////////////////////
-`timescale 1ps/100fs
 `celldefine
 module basic_xor (a, b, clk, out);
 
