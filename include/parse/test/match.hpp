@@ -39,7 +39,7 @@ namespace Parse::Test {
 
 template <class Rule>
 bool match_exactly(const std::string_view str) {
-  tao::pegtl::memory_input<> input(str.begin(), str.end(), "match_exactly");
+  tao::pegtl::memory_input<> input(std::addressof(str.front()), str.size(), "match_exactly");
 
   bool success =
       tao::pegtl::parse<Rule, tao::pegtl::nothing, debug_control>(input);
@@ -54,7 +54,7 @@ bool match_value_exactly(const std::string_view str, Enum value) {
   if (state == value)
     state = static_cast<Enum>(1);
 
-  tao::pegtl::memory_input<> input(str.begin(), str.end(),
+  tao::pegtl::memory_input<> input(std::addressof(str.front()), str.size(),
                                    "match_value_exactly");
 
   using rule_action = make_pegtl_apply0<Apply::rule_value>;

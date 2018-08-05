@@ -181,7 +181,7 @@ int main(int argc, char **argv)
       if (fs::exists(file)) {
 
         // auto file_path_normal = fs::path(file).lexically_normal();
-        auto abs_path = fs::canonical(file);
+        std::string abs_path = fs::canonical(file).string();
 
         tao::pegtl::file_input<> input(abs_path);
 

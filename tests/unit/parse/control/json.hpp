@@ -9,7 +9,7 @@
 
 #include <tao/pegtl/contrib/json.hpp>
 
-constexpr char json_example[] =
+constexpr std::string_view json_example =
     "{\n"
     "  \"name\":\"John\",\n"
     "  \"age\":30,\n"

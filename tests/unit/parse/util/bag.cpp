@@ -40,12 +40,12 @@ TEST_CASE("Parse.Util.Bag", "[Util]")
     REQUIRE(bag_add_remove[1] == 3);
     REQUIRE_FALSE(bag_add_remove.is_empty());
 
-    bag_add_remove.remove(int(0));
+    bag_add_remove.remove(std::size_t(0));
     REQUIRE(bag_add_remove.get_size() == 1);
     REQUIRE(bag_add_remove[0] == 3);
     REQUIRE_FALSE(bag_add_remove.is_empty());
 
-    bag_add_remove.remove(int(0));
+    bag_add_remove.remove(std::size_t(0));
     REQUIRE(bag_add_remove.get_size() == 0);
     REQUIRE(bag_add_remove.is_empty());
   }

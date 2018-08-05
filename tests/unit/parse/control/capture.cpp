@@ -107,7 +107,7 @@ struct rule_one_with_error : rule_one {
 TEST_CASE("Parse.CaptureControl") {
   SECTION("raise") {
     std::string_view raise_input = "asdf";
-    tao::pegtl::memory_input<> input(std::begin(raise_input), std::end(raise_input));
+    tao::pegtl::memory_input<> input(std::addressof(raise_input.front()), raise_input.size(), "raise");
 
     CHECK_THROWS(tao::pegtl::parse<tao::pegtl::must<rule_one_with_error>, tao::pegtl::nothing, capture_control>(input));
     CHECK_THROWS(tao::pegtl::parse<tao::pegtl::must<rule_one>, tao::pegtl::nothing, capture_control>(input));
@@ -116,9 +116,7 @@ TEST_CASE("Parse.CaptureControl") {
   SECTION("JSON") {
     JSONValuePtr json;
 
-
-    tao::pegtl::memory_input<> input(std::begin(json_example),
-                                     std::end(json_example), "json_example");
+    tao::pegtl::memory_input<> input(std::addressof(json_example.front()), json_example.size(), "json_example");
 
     bool success = tao::pegtl::parse<json_grammar::text, make_pegtl_template<JSONValueAction>::type,
                                      capture_control>(input, json);
@@ -134,7 +132,6 @@ TEST_CASE("Parse.CaptureControl") {
     REQUIRE(main_object->size() == 3);
 
     // Check that name == "John
-    main_object->at("name");
     JSONValuePtr& name_value = main_object->at("name");
     REQUIRE(bool(name_value));
     REQUIRE(std::holds_alternative<JSONString>(*name_value));

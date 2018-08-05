@@ -34,7 +34,7 @@ void VCDAssert::print_version_preamble() {
   std::puts("Copyright (C) 2018 Paul le Roux and Calvin Maree");
   std::puts("Licensed under the BSD 2-Clause License\n");
 
-  std::string cwd = Parse::Util::fs::current_path();
+  std::string cwd = Parse::Util::fs::current_path().string();
   fmt::print("Working directory : {}\n\n", cwd);
 }
 

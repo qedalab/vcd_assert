@@ -137,8 +137,8 @@ TEST_CASE("Parse.Actions.Command.PushAction", "[Actions][Command]")
     {
       RawStringLiteral rsl;
 
-      tao::pegtl::memory_input<> input(std::begin(input_str),
-                                       std::end(input_str), "push_action");
+      tao::pegtl::memory_input<> input(std::addressof(input_str.front()),
+                                       input_str.size(), "push_action");
 
       bool success =
           tao::pegtl::parse<raw_string,
@@ -157,8 +157,8 @@ TEST_CASE("Parse.Actions.Command.PushAction", "[Actions][Command]")
       INFO("Should fail")
       RawStringLiteral rsl;
 
-      tao::pegtl::memory_input<> input(std::begin(input_str),
-                                       std::end(input_str), "push_action");
+	  tao::pegtl::memory_input<> input(std::addressof(input_str.front()),
+                                       input_str.size(), "push_action");
 
       CHECK_THROWS(tao::pegtl::parse<raw_string,
                                      make_pegtl_template<RawStringAction>::type,
@@ -172,8 +172,8 @@ TEST_CASE("Parse.Actions.Command.PushAction", "[Actions][Command]")
       INFO("Should fail")
       RawStringLiteral rsl;
 
-      tao::pegtl::memory_input<> input(std::begin(input_str),
-                                       std::end(input_str), "push_action");
+	  tao::pegtl::memory_input<> input(std::addressof(input_str.front()),
+                                       input_str.size(), "push_action");
 
       CHECK_FALSE(tao::pegtl::parse<raw_string,
                                     make_pegtl_template<RawStringAction>::type,

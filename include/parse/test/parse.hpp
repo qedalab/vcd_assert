@@ -43,7 +43,7 @@ void require_parse(std::string_view input_str, States &... states) {
   using tao::pegtl::memory_input;
   using tao::pegtl::parse;
 
-  memory_input<> input(input_str.begin(), input_str.end(), "require_parse");
+  memory_input<> input(std::addressof(input_str.front()), input_str.size(), "require_parse");
   REQUIRE(parse<Rule, make_pegtl_template<Action>::template type,
                 Parse::capture_control>(input, states...));
 }
