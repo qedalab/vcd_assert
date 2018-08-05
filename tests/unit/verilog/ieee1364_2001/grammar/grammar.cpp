@@ -217,6 +217,24 @@ TEST_CASE("Verilog.IEEE1364_2001.Grammar.Grammer",
     CHECK(match_exactly<Grammar::delay_control>(real_delay));
   }
 
+  SECTION("variable_lvalue_0")
+  {
+    CAPTURE(variable_lvalue_0);
+    CHECK(match_exactly<Grammar::variable_lvalue>(variable_lvalue_0));
+  }
+
+  SECTION("expression_0")
+  {
+    CAPTURE(expression_0);
+    CHECK(match_exactly<Grammar::expression>(expression_0));
+  }
+
+  SECTION("expression_1")
+  {
+    CAPTURE(expression_1);
+    CHECK(match_exactly<Grammar::expression>(expression_1));
+  }
+
   SECTION("non_block_assign_0")
   {
     CAPTURE(non_block_assign_0);

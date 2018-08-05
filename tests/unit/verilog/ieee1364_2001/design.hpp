@@ -101,9 +101,13 @@ constexpr auto integer_delay = "#10";
 constexpr auto real_delay = "#2.4";
 constexpr auto bracketed_delay = "#(2.4)";
 
+constexpr auto variable_lvalue_0 = "set";
+constexpr auto variable_lvalue_1 = "set";
+constexpr auto expression_0 = "set";
+constexpr auto expression_1 = "!set";
 constexpr auto non_block_assign_0 = "set = !set;";
-constexpr auto non_block_assign_1 = "#2.4 reset = !reset";
-constexpr auto non_block_assign_2 = "#10 reset = !reset;";
+constexpr auto non_block_assign_1 = "#2.4 reset = !reset ;";
+constexpr auto non_block_assign_2 = "#10 reset = !reset ;";
 
 
 constexpr auto sdf_annotate_example = R"####($sdf_annotate("../../dro.sdf", tb_basic_dro);)####";

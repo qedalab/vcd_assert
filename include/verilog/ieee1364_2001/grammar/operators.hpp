@@ -96,12 +96,12 @@ struct unary_module_path_operator : sor<
   one<'!'>, 
   one<'~'>, 
   one<'&'>, 
-  seq<one<'~'>, one<'&'>>, 
+  string<'~','&'>, 
   one<'|'>, 
-  seq<one<'~'>, one<'|'>>, 
+  string<'~','|'>, 
   one<'^'>,  
-  seq<one<'~'>, one<'^'>>,
-  seq<one<'^'>, one<'~'>>
+  string<'~','^'>, 
+  string<'^','~'>
 > {};
 
 struct arithmetic_sum : one<'+'> {};

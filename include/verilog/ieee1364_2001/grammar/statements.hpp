@@ -120,7 +120,7 @@ struct statement_or_null : sor<
 template<class S = statement>
 struct if_else_if_statement : seq<
   opt_sep_seq< 
-    if_keyword, plus_blank, one<'('>, expression, one<')'>, statement_or_null<>
+    if_keyword, plus_blank, one<'('>, expression, one<')'>, statement_or_null<S>
   >,
   star<
     opt_sep_seq<
@@ -129,10 +129,10 @@ struct if_else_if_statement : seq<
       if_keyword, 
       plus_blank, 
       one<'('>, expression, one<')'>, 
-      statement_or_null<>
+      statement_or_null<S>
     >
   >,
-  opt< else_keyword, opt<plus_sep>, statement_or_null<> >
+  opt< else_keyword, opt<plus_sep>, statement_or_null<S> >
 > {};
 
 struct case_item : sor<
@@ -140,7 +140,7 @@ struct case_item : sor<
   opt_sep_seq< default_keyword, opt<one<':'>>, statement_or_null<> >
 > {};
 
-struct case_statement : opt_sep_must<
+struct case_statement : opt_sep_seq<
   sor< case_keyword, casez_keyword, casex_keyword >,
   one<'('>, expression, one<')'>,
   plus<case_item>,
@@ -176,7 +176,7 @@ struct event_control : if_must<
   >
 > {};
 
-struct delay_control : seq< 
+struct delay_control : if_must< 
   one<'#'>, 
   sor<
     delay_value, 
@@ -194,8 +194,8 @@ struct delay_or_event_control : sor<
   >
 > {};
 
-struct blocking_assignment : opt_sep_must<
-  variable_lvalue, one<'='>, opt<delay_or_event_control>, expression
+struct blocking_assignment : opt_sep_if_must<
+  opt_sep_seq<variable_lvalue, one<'='>, opt<delay_or_event_control>>, expression
 > {};
 
 
@@ -306,10 +306,10 @@ struct par_block : seq<
 > {};
 
 struct procedural_continuous_assignments : sor<
-  assign_keyword, variable_assignment, 
-  deassign_keyword, variable_lvalue, 
-  force_keyword, sor<variable_assignment, net_assignment>,
-  release_keyword, sor<variable_assignment, net_assignment>
+  sep_seq<assign_keyword, variable_assignment>, 
+  sep_seq<deassign_keyword, variable_lvalue>, 
+  sep_seq<force_keyword, sor<variable_assignment, net_assignment>>,
+  sep_seq<release_keyword, sor<variable_assignment, net_assignment>>
 > {};
 
 struct procedural_timing_control_statement : seq<
@@ -357,18 +357,18 @@ struct wait_statement : seq<
   statement_or_null<> 
 > {};
 
-struct statement : seq<
+struct statement : must<
   star<attribute_instance>,
   sor<
-    seq<blocking_assignment, plus_sep, one<';'>>,
     case_statement,
+    seq<blocking_assignment, one<';'>>,
     conditional_statement,
     disable_statement,
     event_trigger,
     loop_statement,
-    seq<nonblocking_assignment, plus_sep, one<';'>>,
+    opt_sep_seq<nonblocking_assignment, one<';'>>,
     par_block,
-    seq<procedural_continuous_assignments, plus_sep, one<';'>>,
+    opt_sep_seq<procedural_continuous_assignments, one<';'>>,
     procedural_timing_control_statement,
     seq_block,
     system_task_enable,

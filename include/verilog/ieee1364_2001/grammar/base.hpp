@@ -62,22 +62,27 @@ struct plus_sep : plus< sep > {};
 
 template<typename T, typename... P>
 struct sep_seq: seq<
-  seq<T, seq<plus_sep, P>...>
+  T, seq<plus_sep, P>...
 > {};
 
 template<typename T, typename... P>
 struct sep_must: must<
-  must<T, must<plus_sep, P>...>
+  T, seq<plus_sep, P>...
 > {};
 
 template<typename T, typename... P>
 struct opt_sep_seq: seq<
-  seq<T, seq<opt<plus_sep>, P>...>
+  T, seq<opt<plus_sep>, P>...
 > {};
 
 template<typename T, typename... P>
 struct opt_sep_must: must<
-  must<T, must<opt<plus_sep>, P>...>
+  T, seq<opt<plus_sep>, P>...
+> {};
+
+template<typename T, typename... P>
+struct opt_sep_if_must: if_must<
+  T, seq<opt<plus_sep>, P>...
 > {};
 
 // template<typename... P>
@@ -124,7 +129,7 @@ struct escaped_identifier : seq<
 struct simple_identifier : seq<
   not_at<keyword>, 
   tao::pegtl::identifier_first,
-  star<
+  plus<
     sor<
       tao::pegtl::identifier_other, 
       one<'$'>
@@ -136,7 +141,7 @@ struct identifier : seq< sor< simple_identifier, escaped_identifier >> {};
 
 struct s_identifier : seq< 
   one<'$'>, 
-  star< 
+  plus< 
     sor<
       tao::pegtl::identifier_other, 
       one<'$'>

@@ -119,19 +119,20 @@ struct constant_primary : sor<
   specparam_identifier
 > {};
 
-
-struct expression : sor <
+struct expression1; //forward
+struct expression2; //forward
+struct expression : sor<
   primary, 
-  opt_sep_must<
+  opt_sep_seq<
     unary_operator, 
     tao::pegtl::pad_opt<attribute_instance, plus_sep>, 
     primary
   >, 
-  opt_sep_must<
-    expression, 
+  opt_sep_seq<
+    expression1, 
     binary_operator, 
     tao::pegtl::pad_opt<attribute_instance, plus_sep>, 
-    expression
+    expression2
   >, 
   conditional_expression,
   qstring
@@ -306,8 +307,7 @@ struct variable_concatenation_value : sor<
 
 struct variable_lvalue;
 
-// struct variable_lvalue : alias<variable_concatenation_value> {};
-struct variable_lvalue_list : list<variable_lvalue, one<','>, plus_sep> {};
+struct variable_concatenation_value_list : list<variable_concatenation_value, one<','>, plus_sep> {};
 
 struct variable_lvalue : sor<
   opt_sep_seq<
@@ -319,7 +319,7 @@ struct variable_lvalue : sor<
       one<'['>, range_expression, one<']'> 
     >
   >,
-  variable_lvalue_list
+  variable_concatenation_value_list
 > {};
 
 struct module_path_expression : sor<
