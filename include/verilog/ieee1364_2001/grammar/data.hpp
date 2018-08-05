@@ -65,16 +65,16 @@ struct output_variable_type : sor<
 > {};
 
 struct real_type : sor<
-seq<real_identifier, opt< one<'='>, constant_expression >>,
-seq<real_identifier, list<dimension, one<','>, plus_sep>>
+  seq<real_identifier, opt< one<'='>, constant_expression >>,
+  seq<real_identifier, list<dimension, one<','>, plus_sep>>
 > {};
 
 struct list_of_real_identifiers : list<real_type, one<','>, plus_sep> {};
 
 
 struct variable_type : sor<
-seq<variable_identifier, opt< one<'='>, constant_expression >>,
-seq<variable_identifier, list<dimension, one<','>, plus_sep>>
+  seq<variable_identifier, opt< one<'='>, constant_expression >>,
+  seq<variable_identifier, list<dimension, one<','>, plus_sep>>
 > {};
 
 struct list_of_variable_identifiers : list<variable_type, one<','>, plus_sep> {};
@@ -104,8 +104,8 @@ struct charge_strength : sor<
 > {};
 
 struct delay_value : sor<
-  unsigned_number, 
   real_number, 
+  unsigned_number, 
   parameter_identifier, 
   specparam_identifier, 
   mintypmax_expression

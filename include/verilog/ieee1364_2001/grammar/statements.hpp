@@ -176,13 +176,11 @@ struct event_control : if_must<
   >
 > {};
 
-struct delay_control : sor<
-  if_must< 
-    one<'#'>, 
-    sor<
-      delay_value, 
-      seq<one<'('>, opt<plus_blank>, mintypmax<expression>, opt<plus_blank>,  one<')'>>
-    >
+struct delay_control : seq< 
+  one<'#'>, 
+  sor<
+    delay_value, 
+    seq<one<'('>, opt<plus_blank>, mintypmax<expression>, opt<plus_blank>,  one<')'>>
   >
 > {};
 
@@ -362,15 +360,15 @@ struct wait_statement : seq<
 struct statement : seq<
   star<attribute_instance>,
   sor<
-    opt_sep_seq<blocking_assignment, one<';'>>,
-    // case_statement,
-    // conditional_statement,
-    // disable_statement,
-    // event_trigger,
-    // loop_statement,
-    opt_sep_seq<nonblocking_assignment, one<';'>>,
-    // par_block,
-    opt_sep_seq<procedural_continuous_assignments, one<';'>>,
+    seq<blocking_assignment, plus_sep, one<';'>>,
+    case_statement,
+    conditional_statement,
+    disable_statement,
+    event_trigger,
+    loop_statement,
+    seq<nonblocking_assignment, plus_sep, one<';'>>,
+    par_block,
+    seq<procedural_continuous_assignments, plus_sep, one<';'>>,
     procedural_timing_control_statement,
     seq_block,
     system_task_enable,

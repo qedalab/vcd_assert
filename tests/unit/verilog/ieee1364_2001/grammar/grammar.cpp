@@ -199,41 +199,50 @@ TEST_CASE("Verilog.IEEE1364_2001.Grammar.Grammer",
     CHECK(match_exactly<Grammar::grammar>(module_example_2));
   }
 
-  // SECTION("integer_delay")
-  // {
-  //   CAPTURE(integer_delay);
-  //   CHECK(match_exactly<Grammar::delay_control>(integer_delay));
-  // }
-  // SECTION("real_delay")
-  // {
-  //   CAPTURE(real_delay);
-  //   CHECK(match_exactly<Grammar::delay_control>(real_delay));
-  // }
+  SECTION("integer_delay")
+  {
+    CAPTURE(integer_delay);
+    CHECK(match_exactly<Grammar::delay_control>(integer_delay));
+  }
 
-  // SECTION("non_block_assign_0")
-  // {
-  //   CAPTURE(non_block_assign_0);
-  //   CHECK(match_exactly<Grammar::statement>(non_block_assign_0));
-  // }
-  // SECTION("non_block_assign_1")
-  // {
-  //   CAPTURE(non_block_assign_1);
-  //   CHECK(match_exactly<Grammar::statement>(non_block_assign_1));
-  // }
-  // SECTION("non_block_assign_2")
-  // {
-  //   CAPTURE(non_block_assign_2);
-  //   CHECK(match_exactly<Grammar::statement>(non_block_assign_2));
-  // }
+  SECTION("real_number")
+  {
+    CAPTURE("2.4");
+    CHECK(match_exactly<Grammar::real_number>("2.4"));
+  }
 
-  // SECTION("seq_block")
-  // {
-  //   auto block = fmt::format("{}\n{}\n{}", non_block_assign_0,
-  //                            non_block_assign_1, non_block_assign_2);
-  //   CAPTURE(block);
+  SECTION("real_delay")
+  {
+    CAPTURE(real_delay);
+    CHECK(match_exactly<Grammar::delay_control>(real_delay));
+  }
 
-  //   CHECK(match_exactly<Grammar::statement>(block));
-  // }
+  SECTION("non_block_assign_0")
+  {
+    CAPTURE(non_block_assign_0);
+    CHECK(match_exactly<Grammar::statement>(non_block_assign_0));
+  }
+
+  SECTION("non_block_assign_1")
+  {
+    CAPTURE(non_block_assign_1);
+    CHECK(match_exactly<Grammar::statement>(non_block_assign_1));
+  }
+
+  SECTION("non_block_assign_2")
+  {
+    CAPTURE(non_block_assign_2);
+    CHECK(match_exactly<Grammar::statement>(non_block_assign_2));
+  }
+
+  SECTION("seq_block")
+  {
+    auto block = fmt::format("{}\n{}\n{}", non_block_assign_0,
+                             non_block_assign_1, non_block_assign_2);
+    CAPTURE(block);
+
+    CHECK(match_exactly<Grammar::statement>(block));
+  }
 
   SECTION("sdf_annotate_example")
   {

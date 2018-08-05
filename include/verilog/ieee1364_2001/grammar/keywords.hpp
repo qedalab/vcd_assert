@@ -161,7 +161,7 @@ struct macromodule_keyword        : key <macromodule_str> {};
 struct medium_str                 : TAO_PEGTL_STRING("medium"){};
 struct medium_keyword             : key <medium_str> {};
 struct module_str                 : TAO_PEGTL_STRING("module"){};
-struct module_keyword             : key <sor<module_str,macromodule_str>> {}; //<<<<< DIFFERENT 
+struct module_keyword             : sor<macromodule_keyword, key <module_str> > {}; //<<<<< DIFFERENT 
 struct nand_str                   : TAO_PEGTL_STRING("nand"){};
 struct nand_keyword               : key <nand_str> {};
 struct negedge_str                : TAO_PEGTL_STRING("negedge"){}; 
@@ -727,6 +727,7 @@ value_plusargs_str
 > {};
 
 struct keyword : key< keyword_str > {};
+// struct keyword : key< TAO_PEGTL_STRING("test") > {};
 
 // clang-format on
 } // namespace Grammar

@@ -304,7 +304,11 @@ struct variable_concatenation_value : sor<
   variable_concatenation
 > {};
 
+struct variable_lvalue;
+
 // struct variable_lvalue : alias<variable_concatenation_value> {};
+struct variable_lvalue_list : list<variable_lvalue, one<','>, plus_sep> {};
+
 struct variable_lvalue : sor<
   opt_sep_seq<
     hierarchical_variable_identifier, 
@@ -315,7 +319,7 @@ struct variable_lvalue : sor<
       one<'['>, range_expression, one<']'> 
     >
   >,
-  list<variable_lvalue, one<','>, plus_sep>
+  variable_lvalue_list
 > {};
 
 struct module_path_expression : sor<
