@@ -28,6 +28,7 @@
 #define LIBVERILOG_IEEE1364_2001_GRAMMAR_CHARACTER_HPP
 
 #include "../../types/enums.hpp"
+#include "./numbers.hpp"
 
 #include <parse/grammar/base.h>
 
@@ -54,8 +55,6 @@ struct special_character : sor<
   special_character_without_brackets,
   one<'(',')'>
 > {};
-
-struct decimal_digit : tao::pegtl::range<'0','9'> {};
 
 struct alphanumeric : sor<
   tao::pegtl::range<'a','z'>,

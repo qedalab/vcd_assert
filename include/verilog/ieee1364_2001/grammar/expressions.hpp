@@ -27,6 +27,13 @@
 #ifndef LIBVERILOG_IEEE1364_2001_GRAMMAR_EXPRESSION_HPP
 #define LIBVERILOG_IEEE1364_2001_GRAMMAR_EXPRESSION_HPP
 
+#include "./attribute.hpp"
+#include "./constants.hpp"
+#include "./identifiers.hpp"
+#include "./numbers.hpp"
+#include "./operators.hpp"
+#include "./ranges.hpp"
+
 #include <parse/grammar/base.h>
 #include <parse/grammar/part.h>
 
@@ -37,104 +44,330 @@ namespace Grammar {
 
 using namespace Parse::Grammar::Base;
 
+//forward
 struct expression;
 struct range_expression;
+struct concatenation;
+struct constant_concatenation;
+struct multiple_concatenation;
+struct module_path_primary; 
+struct mintypmax_expression;
+struct conditional_expression;
+struct constant_range_expression;
+struct net_concatenation;
+struct variable_concatenation;
+struct variable_concatenation_value;
+struct constant_mintypmax_expression;
+struct constant_multiple_concatenation;
+
+
+struct constant_function_call : seq< 
+  function_identifier, 
+  star<attribute_instance>, 
+  one<'('>, list<constant_expression, one<','>, plus_sep>, one<')'>
+> {};
+
+struct function_call : opt_sep_seq<
+  hierarchical_function_identifier, 
+  star<attribute_instance>, 
+  one<'('>, list<expression, one<','>, plus_sep>, one<')'>
+> {};
+
+struct genvar_function_call : opt_sep_seq<
+  genvar_function_identifier, 
+  star<attribute_instance>, 
+  one<'('>, list<expression, one<','>, plus_sep>, one<')'>
+> {};
+
+struct system_function_call : seq<
+  system_function_identifier, 
+  opt< one<'('>, list<expression, one<','>, plus_sep>, one<')'> >
+> {};
 
 struct primary : sor<
-  // number, 
+  number, 
   hierarchical_identifier, 
-  op_sep_seq<
+  opt_sep_seq<
     hierarchical_identifier, 
-    list<op_sep_seq<one<'['>, expression, one<']'>>, separator>
-  >
-  // op_sep_seq<
-  //   hierarchical_identifier, 
-  //   list< 
-  //     op_sep_seq<one<'['>, expression, one<']'>>, separator
-  //   >, 
-  //   op_sep_seq<one<'['>, range_expression, one<']'>>
-  // >, 
-  // op_sep_seq<hierarchical_identifier, one<'['>, range_expression, one<']'>>, 
-  // concatenation, 
-  // multiple_concatenation, 
-  // function_call, 
-  // system_function_call, 
-  // constant_function_call, 
-  // op_sep_seq<one<'('>, mintypmax_expression, one<')'>>
+    list<opt_sep_seq<one<'['>, expression, one<']'>>, plus_sep>
+  >,
+  opt_sep_seq<
+    hierarchical_identifier, 
+    list< 
+      opt_sep_seq<one<'['>, expression, one<']'>>, plus_sep
+    >, 
+    opt_sep_seq<one<'['>, range_expression, one<']'>>
+  >, 
+  opt_sep_seq<hierarchical_identifier, one<'['>, range_expression, one<']'>>, 
+  concatenation, 
+  multiple_concatenation, 
+  function_call, 
+  system_function_call, 
+  constant_function_call, 
+  opt_sep_seq<one<'('>, mintypmax_expression, one<')'>>
 > {};
+
+
+struct constant_primary : sor<
+  constant_concatenation,
+  constant_function_call,
+  opt_sep_seq< one<'('>, constant_mintypmax_expression, one<')'>>,
+  constant_multiple_concatenation,
+  genvar_identifier,
+  number,
+  parameter_identifier,
+  specparam_identifier
+> {};
+
 
 struct expression : sor <
   primary, 
-  // op_sep_seq<
-  //   unary_operator, 
-  //   pad_op<attribute_instance, separator>, 
-  //   primary
-  // >, 
-  // op_sep_seq<
-  //   expression, 
-  //   binary_operator, 
-  //   pad_op<attribute_instance, separator>, 
-  //   expression
-  // >, 
-  // conditional_expression,
+  opt_sep_must<
+    unary_operator, 
+    tao::pegtl::pad_opt<attribute_instance, plus_sep>, 
+    primary
+  >, 
+  opt_sep_must<
+    expression, 
+    binary_operator, 
+    tao::pegtl::pad_opt<attribute_instance, plus_sep>, 
+    expression
+  >, 
+  conditional_expression,
   qstring
 > {};
 
 struct base_expression : alias<expression> {};
+
+struct constant_expression : sor<
+  constant_primary,
+  opt_sep_seq<
+    unary_operator, 
+    star< attribute_instance >, 
+    constant_primary
+  >,
+  opt_sep_seq<
+    constant_expression, 
+    binary_operator, 
+    star<attribute_instance>, 
+    constant_expression
+  >,
+  opt_sep_seq<
+    constant_expression, 
+    one<'?'>, 
+    star< attribute_instance >, 
+    constant_expression, 
+    one<':'>,
+    constant_expression
+  >, 
+  qstring
+> {};
+
+struct constant_base_expression : alias<constant_expression> {};
+
+
 struct width_constant_expression : alias<constant_expression> {};
 struct msb_constant_expression : alias<constant_expression> {};
 struct lsb_constant_expression : alias<constant_expression> {};
 
+struct constant_range_expression : sor<
+  constant_expression,
+  opt_sep_seq<
+    msb_constant_expression, 
+    one<':'>, 
+    lsb_constant_expression
+  >,
+  opt_sep_seq<
+    constant_base_expression, 
+    sor<
+      seq<one<'+'>,one<':'>>,
+      seq<one<'-'>,one<':'>>
+    >,
+    width_constant_expression
+  >
+> {};
+
+struct expression1 : alias<expression> {};
+struct expression2 : alias<expression> {};
+struct expression3 : alias<expression> {};
+
+struct conditional_expression : opt_sep_seq<
+ expression1, one<'?'>, star< attribute_instance >, expression2, one<':'>, expression3
+> {};
+
 struct range_expression : sor<
   expression, 
-  op_sep_seq<msb_constant_expression, one<':'>, lsb_constant_expression>, 
-  op_sep_seq<base_expression, one<'+'>, one<':'>, width_constant_expression>, 
-  op_sep_seq<base_expression, one<'-'>, one<':'>, width_constant_expression>
+  opt_sep_seq<
+    msb_constant_expression, 
+    one<':'>, 
+    lsb_constant_expression
+  >, 
+  opt_sep_seq<
+    base_expression, 
+    sor<
+      seq<one<'+'>,one<':'>>,
+      seq<one<'-'>,one<':'>>
+    >,
+    width_constant_expression
+  >
 > {};
 
-struct concatenation : op_sep_seq<
+
+struct range : opt_sep_seq<
+  one<'['>,
+  msb_constant_expression, 
+  one<':'>,
+  lsb_constant_expression,
+  one<']'>
+> {};
+
+struct bus_range : alias<range> {};
+
+struct dimension_constant_expression : alias<constant_expression> {};
+
+struct dimension : opt_sep_seq<
+  one<'['>,
+  dimension_constant_expression, 
+  one<':'>,
+  dimension_constant_expression,
+  one<']'>
+> {};
+
+template< class T >
+struct triple_min : alias<T> {};
+template< class T >
+struct triple_typ : alias<T> {};
+template< class T >
+struct triple_max : alias<T> {};
+
+template< class T >
+struct triple : seq < 
+  not_at< string<':',':'>, not_at<T> >,
+  opt_sep_seq<
+    opt<triple_min<T>>,
+    one<':'>,
+    opt<triple_typ<T>>,
+    one<':'>,
+    opt<triple_max<T>>
+  >
+> {};
+
+template< class T >
+struct mintypmax : must<
+    sor<triple<T>,T>
+> {};
+
+struct mintypmax_expression : mintypmax<expression> {};
+struct constant_mintypmax_expression : mintypmax<constant_expression> {};
+
+struct event_expression : sor<
+  expression, 
+  hierarchical_identifier, 
+  seq<posedge_keyword, expression>, 
+  seq<negedge_keyword, expression>, 
+  seq<event_expression, seq<one<'o'>,one<'r'>>, event_expression>, 
+  seq<event_expression, one<','>, event_expression>
+> {};
+
+struct concatenation : opt_sep_seq<
   one<'{'>, 
-  list<seq<expression, separator>, one<','>>,
+  list<seq<expression, plus_sep>, one<','>>,
   one<'}'> 
 > {};
 
-struct constant_concatenation : op_sep_seq<
+struct constant_concatenation : opt_sep_seq<
   one<'{'>, 
-  list<seq<constant_expression, separator>, one<','>>,
+  list<seq<constant_expression, plus_sep>, one<','>>,
   one<'}'> 
 > {};
 
-struct constant_multiple_concatenation : op_sep_seq<
+struct constant_multiple_concatenation : opt_sep_seq<
   one<'{'>, 
   constant_expression,
   constant_concatenation, 
   one<'}'> 
 > {};
 
-struct module_path_concatenation : op_sep_seq<
+
+struct variable_concatenation :  opt_sep_seq<
   one<'{'>, 
-  // list<seq<module_path_expression, separator>, one<','>>,
+  list<seq<variable_concatenation_value, plus_sep>, one<','>>,
   one<'}'> 
 > {};
 
-struct module_path_multiple_concatenation : op_sep_seq<
+struct variable_concatenation_value : sor<
+  opt_sep_seq< 
+    hierarchical_variable_identifier, 
+    list<opt_sep_seq<one<'['>, expression, one<']'>>, plus_sep>, 
+    opt<range_expression>
+  >,
+  variable_concatenation
+> {};
+
+struct variable_lvalue : alias<variable_concatenation_value> {};
+
+struct module_path_expression : sor<
+  module_path_primary,
+  seq<unary_module_path_operator, star<attribute_instance>, module_path_primary>
+> {};
+
+struct module_path_mintypmax_expression : mintypmax<module_path_expression> {};
+
+struct module_path_concatenation : opt_sep_seq<
+  one<'{'>, 
+  list<seq<module_path_expression, plus_sep>, one<','>>,
+  one<'}'> 
+> {};
+
+struct module_path_multiple_concatenation : opt_sep_seq<
   one<'{'>, 
   constant_expression,
   module_path_concatenation, 
   one<'}'> 
 > {};
 
-struct multiple_concatenation : op_sep_seq<
+
+struct module_path_primary : sor<
+  number, 
+  identifier, 
+  module_path_concatenation, 
+  module_path_multiple_concatenation, 
+  function_call, 
+  system_function_call, 
+  constant_function_call, 
+  seq<one<'('>, module_path_mintypmax_expression, one<')'>>
+> {};
+
+
+struct multiple_concatenation : opt_sep_seq<
   one<'{'>, 
   constant_expression,
   concatenation, 
   one<'}'> 
 > {};
 
-struct net_concatenation : op_sep_seq<
+struct net_concatenation_value : sor<
+  opt_sep_seq< 
+    hierarchical_net_identifier, 
+    list<opt_sep_seq<one<'['>, expression, one<']'>>, plus_sep>, 
+    opt<range_expression>
+  >,
+  net_concatenation
+> {};
+
+struct net_concatenation : opt_sep_seq<
   one<'{'>, 
-  // list<seq<net_concatenation_value, separator>, one<','>>,
+  list<seq<net_concatenation_value, plus_sep>, one<','>>,
   one<'}'> 
+> {};
+
+struct net_lvalue : sor<
+  seq< 
+    hierarchical_net_identifier, 
+    plus<expression>, 
+    one<'['>, constant_range_expression, one<']'> 
+  >,
+  net_concatenation
 > {};
 
 // clang-format on

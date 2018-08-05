@@ -40,7 +40,7 @@ struct delay_file : block<
   key_delayfile,
   sdf_header,
   plus< cell >
->{};
+> {};
 
 // clang-format on
 

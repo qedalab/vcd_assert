@@ -27,7 +27,7 @@
 #ifndef LIBVERILOG_IEEE1364_2001_GRAMMAR_BLOCK_HPP
 #define LIBVERILOG_IEEE1364_2001_GRAMMAR_BLOCK_HPP
 
-#include "./separator.hpp"
+//#include "./separator.hpp"
 
 #include <parse/grammar/base.h>
 #include <parse/grammar/part.h>
@@ -40,34 +40,24 @@ namespace Grammar {
 using namespace Parse::Grammar::Base;
 using namespace Parse::Grammar::Part;
 
-// Incomplete type !?
-// template <typename T, typename... P>
-// struct block : delimited_seq < opt<separator>,
-//   one<'('>,
-//   T,
-//   delimited_must<opt<separator>,
-//     seq<>, // required for weird template parameter pack rule
-//     P...,
-//     one<')'>
-//   >
-// > {};
+struct plus_sep; //from base
 
 struct open : seq <
-  opt<separator>,
+  opt<plus_sep>,
   one< '(' >,
-  opt<separator>
+  opt<plus_sep>
 > {};
 
 struct close : seq <
-  opt<separator>,
+  opt<plus_sep>,
   one< ')' >,
-  opt<separator>
+  opt<plus_sep>
 > {};
 
 template<typename T, typename... P>
 struct block: if_must<
   seq< open, T >,
-  seq< opt< separator >, P >...,
+  seq< opt< plus_sep >, P >...,
   close
 > {};
 

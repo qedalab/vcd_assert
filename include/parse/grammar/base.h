@@ -24,8 +24,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 // ============================================================================
 
-#ifndef PARSE_grammar_BASE_H_
-#define PARSE_grammar_BASE_H_
+#ifndef PARSEgrammarBASE_H_
+#define PARSEgrammarBASE_H_
 
 #include <tao/pegtl/ascii.hpp>
 #include <tao/pegtl/nothing.hpp>
@@ -99,7 +99,7 @@ using delimited_star = opt<delimited_plus<Padding, Rule>>;
 template <typename Padding, typename First, typename... Rules>
 using delimited_must = must<First, must<Padding, Rules>...>;
 
-template<auto Min, auto Max, typename... Rules>
+template <auto Min, auto Max, typename... Rules>
 using rep_min_max = tao::pegtl::rep_min_max<Min, Max, Rules...>;
 
 using eol = tao::pegtl::eol;

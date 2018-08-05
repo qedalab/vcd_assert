@@ -40,12 +40,26 @@ namespace Grammar {
 using namespace Parse::Grammar::Base;
 using namespace Parse::Grammar::Part;
 
-struct separator : plus<
+struct separator_helper :  plus<
   sor<
     comment,
-    plus<blank>
+    blank
   >
 > {};
+
+struct separator : sor<
+  seq<blank,opt<plus_sep>>,
+  seq<opt<plus_sep>,blank>,
+  seq<opt<plus_sep>,blank,opt<plus_sep>>
+> {};
+
+// struct plus_sep : plus<
+//   blank,
+//   sor<
+//     comment,
+//     plus<blank>
+//   >
+// > {};
 
 // clang-format on
 } // namespace Grammar

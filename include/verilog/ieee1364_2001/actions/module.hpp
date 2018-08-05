@@ -121,7 +121,7 @@ struct ModuleDeclarationAction : multi_dispatch<
 
 
 struct ModuleDescriptionAction: single_dispatch<
-    Grammar::_module_declaration_, 
+    Grammar::module_declaration, 
     inner_action_passthrough< 
       ModuleDeclarationAction
     >
@@ -132,29 +132,31 @@ struct ModuleDescriptionAction: single_dispatch<
 
 struct ModuleDescriptionApply{ // clang-format on
   template <class Rule, class ActionInput>
-  static bool apply(const ActionInput &input, ModuleEvent data, 
-                    DesignReader &reader, Util::InputMap &/*inputmap*/, 
-                    bool first_pass){
+  static bool apply(const ActionInput &input, ModuleEvent data,
+                    DesignReader &reader, Util::InputMap & /*inputmap*/,
+                    bool first_pass)
+  {
 
-    if(first_pass){
+    if (first_pass) {
 
       Parse::Util::debug_puts("DEBUG: found module");
 
       reader.module(data.module_identifier, input.position().source);
 
-    }else{
-      
-      for (auto&& instance : data.instances ){
-        reader.instance(NetType::module, data.module_identifier, instance.name, instance.type);
+    } else {
+
+      for (auto &&instance : data.instances) {
+        reader.instance(NetType::module, data.module_identifier, instance.name,
+                        instance.type);
       }
 
-      for (auto&& command : data.commands ){
+      for (auto &&command : data.commands) {
         reader.command(command, data.module_identifier);
       }
     }
 
     return true;
-    }
+  }
 }; // clang-format off
 
 // clang-format on

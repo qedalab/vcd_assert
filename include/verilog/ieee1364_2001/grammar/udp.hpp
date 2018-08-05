@@ -28,31 +28,37 @@
 #define LIBVERILOG_IEEE1364_2001_GRAMMAR_UPD_HPP
 
 #include "./base.hpp"
+#include "./data.hpp"
+#include "./delay.hpp"
+#include "./expressions.hpp"
 #include "./keywords.hpp"
-#include "./module.hpp"
+#include "./numbers.hpp"
+
+#include <parse/grammar/base.h>
+#include <parse/grammar/part.h>
 
 namespace Verilog {
 namespace IEEE1364_2001 {
 namespace Grammar {
 // clang-format off
 
+using namespace Parse::Grammar::Base;
+using namespace Parse::Grammar::Part;
 
-struct udp_identifier : alias<identifier> {};
-struct variable_identifier : alias<identifier> {};
 
-struct udp_input_declaration : op_seq_seq<
+struct udp_input_declaration : opt_sep_seq<
   star<attribute_instance>, 
   input_keyword,
   list_of_port_identifiers
 > {};
 
 struct udp_output_declaration : sor<
-  op_sep_seq<
+  opt_sep_seq<
     star<attribute_instance>, 
     output_keyword, 
     port_identifier
   >,
-  op_sep_seq<
+  opt_sep_seq<
     star<attribute_instance>, 
     output_keyword, 
     reg_keyword, 
@@ -61,33 +67,54 @@ struct udp_output_declaration : sor<
   >
 > {};
 
-struct udp_reg_declaration : op_sep_seq <
+struct udp_reg_declaration : opt_sep_seq <
   star<attribute_instance>, 
   reg_keyword,
   variable_identifier
 > {};
 
 struct udp_declaration_port_list : sor<
-  op_sep_seq<
+  opt_sep_seq<
     udp_output_declaration, 
     one<';'>
   >,
-  op_sep_seq<
+  opt_sep_seq<
     udp_input_declaration, 
     one<';'>
   >,
-  op_sep_seq<
+  opt_sep_seq<
     udp_reg_declaration, 
     one<';'>
   >
 > {};
 
-struct udp_body : must<
+struct combinational_body; //forward
+struct sequential_body; //forward
 
+struct udp_body : sor<
+  combinational_body, sequential_body
 > {};
 
+// struct combinational_body :  opt_sep_seq<table_keyword, list<combinational_entry, one<','>, plus_sep> { combinational_entry } endtable_keyword>
+// struct combinational_entry :  level_input_list : output_symbol ;
+// struct sequential_body :  [ udp_initial_statement ] table sequential_entry { sequential_entry } endtable
+// struct udp_initial_statement :  initial output_port_identifier = init_val ;
+// struct init_val :  1’b0 | 1’b1 | 1’bx | 1’bX | 1’B0 | 1’B1 | 1’Bx | 1’BX | 1 | 0
+// struct sequential_entry :  seq_input_list : current_state : next_state ;
+// struct seq_input_list :  level_input_list | edge_input_list
+// struct level_input_list :  level_symbol { level_symbol }
+// struct edge_input_list :  { level_symbol } edge_indicator { level_symbol }
+// struct edge_indicator :  ( level_symbol level_symbol ) | edge_symbol
+// struct current_state :  level_symbol
+// struct next_state :  output_symbol | -
+// struct output_symbol :  0 | 1 | x | X
+// struct level_symbol :  0 | 1 | x | X | ? | b | B
+// struct edge_symbol :  r | R | f | F | p | P | n | N | *
+
+
+
 struct udp_declaration : sor<
-  op_sep_seq<
+  opt_sep_seq<
     star<attribute_instance>, 
     primitive_keyword, udp_identifier, 
     one<'('>, udp_port_list, one<')'>, one<';'>,
@@ -95,7 +122,7 @@ struct udp_declaration : sor<
     udp_body,
     endprimitive_keyword
   >,
-  op_sep_seq<
+  opt_sep_seq<
     star<attribute_instance>, 
     primitive_keyword, udp_identifier, 
     one<'('>, udp_declaration_port_list, one<')'>, one<';'>,
@@ -104,9 +131,42 @@ struct udp_declaration : sor<
   >
 > {};
 
+
+
+
+struct name_of_udp_instance : seq<
+  udp_instance_identifier, 
+  opt< bus_range >
+> {};
+
+struct udp_instance : seq<
+  opt< name_of_udp_instance >, 
+  one<'('>, 
+  output_terminal, 
+  one<','>, 
+  input_terminal, 
+  star< 
+    one<','>, 
+    input_terminal 
+  >, 
+  one<')'>
+> {};
+
+struct udp_instantiation : seq<
+  udp_identifier, 
+  // opt< drive_strength >, 
+  opt< delay2 >, 
+  udp_instance,
+  star< 
+    one<','>, 
+    udp_instance 
+  >, 
+  one<';'>
+> {};
+
 // clang-format on
-} // namespace IEEE1364_2001
 } // namespace Grammar
+} // namespace IEEE1364_2001
 } // namespace Verilog
 
 #endif // LIBVERILOG_IEEE1364_2001_GRAMMAR_UPD_HPP

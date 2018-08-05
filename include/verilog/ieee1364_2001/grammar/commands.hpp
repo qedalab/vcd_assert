@@ -38,57 +38,56 @@ namespace Grammar {
 
 struct name_of_instance;
 
-struct sdf_file : if_must< one<'"'>, file_path_spec, one<'"'>>{};
-struct config_file : if_must< one<'"'>, file_path_spec, one<'"'>>{};
-struct log_file : if_must< one<'"'>, file_path_spec, one<'"'>>{};
-struct mtm_spec : alias<qstring>{};
-struct scale_factors : alias<qstring>{};
-struct scale_type : alias<qstring>{};
+struct sdf_file : if_must< one<'"'>, file_path_spec, one<'"'>> {};
+struct config_file : if_must< one<'"'>, file_path_spec, one<'"'>> {};
+struct log_file : if_must< one<'"'>, file_path_spec, one<'"'>> {};
+struct mtm_spec : alias<qstring> {};
+struct scale_factors : alias<qstring> {};
+struct scale_type : alias<qstring> {};
 
-struct sdf_annotate_task : if_must<
+struct sdf_annotate_task : seq<
   seq<
     one<'$'>, 
     sdf_annotate_keyword
   >,
-  opt<separator>,
+  // opt<plus_sep>,
   if_must<
     one<'('>, 
-    opt<separator>,
+    opt<plus_sep>,
     sdf_file,
     opt< 
-      opt<separator>,
+      // opt<plus_sep>,
       one<','>,
-      opt< opt<separator>, name_of_instance >
-      , 
-      opt< 
-        opt<separator>,
-        one<','>, 
-        opt< opt<separator>, config_file >,
-        opt< 
-          opt<separator>,
-          one<','>, 
-          opt< opt<separator>, log_file >,
-          opt< 
-            opt<separator>,
-            one<','>, 
-            opt< opt<separator>, mtm_spec >,
-            opt< 
-            opt<separator>,
-              one<','>, 
-              opt< opt<separator>, scale_factors >,
-              opt< 
-                one<','>, 
-                opt< opt<separator>, scale_type >
-              > 
-            > 
-          > 
-        > 
-      >
+      opt< opt<plus_sep>, name_of_instance >//, 
+      // opt< 
+      //   opt<plus_sep>,
+      //   one<','>, 
+      //   opt< opt<plus_sep>, config_file >,
+      //   opt< 
+      //     opt<plus_sep>,
+      //     one<','>, 
+      //     opt< opt<plus_sep>, log_file >,
+      //     opt< 
+      //       opt<plus_sep>,
+      //       one<','>, 
+      //       opt< opt<plus_sep>, mtm_spec >,
+      //       opt< 
+      //       opt<plus_sep>,
+      //         one<','>, 
+      //         opt< opt<plus_sep>, scale_factors >,
+      //         opt< 
+      //           one<','>, 
+      //           opt< opt<plus_sep>, scale_type >
+      //         > 
+      //       > 
+      //     > 
+      //   > 
+      // >
     >, 
-    opt<separator>,
+    opt<plus_sep>,
     one<')'>
   >,
-  opt<separator>,
+  opt<plus_sep>,
   one<';'> 
 > {};
 

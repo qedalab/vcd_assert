@@ -55,7 +55,7 @@ struct conditional_port_expr : sor<
     one<'('>, opt<unary_operator>, conditional_port_expr, one<')'>
   >,
   seq< conditional_port_expr, binary_operator, conditional_port_expr >
->{};
+> {};
 
 struct simple_expression : sor<
   op_sep_seq<
@@ -85,29 +85,29 @@ struct simple_expression : sor<
       >
     >
   >
->{};
+> {};
 
 struct concat_expression : op_sep_seq<
   one< ',' >,
   simple_expression
->{};
+> {};
 
 struct inversion_condition : seq< 
   inversion_operator, 
   scalar_node
->{};
+> {};
 
 struct node_constant_equality_condition : seq< 
   scalar_node, 
   equality_operator, 
   scalar_constant
->{};
+> {};
 
 struct timing_check_condition : sor<
   inversion_condition,
   node_constant_equality_condition,
   scalar_node
->{};
+> {};
 
 
 // clang-format on

@@ -24,17 +24,16 @@
 // POSSIBILITY OF SUCH DAMAGE.
 // ============================================================================
 
-#ifndef LIBVERILOG_IEEE1364_2001_GRAMMAR_ATTRIBUTE_HPP
-#define LIBVERILOG_IEEE1364_2001_GRAMMAR_ATTRIBUTE_HPP
+#ifndef LIBVERILOG_IEEE1364_2001_GRAMMAR_DECLARATION_HPP
+#define LIBVERILOG_IEEE1364_2001_GRAMMAR_DECLARATION_HPP
 
 #include "./base.hpp"
-#include "./constants.hpp"
+#include "./data.hpp"
+#include "./keywords.hpp"
+#include "./numbers.hpp"
 //#include "./separator.hpp"
-
 #include <parse/grammar/base.h>
 #include <parse/grammar/part.h>
-
-#include <tao/pegtl.hpp>
 
 namespace Verilog {
 namespace IEEE1364_2001 {
@@ -44,31 +43,23 @@ namespace Grammar {
 using namespace Parse::Grammar::Base;
 using namespace Parse::Grammar::Part;
 
-struct constant_expression;
 
-struct attr_name : alias<identifier> {};
 
-struct attr_spec : sor <
-  attr_name,
-  opt_sep_must<
-    attr_name,
-    one<'='>,
-    constant_expression
-  >
-> {};
+/*A.2.3 Declaration lists */
 
-struct attribute_instance : if_must<
-  seq<one<'('>,one<'*'>>,
-  list<
-    seq<attr_spec, opt<plus_sep>>, 
-    one<','>
-  >,
-  seq<one<'*'>,one<')'>>
-> {};
+
+
+
+
+
+
+
+
+struct list_of_specparam_assignments : list<specparam_assignment, one<','>, plus_sep> {};
 
 // clang-format on
 } // namespace Grammar
 } // namespace IEEE1364_2001
 } // namespace Verilog
 
-#endif // LIBVERILOG_IEEE1364_2001_GRAMMAR_ATTRIBUTE_HPP
+#endif // LIBVERILOG_IEEE1364_2001_GRAMMAR_DECLARATION_HPP

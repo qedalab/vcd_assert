@@ -24,17 +24,18 @@
 // POSSIBILITY OF SUCH DAMAGE.
 // ============================================================================
 
-#ifndef LIBVERILOG_IEEE1364_2001_GRAMMAR_ATTRIBUTE_HPP
-#define LIBVERILOG_IEEE1364_2001_GRAMMAR_ATTRIBUTE_HPP
+#ifndef LIBVERILOG_IEEE1364_2001_GRAMMAR_FUNCTION_HPP
+#define LIBVERILOG_IEEE1364_2001_GRAMMAR_FUNCTION_HPP
 
 #include "./base.hpp"
-#include "./constants.hpp"
-//#include "./separator.hpp"
-
+#include "./statements.hpp"
+#include "./task.hpp"
+// #include "./data.hpp"
+// #include "./keywords.hpp"
+// #include "./numbers.hpp"
+// //#include "./separator.hpp"
 #include <parse/grammar/base.h>
 #include <parse/grammar/part.h>
-
-#include <tao/pegtl.hpp>
 
 namespace Verilog {
 namespace IEEE1364_2001 {
@@ -44,26 +45,67 @@ namespace Grammar {
 using namespace Parse::Grammar::Base;
 using namespace Parse::Grammar::Part;
 
-struct constant_expression;
 
-struct attr_name : alias<identifier> {};
+struct function_item_declaration : sor<
+  block_item_declaration, 
+  opt_sep_seq<tf_input_declaration, one<';'>>
+> {};
 
-struct attr_spec : sor <
-  attr_name,
-  opt_sep_must<
-    attr_name,
-    one<'='>,
-    constant_expression
+struct function_port_list : opt_sep_seq<
+  star<attribute_instance>,
+  tf_input_declaration,
+  list<
+    opt_sep_seq<
+      attribute_instance, 
+      tf_input_declaration
+    >,
+    one<','>,
+    plus_sep
   >
 > {};
 
-struct attribute_instance : if_must<
-  seq<one<'('>,one<'*'>>,
-  list<
-    seq<attr_spec, opt<plus_sep>>, 
-    one<','>
+// struct callable_declaration_w_ports
+// struct callable_declaration_wo_ports
+
+struct function_declaration : sor<
+  opt_sep_seq<
+    function_keyword, 
+    opt<automatic_keyword, plus_sep>, 
+    opt<signed_keyword, plus_sep>, 
+    opt<
+      sor<
+        range, 
+        integer_keyword, 
+        real_keyword, 
+        realtime_keyword, 
+        time_keyword
+      >, 
+      plus_sep
+    >, 
+    opt_sep_seq<function_port_list, one<';'>>,  
+    star<function_item_declaration>,
+    statement,
+    endfunction_keyword
   >,
-  seq<one<'*'>,one<')'>>
+  opt_sep_seq<
+    function_keyword, 
+    opt<automatic_keyword, plus_sep>, 
+    opt<signed_keyword, plus_sep>, 
+    opt<
+      sor<
+        range, 
+        integer_keyword, 
+        real_keyword, 
+        realtime_keyword, 
+        time_keyword
+      >, 
+      plus_sep
+    >, 
+    opt_sep_seq<one<'('>, function_port_list, one<')'>, one<';'>>,
+    star<block_item_declaration>,
+    statement,
+    endfunction_keyword
+  >
 > {};
 
 // clang-format on
@@ -71,4 +113,4 @@ struct attribute_instance : if_must<
 } // namespace IEEE1364_2001
 } // namespace Verilog
 
-#endif // LIBVERILOG_IEEE1364_2001_GRAMMAR_ATTRIBUTE_HPP
+#endif // LIBVERILOG_IEEE1364_2001_GRAMMAR_FUNCTION_HPP

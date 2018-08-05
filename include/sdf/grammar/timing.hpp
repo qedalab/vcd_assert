@@ -58,10 +58,10 @@ struct bus_index :  op_sep_seq<
   one< '[' >,
   integer,
   one< ']' >
->{};
+> {};
 
-struct bus_start_index : seq<integer>{};
-struct bus_end_index : seq<integer>{};
+struct bus_start_index : seq<integer> {};
+struct bus_end_index : seq<integer> {};
 
 struct bus_range : seq<
   one< '[' >,
@@ -69,7 +69,7 @@ struct bus_range : seq<
   one< ':' >,
   bus_start_index,
   one< ']' >
->{};
+> {};
 
 struct bus_net : seq< 
   identifier,
@@ -77,7 +77,7 @@ struct bus_net : seq<
   opt<
     bus_range
   >
->{};
+> {};
 
 struct scalar_net : op_sep_seq< 
   identifier,
@@ -85,12 +85,12 @@ struct scalar_net : op_sep_seq<
   opt<
     bus_index
   >
->{};
+> {};
 
 struct net : sor< 
   scalar_net,
   bus_net
->{};
+> {};
 
 struct net_instance : sor< 
   net,
@@ -99,12 +99,12 @@ struct net_instance : sor<
     hchar,
     net
   >
->{};
+> {};
 
 struct net_spec : sor< 
   port_instance,
   net_instance
->{};
+> {};
 
 struct bus_port : seq< 
   identifier,
@@ -112,13 +112,13 @@ struct bus_port : seq<
   // opt<
     bus_range
   // >
->{};
+> {};
 
 //I made this up.
 struct bus_node : sor<
   bus_port,
   bus_net
->{};
+> {};
 
 struct scalar_port : op_sep_seq< 
   identifier,
@@ -126,12 +126,12 @@ struct scalar_port : op_sep_seq<
   opt<
     bus_index
   >
->{};
+> {};
 
 struct port : sor< 
   bus_port,
   scalar_port
->{};
+> {};
 
 struct port_instance : sor< 
   port,
@@ -140,12 +140,12 @@ struct port_instance : sor<
     hchar,
     port
   >
->{};
+> {};
 
 struct scalar_node : sor<
   scalar_port,
   scalar_net
->{};
+> {};
 
 // static constexpr auto value = EdgeType::posedge;
 // static constexpr auto value = EdgeType::negedge;
@@ -191,26 +191,26 @@ struct port_edge : op_sep_seq<
   edge_identifier,
   port_instance,
   one< ')' >
->{};
+> {};
 
 struct port_spec : sor< 
   port_edge,
   port_instance
->{};
+> {};
 
 // struct lbl_def : op_sep_seq< 
 //   one< '(' >,
 //   identifier,
 //   delval_list,
 //   one< ')' >
-// >{};
+// > {};
 
 // struct lbl_type : op_sep_seq< 
 //   one< '(' >,
 //   sor< key_increment, key_absolute >,
 //   plus< lbl_def >,
 //   one< ')' >
-// >{};
+// > {};
 
 // struct neg_pair : op_sep_seq< 
 //   one< '(' >,
@@ -223,7 +223,7 @@ struct port_spec : sor<
 //   signed_real_number,
 //   opt< signed_real_number >,
 //   one< ')' >
-// >{};
+// > {};
 
 // struct pos_pair : op_sep_seq< 
 //   one< '(' >,
@@ -236,19 +236,19 @@ struct port_spec : sor<
 //   signed_real_number,
 //   opt< signed_real_number >,
 //   one< ')' >
-// >{};
+// > {};
 
 // struct edge_list : sor< 
 //   plus< pos_pair >,
 //   plus< neg_pair >  
-// >{};
+// > {};
 
 // struct waveform_env : block<
 //   key_waveform,
 //   port_instance,
 //   real_number,
 //   edge_list
-// >{};
+// > {};
 
 // struct slack_env : block< 
 //   key_slack,
@@ -258,7 +258,7 @@ struct port_spec : sor<
 //   rvalue,
 //   rvalue,
 //   opt< real_number >
-// >{};
+// > {};
 
 // struct departure_env : block< 
 //   key_departure,
@@ -268,7 +268,7 @@ struct port_spec : sor<
 //   rvalue,
 //   rvalue,
 //   rvalue
-// >{};
+// > {};
 
 // struct arrival_env : block<
 //   key_arrival,
@@ -278,37 +278,37 @@ struct port_spec : sor<
 //   rvalue,
 //   rvalue,
 //   rvalue
-// >{};
+// > {};
 
 // struct tenv_def : sor< 
 //   arrival_env,
 //   departure_env,
 //   slack_env,
 //   waveform_env
-// >{};
+// > {};
 
 // struct constraint_path : op_sep_seq< 
 //   one< '(' >,
 //   port_instance,
 //   port_instance,
 //   one< ')' >
-// >{};
+// > {};
 
 // struct name : block<
 //   key_name,
 //   opt< qstring >
-// >{};
+// > {};
 
 // struct exception : block<
 //   key_exception,
 //   plus< cell_instance >
-// >{};
+// > {};
 
 // struct skew_constraint : block<
 //   key_skewconstraint,
 //   port_spec,
 //   value
-// >{};
+// > {};
 
 // struct diff_constraint : block<
 //   key_diff,
@@ -316,7 +316,7 @@ struct port_spec : sor<
 //   constraint_path,
 //   value,
 //   opt< value >
-// >{};
+// > {};
 
 // struct sum_constraint : block<
 //   key_sum,
@@ -324,14 +324,14 @@ struct port_spec : sor<
 //   plus< constraint_path >,
 //   rvalue,
 //   opt< rvalue >
-// >{};
+// > {};
 
 // struct period_constraint : block<
 //   key_periodconstraint,
 //   port_instance, 
 //   value,
 //   opt< exception >
-// >{};
+// > {};
 
 // struct path_constraint : block<
 //   key_pathconstraint,
@@ -340,7 +340,7 @@ struct port_spec : sor<
 //   plus< port_instance >,
 //   rvalue,
 //   rvalue
-// >{};
+// > {};
 
 // struct cns_def : op_sep_seq<
 //   path_constraint,
@@ -348,25 +348,25 @@ struct port_spec : sor<
 //   sum_constraint,
 //   diff_constraint,
 //   skew_constraint
-// >{};
+// > {};
 
 // struct te_def : sor< 
 //   cns_def,
 //   tenv_def
-// >{};
+// > {};
 
 // struct ccond : block<
 //   key_ccond,
 //   opt< qstring >,
 //   timing_check_condition
-// >{};
+// > {};
 
 
 // struct scond : block<
 //   key_scond,
 //   opt< qstring >,
 //   timing_check_condition
-// >{};
+// > {};
 
 
 struct port_tchk : sor<
@@ -377,10 +377,10 @@ struct port_tchk : sor<
     port_spec
   > ,
   port_spec
->{};
+> {};
 
-struct port_tchk_1 : alias<port_tchk>{};
-struct port_tchk_2 : alias<port_tchk>{};
+struct port_tchk_1 : alias<port_tchk> {};
+struct port_tchk_2 : alias<port_tchk> {};
 
 // struct nochange_timing_check : block<
 //   key_nochange,
@@ -388,21 +388,21 @@ struct port_tchk_2 : alias<port_tchk>{};
 //   port_tchk,
 //   rvalue,
 //   rvalue
-// >{};
+// > {};
 
 
 // struct period_timing_check : block<
 //   key_period,
 //   port_tchk,
 //   value
-// >{};
+// > {};
 
 
 // struct width_timing_check : block<
 //   key_width,
 //   port_tchk,
 //   value
-// >{};
+// > {};
 
 
 // struct bidirectskew_timing_check : block<
@@ -411,7 +411,7 @@ struct port_tchk_2 : alias<port_tchk>{};
 //   port_tchk,
 //   value,
 //   value
-// >{};
+// > {};
 
 
 // struct skew_timing_check : block<
@@ -419,7 +419,7 @@ struct port_tchk_2 : alias<port_tchk>{};
 //   port_tchk,
 //   port_tchk,
 //   rvalue
-// >{};
+// > {};
 
 
 // struct recrem_timing_check : block<
@@ -429,7 +429,7 @@ struct port_tchk_2 : alias<port_tchk>{};
 //   rvalue,
 //   rvalue,
 //   if_must< scond, opt<sps>, ccond > 
-// >{};
+// > {};
 
 
 // struct removal_timing_check : block<
@@ -437,14 +437,14 @@ struct port_tchk_2 : alias<port_tchk>{};
 //   port_tchk,
 //   port_tchk,
 //   value
-// >{};
+// > {};
 
 // struct recovery_timing_check : block<
 //   key_recovery,
 //   port_tchk,
 //   port_tchk,
 //   value
-// >{};
+// > {};
 
 struct hold_timing_check : block<
   key_hold,
@@ -471,25 +471,25 @@ struct hold_timing_check : block<
 //     opt<scond>,
 //     opt<ccond> 
 //   >
-// >{};
+// > {};
 
 // struct setup_timing_check : block<
 //   key_setup,
 //   port_tchk,
 //   port_tchk,
 //   value
-// >{};
+// > {};
 
-struct nochange_timing_check : unimplemented<key_nochange>{};
-struct period_timing_check : unimplemented<key_period>{};
-struct width_timing_check : unimplemented<key_width>{};
-struct bidirectskew_timing_check : unimplemented<key_bidirectskew>{};
-struct skew_timing_check : unimplemented<key_skew>{};
-struct recrem_timing_check : unimplemented<key_recrem>{};
-struct removal_timing_check : unimplemented<key_removal>{};
-struct recovery_timing_check : unimplemented<key_recovery>{};
-struct setuphold_timing_check : unimplemented<key_setuphold>{};
-struct setup_timing_check : unimplemented<key_setup>{};
+struct nochange_timing_check : unimplemented<key_nochange> {};
+struct period_timing_check : unimplemented<key_period> {};
+struct width_timing_check : unimplemented<key_width> {};
+struct bidirectskew_timing_check : unimplemented<key_bidirectskew> {};
+struct skew_timing_check : unimplemented<key_skew> {};
+struct recrem_timing_check : unimplemented<key_recrem> {};
+struct removal_timing_check : unimplemented<key_removal> {};
+struct recovery_timing_check : unimplemented<key_recovery> {};
+struct setuphold_timing_check : unimplemented<key_setuphold> {};
+struct setup_timing_check : unimplemented<key_setup> {};
 
 struct tchk_def : sor< 
   setup_timing_check,
@@ -503,37 +503,37 @@ struct tchk_def : sor<
   width_timing_check,
   period_timing_check,
   nochange_timing_check
->{};
+> {};
 
 // struct device_def : block<
 //   key_device,
 //   opt< port_instance >,
 //   delval_list
-// >{};
+// > {};
 
 // struct netdelay_def : block<
 //   key_netdelay,
 //   net_spec,
 //   delval_list
-// >{};
+// > {};
 
 // struct interconnect_def : block<
 //   key_interconnect,
 //   port_instance,
 //   port_instance,
 //   delval_list
-// >{};
+// > {};
 
 // struct port_def : block<
 //   key_port,
 //   port_instance,
 //   delval_list
-// >{};
+// > {};
 
 // struct retain_def : block<
 //   key_retain,
 //   retval_list
-// >{};
+// > {};
 
 // struct iopath_def : block<
 //   key_iopath,
@@ -541,19 +541,19 @@ struct tchk_def : sor<
 //   port_instance,
 //   star< retain_def >,
 //   delval_list
-// >{};
+// > {};
 
 // struct condelse_def : block<
 //   key_condelse,
 //   iopath_def
-// >{};
+// > {};
 
 // struct cond_def : block<
 //   key_cond,
 //   opt< qstring >,
 //   conditional_port_expr,
 //   iopath_def
-// >{};
+// > {};
 
 // struct del_def : sor< 
 //   port_def,
@@ -563,75 +563,75 @@ struct tchk_def : sor<
 //   device_def,
 //   condelse_def,
 //   cond_def
-// >{};
+// > {};
 
 // struct input_output_path : op_sep_seq< 
 //   port_instance, 
 //   port_instance
-// >{};
+// > {};
 
 // struct increment_deltype : block<
 //   key_increment,
 //   plus< del_def >
-// >{};
+// > {};
 
 // struct absolute_deltype : block<
 //   key_absolute,
 //   plus< del_def >
-// >{};
+// > {};
 
 // struct pathpulsepercent_deltype : block<
 //   key_pathpulsepercent,
 //   opt< input_output_path >,
 //   value,
 //   opt< value >
-// >{};
+// > {};
 
 // struct pathpulse_deltype : block<
 //   key_pathpulse,
 //   opt< input_output_path >,
 //   value,
 //   opt< value >
-// >{};
+// > {};
 
 // struct deltype : sor< 
 //   absolute_deltype,
 //   increment_deltype,
 //   pathpulse_deltype,
 //   pathpulsepercent_deltype
-// >{};
+// > {};
 
-struct te_spec : unimplemented< key_timingenv >{};
+struct te_spec : unimplemented< key_timingenv > {};
 // struct te_spec : block<
 //     key_timingenv,
 //     plus< te_def >
-// >{};
+// > {};
 
-struct lbl_spec : unimplemented< key_label >{};
+struct lbl_spec : unimplemented< key_label > {};
 // struct lbl_spec : block<
 //     key_label,
 //     plus< lbl_type >
-// >{};
+// > {};
 
-// struct tc_spec : unimplemented< key_timingcheck >{};
+// struct tc_spec : unimplemented< key_timingcheck > {};
 struct tc_spec : block<
     key_timingcheck,
     plus< tchk_def >
->{};
+> {};
 
-struct del_spec : unimplemented< key_delay >{};
+struct del_spec : unimplemented< key_delay > {};
 
 // struct del_spec : block<
 //     key_delay,
 //     plus< deltype >
-// >{};
+// > {};
 
 struct timing_spec : sor<
   del_spec,
   tc_spec,
   lbl_spec,
   te_spec
->{};
+> {};
 
 // clang-format on
 } // namespace Grammar

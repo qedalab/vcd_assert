@@ -24,17 +24,15 @@
 // POSSIBILITY OF SUCH DAMAGE.
 // ============================================================================
 
-#ifndef LIBVERILOG_IEEE1364_2001_GRAMMAR_ATTRIBUTE_HPP
-#define LIBVERILOG_IEEE1364_2001_GRAMMAR_ATTRIBUTE_HPP
+#ifndef LIBVERILOG_IEEE1364_2001_GRAMMAR_BLOCK_ITEM_HPP
+#define LIBVERILOG_IEEE1364_2001_GRAMMAR_BLOCK_ITEM_HPP
 
 #include "./base.hpp"
-#include "./constants.hpp"
+#include "./keywords.hpp"
 //#include "./separator.hpp"
 
 #include <parse/grammar/base.h>
 #include <parse/grammar/part.h>
-
-#include <tao/pegtl.hpp>
 
 namespace Verilog {
 namespace IEEE1364_2001 {
@@ -44,26 +42,47 @@ namespace Grammar {
 using namespace Parse::Grammar::Base;
 using namespace Parse::Grammar::Part;
 
-struct constant_expression;
+struct block_reg_declaration;
+struct event_declaration;
+struct integer_declaration;
+struct local_parameter_declaration;
+struct parameter_declaration;
+struct real_declaration;
+struct realtime_declaration;
+struct time_declaration;
 
-struct attr_name : alias<identifier> {};
+// struct block_variable_type : opt_sep_seq< 
+//   variable_identifier, plus<dimension>
+// > {};
 
-struct attr_spec : sor <
-  attr_name,
-  opt_sep_must<
-    attr_name,
-    one<'='>,
-    constant_expression
-  >
+struct block_variable_type : opt_sep_seq<
+  variable_identifier, opt<list< dimension, blank, plus_sep>>
 > {};
 
-struct attribute_instance : if_must<
-  seq<one<'('>,one<'*'>>,
-  list<
-    seq<attr_spec, opt<plus_sep>>, 
-    one<','>
-  >,
-  seq<one<'*'>,one<')'>>
+struct list_of_block_variable_identifiers : list<
+  block_variable_type, one<','>, plus_sep
+> {};
+
+struct block_reg_declaration : opt_sep_seq<
+  reg_keyword, 
+  opt<signed_keyword, sep>, 
+  opt<range, sep>,
+  list_of_block_variable_identifiers, 
+  one<';'>
+> {};
+
+struct block_item_declaration : seq<
+  star<attribute_instance>, 
+  sor<
+    block_reg_declaration,
+    event_declaration,
+    integer_declaration,
+    local_parameter_declaration,
+    parameter_declaration,
+    real_declaration,
+    realtime_declaration,
+    time_declaration
+  >
 > {};
 
 // clang-format on
@@ -71,4 +90,4 @@ struct attribute_instance : if_must<
 } // namespace IEEE1364_2001
 } // namespace Verilog
 
-#endif // LIBVERILOG_IEEE1364_2001_GRAMMAR_ATTRIBUTE_HPP
+#endif // LIBVERILOG_IEEE1364_2001_GRAMMAR_BLOCK_ITEM_HPP

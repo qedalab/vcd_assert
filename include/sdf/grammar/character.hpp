@@ -40,18 +40,18 @@ struct special_character_without_brackets : one<
   '!','#','%','&','*','+',',','-','.',char(174) /* ASCII version of « */,
   '/',':',';','<','=','>','?','@','[','\\',']','^',
   '\'','{','|','}','~' 
->{};
+> {};
 struct special_character_without_backslash : one<
   '!','#','%','&','*','+',',','-','.',char(174) /* ASCII version of « */,
   '/',':',';','<','=','>','?','@','[',']','^',
   '\'','{','|','}','~','(',')'
->{};
+> {};
 
 /* '«', and '\\' fails testing*/
 struct special_character : sor<
   special_character_without_brackets,
   one<'(',')'>
->{};
+> {};
 
 struct decimal_digit : range<'0','9'> {};
 

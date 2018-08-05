@@ -39,7 +39,7 @@ namespace Grammar {
 struct grammar : must<
   delay_file, 
   eof
->{};
+> {};
 
 
 // clang-format on

@@ -24,13 +24,12 @@
 // POSSIBILITY OF SUCH DAMAGE.
 // ============================================================================
 
-
 #ifndef LIBVERILOG_IEEE1364_2001_GRAMMAR_BASE_HPP
 #define LIBVERILOG_IEEE1364_2001_GRAMMAR_BASE_HPP
 
+#include "./block.hpp"
 #include "./character.hpp"
 #include "./comment.hpp"
-#include "./block.hpp"
 #include "./keywords.hpp"
 
 #include <parse/grammar/base.h>
@@ -49,35 +48,49 @@ using namespace Parse::Grammar::Part;
 template <typename... Rules>
 using list = tao::pegtl::list<Rules...>;
 
+template <typename... Rules>
+using until = tao::pegtl::until<Rules...>;
 
-struct sp : sor< plus_blank, comment > {};
-struct sps : plus< sp > {};
+template <typename... Rules>
+using pad = tao::pegtl::pad<Rules...>;
+
+// struct sep : sor< plus_blank, comment > {};
+// struct plus_sep : pad< blank, sep> {};
+
+struct sep : pad< plus_blank, comment> {};
+struct plus_sep : plus< sep > {};
 
 template<typename T, typename... P>
 struct sep_seq: seq<
-  opt<sps>,
-  seq<T, seq<sps, P>...>,
-  opt<sps>
+  seq<T, seq<plus_sep, P>...>
 > {};
 
 template<typename T, typename... P>
 struct sep_must: must<
-  opt<sps>,
-  must<T, must<sps, P>...>,
-  opt<sps>
+  must<T, must<plus_sep, P>...>
 > {};
 
-template<typename... P>
-struct op_sep_seq: seq<
-  opt<sps>,  
-  seq<P,opt<sps>>...
+template<typename T, typename... P>
+struct opt_sep_seq: seq<
+  seq<T, seq<opt<plus_sep>, P>...>
 > {};
 
-template<typename... P>
-struct op_sep_must: must<
-  opt<sps>,  
-  seq<P,opt<sps>>...
+template<typename T, typename... P>
+struct opt_sep_must: must<
+  must<T, must<opt<plus_sep>, P>...>
 > {};
+
+// template<typename... P>
+// struct opt_sep_seq: seq<
+//   opt<plus_sep>>,  
+//   seq<P,opt<plus_sep>>...
+// > {};
+
+// template<typename... P>
+// struct opt_sep_must: must<
+//   star<sep>,  
+//   seq<P,opt<plus_sep>>...
+// > {};
 
 struct qstring_content : star<
   sor< blank, any_character> 
@@ -97,17 +110,39 @@ struct qstring : if_must<
 
 
 struct escaped_identifier : seq<
+  not_at<keyword>, 
   one<'\\'>,
-  plus<tao::pegtl::identifier_other>
+  plus<
+    sor<
+      tao::pegtl::identifier_other, 
+      one<'$'>
+    >
+  >
 > {};
 
 
 struct simple_identifier : seq<
+  not_at<keyword>, 
   tao::pegtl::identifier_first,
-  star<tao::pegtl::identifier_other>
+  star<
+    sor<
+      tao::pegtl::identifier_other, 
+      one<'$'>
+    >
+  >
 > {};
 
-struct identifier : seq< not_at<keyword>, sor< simple_identifier, escaped_identifier >> {};
+struct identifier : seq< sor< simple_identifier, escaped_identifier >> {};
+
+struct s_identifier : seq< 
+  one<'$'>, 
+  star< 
+    sor<
+      tao::pegtl::identifier_other, 
+      one<'$'>
+    >
+  >
+> {};
 
 struct hierarchical_identifier : seq <
   identifier,
@@ -117,12 +152,12 @@ struct hierarchical_identifier : seq <
   >>
 > {};
 
-struct path_star : alias<one<'*'>>{};
+struct path_star : alias<one<'*'>> {};
 
-struct path_dot : alias<hchar_dot>{};
-struct path_separator : alias<hchar_slash>{};
+struct path_dot : alias<hchar_dot> {};
+struct path_separator: alias<hchar_slash> {};
 
-struct path_identifier : plus<sor<path_star, path_dot, identifier>>{};
+struct path_identifier : plus<sor<path_star, path_dot, identifier>> {};
 
 struct file_path : list< 
   path_identifier,
@@ -132,6 +167,7 @@ struct file_path : list<
 struct file_path_spec : alias<
   file_path
 > {};
+
 
 
 struct bracket_pairs;
@@ -153,8 +189,8 @@ struct bracket_pair : seq<
 > {};
 
 struct bracket_pairs : plus<
-  opt<sps>,
-  tao::pegtl::list<bracket_pair,opt<sps>>
+  opt<plus_sep>,
+  tao::pegtl::list<bracket_pair,opt<plus_sep>>
 > {};
 
 template<typename T>
@@ -165,6 +201,74 @@ struct unimplemented_block : if_must<
   star<bracket_contents>,
   until<close>
 > {};
+
+
+struct ignored;
+struct ignored_content : 
+  sor<
+    qstring,
+    plus<character>,
+    plus_blank,
+    // hierarchical_identifier,
+    special_character_without_brackets,
+    ignored
+> {};
+
+struct ignored : seq<
+  star<ignored_content>
+> {};
+
+struct op_sep_ignored : plus<
+  opt<plus_sep>,
+  tao::pegtl::list<ignored,opt<plus_sep>>
+> {};
+
+struct unimplemented : if_must<
+  open,
+  star<ignored>,
+  star<ignored_content>,
+  star<ignored>,
+  until<close>
+> {};
+
+struct unimplemented_brackets : if_must<
+  seq<open>,
+  star<bracket_contents>,
+  star<bracket_pairs>,
+  star<bracket_contents>,
+  until<close>
+> {};
+
+struct begin_end_pair;
+// struct begin_end_pairs;
+
+struct begin_end_contents : 
+  sor<
+    qstring,
+    plus_sep,
+    one<'`'>,
+    plus<special_character>,
+    // seq<blank,any_character,blank>,
+    plus<not_at<sor<begin_keyword,end_keyword>>, any_character>,
+    // hierarchical_identifier,
+    begin_end_pair
+> {};
+
+struct begin_end_pair : if_must<
+  begin_keyword,
+  star<begin_end_contents>,
+  end_keyword
+> {};
+
+
+struct unimplemented_begin_end : if_must<
+  begin_keyword,
+  star<begin_end_contents>,
+  // star<begin_end_pairs>,
+  // star<begin_end_contents>,
+  until<end_keyword>
+> {};
+
 
 // struct unimplemented_item : if_must<
 

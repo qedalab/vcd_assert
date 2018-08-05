@@ -24,7 +24,7 @@
 // POSSIBILITY OF SUCH DAMAGE.
 // ============================================================================
 
-#ifndef LIBSDF_GRAMMAR_BASE_HPP 
+#ifndef LIBSDF_GRAMMAR_BASE_HPP
 #define LIBSDF_GRAMMAR_BASE_HPP
 
 #include "./block.hpp"
@@ -52,30 +52,30 @@ struct sep_seq: seq<
   opt<sps>,
   seq<T, seq<sps, P>...>,
   opt<sps>
->{};
+> {};
 
 template<typename T, typename... P>
 struct sep_must: must<
   opt<sps>,
   must<T, must<sps, P>...>,
   opt<sps>
->{};
+> {};
 
 template<typename... P>
 struct op_sep_seq: seq<
   opt<sps>,  
   seq<P,opt<sps>>...
->{};
+> {};
 
 template<typename... P>
 struct op_sep_must: must<
   opt<sps>,  
   seq<P,opt<sps>>...
->{};
+> {};
 
 struct qstring_content : star<
   sor< blank, any_character> 
->{};
+> {};
 
 struct qstring_cont : seq<
   qstring_content,
@@ -109,18 +109,18 @@ struct bracket_contents :
     hierarchical_identifier,
     special_character_without_brackets,
     bracket_pairs
->{};
+> {};
 
 struct bracket_pair : seq<
   one<'('>,
   star<bracket_contents>,
   one<')'>
->{};
+> {};
 
 struct bracket_pairs : plus<
   opt<sps>,
   tao::pegtl::list<bracket_pair,opt<sps>>
->{};
+> {};
 
 template<typename T>
 struct unimplemented : if_must<
@@ -129,11 +129,11 @@ struct unimplemented : if_must<
   star<bracket_pairs>,
   star<bracket_contents>,
   until<close>
->{};
+> {};
 
 // clang-format on
 
 } // namespace Grammar
 } // namespace SDF
 
-#endif // LIBSDF_GRAMMAR_BASE_HPP 
+#endif // LIBSDF_GRAMMAR_BASE_HPP

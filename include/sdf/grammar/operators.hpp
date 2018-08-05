@@ -75,7 +75,7 @@ struct reduction_unary_or : one<'|'> {};
 struct reduction_unary_nor : string<'~','|'> {};
 struct reduction_unary_xor : one<'^'> {};
 struct reduction_unary_xnor : string<'^','~'> {};
-struct reduction_unary_xnor_alt : string<'~','^'>{};
+struct reduction_unary_xnor_alt : string<'~','^'> {};
 
 struct unary_operator : sor<
   reduction_unary_xnor_alt,

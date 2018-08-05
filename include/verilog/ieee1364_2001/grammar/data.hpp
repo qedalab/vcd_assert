@@ -30,6 +30,7 @@
 #include "./base.hpp"
 #include "./constants.hpp"
 #include "./expressions.hpp"
+#include "./identifiers.hpp"
 #include "./operators.hpp"
 
 #include <parse/grammar/base.h>
@@ -45,44 +46,6 @@ namespace Grammar {
 using namespace Parse::Grammar::Base;
 using namespace Parse::Grammar::Part;
 
-struct range : op_sep_seq<
-  one<'['>,
-  msb_constant_expression, 
-  one<':'>,
-  lsb_constant_expression,
-  one<']'>
-> {};
-
-struct bus_range : alias<range> {};
-
-struct constant_expression : sor<
-  constant_primary,
-  op_sep_seq<
-    unary_operator, 
-    star< attribute_instance >, 
-    constant_primary
-  >,
-  op_sep_seq<
-    constant_expression, 
-    binary_operator, 
-    star<attribute_instance>, 
-    constant_expression
-  >,
-  op_sep_seq<
-    constant_expression, 
-    one<'?'>, 
-    star< attribute_instance >, 
-    constant_expression
-  >, 
-  constant_expression,
-  qstring
-> {};
-
-struct output_variable_type : sor<
-  integer_keyword, 
-  time_keyword
-> {};
-
 struct net_type : sor<
   supply0_keyword,
   supply1_keyword,
@@ -94,7 +57,84 @@ struct net_type : sor<
   wire_keyword,
   wand_keyword,
   wor_keyword
->{};
+> {};
+
+struct output_variable_type : sor<
+  integer_keyword, 
+  time_keyword
+> {};
+
+struct real_type : sor<
+seq<real_identifier, opt< one<'='>, constant_expression >>,
+seq<real_identifier, list<dimension, one<','>, plus_sep>>
+> {};
+
+struct list_of_real_identifiers : list<real_type, one<','>, plus_sep> {};
+
+
+struct variable_type : sor<
+seq<variable_identifier, opt< one<'='>, constant_expression >>,
+seq<variable_identifier, list<dimension, one<','>, plus_sep>>
+> {};
+
+struct list_of_variable_identifiers : list<variable_type, one<','>, plus_sep> {};
+
+
+struct strength0 : sor<supply0_keyword, strong0_keyword, pull0_keyword, weak0_keyword> {};
+struct strength1 : sor<supply1_keyword, strong1_keyword, pull1_keyword, weak1_keyword> {};
+
+struct drive_strength_value : sor<
+  strength0,
+  strength1,
+  highz0_keyword,
+  highz1_keyword
+> {};
+
+struct drive_strength_0 : alias<drive_strength_value> {};
+struct drive_strength_1 : alias<drive_strength_value> {};
+
+struct drive_strength : sor<
+  one<'('>, drive_strength_0 , drive_strength_1, one<')'>
+> {};
+
+struct charge_strength : sor<
+  opt_sep_seq<one<'('>, small_keyword, one<')'>>, 
+  opt_sep_seq<one<'('>, medium_keyword, one<')'>>, 
+  opt_sep_seq<one<'('>, large_keyword, one<')'>>
+> {};
+
+struct delay_value : sor<
+  unsigned_number, 
+  real_number, 
+  parameter_identifier, 
+  specparam_identifier, 
+  mintypmax_expression
+> {};
+
+struct delay2 : opt_sep_seq<
+  one<'#'>, 
+  one<'('>, 
+  delay_value, 
+  opt< 
+    one<','>, 
+    delay_value 
+  >, 
+  one<')'>
+> {};
+
+struct delay3 : opt_sep_seq<
+  one<'#'>, 
+  one<'('>, 
+  delay_value,
+  opt< 
+    one<','>, 
+    delay_value, 
+    opt< 
+      one<','>, 
+      delay_value>
+      >, 
+  one<')'>
+> {};
 
 // clang-format on
 } // namespace Grammar

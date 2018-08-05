@@ -90,7 +90,7 @@ struct IncludeFileApply { // clang-format on
     //     auto start = std::get<const char*>(parse_input.value);
     //     tao::pegtl::memory_input<> new_input(start, next_input_rel);
 
-    //     tao::pegtl::parse_nested<Grammar::_grammar_,
+    //     tao::pegtl::parse_nested<Grammar::grammar,
     //                             Parse::make_pegtl_template<GrammarAction>::type,
     //                             Parse::capture_control>(input, new_input,
     //                             reader,
@@ -100,7 +100,7 @@ struct IncludeFileApply { // clang-format on
     //     auto file = std::get<std::string>(parse_input.value);
     //     tao::pegtl::file_input<> new_input(file);
 
-    //     tao::pegtl::parse_nested<Grammar::_grammar_,
+    //     tao::pegtl::parse_nested<Grammar::grammar,
     //                             Parse::make_pegtl_template<GrammarAction>::type,
     //                             Parse::capture_control>(input, new_input,
     //                             reader,
@@ -141,7 +141,7 @@ struct GrammarAction : multi_dispatch<
       CompilerDirectiveAction, 
       Storage::function<&DesignReader::merge>
   >,
-  Grammar::_module_description_, inner_action_then_apply<
+  Grammar::module_description, inner_action_then_apply<
       ModuleDescriptionAction, 
       ModuleDescriptionApply       
   >

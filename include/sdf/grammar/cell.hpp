@@ -41,22 +41,22 @@ namespace Grammar {
 struct cell_type : block< 
   key_cell_type,
   qstring
->{};
+> {};
 
 struct cell_instance : block< 
   key_instance,
   sor<
      one< '*' >, opt<hierarchical_identifier>   /*order*/
   >
->{};
+> {};
 
-// struct cell : unimplemented< key_cell >{}; 
+// struct cell : unimplemented< key_cell > {}; 
 struct cell : block< 
   key_cell,
   cell_type,
   cell_instance,
   star< timing_spec >
->{};
+> {};
 
 // struct plus : ce
 

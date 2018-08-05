@@ -24,42 +24,181 @@
 // POSSIBILITY OF SUCH DAMAGE.
 // ============================================================================
 
-number ::=
-decimal_number
-| octal_number
-| binary_number
-| hex_number
-| real_number
+#ifndef LIBVERILOG_IEEE1364_2001_GRAMMAR_NUMBERS_HPP
+#define LIBVERILOG_IEEE1364_2001_GRAMMAR_NUMBERS_HPP
 
-real_number ::=
-unsigned_number . unsigned_number
-| unsigned_number [ . unsigned_number ] exp [ sign ] unsigned_number
-exp ::= e | E
-decimal_number ::=
-unsigned_number
-| [ size ] decimal_base unsigned_number
-| [ size ] decimal_base x_digit { _ }
-| [ size ] decimal_base z_digit { _ }
-binary_number ::= [ size ] binary_base binary_value
-octal_number ::= [ size ] octal_base octal_value
-hex_number ::= [ size ] hex_base hex_value
-sign ::= + | -
-size ::= non_zero_unsigned_number
-non_zero_unsigned_number 1 ::= non_zero_decimal_digit { _ | decimal_digit}
-unsigned_number 1 ::= decimal_digit { _ | decimal_digit }
-binary_value 1 ::= binary_digit { _ | binary_digit }
-octal_value 1 ::= octal_digit { _ | octal_digit }
-hex_value 1 ::= hex_digit { _ | hex_digit }
-decimal_base 1 ::= ’[s|S]d | ’[s|S]D
-binary_base 1 ::= ’[s|S]b | ’[s|S]B
-octal_base 1 ::= ’[s|S]o | ’[s|S]O
-hex_base 1 ::= ’[s|S]h | ’[s|S]H
-non_zero_decimal_digit ::= 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
-decimal_digit ::= 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
-binary_digit ::= x_digit | z_digit | 0 | 1
-octal_digit ::= x_digit | z_digit | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7
-hex_digit ::=
-x_digit | z_digit | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
-| a | b | c | d | e | f | A | B | C | D | E | F
-x_digit ::= x | X
-z_digit ::= z | Z | ?
+#include <parse/grammar/base.h>
+#include <parse/grammar/part.h>
+
+namespace Verilog {
+namespace IEEE1364_2001 {
+namespace Grammar {
+// clang-format off
+
+using namespace Parse::Grammar::Base;
+using namespace Parse::Grammar::Part;
+
+template< class T >
+struct value_base : seq< 
+    one<'`'>, 
+    one<'s','S'>, 
+    T
+> {};
+
+struct decimal_base : value_base< one<'d','D'> > {};
+struct binary_base : value_base< one<'b','B'> > {};
+struct octal_base : value_base< one<'o','O'> > {};
+struct hex_base : value_base< one<'h','H'> > {};
+
+struct non_zero_decimal_digit : tao::pegtl::range<'1','9'> {};
+struct decimal_digit : tao::pegtl::range<'0','9'> {};
+
+struct x_digit : one<
+  'x','X'
+> {};
+
+struct z_digit : one<
+  'z','Z','?'
+> {};
+
+struct binary_digit : sor<
+ x_digit , z_digit , one<'0','1'>
+ > {};
+
+struct octal_digit : sor<
+ x_digit , z_digit , one<'0','1','2','3','4','5','6','7'>
+> {};
+
+struct hex_digit : sor<
+  x_digit, z_digit, 
+  one<
+  '0','1','2','3','4','5','6','7','8','9', 
+  'a','b','c','d','e','f','A','B','C','D','E','F'
+  >
+> {};
+
+struct binary_value : seq <
+  binary_digit,
+  star<
+    sor<
+      one<'_'>,
+      binary_digit
+    >
+  >
+> {};
+
+struct octal_value : seq <
+  octal_digit,
+  star<
+    sor<
+      one<'_'>,
+      octal_digit
+    >
+  >
+> {};
+
+struct hex_value : seq <
+  hex_digit,
+  star<
+    sor<
+      one<'_'>,
+      hex_digit
+    >
+  >
+> {};
+
+struct non_zero_unsigned_number : seq<
+  non_zero_decimal_digit,
+  star<
+    sor<
+      one<'_'>,
+      decimal_digit
+    >
+  >
+> {};
+
+struct unsigned_number : seq <
+  decimal_digit,
+  star<
+    sor<
+      one<'_'>,
+      decimal_digit
+    >
+  >
+> {};
+
+// struct decimal_base : seq<
+//   opt<one<'s','S'>>,
+//   one<'d','D'>
+// > {};
+
+// struct binary_base : seq<
+//   opt<one<'s','S'>>,
+//   one<'b','B'>
+// > {};
+
+struct size :  alias< non_zero_unsigned_number > {};
+
+// struct binary_number : seq <
+//   opt<size>,
+//   binary_base,
+//   binary_value
+// > {};
+
+struct sign : sor< one<'+'>, one <'-'> > {};
+
+struct decimal_number : sor<
+  unsigned_number, 
+  one<'['>, size, one<']'>, decimal_base, unsigned_number, 
+  one<'['>, size, one<']'>, decimal_base, x_digit, star<one<'_'> >, 
+  one<'['>, size, one<']'>, decimal_base, z_digit, star<one<'_'> >
+> {};
+struct binary_number : seq<
+ one<'['>, size, one<']'>, binary_base, binary_value
+> {};
+struct octal_number : seq<
+ one<'['>, size, one<']'>, octal_base, octal_value
+> {};
+struct hex_number : seq<
+ one<'['>, size, one<']'>, hex_base, hex_value
+> {};
+struct exp : one<'e','E'> {};
+
+// FROM SDF GRAMMAR
+struct integer : plus<decimal_digit> {};
+struct fractional : alias<integer> {};
+struct exponent : alias<integer> {};
+
+// struct real_number : sor<
+// seq< unsigned_number, one<'.'>, unsigned_number >,
+// seq< unsigned_number [ . unsigned_number ] exp [ sign ] unsigned_number
+// > {};
+
+// FROM SDF GRAMMAR
+struct real_number : must<
+  not_at<one<'-'>>,
+  opt<integer>,
+  tao::pegtl::opt_must<seq<one<'.'>, fractional>>,
+  tao::pegtl::opt_must<seq<one<'e'>, opt<sign>, exponent>>
+> {};
+
+// FROM SDF GRAMMAR
+struct signed_real_number : must<
+  opt<sign>,
+  real_number
+> {};
+
+struct number : sor<
+  decimal_number,
+  octal_number,
+  binary_number,
+  hex_number,
+  real_number 
+> {};
+
+// clang-format off
+}
+}
+}
+
+#endif // LIBVERILOG_IEEE1364_2001_GRAMMAR_NUMBERS_HPP

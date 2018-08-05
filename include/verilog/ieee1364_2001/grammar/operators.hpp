@@ -92,6 +92,18 @@ struct unary_operator : sor<
   arithmetic_identity
 > {};
 
+struct unary_module_path_operator : sor<
+  one<'!'>, 
+  one<'~'>, 
+  one<'&'>, 
+  seq<one<'~'>, one<'&'>>, 
+  one<'|'>, 
+  seq<one<'~'>, one<'|'>>, 
+  one<'^'>,  
+  seq<one<'~'>, one<'^'>>,
+  seq<one<'^'>, one<'~'>>
+> {};
+
 struct arithmetic_sum : one<'+'> {};
 struct arithmetic_difference : one<'-'> {};
 struct arithmetic_product : one<'+'> {};
@@ -136,6 +148,6 @@ struct binary_operator : sor<
 // clang-format on
 } // namespace Grammar
 } // namespace IEEE1364_2001
-} // namespace SDF
+} // namespace Verilog
 
 #endif // LIBVERILOG_IEEE1364_2001_GRAMMAR_OPERATORS_HPP

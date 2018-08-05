@@ -24,17 +24,16 @@
 // POSSIBILITY OF SUCH DAMAGE.
 // ============================================================================
 
-#ifndef LIBVERILOG_IEEE1364_2001_GRAMMAR_ATTRIBUTE_HPP
-#define LIBVERILOG_IEEE1364_2001_GRAMMAR_ATTRIBUTE_HPP
+#ifndef LIBVERILOG_IEEE1364_2001_GRAMMAR_TASK_HPP
+#define LIBVERILOG_IEEE1364_2001_GRAMMAR_TASK_HPP
 
 #include "./base.hpp"
-#include "./constants.hpp"
-//#include "./separator.hpp"
+#include "./block_item.hpp"
+#include "./keywords.hpp"
+#include "./ports.hpp"
 
 #include <parse/grammar/base.h>
 #include <parse/grammar/part.h>
-
-#include <tao/pegtl.hpp>
 
 namespace Verilog {
 namespace IEEE1364_2001 {
@@ -44,26 +43,75 @@ namespace Grammar {
 using namespace Parse::Grammar::Base;
 using namespace Parse::Grammar::Part;
 
-struct constant_expression;
+struct task_port_list; //forward;
+struct task_item_declaration; //forward;
+struct task_port_type; //forward;
+struct block_item_declaration; //forward;
 
-struct attr_name : alias<identifier> {};
-
-struct attr_spec : sor <
-  attr_name,
-  opt_sep_must<
-    attr_name,
-    one<'='>,
-    constant_expression
+/* (From Annex A - A.2.7) */
+struct task_declaration : sor<
+  opt_sep_seq<
+    task_keyword, opt<automatic_keyword>, opt_sep_seq<task_port_list, one<';'>>,  
+    star<task_item_declaration>,
+    statement,
+    endtask_keyword
+  >,
+    sep_seq<
+    task_keyword, opt<automatic_keyword>, opt_sep_seq<one<'('>, task_port_list, one<')'>, one<';'>>,  
+    star<block_item_declaration>,
+    statement,
+    endtask_keyword
   >
 > {};
 
-struct attribute_instance : if_must<
-  seq<one<'('>,one<'*'>>,
-  list<
-    seq<attr_spec, opt<plus_sep>>, 
-    one<','>
+struct task_port_item; //farward
+struct task_item_declaration : sor<
+  block_item_declaration,
+  task_port_item
+> {};
+
+struct task_port_list : list< task_port_item, one<','>, plus_sep > {};
+
+struct tf_port_declaration : sor< 
+  opt_sep_seq<
+    opt<reg_keyword>, 
+    opt<signed_keyword>, 
+    opt<range>, 
+    list_of_port_identifiers
   >,
-  seq<one<'*'>,one<')'>>
+  opt_sep_seq<
+    opt<task_port_type>,
+    list_of_port_identifiers
+  >
+> {};
+
+struct tf_input_declaration : opt_sep_seq<
+  input_keyword, plus_sep, tf_port_declaration
+> {};
+
+struct tf_output_declaration : opt_sep_seq<
+  output_keyword, plus_sep, tf_port_declaration
+> {};
+
+struct tf_inout_declaration : opt_sep_seq<
+  inout_keyword, plus_sep, tf_port_declaration
+> {};
+
+struct task_port_item : seq<
+  star<attribute_instance>, 
+  sor<
+    tf_input_declaration,
+    tf_output_declaration,
+    tf_inout_declaration
+  >,
+  one<';'>
+> {};
+
+struct task_port_type : sor<
+  time_keyword, 
+  real_keyword, 
+  realtime_keyword, 
+  integer_keyword
 > {};
 
 // clang-format on
@@ -71,4 +119,4 @@ struct attribute_instance : if_must<
 } // namespace IEEE1364_2001
 } // namespace Verilog
 
-#endif // LIBVERILOG_IEEE1364_2001_GRAMMAR_ATTRIBUTE_HPP
+#endif // LIBVERILOG_IEEE1364_2001_GRAMMAR_TASK_HPP
