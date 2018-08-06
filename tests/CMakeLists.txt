@@ -68,6 +68,20 @@ add_test(
   COMMAND vcd_assert tb_basic_xor.vcd ../tb_xor.v ../xor.v -t tb_basic_xor --node tb_basic_xor --sdf ../xor.sdf
 )
 
+# One bit adder succeed
+add_test(
+  NAME one_bit_adder_success
+  WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/examples/one_bit_adder_success/iverilog_out/
+  COMMAND vcd_assert tb_one_bit_adder.vcd ../tb_one_bit_adder.v ../one_bit_adder.v ../and.v ../dro.v ../or.v ../splitter.v ../xor.v -t tb_one_bit_adder --sdf ../and.sdf --sdf ../dro.sdf --sdf ../or.sdf --sdf ../splitter.sdf --sdf ../xor.sdf
+)
+
+# One bit adder fail
+add_test(
+  NAME one_bit_adder_fail
+  WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/examples/one_bit_adder_fail/iverilog_out/
+  COMMAND vcd_assert tb_one_bit_adder.vcd ../tb_one_bit_adder.v ../one_bit_adder.v ../and.v ../dro.v ../or.v ../splitter.v ../xor.v -t tb_one_bit_adder --sdf ../and.sdf --sdf ../dro.sdf --sdf ../or.sdf --sdf ../splitter.sdf --sdf ../xor.sdf
+)
+
 ############## VERILOG SDF WITH CELLINSTANCE <path>
 # Basic and fail
 add_test(
@@ -102,9 +116,10 @@ add_test(
 # Failing tests
 set_tests_properties(
   basic_dro_fail
-  basic_xor_fail # case cant be supported without verilog.
+  basic_xor_fail
   basic_and_fail
   basic_ndro_fail
+  one_bit_adder_fail
   PROPERTIES WILL_FAIL TRUE
 )
 
