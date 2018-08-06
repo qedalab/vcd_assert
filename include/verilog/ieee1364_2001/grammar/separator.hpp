@@ -47,6 +47,20 @@ struct separator : plus<
   >
 > {};
 
+// struct pad_sep : tao::pegtl::pad< 
+//   blank, 
+//   plus<
+//     sor<
+//       comment,
+//       blank
+//     >
+//   >
+// > {};
+
+// struct separator : plus<
+//   pad_sep
+// > {};
+
 // clang-format on
 } // namespace Grammar
 } // namespace IEEE1364_2001

@@ -1,15 +1,15 @@
 #ifndef UNIT_VERILOG_TEST_DESIGN_HPP
 #define UNIT_VERILOG_TEST_DESIGN_HPP
 
-#include "verilog/types/design.hpp"
 #include "parse/util/static_string.hpp"
+#include "verilog/types/design.hpp"
 
 using namespace Verilog;
 
-namespace Verilog::Test::Verilog::IEEE1364_2001{
+namespace Verilog::Test::Verilog::IEEE1364_2001 {
 
-
-inline auto sdf_annotation_command = SDFAnnotateCommand{"../../dro.sdf", "tb_basic_dro", {}, {}, {}, {}, {}};
+inline auto sdf_annotation_command =
+    SDFAnnotateCommand{"../../dro.sdf", "tb_basic_dro", {}, {}, {}, {}, {}};
 
 // imported from CMAKE ENVIRONMENT
 constexpr auto project_source_dir =
@@ -19,7 +19,6 @@ constexpr auto input_path_ =
 
 constexpr auto dro_file_path_abs_ = input_path_ + "dro.v";
 constexpr auto tb_dro_file_path_abs_ = input_path_ + "tb_dro.v";
-
 
 // clang-format off
 inline DesignView dro_example_design_test {
@@ -79,7 +78,7 @@ inline DesignView tb_dro_example_design_test {
 };
 // clang-format on
 
-
+// clang-format off
 constexpr auto include_statement = "include \"to_be_included\"";
 constexpr auto include_statement_no_qstring = "include to_be_included";
 constexpr auto compiler_directive = "`include \"to_be_included\"";
@@ -97,6 +96,20 @@ constexpr auto module_example_1 = "\nmodule basic_dro;\nendmodule";
 
 constexpr auto module_example_2 = "\nmodule basic_dro (set, reset, out);\nendmodule\n";
 
+
+constexpr auto integer_delay = "#10";
+constexpr auto real_delay = "#2.4";
+constexpr auto bracketed_delay = "#(2.4)";
+
+constexpr auto variable_lvalue_0 = "set";
+constexpr auto variable_lvalue_1 = "set";
+constexpr auto expression_0 = "set";
+constexpr auto expression_1 = "!set";
+constexpr auto non_block_assign_0 = "set = !set;";
+constexpr auto non_block_assign_1 = "#2.4 reset = !reset ;";
+constexpr auto non_block_assign_2 = "#10 reset = !reset ;";
+
+
 constexpr auto sdf_annotate_example = R"####($sdf_annotate("../../dro.sdf", tb_basic_dro);)####";
 constexpr auto module_instantiation_example = R"####(basic_dro DUT (set, reset, out);)####";
 
@@ -106,29 +119,40 @@ constexpr auto begin_end_example_3 = "begin \n\t a = 1;\n\n\tend";
 constexpr auto begin_end_example_4 = "begin\n\tif(a == 1) begin\n\t\ta=0;\n\tend\nend";
 constexpr auto begin_end_example_5 = "begin\n\tif(a == 1) begin\n\t\ta=0;\n\tend\nend";
 
-constexpr auto initial_block_example_1 = "initial begin basic_dro;\nend";
-constexpr auto initial_block_example_2 = "initial \n\tbegin \n\t a = 1;\n\n\tend";
-constexpr auto initial_block_example_3 = "initial \n\tbegin \n\t a = 1;\n\n\tend\n";
-constexpr auto initial_block_example_4 = "initial begin\n\tif(a == 1) begin\n\t\ta=0;\n\tend\nend";
+constexpr auto initial_construct_example_1 = "initial begin basic_dro;\nend";
+constexpr auto initial_construct_example_2 = "initial \n\tbegin \n\t a = 1;\n\n\tend";
+constexpr auto initial_construct_example_3 = "initial \n\tbegin \n\t a = 1;\n\n\tend\n";
+constexpr auto initial_construct_example_4 = "initial begin\n\tif(a == 1) begin\n\t\ta=0;\n\tend\nend";
 
+// clang-format on
 
-// constexpr auto basic_grammar_example_1 = R"####(
-// module basic_dro (set, reset, out);
-// endmodule
-// )####";
+constexpr auto multi_module_example_1 =
+    "module tb_basic_dro_1 (set, reset, out);endmodule\nmodule basic_dro_2 "
+    "(set, "
+    "reset, out);endmodule";
 
-constexpr auto initial_block_with_sdf_example_1 = 
-R"####(initial
-      begin
-         $sdf_annotate("../../dro.sdf", tb_basic_dro);
-         $dumpfile("tb_basic_dro.vcd");
-         $dumpvars;
+constexpr auto multi_module_example_2 =
+    "module basic_dro_1 (set, reset, out);endmodule\nmodule basic_dro_2 (set, "
+    "reset, out);endmodule";
 
-         #10 set = !set;
-         #10 set = !set;
-         #2.4 reset = !reset; //should cause timing violation
-         #10 reset = !reset;
-      end)####";
+constexpr auto multi_module_example_3 =
+    "module basic_dro_1 (set, reset, out); basic_dro_1 DUT_1 (set, reset, clk, "
+    "out); basic_dro_2 DUT_2 (set); endmodule\nmodule basic_dro_2 (set, "
+    "reset, out); basic_ndro DUT_1 (set, reset, clk, out); basic_ndro DUT_2 "
+    "(set, reset, clk, out); basic_ndro DUT_3 (set, reset, clk, out);endmodule";
+
+constexpr auto initial_construct_with_sdf_example_1 =
+    R"####(initial
+  begin
+      $sdf_annotate("../../dro.sdf", tb_basic_dro);
+      $dumpfile("tb_basic_dro.vcd");
+      $dumpvars;
+
+      #10 set = !set;
+      #10 set = !set;
+      #2.4 reset = !reset; //should cause timing violation
+      #10 reset = !reset;
+  end)####";
 
 constexpr auto basic_annotation_example = R"####(module basic_dro;
    reg set = 0;
@@ -213,6 +237,70 @@ endmodule
 
 )####";
 
+constexpr auto xor_module = R"####(module basic_xor endmodule)####";
+
+constexpr auto tb_xor_module =
+    R"####(module tb_basic_xor;
+   reg a = 0;
+   reg b = 0;
+   reg clk = 0;
+   initial
+      begin
+         $dumpfile("tb_basic_xor.vcd");
+         $dumpvars;
+
+         #20 a = !a;
+         #10 a = !a;
+         #10 b = !b;
+         #10 b = !b;
+         #10 a = !a;
+         #10 clk = !clk;
+         #10 a = !a;
+         #10 clk = !clk;
+         #10 b = !b;
+         #10 clk = !clk;
+      end
+
+   initial
+      begin
+         $display("\t\ttime,\ta,\tb,\tclk,\tout");
+         $monitor("%d,\t%b,\t%b,\t%b,\t%b",$time,a,b,clk,out);
+      end
+
+   basic_xor DUT (a, b, clk, out);
+
+   initial
+      #120 $finish;
+endmodule)####";
+
+constexpr auto tb_dro_module = R"####(module tb_basic_dro;
+   reg set = 0;
+   reg reset = 0;
+
+   initial
+      begin
+         $sdf_annotate("../../dro.sdf", tb_basic_dro);
+         $dumpfile("tb_basic_dro.vcd");
+         $dumpvars;
+
+         #10 set = !set;
+         #10 set = !set;
+         #2.4 reset = !reset; //should cause timing violation
+         #10 reset = !reset;
+      end
+
+   initial
+      begin
+         $display("\t\ttime,\tset,\treset,\tout");
+         $monitor("\t\t%0t,\t%b,\t%b,\t%b",$realtime,set,reset,out);
+      end
+
+   basic_dro DUT (set, reset, out);
+
+   initial
+      #50 $finish;
+endmodule)####";
+
 constexpr auto tb_dro_example = R"####(
 // ---------------------------------------------------------------------------
 // Verilog testbench file, created with TimEx v1.00.02
@@ -284,13 +372,10 @@ module tb_basic_ndro;
 endmodule
 )####";
 
-
-
 void catch_design(DesignView wanted, Design test);
 void catch_module(Module wanted, Module test);
 void catch_instance(Instance wanted, Instance test);
 
-} // namespace Test::Verilog::IEEE1364_2001
-
+} // namespace Verilog::Test::Verilog::IEEE1364_2001
 
 #endif // UNIT_VERILOG_TEST_DESIGN_HPP

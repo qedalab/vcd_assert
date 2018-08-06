@@ -31,8 +31,8 @@
 // #include "./source_text.hpp"
 // #include "./attribute.hpp"
 #include "./base.hpp"
-#include "./keywords.hpp"
 #include "./commands.hpp"
+#include "./keywords.hpp"
 
 namespace Verilog {
 namespace IEEE1364_2001 {
@@ -195,7 +195,8 @@ struct module_instance_identifier : alias<identifier>{};
 
 struct fake_bus_range : seq<
   one<'['>,
-  until<one<']'>>
+  seq< star< not_at< one<']',';','['> >, not_at< eof >, tao::pegtl::any >, one<']'> >
+  // tao::pegtl::until<one<']'>, sor<not_at<one<';'>,tao::pegtl::any>>
 >{};
 
 struct name_of_instance : seq < 
@@ -204,7 +205,13 @@ struct name_of_instance : seq <
 >{};
 
 struct module_instance : seq<
-  name_of_instance, opt<separator>, seq<one<'('>, /*opt<list_of_port_connections>,*/ until<one<')'>>>
+  name_of_instance, 
+  opt<separator>, 
+  seq<
+    one<'('>, /*opt<list_of_port_connections>,*/ 
+    seq< star< not_at< one<')','(',';'> >, not_at< eof >, tao::pegtl::any >, one<')'> >
+  >
+  
 >{};
 
 struct module_identifier : alias<identifier> {};
@@ -248,14 +255,25 @@ struct _module_declaration_ : if_must<
   until<one<';'>>,
   opt<separator>,
   star<
-    until<
-      sor<
-        initial_block,
-        module_instantiation
-      >
+    seq< 
+      star< 
+        not_at< module_keyword >, 
+        not_at< module_instantiation >, 
+        not_at< initial_block >, 
+        not_at< eof >, 
+        tao::pegtl::any 
+      >, 
+      sor< initial_block, module_instantiation > 
     >
+    // until<
+    //   sor<
+    //     initial_block,
+    //     module_instantiation
+    //   >
+    // >
   >,
-  until<endmodule_keyword>
+  seq< star< not_at< module_keyword >, not_at< endmodule_keyword >, not_at< eof >, tao::pegtl::any >, endmodule_keyword >
+  // until<endmodule_keyword>
 > {};
 
 struct _module_description_ : sor<

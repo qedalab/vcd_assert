@@ -1,4 +1,5 @@
 #include "../design.hpp"
+#include "../design_temp.hpp"
 
 #include "verilog/ieee1364_2001/actions/grammar.hpp"
 #include "verilog/ieee1364_2001/grammar/grammar_hacked.hpp"
@@ -75,7 +76,8 @@ TEST_CASE("Verilog.Actions.Design", "[Verilog][Events][Design]")
       REQUIRE(tao::pegtl::parse<
               VerilogGrammar::_grammar_,
               Parse::make_pegtl_template<Actions::GrammarAction>::type,
-              Parse::capture_control>(input_tb_dro, reader, inputs, first_pass));
+              Parse::capture_control>(input_tb_dro, reader, inputs,
+                                      first_pass));
     }
 
     auto design_p = reader.release();
@@ -100,28 +102,26 @@ TEST_CASE("Verilog.Actions.Design", "[Verilog][Events][Design]")
               Parse::make_pegtl_template<Actions::GrammarAction>::type,
               Parse::capture_control>(input, reader, inputs, first_pass));
     }
-    
+
     auto design_p = reader.release();
     REQUIRE(design_p.operator bool());
     // Test::catch_test_design(*design_p, dro_example);
     // VerilogTest::catch_design(tb_dro_example_design_test, *design_p);
-    
   }
 
   SECTION("both tb_dro and dro from file")
   {
     Verilog::DesignReader reader{};
     Verilog::Util::InputMap inputmap{}; // no library files.
-   
-   
-    tao::pegtl::file_input<> input_tb_dro(tb_dro_file_path_abs_.to_string_view());
+
+    tao::pegtl::file_input<> input_tb_dro(
+        tb_dro_file_path_abs_.to_string_view());
     tao::pegtl::file_input<> input_dro(dro_file_path_abs_.to_string_view());
 
-      
     REQUIRE(tao::pegtl::parse<
-        VerilogGrammar::_grammar_,
-        Parse::make_pegtl_template<Actions::GrammarAction>::type,
-        Parse::capture_control>(input_dro, reader, inputmap, 1));
+            VerilogGrammar::_grammar_,
+            Parse::make_pegtl_template<Actions::GrammarAction>::type,
+            Parse::capture_control>(input_dro, reader, inputmap, 1));
 
     REQUIRE(tao::pegtl::parse<
             VerilogGrammar::_grammar_,
@@ -135,12 +135,11 @@ TEST_CASE("Verilog.Actions.Design", "[Verilog][Events][Design]")
             VerilogGrammar::_grammar_,
             Parse::make_pegtl_template<Actions::GrammarAction>::type,
             Parse::capture_control>(input_dro, reader, inputmap, 0));
-    
+
     REQUIRE(tao::pegtl::parse<
             VerilogGrammar::_grammar_,
             Parse::make_pegtl_template<Actions::GrammarAction>::type,
             Parse::capture_control>(input_tb_dro, reader, inputmap, 0));
-
 
     auto design_p = reader.release();
     REQUIRE(design_p.operator bool());

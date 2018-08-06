@@ -1,10 +1,11 @@
 #include "../design.hpp"
+#include "../design_temp.hpp"
 
-#include "verilog/ieee1364_2001/grammar/commands.hpp"
-#include "verilog/ieee1364_2001/grammar/grammar_hacked.hpp"
 #include "verilog/ieee1364_2001/actions/commands.hpp"
 #include "verilog/ieee1364_2001/actions/grammar.hpp"
 #include "verilog/ieee1364_2001/actions/module.hpp"
+#include "verilog/ieee1364_2001/grammar/commands.hpp"
+#include "verilog/ieee1364_2001/grammar/grammar_hacked.hpp"
 
 #include "verilog/types/commands.hpp"
 
@@ -31,7 +32,6 @@ using namespace Verilog::IEEE1364_2001;
 using namespace Verilog::Test::Verilog::IEEE1364_2001;
 
 namespace __Grammar = Verilog::IEEE1364_2001::Grammar;
-
 
 TEST_CASE("Verilog.Actions.Module", "[Verilog][Events][Module]")
 {
@@ -73,19 +73,19 @@ TEST_CASE("Verilog.Actions.Module", "[Verilog][Events][Module]")
     ModuleEvent wanted{"basic_dro", {}, {{sdf_annotation_command}}};
 
     require_parse<__Grammar::_module_declaration_,
-                  Actions::ModuleDeclarationAction>(
-        basic_annotation_example, test);
+                  Actions::ModuleDeclarationAction>(basic_annotation_example,
+                                                    test);
 
     REQUIRE(wanted.module_identifier == test.module_identifier);
     // REQUIRE(wanted.instances.size(),test.instances.size());
 
-    for(auto&& [pair1,pair2] : ranges::view::zip(wanted.instances,test.instances)){
-      auto &&[str1,str2] = pair1;
-      auto &&[str3,str4] = pair2;
-      REQUIRE(str1== str3);
+    for (auto &&[pair1, pair2] :
+         ranges::view::zip(wanted.instances, test.instances)) {
+      auto &&[str1, str2] = pair1;
+      auto &&[str3, str4] = pair2;
+      REQUIRE(str1 == str3);
       REQUIRE(str2 == str4);
     }
-
 
     // REQUIRE(test_commands.size() == 1);
 
@@ -108,5 +108,4 @@ TEST_CASE("Verilog.Actions.Module", "[Verilog][Events][Module]")
     REQUIRE(wanted.type == test.type);
     REQUIRE(wanted.name == test.name);
   }
-
 }

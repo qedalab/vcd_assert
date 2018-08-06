@@ -4,4 +4,5 @@ target_sources(unit_verilog PRIVATE
   ${DIR}/base.cpp
   ${DIR}/grammar.cpp
   ${DIR}/module.cpp
+  ${DIR}/module_temp.cpp
 )
