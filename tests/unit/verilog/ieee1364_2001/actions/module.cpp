@@ -1,11 +1,11 @@
 #include "../design.hpp"
 
-#include "verilog/ieee1364_2001/grammar/commands.hpp"
-#include "verilog/ieee1364_2001/grammar/grammar_hacked.hpp"
-#include "verilog/ieee1364_2001/grammar/module.hpp"
 #include "verilog/ieee1364_2001/actions/commands.hpp"
 #include "verilog/ieee1364_2001/actions/grammar.hpp"
 #include "verilog/ieee1364_2001/actions/module.hpp"
+#include "verilog/ieee1364_2001/grammar/commands.hpp"
+#include "verilog/ieee1364_2001/grammar/grammar_hacked.hpp"
+#include "verilog/ieee1364_2001/grammar/module.hpp"
 
 #include "verilog/types/commands.hpp"
 
@@ -33,7 +33,6 @@ using namespace Verilog::Test::Verilog::IEEE1364_2001;
 
 namespace __Grammar = Verilog::IEEE1364_2001::Grammar;
 namespace rsv = ranges::view;
-
 
 TEST_CASE("Verilog.Actions.Module", "[Verilog][Events][Module]")
 {
@@ -74,16 +73,16 @@ TEST_CASE("Verilog.Actions.Module", "[Verilog][Events][Module]")
     Actions::ModuleEvent wanted{"basic_dro", {}, {{sdf_annotation_command}}};
 
     require_parse<__Grammar::_module_declaration_,
-                  Actions::ModuleDeclarationAction>(
-        basic_annotation_example, test);
+                  Actions::ModuleDeclarationAction>(basic_annotation_example,
+                                                    test);
 
     REQUIRE(wanted.module_identifier == test.module_identifier);
     // REQUIRE(wanted.instances.size(),test.instances.size());
 
-    for(auto&& [pair1,pair2] : rsv::zip(wanted.instances,test.instances)){
-      auto &&[str1,str2] = pair1;
-      auto &&[str3,str4] = pair2;
-      REQUIRE(str1== str3);
+    for (auto &&[pair1, pair2] : rsv::zip(wanted.instances, test.instances)) {
+      auto &&[str1, str2] = pair1;
+      auto &&[str3, str4] = pair2;
+      REQUIRE(str1 == str3);
       REQUIRE(str2 == str4);
     }
   }
@@ -107,67 +106,60 @@ TEST_CASE("Verilog.Actions.Module", "[Verilog][Events][Module]")
 
     Actions::ModuleEvent test{};
 
-    SECTION("tb dro example"){ 
+    SECTION("tb dro example")
+    {
       Actions::StringStringMapping wanted{"basic_dro", "DUT"};
-      
+
       require_parse<__Grammar::_module_description_,
-                    Actions::ModuleDescriptionAction>(
-          tb_dro_module, test);
+                    Actions::ModuleDescriptionAction>(tb_dro_module, test);
 
       REQUIRE(test.instances.size() == 1);
       REQUIRE(wanted.type == test.instances[0].type);
       REQUIRE(wanted.name == test.instances[0].name);
     }
 
-    SECTION("tb xor example"){ 
+    SECTION("tb xor example")
+    {
       Actions::StringStringMapping wanted{"basic_xor", "DUT"};
 
       require_parse<__Grammar::_module_description_,
-                    Actions::ModuleDescriptionAction>(
-          tb_xor_module, test);
+                    Actions::ModuleDescriptionAction>(tb_xor_module, test);
 
       REQUIRE(test.instances.size() == 1);
       REQUIRE(wanted.type == test.instances[0].type);
       REQUIRE(wanted.name == test.instances[0].name);
     }
 
-    SECTION("multi instantiation example"){ 
-      Actions::StringStringMapping wanted{"basic_xor", "DUT_1"};
-      Actions::StringStringMapping wanted{"basic_xor", "DUT_2"};
+    // SECTION("multi instantiation example"){
+    //   Actions::StringStringMapping wanted{"basic_xor", "DUT_1"};
+    //   Actions::StringStringMapping wanted{"basic_xor", "DUT_2"};
 
-      require_parse<__Grammar::_module_description_,
-                    Actions::ModuleDescriptionAction>(
-          tb_xor_module, test);
+    //   require_parse<__Grammar::_module_description_,
+    //                 Actions::ModuleDescriptionAction>(
+    //       tb_xor_module, test);
 
-      REQUIRE(test.instances.size() == 2);
-      REQUIRE(wanted.type == test.instances[0].type);
-      REQUIRE(wanted.name == test.instances[0].name);
-    }
-
+    //   REQUIRE(test.instances.size() == 2);
+    //   REQUIRE(wanted.type == test.instances[0].type);
+    //   REQUIRE(wanted.name == test.instances[0].name);
+    // }
   }
 
-  SECTION("module declaration from multi module file")
-  {
+  SECTION("module declaration from multi module file") {}
 
-  }
-
-SECTION("multi module instantiation from module description action")
-  {
-
-  }
+  SECTION("multi module instantiation from module description action") {}
 
   // SECTION("module instantiation from module description action")
   // {
 
   //   DesignReader reader{};
   //   Instance unused;
-    
-  //   SECTION("dro example"){ 
+
+  //   SECTION("dro example"){
   //     Actions::StringStringMapping wanted{"basic_xor", "DUT"};
   //     require_parse<__Grammar::_module_description_,
   //                   Actions::GrammarAction>(
   //         tb_dro_example, reader);
-      
+
   //     auto test = reader.release();
   //     REQUIRE(test.operator bool());
 
@@ -176,12 +168,12 @@ SECTION("multi module instantiation from module description action")
   //     REQUIRE(wanted.name == test->get_instance(0).identifier_);
   //   }
 
-  //   SECTION("xor example"){ 
+  //   SECTION("xor example"){
   //     Actions::StringStringMapping wanted{"basic_dro", "DUT"};
   //     require_parse<__Grammar::_module_description_,
   //                   Actions::GrammarAction>(
   //         xor_verilog_example, reader);
-      
+
   //     auto test = reader.release();
   //     REQUIRE(test.operator bool());
 
@@ -190,7 +182,4 @@ SECTION("multi module instantiation from module description action")
   //     REQUIRE(wanted.name == test->get_instance(0).identifier_);
   //   }
   // }
-
-
-
 }
