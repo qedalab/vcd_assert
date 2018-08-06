@@ -67,7 +67,6 @@ TimingChecker::TimingChecker(std::shared_ptr<VCD::Header> header,
                var_id_code_view.get_id_code(), counter);
 #endif // VERBOSE_DEBUG_OUTPUT
 
-
     // If single value
     if (var_type == VCD::VarType::real) {
       index_lookup_.push_back({counter, counter + 1});
@@ -97,7 +96,6 @@ TimingChecker::TimingChecker(std::shared_ptr<VCD::Header> header,
   assert(index_lookup_.size() == header_->num_id_codes());
   assert(index_lookup_.size() == state_.num_values());
 
-
   /*
     Module names are unique but instance names not. Thus need to traverse two
     trees simultaneously to match them.
@@ -126,7 +124,7 @@ TimingChecker::TimingChecker(std::shared_ptr<VCD::Header> header,
   /* Process and apply the SDF files specified in Verilog file (from scope
    * derived call location). */
   // ONLY IF DESIGN WAS GIVEN
-  if ( num_modules != 0 && num_sdf_commands != 0) {
+  if (num_modules != 0 && num_sdf_commands != 0) {
     for (auto &&sdf_set_index : indices(design_->num_sdf_commands())) {
 
       // get commands
@@ -169,8 +167,8 @@ TimingChecker::TimingChecker(std::shared_ptr<VCD::Header> header,
 
         // apply
         if (local_scope_index_op.has_value()) {
-          fmt::print("found local scope index : ({})\n",
-                     local_scope_index_op.value());
+          Parse::Util::debug_print("found local scope index : ({})\n",
+                                   local_scope_index_op.value());
           apply_sdf_file(sdf_command.sdf_file, local_scope_index_op.value());
         } else {
           // Error : annotate command specidies instance that could not be
@@ -188,8 +186,8 @@ void TimingChecker::build_netlist_lookup(std::size_t scope_index,
   auto verilog_instances = design_->get_module(net_index).instance_lookup_;
 
   Parse::Util::debug_print("DEBUG: importing Verilog instance data :\n");
-  for(auto && vi : verilog_instances){
-    Parse::Util::debug_print("DEBUG: instance ({}:{})\n",vi.first,vi.second);
+  for (auto &&vi : verilog_instances) {
+    Parse::Util::debug_print("DEBUG: instance ({}:{})\n", vi.first, vi.second);
   }
 
   for (auto &&scope_tup : child_scopes) {
@@ -198,14 +196,13 @@ void TimingChecker::build_netlist_lookup(std::size_t scope_index,
 
     if (child_scope.get_scope_type() == VCD::ScopeType::module) {
 
-                               
       auto instance_iter = verilog_instances.find(scope_tup.first);
       if (instance_iter != verilog_instances.end()) {
 
         auto child_module_index = instance_iter->second;
-        
-        Parse::Util::debug_print("DEBUG: storing ({}:{})\n", scope_tup.second, 
-                                 child_module_index); 
+
+        Parse::Util::debug_print("DEBUG: storing ({}:{})\n", scope_tup.second,
+                                 child_module_index);
 
         netlist_lookup_.emplace(scope_tup.second, child_module_index);
         netlist_reverse_lookup_.emplace(child_module_index, scope_tup.second);
@@ -409,7 +406,7 @@ void TimingChecker::apply_sdf_hold(SDF::DelayFile &d, SDF::Hold hold,
           for (auto &&reg_event_idx : reg_event_idx_range) {
             for (auto &&trig_event_idx : trig_event_idx_range) {
               event_lists_[reg_event_idx].events.emplace_back(RegisterEvent{
-                  std::move(reg_cond_cvp), reg_edge, 
+                  std::move(reg_cond_cvp), reg_edge,
                   (std::size_t)trig_event_idx,
 
                   TriggeredEvent{
@@ -467,12 +464,13 @@ void TimingChecker::apply_sdf_timing_specs(SDF::DelayFile &d, SDF::Cell cell,
 void TimingChecker::apply_sdf_cell_helper(SDF::DelayFile &d, SDF::Cell cell,
                                           VCD::Scope &scope)
 {
-  Parse::Util::debug_print("DEBUG: cur scope : {} \n",scope.get_identifier());
-  
+  Parse::Util::debug_print("DEBUG: cur scope : {} \n", scope.get_identifier());
+
   for (auto &child_scope_tup : scope.get_scopes()) {
     auto index = child_scope_tup.second;
     Parse::Util::debug_print("DEBUG: child scope : \n");
-    Parse::Util::debug_print("DEBUG: ({}:{})\n", child_scope_tup.first,child_scope_tup.second);
+    Parse::Util::debug_print("DEBUG: ({}:{})\n", child_scope_tup.first,
+                             child_scope_tup.second);
 
     // cell instance scope
     VCD::Scope child_scope = header_->get_scope(index);
@@ -480,8 +478,9 @@ void TimingChecker::apply_sdf_cell_helper(SDF::DelayFile &d, SDF::Cell cell,
 
     if (child_scope.get_scope_type() == VCD::ScopeType::module) {
 
-      for (auto && net_tup : netlist_lookup_){
-        fmt::print("DEBUG: net_tup: ({}:{})\n",net_tup.first, net_tup.second);
+      for (auto &&net_tup : netlist_lookup_) {
+        Parse::Util::debug_print("DEBUG: net_tup: ({}:{})\n", net_tup.first,
+                                 net_tup.second);
       }
 
       auto verilog_module_index = netlist_lookup_.find(index);
@@ -496,12 +495,11 @@ void TimingChecker::apply_sdf_cell_helper(SDF::DelayFile &d, SDF::Cell cell,
         }
 
       } else {
-        Parse::Util::debug_print("DEBUG: scope index not found\n");    
+        Parse::Util::debug_print("DEBUG: scope index not found\n");
         // else ignore..
       }
-    }else{
-      Parse::Util::debug_print("DEBUG: not a module type\n");    
-
+    } else {
+      Parse::Util::debug_print("DEBUG: not a module type\n");
     }
     // TODO : GO DOWN FOR NESTED MODULE ONLY OR ALL NESTED SCOPES?
     apply_sdf_cell_helper(d, cell, child_scope);
@@ -644,8 +642,9 @@ void TimingChecker::apply_sdf_file(std::string delayfile_path,
   }
 }
 
-void TimingChecker::handle_event(const RegisterEvent &event,
-                                               VCD::Value from, VCD::Value to) {
+void TimingChecker::handle_event(const RegisterEvent &event, VCD::Value from,
+                                 VCD::Value to)
+{
 
   if (!edge_type_matches(event.edge_type, from, to))
     return;
@@ -675,8 +674,8 @@ void TimingChecker::handle_event(const RegisterEvent &event,
   return timing_violation;
 }
 
-[[nodiscard]] bool TimingChecker::internal_event(
-    std::size_t vcd_range_index, ranges::span<VCD::Value> values)
+    [[nodiscard]] bool TimingChecker::internal_event(
+        std::size_t vcd_range_index, ranges::span<VCD::Value> values)
 {
   auto prev_values = state_.get_vector_value(vcd_range_index);
   assert(values.size() == prev_values.size());
@@ -751,7 +750,7 @@ void TimingChecker::scalar_value_change(VCD::ScalarValueChangeView value_change)
   if (internal_event(index, value_change.value)) {
     // Generate pretty time string if possible
     std::string sim_time_string;
-    if(header_->has_time_scale()) {
+    if (header_->has_time_scale()) {
       auto ts = header_->get_time_scale().value();
       sim_time_string = VCD::Util::time_string(ts, sim_time_);
     } else {
@@ -933,8 +932,7 @@ void TimingChecker::dump_registered_event_list()
       fmt::print("    Register Trigger index : {}\n", reg_event.trigger_index);
       fmt::print("    Trigger Condition      : {}\n",
                  serialize_conditional(trig_event.condition));
-      fmt::print("    Trigger Assertion      : {}\n",
-                 trig_event.assertion_sv);
+      fmt::print("    Trigger Assertion      : {}\n", trig_event.assertion_sv);
       fmt::print("    Trigger EdgeType       : {}\n",
                  edge_type_to_string(trig_event.edge_type));
       fmt::print("    Trigger hold time      : {}\n", trig_event.hold_time);

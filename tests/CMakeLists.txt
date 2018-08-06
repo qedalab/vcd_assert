@@ -106,12 +106,12 @@ add_test(
 #   COMMAND vcd_assert tb_full_adder_1bit.vcd ../tb_full_adder_1bit.v ../full_adder_1bit.v  ../../examples_cell_library.v -t tb_full_adder_1bit
 # )
 
-# Full adder 1bit succeed
-add_test(
-  NAME full_adder_1bit
-  WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/examples/full_adder_1bit/iverilog_out/
-  COMMAND vcd_assert tb_full_adder_1bit.vcd ../tb_full_adder_1bit_success.v ../full_adder_1bit.v ../../examples_cell_library.v -t tb_full_adder_1bit
-)
+# # Full adder 1bit succeed
+# add_test(
+#   NAME full_adder_1bit
+#   WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/examples/full_adder_1bit/iverilog_out/
+#   COMMAND vcd_assert tb_full_adder_1bit.vcd ../tb_full_adder_1bit_success.v ../full_adder_1bit.v ../../examples_cell_library.v -t tb_full_adder_1bit
+# )
 
 # Failing tests
 set_tests_properties(
@@ -119,7 +119,7 @@ set_tests_properties(
   basic_xor_fail # case cant be supported without verilog.
   basic_and_fail
   basic_ndro_fail
-  full_adder_1bit # remove this when full_adder_1bit is fixed.
+  # full_adder_1bit # remove this when full_adder_1bit is fixed.
   PROPERTIES WILL_FAIL TRUE
 )
 

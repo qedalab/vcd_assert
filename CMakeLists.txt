@@ -54,14 +54,14 @@ target_add_warnings(libsdf)
 add_library(libverilog "src/verilog")
 target_include_directories(libverilog PUBLIC "${PROJECT_SOURCE_DIR}/include/")
 target_link_libraries(libverilog PUBLIC libparse fmt::fmt)
-target_compile_definitions(libverilog PUBLIC -DVERBOSE_DEBUG_OUTPUT=1)
+# target_compile_definitions(libverilog PUBLIC -DVERBOSE_DEBUG_OUTPUT=1)
 target_add_warnings(libverilog)
 
 #Add vcd_assert library
 add_library(libvcd_assert "src/vcd_assert")
 target_include_directories(libvcd_assert PUBLIC "${PROJECT_SOURCE_DIR}/include/")
 target_link_libraries(libvcd_assert PUBLIC libvcd libsdf libverilog libparse)
-target_compile_definitions(libvcd_assert PUBLIC -DVERBOSE_DEBUG_OUTPUT=1)
+# target_compile_definitions(libvcd_assert PUBLIC -DVERBOSE_DEBUG_OUTPUT=1)
 target_add_warnings(libvcd_assert)
 
 add_subdirectory(src)
