@@ -11,4 +11,4 @@ iverilog -Dbegin_time=20 -gspecify \
   ../../splitter_8bit/*.v          \
   ../../examples_cell_library.v
 
-./run
+vvp ./run

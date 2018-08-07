@@ -99,6 +99,20 @@ add_test(
 )
 
 ############## COMPLEX EXAMPLE (SMALL) 
+# One bit adder succeed
+add_test(
+  NAME one_bit_adder_success
+  WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/examples/one_bit_adder_success/iverilog_out/
+  COMMAND vcd_assert tb_one_bit_adder.vcd ../tb_one_bit_adder.v ../one_bit_adder.v ../and.v ../dro.v ../or.v ../splitter.v ../xor.v -t tb_one_bit_adder --sdf ../and.sdf --sdf ../dro.sdf --sdf ../or.sdf --sdf ../splitter.sdf --sdf ../xor.sdf
+)
+
+# One bit adder fail
+add_test(
+  NAME one_bit_adder_fail
+  WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/examples/one_bit_adder_fail/iverilog_out/
+  COMMAND vcd_assert tb_one_bit_adder.vcd ../tb_one_bit_adder.v ../one_bit_adder.v ../and.v ../dro.v ../or.v ../splitter.v ../xor.v -t tb_one_bit_adder --sdf ../and.sdf --sdf ../dro.sdf --sdf ../or.sdf --sdf ../splitter.sdf --sdf ../xor.sdf
+)
+
 # Full adder 1bit fail
 # add_test(
 #   NAME full_adder_1bit_fail
@@ -119,6 +133,7 @@ set_tests_properties(
   basic_xor_fail # case cant be supported without verilog.
   basic_and_fail
   basic_ndro_fail
+  one_bit_adder_fail
   # full_adder_1bit # remove this when full_adder_1bit is fixed.
   PROPERTIES WILL_FAIL TRUE
 )

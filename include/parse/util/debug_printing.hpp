@@ -1,6 +1,8 @@
 #ifndef LIBPARSE_UTIL_DEBUG_PRINTING_HPP
 #define LIBPARSE_UTIL_DEBUG_PRINTING_HPP
 
+#define VERBOSE_DEBUG_OUTPUT
+
 #ifdef VERBOSE_DEBUG_OUTPUT
 #include <fmt/format.h>
 #endif

@@ -105,6 +105,7 @@ int main(int argc, char **argv)
 
   std::vector<std::string> sdf_files;
   auto sdf_option = cli.add_option("--sdf,-s", sdf_files, "SDF File to apply");
+  sdf_option->check(CLI::ExistingFile);
 
   int verbose;
   cli.add_flag("--verbose,-v", verbose, "Verbosity level [1-3]");
