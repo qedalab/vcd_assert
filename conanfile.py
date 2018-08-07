@@ -1,5 +1,6 @@
 from conans import ConanFile, CMake
 
+
 class VCDAssertConan(ConanFile):
     name = "libparse"
     version = "master"

@@ -40,6 +40,52 @@ namespace Grammar {
 using namespace Parse::Grammar::Base;
 using namespace Parse::Grammar::Part;
 
+template <typename... Rules>
+using pad = tao::pegtl::pad<Rules...>;
+
+// struct sep : sor< plus_blank, comment > {};
+// struct plus_sep : pad< blank, sep> {};
+
+struct sep : pad< plus_blank, comment > {};
+struct plus_sep : plus< sep > {};
+
+template<typename T, typename... P>
+struct sep_seq: seq<
+  T, seq<plus_sep, P>...
+> {};
+
+template<typename T, typename... P>
+struct sep_must: must<
+  T, seq<plus_sep, P>...
+> {};
+
+template<typename T, typename... P>
+struct opt_sep_seq: seq<
+  T, seq<opt<plus_sep>, P>...
+> {};
+
+template<typename T, typename... P>
+struct opt_sep_must: must<
+  T, seq<opt<plus_sep>, P>...
+> {};
+
+template<typename T, typename... P>
+struct opt_sep_if_must: if_must<
+  T, seq<opt<plus_sep>, P>...
+> {};
+
+// template<typename... P>
+// struct opt_sep_seq: seq<
+//   opt<plus_sep>>,  
+//   seq<P,opt<plus_sep>>...
+// > {};
+
+// template<typename... P>
+// struct opt_sep_must: must<
+//   star<sep>,  
+//   seq<P,opt<plus_sep>>...
+// > {};
+
 struct separator_helper :  plus<
   sor<
     comment,

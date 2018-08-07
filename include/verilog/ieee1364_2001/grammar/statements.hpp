@@ -113,8 +113,8 @@ struct loop : sor<
 
 template<class S = statement>
 struct statement_or_null : sor<  
-  S, 
-  seq<star<attribute_instance>, one<';'>>
+  seq<star<attribute_instance>, one<';'>>,
+  S
 > {};
 
 template<class S = statement>
@@ -179,8 +179,8 @@ struct event_control : if_must<
 struct delay_control : if_must< 
   one<'#'>, 
   sor<
-    delay_value, 
-    seq<one<'('>, opt<plus_blank>, mintypmax<expression>, opt<plus_blank>,  one<')'>>
+    seq<one<'('>, opt<plus_blank>, mintypmax<expression>, opt<plus_blank>,  one<')'>>,
+    delay_value
   >
 > {};
 
@@ -319,14 +319,15 @@ struct procedural_timing_control_statement : seq<
 > {};
 
 
-struct seq_block : sep_must<
+struct seq_block : sep_seq<
   begin_keyword, 
   opt< 
     one<':'>, 
     block_identifier
   >, 
   star<block_item_declaration>,
-  opt<list<statement, blank, plus_sep>>,
+  // opt<list<statement, blank, plus_sep>>,
+  star<statement>,
   end_keyword
 > {};
 
@@ -361,14 +362,14 @@ struct statement : must<
   star<attribute_instance>,
   sor<
     case_statement,
-    seq<blocking_assignment, one<';'>>,
+    if_must<blocking_assignment, opt<plus_sep>, one<';'>>,
     conditional_statement,
     disable_statement,
     event_trigger,
     loop_statement,
-    opt_sep_seq<nonblocking_assignment, one<';'>>,
+    if_must<nonblocking_assignment, opt<plus_sep>, one<';'>>,
     par_block,
-    opt_sep_seq<procedural_continuous_assignments, one<';'>>,
+    if_must<procedural_continuous_assignments, opt<plus_sep>, one<';'>>,
     procedural_timing_control_statement,
     seq_block,
     system_task_enable,

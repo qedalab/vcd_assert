@@ -27,6 +27,8 @@
 #ifndef LIBVERILOG_IEEE1364_2001_GRAMMAR_NUMBERS_HPP
 #define LIBVERILOG_IEEE1364_2001_GRAMMAR_NUMBERS_HPP
 
+#include "separator.hpp"
+
 #include <parse/grammar/base.h>
 #include <parse/grammar/part.h>
 
@@ -37,6 +39,7 @@ namespace Grammar {
 
 using namespace Parse::Grammar::Base;
 using namespace Parse::Grammar::Part;
+
 
 template< class T >
 struct value_base : seq< 
@@ -149,18 +152,18 @@ struct sign : sor< one<'+'>, one <'-'> > {};
 
 struct decimal_number : sor<
   unsigned_number, 
-  one<'['>, size, one<']'>, decimal_base, unsigned_number, 
-  one<'['>, size, one<']'>, decimal_base, x_digit, star<one<'_'> >, 
-  one<'['>, size, one<']'>, decimal_base, z_digit, star<one<'_'> >
+  opt_sep_seq<opt<size>, decimal_base, unsigned_number>, 
+  opt_sep_seq<opt<size>, decimal_base, x_digit, star<one<'_'> >>, 
+  opt_sep_seq<opt<size>, decimal_base, z_digit, star<one<'_'>> >
 > {};
-struct binary_number : seq<
- one<'['>, size, one<']'>, binary_base, binary_value
+struct binary_number : opt_sep_seq<
+ opt<size>, binary_base, binary_value
 > {};
-struct octal_number : seq<
- one<'['>, size, one<']'>, octal_base, octal_value
+struct octal_number : opt_sep_seq<
+ opt<size>, octal_base, octal_value
 > {};
-struct hex_number : seq<
- one<'['>, size, one<']'>, hex_base, hex_value
+struct hex_number : opt_sep_seq<
+ opt<size>, hex_base, hex_value
 > {};
 struct exp : one<'e','E'> {};
 
@@ -175,12 +178,18 @@ struct exponent : alias<integer> {};
 // > {};
 
 // FROM SDF GRAMMAR
-struct real_number : must<
-  not_at<one<'-'>>,
-  opt<integer>,
-  tao::pegtl::opt_must<seq<one<'.'>, fractional>>,
-  tao::pegtl::opt_must<seq<one<'e'>, opt<sign>, exponent>>
+// struct real_number : must<
+//   not_at<one<'-'>>,
+//   opt<integer>,
+//   tao::pegtl::opt_must<seq<one<'.'>, fractional>>,
+//   tao::pegtl::opt_must<seq<one<'e'>, opt<sign>, exponent>>
+// > {};
+
+struct real_number : sor<
+  seq<unsigned_number, one<'.'>, unsigned_number>,
+  seq<unsigned_number, opt< one<'.'>, unsigned_number >, exp, opt<size>, unsigned_number>
 > {};
+
 
 // FROM SDF GRAMMAR
 struct signed_real_number : must<

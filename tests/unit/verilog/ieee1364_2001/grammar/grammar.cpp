@@ -223,13 +223,19 @@ TEST_CASE("Verilog.IEEE1364_2001.Grammar.Grammer",
     CHECK(match_exactly<Grammar::variable_lvalue>(variable_lvalue_0));
   }
 
-  SECTION("expression_0")
+  SECTION("expression_0 as primary")
+  {
+    CAPTURE(expression_0);
+    CHECK(match_exactly<Grammar::hierarchical_identifier>(expression_0));
+  }
+
+  SECTION("expression_0 as expression")
   {
     CAPTURE(expression_0);
     CHECK(match_exactly<Grammar::expression>(expression_0));
   }
 
-  SECTION("expression_1")
+  SECTION("expression_1 as expression")
   {
     CAPTURE(expression_1);
     CHECK(match_exactly<Grammar::expression>(expression_1));
@@ -255,7 +261,7 @@ TEST_CASE("Verilog.IEEE1364_2001.Grammar.Grammer",
 
   SECTION("seq_block")
   {
-    auto block = fmt::format("{}\n{}\n{}", non_block_assign_0,
+    auto block = fmt::format("begin\n\t{}\n\t{}\n\t{}\nend", non_block_assign_0,
                              non_block_assign_1, non_block_assign_2);
     CAPTURE(block);
 

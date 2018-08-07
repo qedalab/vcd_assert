@@ -125,13 +125,15 @@ struct expression : sor<
   primary, 
   opt_sep_seq<
     unary_operator, 
-    tao::pegtl::pad_opt<attribute_instance, plus_sep>, 
+    // tao::pegtl::pad_opt<opt<attribute_instance>, plus_sep>, 
+    star<attribute_instance>, 
     primary
   >, 
   opt_sep_seq<
     expression1, 
     binary_operator, 
-    tao::pegtl::pad_opt<attribute_instance, plus_sep>, 
+    // tao::pegtl::pad_opt<opt<attribute_instance>, plus_sep>, 
+    star<attribute_instance>, 
     expression2
   >, 
   conditional_expression,
