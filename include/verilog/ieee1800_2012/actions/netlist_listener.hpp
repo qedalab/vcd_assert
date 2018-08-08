@@ -24,55 +24,37 @@
 // POSSIBILITY OF SUCH DAMAGE.
 // ============================================================================
 
-#ifndef LIBVERILOG_TYPES_MODULE_HPP
-#define LIBVERILOG_TYPES_MODULE_HPP
+#ifndef LIBVERILOG_IEEE1800_2012_GRAMMAR_NETLIST_LISTENER_HPP
+#define LIBVERILOG_IEEE1800_2012_GRAMMAR_NETLIST_LISTENER_HPP
 
-#include "enums.hpp"
-#include "commands.hpp"
-#include "time_scale.hpp"
-
-#include <range/v3/view/all.hpp>
-
-#include <optional>
+#include "../../types/design_reader.hpp"
+#include <SV2012BaseListener.h>
 #include <string>
-#include <unordered_map>
 
 namespace Verilog {
 
-class Attributes {
-  std::optional<TimeScale> time_scale_; /// Time scale of 
+class NetlistListener : SV2012BaseListener
+{
+private:
+  std::shared_ptr<SV2012Parser> parser_;
+  std::shared_ptr<DesignReader> reader_;
+  // size_t module_i_;
 
 public:
-    /// Get the time scale if present
-  /// \returns The time scale if present
-  std::optional<TimeScale> get_time_scale() const noexcept;
+  NetlistListener(std::shared_ptr<SV2012Parser> parser,
+                  std::shared_ptr<DesignReader> reader);
 
-  /// True if the design contains a time scale
-  /// \returns Wether the design contains a time scale
-  bool has_time_scale() const noexcept;
+  void enterModule_declaration(SV2012Parser::Module_declarationContext *ctx);
+  void exitModule_declaration(SV2012Parser::Module_declarationContext *ctx);
 
+  void
+  enterModule_instantiation(SV2012Parser::Module_instantiationContext *ctx);
+  void exitModule_instantiation(SV2012Parser::Module_instantiationContext *ctx);
+
+  void enterGate_instantiation(SV2012Parser::Gate_instantiationContext *ctx);
+  void exitGate_instantiation(SV2012Parser::Gate_instantiationContext *ctx);
 };
 
-struct ModuleEvent {
-  std::string module_identifier;
-  std::vector<std::pair<std::string, std::string>> instances; //(definition identifier, instance identifier) 
-  std::vector<Command> commands; 
-};
+} // namespace Verilog
 
-struct Module { 
-  std::string identifier;        /// The module identifier
-  std::string file_path;
-
-  std::unordered_map<std::string, std::size_t> instance_lookup_; /// netlist references to child instances   
-  // std::vector<std::size_t> variable;  /// netlist references to child variables   
-  
-  // std::optional<Attributes> attributes;
-  
-  // std::vector<Attribute> attributes_;
-  // std::vector<Port> ports_;
-  // std::vector<Parameters> parameters_;
-};
-
-}
-
-#endif // LIBVERILOG_TYPES_MODULE_HPP
+#endif // LIBVERILOG_IEEE1800_2012_GRAMMAR_NETLIST_LISTENER_HPP

@@ -1,0 +1,7 @@
+add_subdirectory(actions)
+
+set(DIR ${CMAKE_CURRENT_SOURCE_DIR})
+
+target_sources(unit_verilog PRIVATE
+  ${DIR}/designreader.cpp
+)

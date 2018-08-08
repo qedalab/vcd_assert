@@ -10,6 +10,8 @@ target_sources(libvcd_assert PRIVATE
   ${DIR}/triggered_timing_checker.cpp
   )
 
+message(STATUS "Linking vcd_assert with: ${antlr4cpp_src_files_SystemVerilog}")
+
 add_executable(vcd_assert
   ${DIR}/vcd_assert.cpp
   ${DIR}/version.cpp
@@ -21,10 +23,11 @@ add_custom_command(
 )
 
 target_compile_options(vcd_assert
-  PRIVATE -DVCD_ASSERT_VERSION_MACRO="${PROJECT_VERSION} ${CMAKE_BUILD_TYPE}"
+  PRIVATE -DVCD_ASSERT_VERSION_MACRO="${PROJECT_VERSION} ${CMAKE_BUILD_TYPE}" 
 )
 
-target_add_warnings(vcd_assert)
+# try "-Isystem ${ANTLR4CPP_INCLUDE_DIRS}" ?
+# target_add_warnings(vcd_assert)
 target_link_libraries(vcd_assert
   libvcd_assert
   CLI11::CLI11

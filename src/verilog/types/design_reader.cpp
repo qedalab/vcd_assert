@@ -125,6 +125,15 @@ std::size_t DesignReader::module(std::string module_name, std::string file_path)
   }
 }
 
+bool DesignReader::next_module(){
+  if (current_module_index_ < (design_->modules_.size()-1)){
+    current_module_index_++;
+    return true;
+  }else{
+    return false;
+  }
+}
+
 /*  NO LONGER Assumes that the origin of the instantiation is the
     last elem in collection corresponding to the NetType (modules_).
     INSTEAD, Since instance are found in parsing second pass the 

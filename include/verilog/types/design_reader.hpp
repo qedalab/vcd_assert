@@ -56,6 +56,7 @@ using InputHandles = std::unordered_map<std::string, InputType>; //source
 class DesignReader {
   std::unique_ptr<Design> design_;       /// Pointer to Verilog Design
   std::vector<std::size_t> net_stack_;   /// Stack of current nets
+  std::size_t current_module_index_ = 0;                 /// current definition index
   // InputHandles<InputType> inputs_;
   // std::vector<tao::pegtl::file_input> files_;
   // std::unordered_map<std::string, std::size_t> file_lookup_; 
@@ -70,6 +71,8 @@ public:
   /// Introduces a new module into the design, and links it with a <NetType> definition  
   std::size_t module(std::string module_name, std::string file_path);
   
+  bool next_module();
+
   /// Introduces a new instance, and links it with a <NetType> definition  
   /// \param NetType instance definition's type
   /// \param instance_name instance identifier.

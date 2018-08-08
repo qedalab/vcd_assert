@@ -35,8 +35,8 @@
 
 #include <sdf/actions/base.hpp>
 #include <sdf/grammar/base.hpp>
-#include <sdf/types/base.hpp>
 #include <sdf/serialize/base.hpp>
+#include <sdf/types/base.hpp>
 
 #include <verilog/ieee1364_2001/actions/grammar.hpp>
 #include <verilog/ieee1364_2001/actions/module.hpp>
@@ -48,8 +48,8 @@
 
 #include <parse/actions/control.hpp>
 #include <parse/actions/make_pegtl_template.hpp>
-#include <parse/util/filesystem.hpp>
 #include <parse/util/debug_printing.hpp>
+#include <parse/util/filesystem.hpp>
 
 #include <tao/pegtl/file_input.hpp>
 #include <tao/pegtl/memory_input.hpp>
@@ -66,8 +66,11 @@
 #include <range/v3/view/zip.hpp>
 #include <string_view>
 
-// #include <range/v3/view/foreach.hpp>
-// #include <range/v3/algorithm/remove_if.hpp>
+// #include "SV2012BaseListener.h"
+// #include "SV2012Lexer.h"
+// #include "SV2012Parser.h"
+// #include "antlr4-runtime.h"
+// #include "vcd_assert/antlr_include_wrapper.hpp"
 
 namespace fs = Parse::Util::fs;
 namespace rsv = ranges::view;
@@ -90,15 +93,15 @@ int main(int argc, char **argv)
   vcd_file_option->check(CLI::ExistingFile);
 
   std::vector<std::string> source_files;
-  auto source_file_option = cli.add_option("verilog_files", source_files,
-                                           "Verilog source file(s)");
+  auto source_file_option =
+      cli.add_option("verilog_files", source_files, "Verilog source file(s)");
   source_file_option->check(CLI::ExistingFile);
 
   std::string top_module;
   cli.add_option("--top,-t", top_module, "Name of top verilog module");
 
-//   std::vector<std::string> library_files;
-//   cli.add_option("--include,-i", library_files, "Verilog library Files");
+  //   std::vector<std::string> library_files;
+  //   cli.add_option("--include,-i", library_files, "Verilog library Files");
 
   std::vector<std::string> vcd_nodes;
   auto node_option = cli.add_option("--node,-n", vcd_nodes, "VCD Node");
@@ -155,10 +158,11 @@ int main(int argc, char **argv)
   assert(sdf_files.empty());
   assert(vcd_nodes.empty());
 
-//   if (!library_files.empty()) {
-//     fmt::print(
-//         FMT_STRING("WARNING: Verilog library sources not yet supported.\n"));
-//   }
+  //   if (!library_files.empty()) {
+  //     fmt::print(
+  //         FMT_STRING("WARNING: Verilog library sources not yet
+  //         supported.\n"));
+  //   }
 
   if (apply_nodes.empty() && source_files.empty()) {
     fmt::print(FMT_STRING("ERROR: No timing checks to match!\n"));
@@ -167,6 +171,9 @@ int main(int argc, char **argv)
 
   // Initialise the Verilog design reader
   Verilog::DesignReader design_reader{};
+  // using namespace antlr4;
+  // using namespace SystemVerilog;
+  // using namespace antlr4;
 
   if (!source_files.empty()) {
 
@@ -183,29 +190,38 @@ int main(int argc, char **argv)
         // auto file_path_normal = fs::path(file).lexically_normal();
         std::string abs_path = fs::canonical(file).string();
 
-        tao::pegtl::file_input<> input(abs_path);
+        // tao::pegtl::file_input<> input(abs_path);
 
-        Verilog::IEEE1364_2001::Actions::ModuleEvent me{};
+        // Verilog::IEEE1364_2001::Actions::ModuleEvent me{};
 
-        // Parse with only Module actions, to build module map.
-        auto result = tao::pegtl::parse<
-            Verilog::IEEE1364_2001::Grammar::_grammar_,
-            Parse::make_pegtl_template<
-                Verilog::IEEE1364_2001::Actions::ModuleDescriptionAction>::type,
-            Parse::capture_control>(input, me);
+        // std::ifstream stream;
+        // stream.open(abs_path);
 
-        if (!result) {
-          fmt::print(FMT_STRING("ERROR: Failed to parse Verilog file:\n"));
-        } else {
-          if (me.module_identifier == top_module) {
-            starting_source_file_index_op = (std::size_t)i;
-          }
-        }
+        // antlr4::ANTLRInputStream input(stream);
+        // SystemVerilog::SV2012Lexer lexer(&input);
+        // antlr4::CommonTokenStream tokens(&lexer);
+        // SystemVerilog::SV2012Parser parser(&tokens);
+
+        // auto *tree = parser.source_text();
+        // // std::cout << tree->toStringTree(&parser) << std::endl <<
+        // std::endl;
+
+        // tree::ParseTreeWalker walker{}; // create standard walker
+        // DesignListener extract(parser);
+        // walker.walk(extract, tree); // initiate walk of tree with listener
+
+        // if (!result) {
+        //   fmt::print(FMT_STRING("ERROR: Failed to parse Verilog file:\n"));
+        // } else {
+        //   if (me.module_identifier == top_module) {
+        //     starting_source_file_index_op = (std::size_t)i;
+        //   }
+        // }
       } else {
         fmt::print("ERROR: file not found : {}\n", file);
       }
     }
-    
+
     Parse::Util::debug_puts("DEBUG: Top module found");
 
     if (starting_source_file_index_op.has_value()) {
@@ -218,14 +234,15 @@ int main(int argc, char **argv)
       auto top_file_abs_path = fs::canonical(top_file_normal);
 
       // Create input map of library files.
-//       for (auto &&file : library_files) {
-//         auto abs_path = fs::canonical(fs::path(file));
+      //       for (auto &&file : library_files) {
+      //         auto abs_path = fs::canonical(fs::path(file));
 
-//         // TODO search in 'include statement' apply action, not here..
-//         inputmap.emplace(abs_path, // relative path from the test bench
-//                          Verilog::Util::ParseInput{
-//                          Verilog::Util::InputTypeEnum::library_file, abs_path});
-//       }
+      //         // TODO search in 'include statement' apply action, not here..
+      //         inputmap.emplace(abs_path, // relative path from the test bench
+      //                          Verilog::Util::ParseInput{
+      //                          Verilog::Util::InputTypeEnum::library_file,
+      //                          abs_path});
+      //       }
 
       // First pass builds module map.
       // Second pass does rest.
@@ -252,8 +269,8 @@ int main(int argc, char **argv)
                 "ERROR: Unsuccessful parse of Verilog source file!\n");
           }
         }
-      }     
-      
+      }
+
       std::puts("Verilog parse successful");
 
     } else {
@@ -303,9 +320,10 @@ int main(int argc, char **argv)
                       Parse::capture_control>(path_input, path);
 
     // std::string hi_output;
-    // SDF::serialize_hierarchical_identifier(ranges::back_inserter(hi_output), 0, path);
+    // SDF::serialize_hierarchical_identifier(ranges::back_inserter(hi_output),
+    // 0, path);
 
-    Parse::Util::debug_puts("DEBUG: trying to find node in vcd header");  
+    Parse::Util::debug_puts("DEBUG: trying to find node in vcd header");
     // std::puts("node_scope_index_op found");
 
     auto node_scope_index_op = VCDAssert::match_scope(*header_p, path.value, 0);
@@ -313,12 +331,13 @@ int main(int argc, char **argv)
       Parse::Util::debug_puts("DEBUG: node(scope) found");
 
       for (auto &&sdf_file : sdf_file_array) {
-        Parse::Util::debug_print("DEBUG: applying sdf file ({}) to vcd scope\n", sdf_file);
+        Parse::Util::debug_print("DEBUG: applying sdf file ({}) to vcd scope\n",
+                                 sdf_file);
         timing_checker.apply_sdf_file(sdf_file, node_scope_index_op.value());
       }
 
     } else {
-      fmt::print("WARNING: supplied node not matched (node : {})\n",node);
+      fmt::print("WARNING: supplied node not matched (node : {})\n", node);
       // could not find the supplied scope.
     }
   }
