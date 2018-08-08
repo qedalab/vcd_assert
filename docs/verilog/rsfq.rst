@@ -57,10 +57,10 @@ introduce an intermediate wire that does the integer comparisons.
        internal_state_2,
        internal_state_3;
 
-  assign internal_state_0 = state == 0;
-  assign internal_state_1 = state == 1;
-  assign internal_state_2 = state == 2;
-  assign internal_state_3 = state == 3;
+  assign internal_state_0 = state === 0;
+  assign internal_state_1 = state === 1;
+  assign internal_state_2 = state === 2;
+  assign internal_state_3 = state === 3;
 
 Next is the specify block wherin all the delays and timing assertions are
 specified.

@@ -76,7 +76,7 @@
     )
     (CELL
         (CELLTYPE "basic_jtl")
-        (INSTANCE DUT)
+        (INSTANCE *)
         (DELAY
             (ABSOLUTE
                 /*Conditional delays not supported by iverilog */
