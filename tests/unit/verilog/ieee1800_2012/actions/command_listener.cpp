@@ -92,15 +92,15 @@ TEST_CASE("Verilog.Actions.CommandListener",
     SV2012Lexer lexer(&input);
     CommonTokenStream tokens(&lexer);
     SV2012Parser parser(&tokens);  
-    auto *tree = parser.source_text();
+    /*auto *tree =*/ parser.source_text();
     // std::cout << tree->toStringTree(&parser) << std::endl << std::endl;
 
     INFO("Initialize listener");
-    CommandListener cl(parser, reader, tb_dro_file_path_abs_.to_string());
+    // CommandListener cl(parser, reader, tb_dro_file_path_abs_.to_string());
 
     INFO("Walk tree with listener");
-    tree::ParseTreeWalker walker();
-    walker.walk(cl, tree);
+    // tree::ParseTreeWalker walker{};
+    // walker.walk(cl, tree);
 
     FAIL();
   }

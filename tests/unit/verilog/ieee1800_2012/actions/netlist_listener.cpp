@@ -43,9 +43,7 @@ TEST_CASE("Verilog.Actions.NetlistListener",
     SV2012Lexer lexer(&input);
     CommonTokenStream tokens(&lexer);
     SV2012Parser parser(&tokens);
-    
-    CommonTokenStream tokens = new CommonTokenStream(&lexer);
-    
+        
     auto *tree = parser.source_text();
     std::cout << tree->toStringTree(&parser) << std::endl << std::endl;
     FAIL();
