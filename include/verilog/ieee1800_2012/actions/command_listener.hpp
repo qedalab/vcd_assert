@@ -31,6 +31,8 @@
 
 #include <SV2012BaseListener.h>
 #include <string>
+#include <range/v3/view/indices.hpp>
+#include <range/v3/view/zip.hpp>
 
 namespace Verilog {
 

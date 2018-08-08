@@ -16,13 +16,12 @@ void NetlistListener::enterModule_declaration(
     SV2012Parser::Module_declarationContext *ctx)
 {
   auto tokens = parser_->getTokenStream();
-  if (!ctx->module_identifier().empty()) {
-    auto identifier = tokens->getText(ctx->module_identifier()[0]);
-    // auto module_i = modmap.find(identifier);
-        // set current module name
-
+  if (ctx->module_identifier(0)) {
+    // auto identifier = ctx->module_identifier(0);
+    reader_->next_module();
   } else {
-    throw std::runtime_error("InternalError(listener has no module identifier)");
+    throw std::runtime_error(
+        "InternalError(listener has no module identifier)");
   }
 }
 
@@ -31,11 +30,23 @@ void NetlistListener::exitModule_declaration(
 {
 }
 
-
-
 void NetlistListener::enterModule_instantiation(
     SV2012Parser::Module_instantiationContext *ctx)
 {
+  auto tokens = parser_->getTokenStream();
+  if (ctx->module_identifier() && !ctx->hierarchical_instance().empty()) {
+    
+    //TODO should handle MULTI instantiation? 0 -> n; not just 0.
+    auto module_ident = tokens->getText(ctx->module_identifier());
+    auto inst_ident = tokens->getText(ctx->hierarchical_instance(0)
+                                          ->name_of_instance()
+                                          ->instance_identifier());
+
+    reader_->instance(NetType::module, "dummy", inst_ident, module_ident);
+  } else {
+    throw std::runtime_error(
+        "InternalError(listener has no module identifier)");
+  }
 }
 
 void NetlistListener::exitModule_instantiation(
@@ -46,6 +57,21 @@ void NetlistListener::exitModule_instantiation(
 void NetlistListener::enterGate_instantiation(
     SV2012Parser::Gate_instantiationContext *ctx)
 {
+
+  // HOW DOES VCD ASSERT HANDLE PRIMITIVES?
+    
+  // auto tokens = parser_->getTokenStream();
+  // if (ctx->module_identifier(0) && ctx->hiea(0)) {
+  //   auto gate_ident = tokens->getText(ctx->module_identifier(0));
+  //   auto inst_ident = tokens->getText(ctx->hierarchical_instance(0)
+  //                                         ->name_of_instance()
+  //                                         ->instance_identifier());
+
+  //   reader_->instance(NetType::module, "dummy", inst_ident, module_ident);
+  // } else {
+  //   throw std::runtime_error(
+  //       "InternalError(listener has no module identifier)");
+  // }
 }
 
 void NetlistListener::exitGate_instantiation(
