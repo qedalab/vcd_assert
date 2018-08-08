@@ -1,7 +1,8 @@
 function(example_as_test)
+  set(option_args VERILOG_AS_ARGS)
   set(single_args NAME DIR SCRIPT VCD)
   set(multi_args SDF VERILOG ARGS)
-  cmake_parse_arguments(EXAMPLE "" "${single_args}" "${multi_args}" ${ARGN})
+  cmake_parse_arguments(EXAMPLE "${option_args}" "${single_args}" "${multi_args}" ${ARGN})
 
 #   message("EXAMPLE_START")
 #   message("NAME : ${EXAMPLE_NAME}")
@@ -64,10 +65,18 @@ function(example_as_test)
     DEPENDS ${VCD_FILE}
   )
 
+  set(VCD_ASSERT_COMMAND vcd_assert ${VCD_FILE})
+
+  if(${EXAMPLE_VERILOG_AS_ARGS})
+    set(VCD_ASSERT_COMMAND ${VCD_ASSERT_COMMAND} ${BIN_VERILOG})
+  endif()
+
+  set(VCD_ASSERT_COMMAND ${VCD_ASSERT_COMMAND} ${EXAMPLE_ARGS})
+
   add_test(
     NAME ${EXAMPLE_NAME}
     WORKING_DIRECTORY ${BIN_DIR}/iverilog_out/
-    COMMAND vcd_assert ${VCD_FILE} ${EXAMPLE_ARGS}
+    COMMAND ${VCD_ASSERT_COMMAND}
   )
 
 endfunction()

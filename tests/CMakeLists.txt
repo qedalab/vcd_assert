@@ -52,8 +52,9 @@ example_as_test(
   DIR examples/basic_xor_fail
   VCD tb_basic_xor.vcd
   SDF xor.sdf
-  VERILOG xor.v tb_xor.v
-  ARGS ../tb_xor.v ../xor.v -t tb_basic_xor --node tb_basic_xor --sdf ../xor.sdf
+  VERILOG tb_xor.v xor.v
+  VERILOG_AS_ARGS
+  ARGS -t tb_basic_xor --node tb_basic_xor --sdf ../xor.sdf
 )
 
 # Basic xor succeed
@@ -63,8 +64,9 @@ example_as_test(
   DIR examples/basic_xor_success
   VCD tb_basic_xor.vcd
   SDF xor.sdf
-  VERILOG xor.v tb_xor.v
-  ARGS ../tb_xor.v ../xor.v -t tb_basic_xor --node tb_basic_xor --sdf ../xor.sdf
+  VERILOG tb_xor.v xor.v
+  VERILOG_AS_ARGS
+  ARGS -t tb_basic_xor --node tb_basic_xor --sdf ../xor.sdf
 )
 
 ############## VERILOG SDF WITH CELLINSTANCE <path>
@@ -75,8 +77,9 @@ example_as_test(
   DIR examples/basic_and_fail
   VCD tb_basic_and.vcd
   SDF and.sdf
-  VERILOG and.v tb_and.v
-  ARGS ../tb_and.v ../and.v -t tb_basic_and 
+  VERILOG tb_and.v and.v
+  VERILOG_AS_ARGS
+  ARGS -t tb_basic_and 
 )
 
 # Basic and success
@@ -86,8 +89,9 @@ example_as_test(
   DIR examples/basic_and_success
   VCD tb_basic_and.vcd
   SDF and.sdf
-  VERILOG and.v tb_and.v
-  ARGS ../tb_and.v ../and.v -t tb_basic_and
+  VERILOG tb_and.v and.v
+  VERILOG_AS_ARGS
+  ARGS -t tb_basic_and
 )
 
 ############## VERILOG SDF WITH CELLINSTANCE <*>
@@ -100,7 +104,8 @@ example_as_test(
   VCD tb_basic_ndro.vcd
   SDF ndro.sdf
   VERILOG ndro.v tb_ndro.v
-  ARGS ../tb_ndro.v ../ndro.v -t tb_basic_ndro 
+  VERILOG_AS_ARGS
+  ARGS -t tb_basic_ndro 
 )
 
 # Basic ndro success
@@ -111,7 +116,8 @@ example_as_test(
   VCD tb_basic_ndro.vcd
   SDF ndro.sdf
   VERILOG ndro.v tb_ndro.v
-  ARGS ../tb_ndro.v ../ndro.v -t tb_basic_ndro
+  VERILOG_AS_ARGS
+  ARGS -t tb_basic_ndro
 )
 
 ############## COMPLEX EXAMPLE (SMALL)
@@ -124,7 +130,8 @@ example_as_test(
   VCD tb_one_bit_adder.vcd
   SDF and.sdf dro.sdf or.sdf xor.sdf splitter.sdf
   VERILOG tb_one_bit_adder.v one_bit_adder.v and.v dro.v or.v splitter.v xor.v
-  ARGS ../tb_one_bit_adder.v ../one_bit_adder.v ../and.v ../dro.v ../or.v ../splitter.v ../xor.v -t tb_one_bit_adder --sdf ../and.sdf --sdf ../dro.sdf --sdf ../or.sdf --sdf ../splitter.sdf --sdf ../xor.sdf
+  VERILOG_AS_ARGS
+  ARGS -t tb_one_bit_adder --sdf ../and.sdf --sdf ../dro.sdf --sdf ../or.sdf --sdf ../splitter.sdf --sdf ../xor.sdf
 )
 
 example_as_test(
@@ -134,7 +141,8 @@ example_as_test(
   VCD tb_one_bit_adder.vcd
   SDF and.sdf dro.sdf or.sdf xor.sdf splitter.sdf
   VERILOG tb_one_bit_adder.v one_bit_adder.v and.v dro.v or.v splitter.v xor.v
-  ARGS ../tb_one_bit_adder.v ../one_bit_adder.v ../and.v ../dro.v ../or.v ../splitter.v ../xor.v -t tb_one_bit_adder --sdf ../and.sdf --sdf ../dro.sdf --sdf ../or.sdf --sdf ../splitter.sdf --sdf ../xor.sdf
+  VERILOG_AS_ARGS
+  ARGS -t tb_one_bit_adder --sdf ../and.sdf --sdf ../dro.sdf --sdf ../or.sdf --sdf ../splitter.sdf --sdf ../xor.sdf
 )
 
 # Failing tests
