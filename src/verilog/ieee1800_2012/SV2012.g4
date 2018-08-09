@@ -1388,11 +1388,11 @@ data_type_or_implicit
 ;
 
 let_expression :
-( package_scope )? let_identifier ( '(' ( let_list_of_arguments )? ')' )?
+( package_scope )? let_identifier ( '(' let_list_of_arguments ')' )? //<<7
 ;
 
 let_list_of_arguments :
-( let_actual_arg )? ( ',' ( let_actual_arg )? )*  ( ',' '.' identifier '(' ( let_actual_arg )? ')' )* 
+( let_actual_arg )? ( ',' ( let_actual_arg )? )*  ( ',' '.' identifier '(' ( let_actual_arg )? ')' )*  //<<7
 | '.' identifier '(' ( let_actual_arg )? ')'  ( ',' '.' identifier '(' ( let_actual_arg )? ')' )* 
 ;
 
@@ -1442,7 +1442,7 @@ hierarchical_tf_identifier
 ;
 
 cover_point :
-( ( data_type_or_implicit )? cover_point_identifier ':' )? 'coverpoint' expression ( 'iff' '(' expression ')' )?
+( data_type_or_implicit cover_point_identifier ':' )? 'coverpoint' expression ( 'iff' '(' expression ')' )? //<<8 remove optional brackets
 bins_or_empty
 ;
 
@@ -1715,7 +1715,7 @@ program_identifier ( parameter_value_assignment )? hierarchical_instance  ( ',' 
 // A.4.1.4 Checker instantiation
 
 checker_instantiation :
-ps_checker_identifier name_of_instance '(' (list_of_checker_port_connections)? ')' ';'
+ps_checker_identifier name_of_instance '(' list_of_checker_port_connections ')' ';' //<<9 remove optional brackets
 ;
 
 list_of_checker_port_connections :
@@ -3434,7 +3434,7 @@ ps_or_hierarchical_tf_identifier :
 
 ps_parameter_identifier :
 ( package_scope | class_scope )? parameter_identifier
-|  ( generate_block_identifier ( ( constant_expression )? )? '.' )*  parameter_identifier
+|  ( generate_block_identifier ('[' constant_expression ']' )? '.' )*  parameter_identifier
 ;
 
 ps_type_identifier : ( 'local' ':' ':' | package_scope )? type_identifier
