@@ -13,20 +13,10 @@ NetlistListener::NetlistListener(std::shared_ptr<SV2012Parser> parser,
 }
 
 void NetlistListener::enterModule_declaration(
-    SV2012Parser::Module_declarationContext *ctx)
+    SV2012Parser::Module_declarationContext * /*ctx*/)
 {
-  auto tokens = parser_->getTokenStream();
-  if (ctx->module_identifier(0)) {
-    reader_->next_module();
-  } else {
-    throw std::runtime_error(
-        "InternalError(listener has no module identifier)");
-  }
-}
-
-void NetlistListener::exitModule_declaration(
-    SV2012Parser::Module_declarationContext *ctx)
-{
+  Parse::Util::debug_puts("DEBUG: NetlistListener: Enter Module");
+  reader_->next_module();
 }
 
 void NetlistListener::enterModule_instantiation(
@@ -34,8 +24,8 @@ void NetlistListener::enterModule_instantiation(
 {
   auto tokens = parser_->getTokenStream();
   if (ctx->module_identifier() && !ctx->hierarchical_instance().empty()) {
-    
-    //TODO should handle MULTI instantiation? 0 -> n; not just 0.
+
+    // TODO should handle MULTI instantiation? 0 -> n; not just 0.
     auto module_ident = tokens->getText(ctx->module_identifier());
     auto inst_ident = tokens->getText(ctx->hierarchical_instance(0)
                                           ->name_of_instance()
@@ -48,20 +38,15 @@ void NetlistListener::enterModule_instantiation(
   }
 }
 
-void NetlistListener::exitModule_instantiation(
-    SV2012Parser::Module_instantiationContext *ctx)
-{
-}
-
 void NetlistListener::enterGate_instantiation(
     SV2012Parser::Gate_instantiationContext *ctx)
 {
 
   // HOW DOES VCD ASSERT HANDLE PRIMITIVES?
-    
+
   // auto tokens = parser_->getTokenStream();
   // if (ctx->module_identifier() && !ctx->hierarchical_instance().empty()) {
-    
+
   //   //TODO should handle MULTI instantiation? 0 -> n; not just 0.
   //   auto module_ident = tokens->getText(ctx->module_identifier());
   //   auto inst_ident = tokens->getText(ctx->hierarchical_instance(0)
@@ -73,9 +58,4 @@ void NetlistListener::enterGate_instantiation(
   //   throw std::runtime_error(
   //       "InternalError(listener has no module identifier)");
   // }
-}
-
-void NetlistListener::exitGate_instantiation(
-    SV2012Parser::Gate_instantiationContext *ctx)
-{
 }

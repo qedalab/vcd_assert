@@ -28,12 +28,14 @@
 #define LIBVERILOG_IEEE1800_2012_GRAMMAR_NETLIST_LISTENER_HPP
 
 #include "../../types/design_reader.hpp"
+
 #include <SV2012BaseListener.h>
+
 #include <string>
 
 namespace Verilog {
 
-class NetlistListener : SV2012BaseListener
+class NetlistListener : public SV2012BaseListener
 {
 private:
   std::shared_ptr<SV2012Parser> parser_;
@@ -45,14 +47,11 @@ public:
                   std::shared_ptr<DesignReader> reader);
 
   void enterModule_declaration(SV2012Parser::Module_declarationContext *ctx);
-  void exitModule_declaration(SV2012Parser::Module_declarationContext *ctx);
 
   void
   enterModule_instantiation(SV2012Parser::Module_instantiationContext *ctx);
-  void exitModule_instantiation(SV2012Parser::Module_instantiationContext *ctx);
 
   void enterGate_instantiation(SV2012Parser::Gate_instantiationContext *ctx);
-  void exitGate_instantiation(SV2012Parser::Gate_instantiationContext *ctx);
 };
 
 } // namespace Verilog

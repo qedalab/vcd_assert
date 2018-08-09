@@ -16,14 +16,19 @@ void PreprocessListener::enterModule_declaration(
     SV2012Parser::Module_declarationContext *ctx)
 {
   auto tokens = parser_->getTokenStream();
-  if (!ctx->module_identifier().empty()) {
-    // auto identifier = ctx->module_identifier(0);
-
-    auto identifier = tokens->getText(ctx->module_identifier(0));
-    reader_->module(identifier,file_path_);
-  } else {
-    throw std::runtime_error("InternalError(listener has no module identifier)");
+  SV2012Parser::Module_identifierContext *mod_id_ctx;
+  if (ctx->module_nonansi_header()) {
+    Parse::Util::debug_puts("DEBUG: Module nonansi header");
+    mod_id_ctx = ctx->module_nonansi_header()->module_identifier();
+  } else if (ctx->module_ansi_header()) {
+    Parse::Util::debug_puts("DEBUG: Module ansi header");
+    mod_id_ctx = ctx->module_ansi_header()->module_identifier();
   }
+
+  Parse::Util::debug_puts("DEBUG: Module identifier ({})",
+                          tokens->getText(mod_id_ctx));
+
+  reader_->module(tokens->getText(mod_id_ctx), file_path_);
 }
 
 void PreprocessListener::enterInclude_statement(

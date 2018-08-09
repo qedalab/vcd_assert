@@ -138,13 +138,11 @@ struct ModuleDescriptionApply{ // clang-format on
 
     if(first_pass){
 
-      Parse::Util::debug_puts("DEBUG: first pass : found module");
+      Parse::Util::debug_puts("DEBUG: found module");
 
       reader.module(data.module_identifier, input.position().source);
 
     }else{
-
-      Parse::Util::debug_puts("DEBUG: second pass : found instance/command");
       
       for (auto&& instance : data.instances ){
         reader.instance(NetType::module, data.module_identifier, instance.name, instance.type);

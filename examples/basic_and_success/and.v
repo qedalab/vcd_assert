@@ -1,4 +1,7 @@
 // Adapted from TimEx generated files for vcd_assert
+`ifndef basic_and_
+`define basic_and_
+
 `define begin_time 8
 `timescale 1ps/100fs
 module basic_and (a, b, clk, out);
@@ -23,10 +26,10 @@ wire internal_state_0,
      internal_state_2,
      internal_state_3;
 
-assign internal_state_0 = state == 0;
-assign internal_state_1 = state == 1;
-assign internal_state_2 = state == 2;
-assign internal_state_3 = state == 3;
+assign internal_state_0 = state === 0;
+assign internal_state_1 = state === 1;
+assign internal_state_2 = state === 2;
+assign internal_state_3 = state === 3;
 
 specify
     // Output delays
@@ -131,3 +134,5 @@ case (state)
 endcase
 
 endmodule
+
+`endif // basic_and_

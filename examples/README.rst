@@ -25,9 +25,23 @@ XOR: Specified on the commandline with "*" instance
 Bigger examples
 ---------------
 
+For more elaborate examples we include a 1-bit full adder, an 8-bit ripple carry adder 
+(ripple_carry_8bit) and a 2-to-4-bit-, one-hot-, dual-to-single-rail-, AND-based decoder (decode2dr4sr). 
+
+All of these use SDF files to annotate their assertions with mixed use of the "*", named and unnamed 
+cell instances. 
+
+Furthermore, the decoder shows normal file specification on command line, whereas the 1-bit and 
+8-bit adder examples use the vcd_assert library file flag (-i) to include its dependencies. 
+
+Large/Very-Large Examples:
+-------------------------
 TODO
+
 
 Notes
 ------
-The basic NDRO doesn't run in IVerilog due to a bug in IVerilog.
+We use compiler directives to disable the sdf annotation command in the basic NDRO example, because 
+it doesn't run in IVerilog due to a bug in IVerilog not being able parse SDF files which make use of 
+the '*' wildcard to specify cell instances.
 

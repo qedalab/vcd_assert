@@ -58,6 +58,8 @@ struct cell : block<
   star< timing_spec >
 >{};
 
+// struct plus : ce
+
 // clang-format on
 
 } // namespace Grammar

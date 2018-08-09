@@ -57,13 +57,15 @@ module_ansi_header :
 ( package_import_declaration )*  ( parameter_port_list )? ( list_of_port_declarations )? ';'
 ;
 
+module_identifier_tag : module_identifier ;
+
 module_declaration :
 module_nonansi_header ( timeunits_declaration )?  ( module_item )* 
-'endmodule' ( ':' module_identifier )?
+'endmodule' ( ':' module_identifier_tag )?
 | module_ansi_header ( timeunits_declaration )?  ( non_port_module_item )* 
-'endmodule' ( ':' module_identifier )?
+'endmodule' ( ':' module_identifier_tag )?
 |  ( attribute_instance )*  module_keyword ( lifetime )? module_identifier '(' '.' '*' ')' ';'
-( timeunits_declaration )?  ( module_item )*  'endmodule' ( ':' module_identifier )?
+( timeunits_declaration )?  ( module_item )*  'endmodule' ( ':' module_identifier_tag )?
 | 'extern' module_nonansi_header
 | 'extern' module_ansi_header
 ;
@@ -235,7 +237,7 @@ elaboration_system_task :
 | '$info' ( '(' ( list_of_arguments )? ')' )? ';'
 ;
 
-finish_number : UINT
+finish_number : Unsigned_number
 ;
 
 module_common_item :
@@ -259,11 +261,17 @@ port_declaration ';'
 | non_port_module_item
 ;
 
+// udp_instantiation ::=
+// udp_identifier [ drive_strength ] [ delay2 ] udp_instance { , udp_instance } ;
+// // from A.5.4
+// udp_instance ::= [ name_of_instance ] ( output_terminal , input_terminal { , input_terminal } )
+// name_of_instance ::= instance_identifier { unpacked_dimension }
+
 module_or_generate_item :
 ( attribute_instance )*  parameter_override
 |  ( attribute_instance )*  gate_instantiation
-|  ( attribute_instance )*  udp_instantiation
 |  ( attribute_instance )*  module_instantiation
+|  ( attribute_instance )*  udp_instantiation
 |  ( attribute_instance )*  module_common_item
 ;
 
@@ -837,7 +845,7 @@ delay2 : '#' delay_value | '#' '(' mintypmax_expression ( ',' mintypmax_expressi
 ;
 
 delay_value :
-UINT
+Unsigned_number
 | Real_number
 | ps_identifier
 | time_literal
@@ -1663,6 +1671,7 @@ pass_switchtype : 'tran' | 'rtran'
 // A.4.1 Instantiation
 // A.4.1.1 Module instantiation
 
+
 module_instantiation :
 module_identifier ( parameter_value_assignment )? hierarchical_instance  ( ',' hierarchical_instance )*  ';'
 ;
@@ -1877,7 +1886,7 @@ output_symbol : Integral_number
 ;
 
 //level_symbol : '0' | '1' | 'x' | 'X' | '?' | 'b' | 'B'
-level_symbol : UINT | Simple_identifier | '?'
+level_symbol : Unsigned_number | Simple_identifier | '?'
 ;
 
 //edge_symbol : 'r' | 'R' | 'f' | 'F' | 'p' | 'P' | 'n' | 'N' | '*'
@@ -2032,10 +2041,8 @@ delay_control
 | 'repeat' '(' expression ')' event_control
 ;
 
-DelayChar : [#] ;
-
-delay_control : 
- DelayChar delay_value
+delay_control :
+'#' delay_value
 | '#(' mintypmax_expression ')'
 ;
 
@@ -2289,17 +2296,17 @@ deferred_immediate_assert_statement
 ;
 
 deferred_immediate_assert_statement :
-'assert' '#' UINT '(' expression ')' action_block
+'assert' '#' Unsigned_number '(' expression ')' action_block
 | 'assert' 'final' '(' expression ')' action_block
 ;
 
 deferred_immediate_assume_statement :
-'assume' '#' UINT '(' expression ')' action_block
+'assume' '#' Unsigned_number '(' expression ')' action_block
 | 'assume' 'final' '(' expression ')' action_block
 ;
 
 deferred_immediate_cover_statement :
-'cover' '#' UINT '(' expression ')' statement_or_null
+'cover' '#' Unsigned_number '(' expression ')' statement_or_null
 | 'cover' 'final' '(' expression ')' statement_or_null
 ;
 
@@ -2732,7 +2739,7 @@ zero_or_one : '0' | '1'
 z_or_x : 'x' | 'X' | 'z' | 'Z'
 ;
 **/
-edge_descriptor : UINT Simple_identifier? | Simple_identifier UINT
+edge_descriptor : Unsigned_number Simple_identifier? | Simple_identifier Unsigned_number
 ;
 
 timing_check_condition :
@@ -2960,8 +2967,8 @@ part_select_range : constant_range | indexed_range
 ;
 
 indexed_range :
-expression '+:' constant_expression
-| expression '-:' constant_expression
+expression '+' ':' constant_expression
+| expression '-' ':' constant_expression
 ;
 
 genvar_expression : constant_expression
@@ -3027,7 +3034,7 @@ primary_literal : number | time_literal | Unbased_unsized_literal | String_liter
 ;
 
 time_literal :
-UINT time_unit
+Unsigned_number time_unit
 | Fixed_point_number time_unit
 ;
 
@@ -3128,8 +3135,8 @@ Decimal_number
 ;
 
 Decimal_number :
-UINT
-| Size? Decimal_base UINT
+Unsigned_number
+| Size? Decimal_base Unsigned_number
 | Size? Decimal_base X_digit  '_'*
 | Size? Decimal_base Z_digit  '_'*
 ;
@@ -3149,17 +3156,17 @@ fragment Size : Non_zero_unsigned_number
 fragment Non_zero_unsigned_number : Non_zero_decimal_digit  ( '_' | Decimal_digit)*
 ;
 
-UINT : Decimal_digit  ( '_' | Decimal_digit )* 
+Unsigned_number : Decimal_digit  ( '_' | Decimal_digit )* 
 ;
 
 
-Fixed_point_number : UINT '.' UINT
+Fixed_point_number : Unsigned_number '.' Unsigned_number
 ;
 
 
 Real_number :
 Fixed_point_number
-| UINT ( '.' UINT )? [eE] [+-]? UINT
+| Unsigned_number ( '.' Unsigned_number )? [eE] [+-]? Unsigned_number
 ;
 
 

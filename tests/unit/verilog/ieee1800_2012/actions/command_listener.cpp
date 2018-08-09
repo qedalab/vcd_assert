@@ -27,7 +27,7 @@
 using namespace Verilog::Test;
 using namespace Verilog;
 using namespace antlr4;
-
+using namespace antlr4::tree;
     // CAPTURE(tb_dro_example);
 
 
@@ -74,35 +74,69 @@ TEST_CASE("Verilog.Actions.CommandListener",
     // clang-format on
     };
 
+   /*
+    const DelayFileView wanted = test_delayfile_1;
+
+    //Delayfile from test delayfile view 
+    DelayFileTester dft = DelayFileTester();
+    auto test_delayfile_p = dft.get_test_delayfile(wanted);
+
+    //serialize test delayfile
+    std::string serialized;
+    serialize_delayfile(ranges::back_inserter(serialized), test_delayfile_p);
+
+    //parse serialized delayfile using DelayFileReader
+    DelayFileReader test_reader{};
+    require_parse<Grammar::delay_file, Actions::DelayFileAction>(
+        serialized, test_reader);
+
+    //get Delayfile from parse result
+    auto test_p = test_reader.release();
+    REQUIRE(test_p.operator bool());
+    // auto& test = ;
+
+    //compare delayfile from parse with original delayfile view.
+    catch_test_delayfile(test_delayfile_1, *test_p);
+   */
+
+
+
     INFO("Setup test data");
-    DesignReader reader{};
+    
+    auto reader_sp = std::make_shared<DesignReader>();
     
     /*TEST REQUIRES THAT reader be partially provisioned with module stuff*/
-    reader.module("tb_basic_dro", tb_dro_file_path_abs_.to_string());
+    reader_sp->module("tb_basic_dro", tb_dro_file_path_abs_.to_string());
 
 
     INFO("Setup parsing");
     ANTLRInputStream input(tb_dro_example);
-    CAPTURE(tb_dro_example);
+    // CAPTURE(tb_dro_example);
     
     INFO("Parse input into parse tree");
     SV2012Lexer lexer(&input);
     CommonTokenStream tokens(&lexer);
-    SV2012Parser parser(&tokens);  
+    
+    auto parser_sp = std::make_shared<SV2012Parser>(&tokens) ;
 
-    std::cout << tokens.getText() << std::endl << std::endl;
+    // auto parser_p = std::make_shared<SV2012Parser>(*parser);  
 
+    auto *tree = parser_sp->source_text();
 
-    // auto *tree = parser.source_text();
-    // std::cout << tree->toStringTree(&parser) << std::endl << std::endl;
+    std::cout << tree->toStringTree(parser_sp.get()) << std::endl << std::endl;
 
     INFO("Initialize listener");
-    // CommandListener cl(parser, reader, tb_dro_file_path_abs_.to_string());
+    CommandListener cl(parser_sp,reader_sp);
 
     INFO("Walk tree with listener");
-    // tree::ParseTreeWalker walker{};
-    // walker.walk(cl, tree);
+    ParseTreeWalker walker;
+    walker.walk(&cl, tree);
 
+
+    auto design_p = reader_sp->release();
+    REQUIRE(design_p.operator bool());
+
+    REQUIRE(design_p->num_sdf_commands() == 1);
     FAIL();
   }
 }

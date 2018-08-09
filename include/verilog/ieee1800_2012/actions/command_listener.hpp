@@ -29,14 +29,17 @@
 
 #include "../../types/design_reader.hpp"
 
+#include "parse/util/debug_printing.hpp"
+
 #include <SV2012BaseListener.h>
+
 #include <string>
 #include <range/v3/view/indices.hpp>
 #include <range/v3/view/zip.hpp>
 
 namespace Verilog {
 
-class CommandListener : SV2012BaseListener
+class CommandListener : public SV2012BaseListener
 {
 private:
   std::shared_ptr<SV2012Parser> parser_;
@@ -49,7 +52,7 @@ public:
 
   void enterModule_declaration(SV2012Parser::Module_declarationContext * ctx);
 
-  void enterSystem_tf_call(SV2012Parser::System_tf_callContext *ctx);
+  void exitSystem_tf_call(SV2012Parser::System_tf_callContext *ctx);
   
 };
 

@@ -28,12 +28,14 @@
 #define LIBVERILOG_IEEE1800_2012_GRAMMAR_PREPROCESS_LISTENER_HPP
 
 #include "../../types/design_reader.hpp"
+
 #include <SV2012BaseListener.h>
+
 #include <string>
 
 namespace Verilog {
 
-class PreprocessListener : SV2012BaseListener
+class PreprocessListener : public SV2012BaseListener
 {
 private:
   std::shared_ptr<SV2012Parser> parser_;
@@ -47,7 +49,6 @@ public:
 
   /*For building MODULE->FILE map/symbols-table */
   void enterModule_declaration(SV2012Parser::Module_declarationContext *ctx);
-  void exitModule_declaration(SV2012Parser::Module_declarationContext *ctx);
 
   /*For convertion to regular timescale annotation format*/
   void enterPp_timescale_declaration(

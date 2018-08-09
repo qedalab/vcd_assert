@@ -35,7 +35,7 @@ TEST_CASE("Verilog.Actions.NetlistListener",
 
   SECTION("sdf annotation action")
   {
-    CAPTURE(dro_example);
+    // CAPTURE(dro_example);
 
     ANTLRInputStream input(dro_example);
     SV2012Lexer lexer(&input);

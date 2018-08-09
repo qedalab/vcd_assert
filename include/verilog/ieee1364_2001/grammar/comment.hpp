@@ -37,7 +37,7 @@ namespace Grammar {
 
 using namespace Parse::Grammar::Base;
 
-struct one_line_comment : seq< 
+struct one_line_comment : if_must< 
     two< '/' >, until< eolf > 
 > {};
 

@@ -1,5 +1,5 @@
 `timescale 1ps/100fs
-module basic_one_bit_adder (cin, a, b, clk, sum, cout);
+module full_adder_1bit (cin, a, b, clk, sum, cout);
 
   input cin, a, b, clk;
 
