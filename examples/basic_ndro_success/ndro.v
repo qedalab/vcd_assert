@@ -1,4 +1,7 @@
 // Adapted from TimEx genrated files for vcd_assert testing
+`ifndef basic_ndro_
+`define basic_ndro_
+
 `define begin_time 8
 `timescale 1ps/100fs
 module basic_ndro (set, reset, clk, out);
@@ -76,4 +79,6 @@ case (state)
     end
 endcase
 
-endmodule
+endmodule 
+
+`endif // basic_ndro_

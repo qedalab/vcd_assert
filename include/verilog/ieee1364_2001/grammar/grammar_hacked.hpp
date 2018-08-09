@@ -233,10 +233,12 @@ struct at_least_blank_separator : seq<
 >{};
 
 struct initial_block : seq < //causes parse errors when if_must
-  initial_keyword,
-  // at_least_blank_separator,
-  separator,
-  begin_keyword,
+  seq<
+    initial_keyword,
+   // at_least_blank_separator,
+    separator,
+    begin_keyword
+  >,
   star<
     until<
       sor<
@@ -284,10 +286,10 @@ struct _module_description_ : sor<
 struct _grammar_ : must<
   opt<separator>,
   opt<list<
-    until<
-      sor<compiler_directive,_module_description_>
+    tao::pegtl::until<
+      sor<separator, compiler_directive,_module_description_>, seq<not_at<comment>, tao::pegtl::any>
     >,
-    opt<separator>
+    opt<blank>
   >>,
   opt<separator>
   

@@ -169,7 +169,7 @@ bool DelayFileReader::has_timescale() const noexcept
 void DelayFileReader::cells(std::vector<Cell> cells)
 {
   if(has_cells())
-    throw std::runtime_error("timescale has already been set");
+    throw std::runtime_error("cells has already been set");
 
   delayfile_->cells_ = std::move(cells);
 }

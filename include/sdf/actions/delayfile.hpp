@@ -97,7 +97,7 @@ struct DelayFileAction : multi_dispatch<
         static_cast<TimeScaleFunctionType>(&DelayFileReader::timescaleview)
       >
   >,
-  Grammar::cell, inner_action<
+  tao::pegtl::plus<Grammar::cell>, inner_action<
       CellArrayAction, 
       Storage::function<&DelayFileReader::cells>
   >

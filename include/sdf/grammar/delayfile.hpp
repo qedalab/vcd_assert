@@ -39,7 +39,7 @@ namespace Grammar {
 struct delay_file : block<
   key_delayfile,
   sdf_header,
-  star< cell >
+  plus< cell >
 >{};
 
 // clang-format on

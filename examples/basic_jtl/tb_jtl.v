@@ -1,6 +1,5 @@
 // Adapted from TimEx generated files for vcd_assert testing
 `timescale 1ps/100fs
-
 module tb_basic_jtl;
     reg in = 0;
 

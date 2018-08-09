@@ -8,6 +8,7 @@ option(BUILD_DOCS "Build documentation [unused]" FALSE)
 
 include(cmake/warnings.cmake)
 include(cmake/antlr.cmake)
+include(cmake/example_as_test.cmake)
 
 antlr_init("4.7.1")
 

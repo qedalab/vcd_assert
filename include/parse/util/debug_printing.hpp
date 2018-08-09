@@ -9,15 +9,16 @@
 
 namespace Parse::Util {
 
-template <typename Input>
+template <typename... Args>
 #ifdef VERBOSE_DEBUG_OUTPUT
-void debug_puts(Input input)
+void debug_puts(Args... args)
 {
-  fmt::print(input);
+  fmt::print(args...);
   fmt::print("\n");
 #else
-void debug_puts(Input /*unused*/)
+void debug_puts(Args... /*args*/)
 {
+  // (void)args;
 #endif
 }
 

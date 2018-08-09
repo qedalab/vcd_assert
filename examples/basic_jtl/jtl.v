@@ -1,4 +1,7 @@
 // Adapted from TimEx generated files for vcd_assert testing
+`ifndef basic_jtl
+`define basic_jtl
+
 `timescale 1ps/100fs
 module basic_jtl (in, out);
 
@@ -39,3 +42,5 @@ begin
 end
 
 endmodule
+
+`endif //basic_jtl_

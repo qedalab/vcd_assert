@@ -5,14 +5,14 @@
 `endif
 
 `timescale 1ps/100fs
-module tb_one_bit_adder;
+module tb_full_adder_1bit;
     reg a = 0;
     reg b = 0;
     reg cin = 0;
     reg clk = 0;
 
     initial begin
-        $dumpfile("tb_one_bit_adder.vcd");
+        $dumpfile("tb_full_adder_1bit.vcd");
         $dumpvars;
 
         #`begin_time
@@ -63,6 +63,6 @@ module tb_one_bit_adder;
         $monitor("%d,\t%b,\t%b,\t%b,\t%b,\t%b,\t%b",$time,cin,a,b,clk,sum,cout);
     end
 
-    basic_one_bit_adder DUT (cin, a, b, clk, sum ,cout);
+    full_adder_1bit DUT (cin, a, b, clk, sum ,cout);
 
 endmodule

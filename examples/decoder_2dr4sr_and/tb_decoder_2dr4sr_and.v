@@ -3,23 +3,10 @@
 
 `timescale 1ps/1ps
 
-////////////////////////////////////TESTBENCH///////////////////////////////////
-module tb_decoder_4bit
+module0 tb_decoder_2dr4sr_and
   #(parameter
     SIZE = 2,
-    t_hold = 3,
-    t_out = 9,
-    t_setup = 8,
-    pulse_width = 2,
-    period = 30,
-    off_time = period - pulse_width,
-    runtime = 1000,
-    warning_file = "", //set this to an actual file from top level tb.
-    tuning_delay = 2, //extra delay after all clk pulses arrive
-    t_read = 3,
-    min_input_delay = 3, //time needed to
-    max_input_delay = 5, //time needed to
-    splitter_delay = 2
+    t_test = 3 
     )();
 reg [(SIZE)-1:0]                in_data;
 reg [(SIZE)-1:0]                in_negative;

@@ -1,11 +1,11 @@
-`ifndef decoder_4bit
-`define decoder_4bit
+`ifndef decoder_2dr4sr_and_
+`define decoder_2dr4sr_and_
 
 `timescale 1ps/1ps
 `include "../basic/basic_and_success/basic_and.v"
 
 // AND based 2-bit dual rail input to 4 bit single rail output,  one hot decoder. 
-module decoder_4bit
+module decoder_2dr4sr_and
   #(parameter
       warning_file = "", //set this to an actual file from top level tb.  
       SIZE = 2
@@ -36,6 +36,6 @@ basic_and and_hot_3(
   .out(out[3])
 );
 
-endmodule // decoder_4bit
-`endif // decoder_4bit
+endmodule // decoder_2dr4sr_and
+`endif // decoder_2dr4sr_and_
 
