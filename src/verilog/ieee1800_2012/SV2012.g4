@@ -2995,7 +2995,7 @@ number
 
 primary :
 primary_literal
-// | ( class_qualifier | package_scope )? hierarchical_identifier select // <<4
+| ( class_qualifier | package_scope )? hierarchical_identifier select // <<4
 | empty_queue
 | concatenation ( '[' range_expression ']' )?
 | multiple_concatenation ( '[' range_expression ']' )?
@@ -3011,7 +3011,9 @@ primary_literal
 | 'null'
 ;
 
-class_qualifier : ( 'local' ':' ':' )? ( implicit_class_handle '.' | class_scope )?
+class_qualifier : 
+'local' ':' ':'  ( implicit_class_handle '.' | class_scope )?
+( 'local' ':' ':' )? ( implicit_class_handle '.' | class_scope )
 ;
 
 range_expression :
