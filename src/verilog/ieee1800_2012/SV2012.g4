@@ -203,7 +203,7 @@ port_reference  ( ',' port_reference )* 	//<<5
 ;
 
 port_reference :
-port_identifier constant_select
+port_identifier ( constant_select )?
 ;
 
 port_direction : 'input' | 'output' | 'inout' | 'ref'
@@ -300,7 +300,7 @@ module_identifier
 ;
 
 bind_target_instance :
-hierarchical_identifier constant_bit_select
+hierarchical_identifier ( constant_bit_select )?
 ;
 
 bind_target_instance_list :
@@ -693,7 +693,7 @@ net_identifier  ( unpacked_dimension )*
 
 type_declaration :
 'typedef' data_type type_identifier  ( variable_dimension )*  ';'
-| 'typedef' interface_instance_identifier constant_bit_select '.' type_identifier type_identifier ';'
+| 'typedef' interface_instance_identifier ( constant_bit_select )? '.' type_identifier type_identifier ';'
 | 'typedef' ( 'enum' | 'struct' | 'union' | 'class' | 'interface' 'class' )? type_identifier ';'
 ;
 
@@ -2969,10 +2969,10 @@ genvar_expression : constant_expression
 
 constant_primary :
 primary_literal
-| ps_parameter_identifier constant_select
+| ps_parameter_identifier ( constant_select )?
 | specparam_identifier ( '[' constant_range_expression ']' )?
 | genvar_identifier
-| formal_port_identifier constant_select
+| formal_port_identifier ( constant_select )?
 | ( package_scope | class_scope )? enum_identifier
 | constant_concatenation ( '[' constant_range_expression ']' )?
 | constant_multiple_concatenation ( '[' constant_range_expression ']' )?
@@ -3046,12 +3046,14 @@ nonrange_select :
 (  ( '.' member_identifier bit_select )*  '.' member_identifier )? bit_select
 ;
 
-constant_bit_select :  ( '[' constant_expression ']' )* 
+constant_bit_select : '[' constant_expression ']' ( '[' constant_expression ']' )* 
 ;
 
+/* TODO : how can grammar distingish between identifiers in hierarchy_identifier and in members? */ //<<11
+//<<10 : changed constant_select to non optional internals.
 constant_select :
-(  ( '.' member_identifier constant_bit_select )*  '.' member_identifier )? constant_bit_select
-( '[' constant_part_select_range ']' )?
+('.' member_identifier ( constant_bit_select )? )*  '.' member_identifier  ( constant_bit_select | '[' constant_part_select_range ']' )? //<<10
+| (  ( '.' member_identifier ( constant_bit_select )? )*  '.' member_identifier )? (constant_bit_select | '[' constant_part_select_range ']')  //<<10
 ;
 
 constant_cast :
@@ -3068,7 +3070,7 @@ casting_type '\'' '(' expression ')'
 // A.8.5 Expression left-side values
 
 net_lvalue :
-ps_or_hierarchical_net_identifier constant_select
+ps_or_hierarchical_net_identifier ( constant_select )?
 | '{' net_lvalue  ( ',' net_lvalue )*  '}'
 | ( assignment_pattern_expression_type )? assignment_pattern_net_lvalue
 ;
@@ -3306,7 +3308,7 @@ hierarchical_block_identifier : hierarchical_identifier
 hierarchical_event_identifier : hierarchical_identifier
 ;
 
-hierarchical_identifier : ( '$root' '.' )?  ( identifier constant_bit_select '.' )*  identifier
+hierarchical_identifier : ( '$root' '.' )?  ( identifier ( constant_bit_select )? '.' )*  identifier
 ;
 
 hierarchical_net_identifier : hierarchical_identifier
