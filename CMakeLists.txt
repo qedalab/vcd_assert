@@ -56,7 +56,7 @@ add_library(libverilog "src/verilog")
 target_sources(libverilog PRIVATE ${antlr4cpp_src_files_Verilog})
 
 target_include_directories(libverilog PUBLIC "${PROJECT_SOURCE_DIR}/include/"  ${ANTLR4CPP_INCLUDE_DIRS}  ${antlr4cpp_include_dirs_Verilog})
-target_link_libraries(libverilog PUBLIC fmt::fmt Verilog)
+target_link_libraries(libverilog PUBLIC fmt::fmt Verilog libparse)
 
 #Add vcd_assert library
 add_library(libvcd_assert "src/vcd_assert")
