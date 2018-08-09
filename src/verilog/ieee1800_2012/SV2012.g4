@@ -235,7 +235,7 @@ elaboration_system_task :
 | '$info' ( '(' ( list_of_arguments )? ')' )? ';'
 ;
 
-finish_number : Unsigned_number
+finish_number : UINT
 ;
 
 module_common_item :
@@ -837,7 +837,7 @@ delay2 : '#' delay_value | '#' '(' mintypmax_expression ( ',' mintypmax_expressi
 ;
 
 delay_value :
-Unsigned_number
+UINT
 | Real_number
 | ps_identifier
 | time_literal
@@ -1877,7 +1877,7 @@ output_symbol : Integral_number
 ;
 
 //level_symbol : '0' | '1' | 'x' | 'X' | '?' | 'b' | 'B'
-level_symbol : Unsigned_number | Simple_identifier | '?'
+level_symbol : UINT | Simple_identifier | '?'
 ;
 
 //edge_symbol : 'r' | 'R' | 'f' | 'F' | 'p' | 'P' | 'n' | 'N' | '*'
@@ -1999,7 +1999,7 @@ blocking_assignment ';'
 | loop_statement
 | jump_statement
 | par_block
-| procedural_timing_control_statement
+| procedural_timing_control_statement ';' 
 | seq_block
 | wait_statement
 | procedural_assertion_statement
@@ -2023,7 +2023,7 @@ variable_identifier_list : variable_identifier  ( ',' variable_identifier )*
 // A.6.5 Timing control statements
 
 procedural_timing_control_statement :
-procedural_timing_control statement_or_null
+procedural_timing_control White_space ( attribute_instance )* ( statement )?  //<<12
 ;
 
 delay_or_event_control :
@@ -2032,16 +2032,18 @@ delay_control
 | 'repeat' '(' expression ')' event_control
 ;
 
-delay_control :
-'#' delay_value
-| '#' '(' mintypmax_expression ')'
+DelayChar : [#] ;
+
+delay_control : 
+ DelayChar delay_value
+| '#(' mintypmax_expression ')'
 ;
 
 event_control :
 '@' hierarchical_event_identifier
-| '@' '(' event_expression ')'
-| '@' '*'
-| '@' '(' '*' ')'
+| '@(' event_expression ')'
+| '@*'
+| '@(' '*' ')'
 | '@' ps_or_hierarchical_sequence_identifier
 ;
 
@@ -2287,17 +2289,17 @@ deferred_immediate_assert_statement
 ;
 
 deferred_immediate_assert_statement :
-'assert' '#' Unsigned_number '(' expression ')' action_block
+'assert' '#' UINT '(' expression ')' action_block
 | 'assert' 'final' '(' expression ')' action_block
 ;
 
 deferred_immediate_assume_statement :
-'assume' '#' Unsigned_number '(' expression ')' action_block
+'assume' '#' UINT '(' expression ')' action_block
 | 'assume' 'final' '(' expression ')' action_block
 ;
 
 deferred_immediate_cover_statement :
-'cover' '#' Unsigned_number '(' expression ')' statement_or_null
+'cover' '#' UINT '(' expression ')' statement_or_null
 | 'cover' 'final' '(' expression ')' statement_or_null
 ;
 
@@ -2730,7 +2732,7 @@ zero_or_one : '0' | '1'
 z_or_x : 'x' | 'X' | 'z' | 'Z'
 ;
 **/
-edge_descriptor : Unsigned_number Simple_identifier? | Simple_identifier Unsigned_number
+edge_descriptor : UINT Simple_identifier? | Simple_identifier UINT
 ;
 
 timing_check_condition :
@@ -2958,8 +2960,8 @@ part_select_range : constant_range | indexed_range
 ;
 
 indexed_range :
-expression '+' ':' constant_expression
-| expression '-' ':' constant_expression
+expression '+:' constant_expression
+| expression '-:' constant_expression
 ;
 
 genvar_expression : constant_expression
@@ -3025,7 +3027,7 @@ primary_literal : number | time_literal | Unbased_unsized_literal | String_liter
 ;
 
 time_literal :
-Unsigned_number time_unit
+UINT time_unit
 | Fixed_point_number time_unit
 ;
 
@@ -3126,8 +3128,8 @@ Decimal_number
 ;
 
 Decimal_number :
-Unsigned_number
-| Size? Decimal_base Unsigned_number
+UINT
+| Size? Decimal_base UINT
 | Size? Decimal_base X_digit  '_'*
 | Size? Decimal_base Z_digit  '_'*
 ;
@@ -3147,16 +3149,20 @@ fragment Size : Non_zero_unsigned_number
 fragment Non_zero_unsigned_number : Non_zero_decimal_digit  ( '_' | Decimal_digit)*
 ;
 
+UINT : Decimal_digit  ( '_' | Decimal_digit )* 
+;
+
+
+Fixed_point_number : UINT '.' UINT
+;
+
+
 Real_number :
 Fixed_point_number
-| Unsigned_number ( '.' Unsigned_number )? [eE] [+-]? Unsigned_number
+| UINT ( '.' UINT )? [eE] [+-]? UINT
 ;
 
-Fixed_point_number : Unsigned_number '.' Unsigned_number
-;
 
-Unsigned_number : Decimal_digit  ( '_' | Decimal_digit )* 
-;
 
 fragment Binary_value : Binary_digit  ( '_' | Binary_digit )* 
 ;
@@ -3456,7 +3462,7 @@ Simple_identifier : [a-zA-Z_] [a-zA-Z0-9_$]*
 specparam_identifier : identifier
 ;
 
-System_tf_identifier : '$'[a-zA-Z0-9_$] [a-zA-Z0-9_$]*
+System_tf_identifier : [$][a-zA-Z0-9_$][a-zA-Z0-9_$]*
 ;
 
 task_identifier : identifier

@@ -15,14 +15,15 @@ PreprocessListener::PreprocessListener(std::shared_ptr<SV2012Parser> parser,
 void PreprocessListener::enterModule_declaration(
     SV2012Parser::Module_declarationContext *ctx)
 {
-    reader_->next_module();
-  // auto tokens = parser_->getTokenStream();
-  // if (ctx->module_identifier() != null) {
-  //   auto identifier = tokens->getText(ctx->module_identifier());
-  //   reader_->next_module();
-  // } else {
-  //   throw std::runtime_error("InternalError(listener has no module identifier)")
-  // }
+  auto tokens = parser_->getTokenStream();
+  if (!ctx->module_identifier().empty()) {
+    // auto identifier = ctx->module_identifier(0);
+
+    auto identifier = tokens->getText(ctx->module_identifier(0));
+    reader_->module(identifier,file_path_);
+  } else {
+    throw std::runtime_error("InternalError(listener has no module identifier)");
+  }
 }
 
 void PreprocessListener::enterInclude_statement(
@@ -66,7 +67,7 @@ void PreprocessListener::exitSource_text(
 }
 
 
-/* from gburdell parser */
+/* preprocessor from gburdell sv2012 'parser' */
 
 //     private static final Pattern stSpacePatt = Pattern.compile("([ \t]+)(?=[^
 //     \t])");

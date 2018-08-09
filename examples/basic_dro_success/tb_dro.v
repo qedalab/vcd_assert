@@ -16,7 +16,7 @@ module tb_basic_dro;
 
     initial begin
         $display("\t\ttime,\tset,\treset,\tout");
-        $monitor("\t\t%0t,\t%b,\t%b,\t%b",$realtime,set,reset,out);
+        $monitor("\t\t%0t,\t%b,\t%b,\t%b", $realtime, set, reset, out);
     end
 
     basic_dro DUT (set, reset, out);

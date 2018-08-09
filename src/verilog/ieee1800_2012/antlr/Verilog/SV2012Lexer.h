@@ -71,11 +71,12 @@ public:
     T__294 = 295, T__295 = 296, T__296 = 297, T__297 = 298, T__298 = 299, 
     T__299 = 300, T__300 = 301, T__301 = 302, T__302 = 303, T__303 = 304, 
     T__304 = 305, T__305 = 306, T__306 = 307, T__307 = 308, T__308 = 309, 
-    T__309 = 310, T__310 = 311, T__311 = 312, T__312 = 313, File_path_spec = 314, 
-    Integral_number = 315, Decimal_number = 316, Real_number = 317, Fixed_point_number = 318, 
-    Unsigned_number = 319, Unbased_unsized_literal = 320, String_literal = 321, 
-    One_line_comment = 322, Block_comment = 323, Escaped_identifier = 324, 
-    Simple_identifier = 325, System_tf_identifier = 326, White_space = 327
+    T__309 = 310, T__310 = 311, T__311 = 312, T__312 = 313, T__313 = 314, 
+    T__314 = 315, T__315 = 316, T__316 = 317, T__317 = 318, File_path_spec = 319, 
+    DelayChar = 320, Integral_number = 321, Decimal_number = 322, UINT = 323, 
+    Fixed_point_number = 324, Real_number = 325, Unbased_unsized_literal = 326, 
+    String_literal = 327, One_line_comment = 328, Block_comment = 329, Escaped_identifier = 330, 
+    Simple_identifier = 331, System_tf_identifier = 332, White_space = 333
   };
 
   SV2012Lexer(antlr4::CharStream *input);

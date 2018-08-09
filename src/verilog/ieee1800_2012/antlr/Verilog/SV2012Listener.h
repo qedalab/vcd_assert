@@ -613,6 +613,12 @@ public:
   virtual void enterTf_port_declaration(SV2012Parser::Tf_port_declarationContext *ctx) = 0;
   virtual void exitTf_port_declaration(SV2012Parser::Tf_port_declarationContext *ctx) = 0;
 
+  virtual void enterTf_prototype_port_item(SV2012Parser::Tf_prototype_port_itemContext *ctx) = 0;
+  virtual void exitTf_prototype_port_item(SV2012Parser::Tf_prototype_port_itemContext *ctx) = 0;
+
+  virtual void enterTf_prototype_port_list(SV2012Parser::Tf_prototype_port_listContext *ctx) = 0;
+  virtual void exitTf_prototype_port_list(SV2012Parser::Tf_prototype_port_listContext *ctx) = 0;
+
   virtual void enterTask_prototype(SV2012Parser::Task_prototypeContext *ctx) = 0;
   virtual void exitTask_prototype(SV2012Parser::Task_prototypeContext *ctx) = 0;
 

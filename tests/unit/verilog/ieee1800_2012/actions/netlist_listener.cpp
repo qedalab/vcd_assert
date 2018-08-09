@@ -17,9 +17,7 @@
 #include <range/v3/view/zip.hpp>
 #include <string>
 #include <string_view>
-#include <tao/pegtl/file_input.hpp>
-#include <tao/pegtl/memory_input.hpp>
-#include <tao/pegtl/parse.hpp>
+
 
 #include "SV2012BaseListener.h"
 #include "SV2012Lexer.h"
@@ -37,7 +35,7 @@ TEST_CASE("Verilog.Actions.NetlistListener",
 
   SECTION("sdf annotation action")
   {
-    // CAPTURE(dro_example);
+    CAPTURE(dro_example);
 
     ANTLRInputStream input(dro_example);
     SV2012Lexer lexer(&input);
@@ -45,7 +43,7 @@ TEST_CASE("Verilog.Actions.NetlistListener",
     SV2012Parser parser(&tokens);
         
     auto *tree = parser.source_text();
-    std::cout << tree->toStringTree(&parser) << std::endl << std::endl;
+    // std::cout << tree->toStringTree(&parser) << std::endl << std::endl;
     FAIL();
   }
 

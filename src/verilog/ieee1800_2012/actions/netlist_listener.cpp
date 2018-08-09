@@ -17,7 +17,6 @@ void NetlistListener::enterModule_declaration(
 {
   auto tokens = parser_->getTokenStream();
   if (ctx->module_identifier(0)) {
-    // auto identifier = ctx->module_identifier(0);
     reader_->next_module();
   } else {
     throw std::runtime_error(
@@ -61,8 +60,10 @@ void NetlistListener::enterGate_instantiation(
   // HOW DOES VCD ASSERT HANDLE PRIMITIVES?
     
   // auto tokens = parser_->getTokenStream();
-  // if (ctx->module_identifier(0) && ctx->hiea(0)) {
-  //   auto gate_ident = tokens->getText(ctx->module_identifier(0));
+  // if (ctx->module_identifier() && !ctx->hierarchical_instance().empty()) {
+    
+  //   //TODO should handle MULTI instantiation? 0 -> n; not just 0.
+  //   auto module_ident = tokens->getText(ctx->module_identifier());
   //   auto inst_ident = tokens->getText(ctx->hierarchical_instance(0)
   //                                         ->name_of_instance()
   //                                         ->instance_identifier());

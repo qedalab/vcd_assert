@@ -18,9 +18,6 @@
 #include <range/v3/view/zip.hpp>
 #include <string>
 #include <string_view>
-#include <tao/pegtl/file_input.hpp>
-#include <tao/pegtl/memory_input.hpp>
-#include <tao/pegtl/parse.hpp>
 
 #include "SV2012BaseListener.h"
 #include "SV2012Lexer.h"
@@ -86,13 +83,17 @@ TEST_CASE("Verilog.Actions.CommandListener",
 
     INFO("Setup parsing");
     ANTLRInputStream input(tb_dro_example);
-
+    CAPTURE(tb_dro_example);
     
     INFO("Parse input into parse tree");
     SV2012Lexer lexer(&input);
     CommonTokenStream tokens(&lexer);
     SV2012Parser parser(&tokens);  
-    /*auto *tree =*/ parser.source_text();
+
+    std::cout << tokens.getText() << std::endl << std::endl;
+
+
+    // auto *tree = parser.source_text();
     // std::cout << tree->toStringTree(&parser) << std::endl << std::endl;
 
     INFO("Initialize listener");

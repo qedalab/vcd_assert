@@ -12,3 +12,4 @@ test.sdf
 empty.sdf
 resources/benchmark/*/results/*
 compile_commands.json
+.antlr/

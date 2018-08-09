@@ -95,7 +95,6 @@ void CommandListener::enterSystem_tf_call(
       }
 
       SDFAnnotateCommand sdf_annotate_command{
-          //clang-format off
           tokens->getText(sdf_file_ctx),
           name_of_instance,
           config_file,
@@ -103,7 +102,6 @@ void CommandListener::enterSystem_tf_call(
           mtm_spec,
           scale_factors,
           scale_type
-          //clang-format on
       };
      
       command = sdf_annotate_command;
