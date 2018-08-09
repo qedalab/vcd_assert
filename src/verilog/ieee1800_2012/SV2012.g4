@@ -178,7 +178,7 @@ parameter_declaration
 | 'type' list_of_type_assignments
 ;
 
-list_of_ports : '(' port  ( ',' port )*  ')'
+list_of_ports : '(' ( port  ( ',' ( port )? )* )?  ')' //<<5
 ;
 
 list_of_port_declarations :
@@ -194,13 +194,12 @@ port_declaration :
 ;
 
 port :
-( port_expression )?
+port_expression 																			//<<5
 | '.' port_identifier '(' ( port_expression )? ')'
 ;
 
 port_expression :
-port_reference
-|  ( port_reference  ( ',' port_reference )*  )* 
+port_reference  ( ',' port_reference )* 	//<<5
 ;
 
 port_reference :
@@ -230,7 +229,7 @@ ansi_port_declaration :
 
 // A.1.4 Module items
 elaboration_system_task :
-'$fatal' ( '(' finish_number (',' list_of_arguments )? ')' )? ';'
+ '$fatal' ( '(' finish_number (',' list_of_arguments )? ')' )? ';'
 | '$error' ( '(' ( list_of_arguments )? ')' )? ';'
 | '$warning' ( '(' ( list_of_arguments )? ')' )? ';'
 | '$info' ( '(' ( list_of_arguments )? ')' )? ';'
@@ -777,7 +776,8 @@ net_type : 'supply0' | 'supply1' | 'tri' | 'triand' | 'trior' | 'trireg' | 'tri0
 ;
 
 net_port_type :
-( net_type )? data_type_or_implicit
+( net_type )? data_type // <<6 TODO
+| net_type data_type_or_implicit // <<6 TODO dual optional case removed data type implicit (PROB WRONG)
 | net_type_identifier
 | 'interconnect' implicit_data_type
 ;
@@ -1036,13 +1036,13 @@ block_item_declaration
 ;
 
 tf_port_list :
-tf_port_item  ( ',' tf_port_item )* 
+tf_port_item  ( ',' tf_port_item )*  // <<<0
 ;
 
 tf_port_item :
 ( attribute_instance )* 
 ( tf_port_direction )? ( 'var' )? data_type_or_implicit
-( port_identifier  ( variable_dimension )*  ( '=' expression )? )?
+port_identifier  ( variable_dimension )*  ( '=' expression )? // <<<0
 ;
 
 tf_port_direction : port_direction | 'const' 'ref'
@@ -1052,7 +1052,22 @@ tf_port_declaration :
 ( attribute_instance )*  tf_port_direction ( 'var' )? data_type_or_implicit list_of_tf_variable_identifiers ';'
 ;
 
-task_prototype : 'task' task_identifier ( '(' ( tf_port_list )? ')' )?
+tf_prototype_port_item :
+( attribute_instance )* 
+(
+	( tf_port_direction )? ( 'var' )? data_type_or_implicit
+	port_identifier  ( variable_dimension )*  ( '=' expression )? // <<<0
+|
+	( tf_port_direction )? ( 'var' )? data_type
+	( port_identifier  ( variable_dimension )*  ( '=' expression )? )? // <<<0
+)
+;
+
+tf_prototype_port_list :
+tf_prototype_port_item  ( ',' tf_prototype_port_item )*  // <<<0
+;
+
+task_prototype : 'task' task_identifier ( '(' tf_prototype_port_list ')' )? // <<<0
 ;
 
 // A.2.8 Block item declarations
@@ -1152,11 +1167,11 @@ restrict_property_statement:
 ;
 
 property_instance :
-ps_or_hierarchical_property_identifier ( '(' ( property_list_of_arguments )? ')' )?
+ps_or_hierarchical_property_identifier ( '(' property_list_of_arguments ')' )? // <<<1
 ;
 
-property_list_of_arguments :
-(property_actual_arg)?  ( ',' (property_actual_arg)? )*   ( ',' '.' identifier '(' (property_actual_arg)? ')' )* 
+property_list_of_arguments : 
+(property_actual_arg)?  ( ',' (property_actual_arg)? )*   ( ',' '.' identifier '(' (property_actual_arg)? ')' )*  // <<<1
 | '.' identifier '(' (property_actual_arg)? ')'  ( ',' '.' identifier '(' (property_actual_arg)? ')' )* 
 ;
 
@@ -1300,11 +1315,11 @@ operator_assignment
 ;
 
 sequence_instance :
-ps_or_hierarchical_sequence_identifier ( '(' ( sequence_list_of_arguments )? ')' )?
+ps_or_hierarchical_sequence_identifier ( '(' sequence_list_of_arguments ')' )? // <<<2
 ;
 
 sequence_list_of_arguments :
-(sequence_actual_arg)?  ( ',' (sequence_actual_arg)? )*   ( ',' '.' identifier '(' (sequence_actual_arg)? ')' )* 
+(sequence_actual_arg)?  ( ',' (sequence_actual_arg)? )*   ( ',' '.' identifier '(' (sequence_actual_arg)? ')' )* // <<<2
 | '.' identifier '(' (sequence_actual_arg)? ')'  ( ',' '.' identifier '(' (sequence_actual_arg)? ')' )* 
 ;
 
@@ -1666,7 +1681,7 @@ ordered_parameter_assignment : param_expression
 named_parameter_assignment : '.' parameter_identifier '(' ( param_expression )? ')'
 ;
 
-hierarchical_instance : name_of_instance '(' ( list_of_port_connections )? ')'
+hierarchical_instance : name_of_instance '(' list_of_port_connections  ')' // <<3 empty implied inside 'list_of_port_connections'
 ;
 
 name_of_instance : instance_identifier  ( unpacked_dimension )* 
@@ -1677,7 +1692,7 @@ ordered_port_connection  ( ',' ordered_port_connection )*
 | named_port_connection  ( ',' named_port_connection )* 
 ;
 
-ordered_port_connection :  ( attribute_instance )*  ( expression )?
+ordered_port_connection :  ( attribute_instance )*  ( expression )? // <<3 either a 
 ;
 
 named_port_connection :
@@ -2817,8 +2832,8 @@ positional_tagged_expression_argument :
 ;
 
 list_of_arguments :
-( expression )?  ( positional_expression_argument )*  ( positional_tagged_expression_argument )* 
-| '.' identifier '(' ( expression )? ')'  ( positional_tagged_expression_argument )* 
+ expression ( positional_expression_argument )*  ( positional_tagged_expression_argument )* 
+| '.' identifier '(' expression ')'  ( positional_tagged_expression_argument )* 
 ;
 
 method_call_body :
@@ -2980,7 +2995,7 @@ number
 
 primary :
 primary_literal
-| ( class_qualifier | package_scope )? hierarchical_identifier select
+// | ( class_qualifier | package_scope )? hierarchical_identifier select // <<4
 | empty_queue
 | concatenation ( '[' range_expression ']' )?
 | multiple_concatenation ( '[' range_expression ']' )?
@@ -3437,7 +3452,7 @@ Simple_identifier : [a-zA-Z_] [a-zA-Z0-9_$]*
 specparam_identifier : identifier
 ;
 
-System_tf_identifier : '$' [a-zA-Z_] [a-zA-Z0-9_$]*
+System_tf_identifier : '$'[a-zA-Z0-9_$] [a-zA-Z0-9_$]*
 ;
 
 task_identifier : identifier
