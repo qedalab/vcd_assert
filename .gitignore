@@ -1,4 +1,5 @@
 .gitignore
+.git
 *.o
 *.bin
 *.outs

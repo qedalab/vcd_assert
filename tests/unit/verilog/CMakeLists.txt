@@ -15,5 +15,6 @@ endif()
 
 # add_subdirectory(ieee1364_2001)
 add_subdirectory(ieee1800_2012)
-add_subdirectory(types)
+add_subdirectory(test)
+# add_subdirectory(types)
 

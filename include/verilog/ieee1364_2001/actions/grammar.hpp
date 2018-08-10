@@ -86,7 +86,7 @@ struct IncludeFileApply { // clang-format on
     //   auto parse_input = i->second;
     //   // auto parse_input = inputmap.at(next_input_abs);
 
-    //   if(parse_input.type == Util::InputTypeEnum::const_char_pointer){
+    //   if(parse_input.type == Util::InputTypeEnum::memory){
     //     auto start = std::get<const char*>(parse_input.value);
     //     tao::pegtl::memory_input<> new_input(start, next_input_rel);
 

@@ -36,18 +36,18 @@ namespace Verilog::Util {
 enum class InputTypeEnum {
   source_file,
   library_file,
-  const_char_pointer
+  memory
 };
 
-using InputType = std::variant<const char*, std::string>;
+using InputTypeValueVariant = std::variant<const char*, std::string>;
 
 struct ParseInput{
+  std::string name;
   InputTypeEnum type;
-  InputType value;
+  InputTypeValueVariant value;
 };
 
 using InputMap = std::unordered_map<std::string, ParseInput>;
-
 
 } // namespace Verilog::Util
 

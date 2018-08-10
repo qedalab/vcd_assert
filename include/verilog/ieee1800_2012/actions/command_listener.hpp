@@ -44,10 +44,12 @@ class CommandListener : public SV2012BaseListener
 private:
   std::shared_ptr<SV2012Parser> parser_;
   std::shared_ptr<DesignReader> reader_;
-  size_t module_i_ = 0;
+  std::string file_path_;
+  
 public:
   CommandListener(std::shared_ptr<SV2012Parser> parser,
-                  std::shared_ptr<DesignReader> reader);
+                  std::shared_ptr<DesignReader> reader,
+                  std::string file_path = "");
 
 
   void enterModule_declaration(SV2012Parser::Module_declarationContext * ctx);

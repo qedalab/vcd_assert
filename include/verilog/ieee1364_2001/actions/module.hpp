@@ -138,18 +138,22 @@ struct ModuleDescriptionApply{ // clang-format on
 
     if(first_pass){
 
-      Parse::Util::debug_puts("DEBUG: found module");
+      Parse::Util::debug_puts("DEBUG: found new module");
 
       reader.module(data.module_identifier, input.position().source);
 
     }else{
+
+      Parse::Util::debug_puts("DEBUG: next module");
+      //increment internal counter
+      reader.next_module();
       
       for (auto&& instance : data.instances ){
-        reader.instance(NetType::module, data.module_identifier, instance.name, instance.type);
+        reader.instance(NetType::module, instance.name, instance.type);
       }
 
       for (auto&& command : data.commands ){
-        reader.command(command, data.module_identifier);
+        reader.command(command);
       }
     }
 

@@ -27,39 +27,39 @@
 #ifndef LIBVERILOG_TYPES_DESIGN_READER_HPP
 #define LIBVERILOG_TYPES_DESIGN_READER_HPP
 
-#include "enums.hpp"
 #include "design.hpp"
+#include "enums.hpp"
 
-#include <optional>
-#include <memory>
-#include <vector>
 #include <fmt/format.h>
+#include <memory>
+#include <optional>
 #include <parse/util/debug_printing.hpp>
+#include <vector>
 
 // #include <pegtl/input/>
 
 namespace Verilog {
 
+template <class InputTypeValueVariant>
+using InputHandles = std::unordered_map<std::string, InputTypeValueVariant>; // source
 
-template<class InputType>
-using InputHandles = std::unordered_map<std::string, InputType>; //source
-
-// template<class InputType>
+// template<class InputTypeValueVariant>
 // class InputHandles{
 //   // std::vector<std::filesystem::path>;
 //   // std::vector<std::string> sources_;
-//   std::unordered_map<std::string, InputType> inputs_; //source
+//   std::unordered_map<std::string, InputTypeValueVariant> inputs_; //source
 // };
 /// Verilog design reader class
 /// This class populates and returns a populated Verilog::Design
-// template<class InputType>
-class DesignReader {
+// template<class InputTypeValueVariant>
+class DesignReader
+{
   std::unique_ptr<Design> design_;       /// Pointer to Verilog Design
   std::vector<std::size_t> net_stack_;   /// Stack of current nets
-  std::size_t current_module_index_ = 0;                 /// current definition index
-  // InputHandles<InputType> inputs_;
+  std::size_t current_module_index_ = 0; /// current definition index
+  // InputHandles<InputTypeValueVariant> inputs_;
   // std::vector<tao::pegtl::file_input> files_;
-  // std::unordered_map<std::string, std::size_t> file_lookup_; 
+  // std::unordered_map<std::string, std::size_t> file_lookup_;
 
 public:
   /// DesignReader constructor
@@ -68,24 +68,25 @@ public:
   // void merge(std::unique_ptr<DesignReader> other);
   void merge(DesignReader other);
 
-  /// Introduces a new module into the design, and links it with a <NetType> definition  
+  /// Introduces a new module into the design, and links it with a <NetType>
+  /// definition
   std::size_t module(std::string module_name, std::string file_path);
-  
+
   bool next_module();
 
-  /// Introduces a new instance, and links it with a <NetType> definition  
+  /// Introduces a new instance, and links it with a <NetType> definition
   /// \param NetType instance definition's type
   /// \param instance_name instance identifier.
   /// \param definition_name <NetType> definition identifier
   /// \return index instance is stored at if successful, throws otherwise.
   /// \exception Throws if definition is not found. (missing import statement)
-  std::size_t instance(NetType type, std::string current_module_name,
-                       std::string instance_name, std::string definition_name);
+  std::size_t instance(NetType type, std::string instance_name,
+                       std::string definition_name);
 
   /// Add a command to be applied at a specific definition scope
   /// \param command command to add
   /// \param definition identifier
-  std::size_t command(Command command, std::string definition_name);
+  std::size_t command(Command command);
 
   /// Releases the design file that was read in.
   /// Essentially finalizing the data within the design file.
@@ -94,6 +95,6 @@ public:
   std::unique_ptr<Design> release();
 };
 
-}
+} // namespace Verilog
 
 #endif // LIBVERILOG_TYPES_DESIGN_READER_HPP

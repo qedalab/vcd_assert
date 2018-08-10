@@ -204,7 +204,7 @@ TEST_CASE("Verilog.Actions.Design", "[Verilog][Events][Design]")
 
     //       // inputmap.emplace("dro.v", // include_string
     //       //                  Verilog::Util::ParseInput{
-    //       // Verilog::Util::InputTypeEnum::const_char_pointer,
+    //       // Verilog::Util::InputTypeEnum::memory,
     //       //                      test_string_p});
 
     //       for (auto &&pass : rsv::indices(2)) {

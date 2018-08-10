@@ -7,24 +7,19 @@ namespace rsv = ranges::view;
 // using sp = SV2012Parser;
 
 CommandListener::CommandListener(std::shared_ptr<SV2012Parser> parser,
-                                 std::shared_ptr<DesignReader> reader) :
+                                 std::shared_ptr<DesignReader> reader,
+                                 std::string file_path) :
     parser_(parser),
-    reader_(reader)
+    reader_(reader),
+    file_path_(file_path)
 {
 }
 
 void CommandListener::enterModule_declaration(
     SV2012Parser::Module_declarationContext *ctx)
 {
-  Parse::Util::debug_puts("DEBUG: CommandListener: Enter Module");
-
-  // Parse::Util::debug_puts("DEBUG: Module identifier ({})",
-                            // tokens->getText(identifier));
+  Parse::Util::debug_puts("DEBUG: CommandListener: Enter module declaration");
   reader_->next_module();
-  
-  // Parse::Util::debug_puts("DEBUG: Match ({})",
-                          //  tokens->getText(ctx->module_nonansi_header()));
-
 }
 
 void CommandListener::exitSystem_tf_call(
@@ -39,15 +34,13 @@ void CommandListener::exitSystem_tf_call(
 
   if ((ctx->System_tf_identifier()) && (ctx->list_of_arguments())) {
 
-    Parse::Util::debug_puts(
-        "DEBUG: CommandListener: identifier ({})",
-        ctx->System_tf_identifier()->getSymbol()->getText());
-    Parse::Util::debug_puts("DEBUG: CommandListener: args ({})",
-                            tokens->getText(ctx->list_of_arguments()));
+    auto str = ctx->System_tf_identifier()->getSymbol()->getText();
     SV2012Parser::List_of_argumentsContext *args_ctx = ctx->list_of_arguments();
     Command command{};
 
-    auto str = ctx->System_tf_identifier()->getSymbol()->getText();
+    Parse::Util::debug_puts("DEBUG: CommandListener: identifier ({})", str);
+    Parse::Util::debug_puts("DEBUG: CommandListener: args ({})",
+                            tokens->getText(args_ctx));
 
     if (str == "$sdf_annotate") {
       Parse::Util::debug_puts(
@@ -115,17 +108,12 @@ void CommandListener::exitSystem_tf_call(
           mtm_spec, scale_factors,    scale_type};
 
       command = sdf_annotate_command;
-      reader_->command(command, "dummy");
+      reader_->command(command);
       Parse::Util::debug_puts("DEBUG: CommandListener: store command");
     } else {
       // do nothing
     }
-
   } else {
-    // do nothing
-    Parse::Util::debug_puts("context invalid");
-
-    // throw std::runtime_error(
-    //     "InternalError(system task identifier null)");
+    Parse::Util::debug_puts("DEBUG : task/funtion ignored");
   }
 }
