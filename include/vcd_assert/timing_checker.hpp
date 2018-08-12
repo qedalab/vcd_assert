@@ -115,7 +115,7 @@ class TimingChecker
                                                 std::size_t port_vcd_var_index);
 
   std::optional<std::tuple<ConditionalValuePointer, EdgeType>>
-  apply_sdf_hold_port_tchk_helper(SDF::PortTimingCheck port_tchk,
+  apply_sdf_hold_port_tchk(SDF::PortTimingCheck port_tchk,
                                   std::size_t scope_index, VCD::Scope &scope);
   
 

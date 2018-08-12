@@ -55,8 +55,8 @@ using InputHandles = std::unordered_map<std::string, InputTypeValueVariant>; // 
 class DesignReader
 {
   std::unique_ptr<Design> design_;       /// Pointer to Verilog Design
-  std::vector<std::size_t> net_stack_;   /// Stack of current nets
-  std::size_t current_module_index_ = 0; /// current definition index
+  // std::vector<std::size_t> net_stack_;   /// Stack of current nets
+  int current_module_index_ = 0; /// current definition index
   // InputHandles<InputTypeValueVariant> inputs_;
   // std::vector<tao::pegtl::file_input> files_;
   // std::unordered_map<std::string, std::size_t> file_lookup_;
@@ -65,6 +65,12 @@ public:
   /// DesignReader constructor
   DesignReader();
 
+  // Copy constructor
+  DesignReader(const DesignReader &other) {
+    current_module_index_ = other.current_module_index_;
+    design_ = std::make_unique<Design>(*other.design_);
+  }
+  
   // void merge(std::unique_ptr<DesignReader> other);
   void merge(DesignReader other);
 

@@ -127,12 +127,17 @@ std::size_t DesignReader::module(std::string module_name, std::string file_path)
 
 bool DesignReader::next_module()
 {
+  Parse::Util::debug_puts("DEBUG: old current module index: ({})",current_module_index_);
   if (current_module_index_ < (design_->modules_.size() - 1)) {
     current_module_index_++;
+    Parse::Util::debug_puts("DEBUG: new current module index: ({})",current_module_index_);
     return true;
   } else {
+    current_module_index_ = 0;
+    Parse::Util::debug_puts("DEBUG: new current module index: ({})",current_module_index_);
     return false;
   }
+
 }
 
 /*  NO LONGER Assumes that the origin of the instantiation is the
@@ -170,6 +175,8 @@ std::size_t DesignReader::instance(NetType type,
                                    instance_name, definition_index});
 
     // INSERT INSTANCE INDEX INTO MODULE
+    Parse::Util::debug_print("DEBUG: insert instance idx into module w idx : {}\n", current_module_index_);
+
     design_->modules_.at(current_module_index_)
         .instance_lookup_.emplace(instance_name, new_instance_index);
 
@@ -244,8 +251,5 @@ std::size_t DesignReader::command(Command command)
 
 std::unique_ptr<Design> DesignReader::release()
 {
-  if (!net_stack_.empty())
-    throw std::runtime_error("Cannot release Design while there is still net");
-
   return std::move(design_);
 }

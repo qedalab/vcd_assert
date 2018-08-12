@@ -38,13 +38,21 @@
 #include <sdf/serialize/base.hpp>
 #include <sdf/types/base.hpp>
 
-#include <verilog/ieee1364_2001/actions/grammar.hpp>
-#include <verilog/ieee1364_2001/actions/module.hpp>
-#include <verilog/ieee1364_2001/grammar/grammar.hpp>
-#include <verilog/ieee1364_2001/grammar/module.hpp>
+// #include <verilog/ieee1364_2001/actions/grammar.hpp>
+// #include <verilog/ieee1364_2001/actions/module.hpp>
+// #include <verilog/ieee1364_2001/grammar/grammar.hpp>
+// #include <verilog/ieee1364_2001/grammar/module.hpp>
+#include <verilog/ieee1800_2012/parse.hpp>
+
+#include "verilog/ieee1800_2012/actions/command_listener.hpp"
+#include "verilog/ieee1800_2012/actions/netlist_listener.hpp"
+#include "verilog/ieee1800_2012/actions/preprocess_listener.hpp"
+
 #include <verilog/types/commands.hpp>
+#include <verilog/types/design.hpp>
 #include <verilog/types/design_reader.hpp>
-#include <verilog/types/module.hpp>
+#include <verilog/util/parse_input.hpp>
+// #include <verilog/types/module.hpp>
 
 #include <parse/actions/control.hpp>
 #include <parse/actions/make_pegtl_template.hpp>
@@ -74,6 +82,7 @@
 
 namespace fs = Parse::Util::fs;
 namespace rsv = ranges::view;
+using namespace Verilog;
 
 struct NodeApply {
   std::string node;
@@ -171,67 +180,92 @@ int main(int argc, char **argv)
   }
 
   // Initialise the Verilog design reader
-  Verilog::DesignReader design_reader{};
-  // using namespace antlr4;
-  // using namespace SystemVerilog;
-  // using namespace antlr4;
+  auto design_reader = std::make_shared<DesignReader>();
 
   if (!source_files.empty()) {
+    std::puts("Start Verilog parsing");
 
-    Verilog::Util::InputMap inputmap{};
-
+    // Util::InputMap inputmap{};
+    std::vector<Util::ParseInput> inputs{};
     std::optional<std::size_t> starting_source_file_index_op{};
 
-    // Find file containing top module
     // (not using top module at the moment, but MUST be given non the less)
-    for (auto &&[i, file] : rsv::zip(rsv::indices, source_files)) {
+    Parse::Util::debug_puts("DEBUG: Pass 1 : preprocess + symbol table");
+    for (auto &&file : source_files) {
       if (fs::exists(file)) {
+        Parse::Util::debug_puts("DEBUG: parsing file : ({})", file);
 
         // auto file_path_normal = fs::path(file).lexically_normal();
         std::string abs_path = fs::canonical(file).string();
 
-        // tao::pegtl::file_input<> input(abs_path);
+        inputs.emplace_back(
+            Util::ParseInput{file, Util::InputTypeEnum::source_file, abs_path});
 
-        // Verilog::IEEE1364_2001::Actions::ModuleEvent me{};
-
-        // std::ifstream stream;
-        // stream.open(abs_path);
-
-        // antlr4::ANTLRInputStream input(stream);
-        // SystemVerilog::SV2012Lexer lexer(&input);
-        // antlr4::CommonTokenStream tokens(&lexer);
-        // SystemVerilog::SV2012Parser parser(&tokens);
-
-        // auto *tree = parser.source_text();
-        // // std::cout << tree->toStringTree(&parser) << std::endl <<
-        // std::endl;
-
-        // tree::ParseTreeWalker walker{}; // create standard walker
-        // DesignListener extract(parser);
-        // walker.walk(extract, tree); // initiate walk of tree with listener
-
-        // if (!result) {
-        //   fmt::print(FMT_STRING("ERROR: Failed to parse Verilog file:\n"));
-        // } else {
-        //   if (me.module_identifier == top_module) {
-        //     starting_source_file_index_op = (std::size_t)i;
-        //   }
-        // }
       } else {
         fmt::print("ERROR: file not found : {}\n", file);
       }
     }
 
-    Parse::Util::debug_puts("DEBUG: Top module found");
+    assert(source_files.size() == inputs.size());
 
+    // Initialize parser and parse Verilog source files
+    auto parsers = IEEE1800_2012::init_antlr_parsers(inputs);
+
+    // Parse run 1 : preprocess + module declaration symbol table
+    std::puts("\nINFO: Start preprocessor run");
+    for (auto &&[walker, parser, tree, parse_source] : parsers) {
+      // debug print
+      if (verbose >= 2) {
+        Parse::Util::debug_print("DEBUG: parse tree start :\n");
+        Parse::Util::debug_puts(tree->toStringTree(parser.get()));
+        Parse::Util::debug_print("DEBUG: parse tree end :\n");
+      }
+
+      auto pp_listener = std::make_shared<PreprocessListener>(parser, design_reader, parse_source);
+      std::vector<std::shared_ptr<SV2012BaseListener>> first_pass_listeners{};
+      first_pass_listeners.emplace_back(pp_listener);
+      IEEE1800_2012::walk_w_listeners(walker, tree, first_pass_listeners);
+    }
+
+    // Find file containing top module
+    auto design_reader_copy = std::make_shared<DesignReader>(*design_reader);
+    auto temp_design = design_reader_copy->release();
+    auto search = temp_design->module_find(top_module);
+    Parse::Util::debug_puts("DEBUG: Testing for : \"{}\"", top_module);
+
+    // #ifdef VERBOSE_DEBUG_OUTPUT
+    //     for (auto &&i : rsv::indices(temp_design->num_modules())) {
+    //       auto mod = temp_design->get_module(i);
+    //       Parse::Util::debug_puts("DEBUG: case {} : \"{}\" : ({})",i,
+    //       mod.identifier, mod.file_path);
+    //     }
+    // #endif
+
+    if (search.has_value()) {
+      Parse::Util::debug_puts("DEBUG: Top module found");
+      auto top = temp_design->get_module(search.value());
+      auto top_file_path = top.file_path;
+
+      for (auto &&[i, file] : rsv::zip(rsv::indices, source_files)) {
+        if (file == top_file_path) {
+          Parse::Util::debug_puts("DEBUG: index of file found : {}", i);
+          starting_source_file_index_op = (std::size_t)i;
+          break;
+        }
+      }
+    } else {
+      throw std::runtime_error("ERROR: top module not found!\n");
+    }
+
+    // Parse run 2 : build netlist + get commands
+    Parse::Util::debug_puts("DEBUG: Pass 2 : netlist + commands");
     if (starting_source_file_index_op.has_value()) {
-      std::puts("Start Verilog parsing");
 
-      auto index = starting_source_file_index_op.value();
+      // auto index = starting_source_file_index_op.value();
 
-      auto top_file_normal =
-          fs::path(source_files[index]); //.lexically_normal();
-      auto top_file_abs_path = fs::canonical(top_file_normal);
+      // auto top_file_normal =
+      //     fs::path(source_files[index]); //.lexically_normal();
+      // auto top_file_abs_path = fs::canonical(top_file_normal);
 
       // Create input map of library files.
       //       for (auto &&file : library_files) {
@@ -239,37 +273,20 @@ int main(int argc, char **argv)
 
       //         // TODO search in 'include statement' apply action, not here..
       //         inputmap.emplace(abs_path, // relative path from the test bench
-      //                          Verilog::Util::ParseInput{
-      //                          Verilog::Util::InputTypeEnum::library_file,
+      //                          Util::ParseInput{
+      //                          Util::InputTypeEnum::library_file,
       //                          abs_path});
       //       }
+ 
 
-      // First pass builds module map.
-      // Second pass does rest.
-      // Both follow includes.
+      for (auto &&[walker, parser, tree, parse_source] : parsers) {
+        std::shared_ptr<SV2012BaseListener> c_listener = std::make_shared<CommandListener>(parser, design_reader, parse_source);
+        std::shared_ptr<SV2012BaseListener> n_listener = std::make_shared<NetlistListener>(parser, design_reader, parse_source);
+        std::vector<std::shared_ptr<SV2012BaseListener>> second_pass_listeners{};
+        second_pass_listeners.emplace_back(c_listener);
+        second_pass_listeners.emplace_back(n_listener);
 
-      // Parse starting from top Verilog file
-      bool result = false;
-      for (auto &&pass : rsv::indices(2)) {
-        Parse::Util::debug_print("DEBUG: starting pass : {}\n", pass+1);
-        
-        for (auto &&file : source_files) {
-          tao::pegtl::file_input<> verilog_input(file);
-
-          bool first_pass = (pass == 0);
-          // Parse Verilog from top
-          result = tao::pegtl::parse<
-              Verilog::IEEE1364_2001::Grammar::_grammar_,
-              Parse::make_pegtl_template<
-                  Verilog::IEEE1364_2001::Actions::GrammarAction>::type,
-              Parse::capture_control>(verilog_input, design_reader, inputmap,
-                                      first_pass);
-
-          if (!result) {
-            throw std::runtime_error(
-                "ERROR: Unsuccessful parse of Verilog source file!\n");
-          }
-        }
+        IEEE1800_2012::walk_w_listeners(walker, tree, second_pass_listeners);
       }
 
       std::puts("Verilog parse successful");
@@ -283,7 +300,7 @@ int main(int argc, char **argv)
   }
 
   // Finalize verilog parsing into Design object.
-  auto design_p = design_reader.release();
+  auto design_p = design_reader->release();
   assert(design_p.operator bool());
 
   std::puts("INFO: Starting VCD parsing");

@@ -52,7 +52,7 @@ public:
                   std::string file_path = "");
 
 
-  void enterModule_declaration(SV2012Parser::Module_declarationContext * ctx);
+  void exitModule_declaration(SV2012Parser::Module_declarationContext * ctx);
 
   void exitSystem_tf_call(SV2012Parser::System_tf_callContext *ctx);
   

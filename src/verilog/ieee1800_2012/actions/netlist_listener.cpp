@@ -14,10 +14,10 @@ NetlistListener::NetlistListener(std::shared_ptr<SV2012Parser> parser,
 {
 }
 
-void NetlistListener::enterModule_declaration(
+void NetlistListener::exitModule_declaration(
     SV2012Parser::Module_declarationContext * /*ctx*/)
 {
-  Parse::Util::debug_puts("DEBUG: NetlistListener: Enter module declaration");
+  Parse::Util::debug_puts("DEBUG: NetlistListener: Exit module declaration");
   reader_->next_module();
 }
 

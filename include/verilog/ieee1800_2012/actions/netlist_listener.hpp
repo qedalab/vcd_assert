@@ -47,7 +47,7 @@ public:
                   std::shared_ptr<DesignReader> reader,
                   std::string file_path = "");
 
-  void enterModule_declaration(SV2012Parser::Module_declarationContext *ctx);
+  void exitModule_declaration(SV2012Parser::Module_declarationContext *ctx);
 
   void
   enterModule_instantiation(SV2012Parser::Module_instantiationContext *ctx);

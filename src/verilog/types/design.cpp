@@ -62,6 +62,7 @@ Design::get_sdf_commands(std::size_t sdf_set_index) const
 
 std::size_t Design::sdf_reverse_lookup(std::size_t sdf_set_index) const
 {
+  assert(sdf_commands_reverse_lookup_.size() > sdf_set_index);
   return sdf_commands_reverse_lookup_.at(sdf_set_index);
 }
 

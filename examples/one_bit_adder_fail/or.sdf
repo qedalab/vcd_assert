@@ -16,7 +16,7 @@
         */
     (CELL
         (CELLTYPE "basic_or")
-        (INSTANCE DUT)
+        (INSTANCE *)
         (DELAY
             (ABSOLUTE
                 /*Conditional delays not supported by iverilog */

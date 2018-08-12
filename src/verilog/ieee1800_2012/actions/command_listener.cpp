@@ -1,4 +1,5 @@
 #include "verilog/ieee1800_2012/actions/command_listener.hpp"
+#include <string>
 
 using namespace Verilog;
 namespace rsv = ranges::view;
@@ -15,10 +16,10 @@ CommandListener::CommandListener(std::shared_ptr<SV2012Parser> parser,
 {
 }
 
-void CommandListener::enterModule_declaration(
+void CommandListener::exitModule_declaration(
     SV2012Parser::Module_declarationContext *ctx)
 {
-  Parse::Util::debug_puts("DEBUG: CommandListener: Enter module declaration");
+  Parse::Util::debug_puts("DEBUG: CommandListener: Exit module declaration");
   reader_->next_module();
 }
 
@@ -55,6 +56,12 @@ void CommandListener::exitSystem_tf_call(
       auto ctxv = args_ctx->positional_expression_argument();
 
       std::string sdf_file = tokens->getText(sdf_file_ctx);
+      Parse::Util::debug_puts( 
+          "DEBUG: CommandListener: $sdf_annotate system file path : ({})", sdf_file);
+      //unwrap if quoted string
+      sdf_file = sdf_file.substr(1,sdf_file.size()-2);
+      Parse::Util::debug_puts( 
+          "DEBUG: CommandListener: $sdf_annotate system file path : ({})", sdf_file);
       std::optional<std::string> name_of_instance{};
       std::optional<std::string> config_file{};
       std::optional<std::string> log_file{};
@@ -67,32 +74,38 @@ void CommandListener::exitSystem_tf_call(
           switch (i) {
           case 0:
             if (op_ctx->expression()) {
-              name_of_instance = tokens->getText(op_ctx->expression());
+              auto str = tokens->getText(op_ctx->expression());
+              name_of_instance = (str.substr(0,1) =="\"") ? str.substr(1,str.size()-2) : str;
             }
             break;
           case 1:
             if (op_ctx->expression()) {
-              config_file = tokens->getText(op_ctx->expression());
+              auto str = tokens->getText(op_ctx->expression());
+              config_file = (str.substr(0,1) =="\"") ? str.substr(1,str.size()-2) : str;
             }
             break;
           case 2:
             if (op_ctx->expression()) {
-              log_file = tokens->getText(op_ctx->expression());
+              auto str = tokens->getText(op_ctx->expression());
+              log_file = (str.substr(0,1) =="\"") ? str.substr(1,str.size()-2) : str;
             }
             break;
           case 3:
             if (op_ctx->expression()) {
-              mtm_spec = tokens->getText(op_ctx->expression());
+              auto str = tokens->getText(op_ctx->expression());
+              mtm_spec = (str.substr(0,1) =="\"") ? str.substr(1,str.size()-2) : str;
             }
             break;
           case 4:
             if (op_ctx->expression()) {
-              scale_factors = tokens->getText(op_ctx->expression());
+              auto str = tokens->getText(op_ctx->expression());
+              scale_factors = (str.substr(0,1) =="\"") ? str.substr(1,str.size()-2) : str;
             }
             break;
           case 5:
             if (op_ctx->expression()) {
-              scale_type = tokens->getText(op_ctx->expression());
+              auto str = tokens->getText(op_ctx->expression());
+              scale_type = (str.substr(0,1) =="\"") ? str.substr(1,str.size()-2) : str;
             }
             break;
 
@@ -104,8 +117,14 @@ void CommandListener::exitSystem_tf_call(
       Parse::Util::debug_puts(
           "DEBUG: CommandListener: build SDFAnnotateCommand");
       SDFAnnotateCommand sdf_annotate_command{
-          sdf_file, name_of_instance, config_file, log_file,
-          mtm_spec, scale_factors,    scale_type};
+          sdf_file, 
+          name_of_instance, 
+          config_file, 
+          log_file,
+          mtm_spec, 
+          scale_factors, 
+          scale_type
+        };
 
       command = sdf_annotate_command;
       reader_->command(command);

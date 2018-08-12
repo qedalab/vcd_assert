@@ -36,10 +36,11 @@ void parse_w_listener(std::shared_ptr<DesignReader> test_out_p,
   INFO("Setup parse");
   ANTLRInputStream input(parse_input);
 
-  SV2012Lexer lexer(&input);
+  SV2012Lexer lexer(&input);  
+  lexer.removeErrorListeners();
   CommonTokenStream tokens(&lexer);
   auto parser_sp = std::make_shared<SV2012Parser>(&tokens);
-
+  parser_sp->removeErrorListeners();
   INFO("Parse input into parse tree");
   auto *tree = parser_sp->source_text();
 

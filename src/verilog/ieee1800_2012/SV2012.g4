@@ -3397,7 +3397,7 @@ package_identifier : identifier
 
 package_scope :
 package_identifier ':' ':'
-| '$unit' ':' ':'
+| '$unit' ':' ':' 
 ;
 
 parameter_identifier : identifier
