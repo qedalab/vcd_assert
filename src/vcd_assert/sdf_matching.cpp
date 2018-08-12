@@ -70,6 +70,9 @@ VCDAssert::get_sdf_node_ptr(const VCD::Header &header, State &state,
   auto state_var_index = index_lookup.at(vcd_id_index).from;
   auto var_svp = state.get_value_pointer(state_var_index);
 
+  Parse::Util::debug_puts("DEBUG: vcd_var_index : ({})",vcd_var_index);
+  Parse::Util::debug_puts("DEBUG: vcd_id_index : ({})",vcd_id_index);
+  Parse::Util::debug_puts("DEBUG: state_var_index : ({})",state_var_index);
   Parse::Util::debug_puts("DEBUG: found variable state value pointer");
 
   if (std::holds_alternative<VCD::Value *>(var_svp)) {
@@ -225,13 +228,21 @@ VCDAssert::get_sdf_node_scope_index(const VCD::Header &header, SDF::Node node,
         node.basename_identifier);
   }
 
+  std::optional<std::pair<std::string, std::size_t>> found{};
+
   for (auto &&child_var : inner_scope.get_variables()) {
     Parse::Util::debug_print("DEBUG: child var :{}\n", child_var.first);
+    if(node.basename_identifier ==  child_var.first){
+      found = {child_var.first,child_var.second} ;
+    }
   }
-
-  // get the variable from the scope
-  if (inner_scope.contains_variable(node.basename_identifier)) {
-    return inner_scope.get_variable_index(node.basename_identifier);
+  if(found.has_value())
+  {
+    return found.value().second;
+    // get the variable from the scope
+      // if (inner_scope.contains_variable(node.basename_identifier)) {
+      //     return inner_scope.get_variable_index(node.basename_identifier);
+      //   }
   } else {
     std::puts("WARN: variable not found in scope, ignoring");
     return {};
@@ -263,8 +274,10 @@ VCDAssert::get_sdf_conditional_ptr(const VCD::Header &header, State &state,
     if (left_index_option.has_value()) {
       Parse::Util::debug_puts("DEBUG: found conditional node vcd index.");
 
+      auto vcd_val_index = left_index_option.value();
+
       auto left_cvp = get_sdf_node_ptr(header, state, index_lookup,
-                                       left_index_option.value());
+                                       vcd_val_index);
 
       auto right_cvp = ConditionalValuePointer(VCD::Value::one); /// <<<<
 

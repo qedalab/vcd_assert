@@ -216,22 +216,26 @@ int main(int argc, char **argv)
     std::puts("\nINFO: Start preprocessor run");
     for (auto &&parse_data : parsers) {
 
+      auto *tree = parse_data.parser->source_text();    
+
+      ParseTreeWalker walker;
+
       if (verbose > 1) {
         Parse::Util::debug_print("DEBUG: parse tree start :\n");
         Parse::Util::debug_puts(
-            parse_data.tree_root->toStringTree(parse_data.parser.get()));
+            // parse_data.
+            tree->toStringTree(parse_data.parser.get()));
         Parse::Util::debug_print("DEBUG: parse tree end :\n");
       }
 
       auto pp_listener = std::make_shared<PreprocessListener>(
           parse_data.parser, design_reader, parse_data.source_name);
+                                   
+      // IEEE1800_2012::walk_w_listener(parse_data.walker, parse_data.tree_root,
+        IEEE1800_2012::walk_w_listener(walker, tree,
+                                       pp_listener);
+        parse_data.parser->reset();
 
-      std::vector<std::shared_ptr<SV2012BaseListener>> first_pass_listeners{};
-
-      first_pass_listeners.emplace_back(pp_listener);
-
-      IEEE1800_2012::walk_w_listeners(parse_data.walker, parse_data.tree_root,
-                                      first_pass_listeners);
     }
 
     // Find file containing top module
@@ -265,7 +269,7 @@ int main(int argc, char **argv)
     }
 
     // Parse run 2 : build netlist + get commands
-    Parse::Util::debug_puts("DEBUG: Pass 2 : netlist + commands");
+    Parse::Util::debug_puts("\n\nDEBUG: Pass 2 : netlist + commands");
     if (starting_source_file_index_op.has_value()) {
 
       // auto index = starting_source_file_index_op.value();
@@ -297,19 +301,41 @@ int main(int argc, char **argv)
       // second_pass_listeners.emplace_back(n_listener);
 
       for (auto &&parse_data : parsers) {
-        std::shared_ptr<SV2012BaseListener> c_listener =
-        std::make_shared<CommandListener>(parse_data.parser, design_reader,
-                                          parse_data.source_name);
-        IEEE1800_2012::walk_w_listener(parse_data.walker, parse_data.tree_root,
+        // std::shared_ptr<SV2012BaseListener> c_listener =
+        // std::make_shared<CommandListener>(parse_data.parser, design_reader,
+        //                                   parse_data.source_name);
+
+        auto c_listener = std::make_shared<CommandListener>(
+          parse_data.parser, design_reader, parse_data.source_name);
+
+        auto *tree = parse_data.parser->source_text();
+        // tree_root = std::make_shared<SV2012Parser::Source_textContext>(tree);
+        // auto tree_root = std::shared_ptr<SV2012Parser::Source_textContext>(tree);
+        // auto walker = std::make_shared<ParseTreeWalker>();
+        ParseTreeWalker walker;
+        // IEEE1800_2012::walk_w_listener(parse_data.walker, parse_data.tree_root,
+        IEEE1800_2012::walk_w_listener(walker, tree,
         c_listener);
+        parse_data.parser->reset();
+
       }
 
       for (auto &&parse_data : parsers) {
-        std::shared_ptr<SV2012BaseListener> n_listener =
-        std::make_shared<NetlistListener>(parse_data.parser, design_reader,
-                                          parse_data.source_name);
-        IEEE1800_2012::walk_w_listener(parse_data.walker, parse_data.tree_root,
+
+        auto n_listener = std::make_shared<NetlistListener>(
+          parse_data.parser, design_reader, parse_data.source_name);
+        // std::shared_ptr<SV2012BaseListener> n_listener =
+        // std::make_shared<NetlistListener>(parse_data.parser, design_reader,
+        //                                   parse_data.source_name);
+
+        auto *tree = parse_data.parser->source_text();
+        // tree_root = std::make_shared<SV2012Parser::Source_textContext>(tree);
+        // auto tree_root = std::shared_ptr<SV2012Parser::Source_textContext>(tree);
+        // auto walker = std::make_shared<ParseTreeWalker>();                                          
+        ParseTreeWalker walker;
+        IEEE1800_2012::walk_w_listener(walker, tree,
         n_listener);
+        parse_data.parser->reset();
       }
    
 
@@ -324,6 +350,7 @@ int main(int argc, char **argv)
   }
 
   // Finalize verilog parsing into Design object.
+  Parse::Util::debug_puts("DEBUG: release designreader");
   auto design_p = design_reader->release();
   assert(design_p.operator bool());
 

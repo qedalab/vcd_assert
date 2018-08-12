@@ -253,6 +253,7 @@ TimingChecker::apply_sdf_hold_port_tchk(SDF::PortTimingCheck port_tchk,
   EdgeType edge{};
 
   if (port_tchk.port.edge.has_value()) {
+    Parse::Util::debug_puts("DEBUG: an edge was specified");
     switch (port_tchk.port.edge.value()) {
     case SDF::EdgeType::posedge:
       edge = VCDAssert::EdgeType::PosEdge;
@@ -295,17 +296,23 @@ TimingChecker::apply_sdf_hold_port_tchk(SDF::PortTimingCheck port_tchk,
   }
 
   if (port_tchk.timing_check_condition.has_value()) {
+    
     Parse::Util::debug_puts("DEBUG: port tcheck holds conditional");
+
     auto cond_cvd_option = get_sdf_conditional_ptr(
         *header_, state_, port_tchk.timing_check_condition.value(),
         index_lookup_, scope_index, scope);
 
     if (cond_cvd_option.has_value()) {
+
       return {{std::move(cond_cvd_option.value()), edge}};
+
     } else {
+      
       std::puts("InternalError : could not convert conditional to conditional "
                 "value pointer.");
       return {};
+
     }
 
   } else {
@@ -377,7 +384,7 @@ TimingChecker::get_hold_event_range(SDF::Node port,
 void TimingChecker::apply_sdf_hold(SDF::DelayFile &d, SDF::Hold hold,
                                    std::size_t scope_index, VCD::Scope &scope)
 {
-  Parse::Util::debug_puts("DEBUG: applying hold timing check to scope.");
+  Parse::Util::debug_puts("DEBUG: timing check = hold");
 
   auto sdf_value = hold.value.content(); // chooses TYP for now.
 
@@ -399,11 +406,11 @@ void TimingChecker::apply_sdf_hold(SDF::DelayFile &d, SDF::Hold hold,
       auto reg_port_idx = reg_port_idx_option.value();
       auto trig_port_idx = trig_port_idx_option.value();
 
-      Parse::Util::debug_puts("DEBUG: get left port tcheck cvp and edgetype.");
+      Parse::Util::debug_puts("DEBUG: get right(reg) port tcheck cvp and edgetype.");
       auto reg_apply_data_option =
           apply_sdf_hold_port_tchk(reg, scope_index, scope);
 
-      Parse::Util::debug_puts("DEBUG: get right port tcheck cvp and edgetype.");
+      Parse::Util::debug_puts("DEBUG: get left(trig) port tcheck cvp and edgetype.");
       auto trig_apply_data_option =
           apply_sdf_hold_port_tchk(trig, scope_index, scope);
 
@@ -471,6 +478,7 @@ void TimingChecker::apply_sdf_timing_specs(SDF::DelayFile &d, SDF::Cell cell,
   Parse::Util::debug_puts(
       "DEBUG: applying timing specs to cell to scope : ({})",
       scope.get_identifier());
+
   for (auto &&spec : cell.timing_specs) {
     switch (spec.get_enum_type()) {
     case SDF::TimingSpecType::timing_check:
@@ -498,10 +506,10 @@ void TimingChecker::apply_sdf_timing_specs(SDF::DelayFile &d, SDF::Cell cell,
 void TimingChecker::apply_sdf_cell_helper(SDF::DelayFile &d, SDF::Cell cell,
                                           VCD::Scope &scope)
 {
-  Parse::Util::debug_print("\nDEBUG: ENTER SCOPE : {} \n",
-                           scope.get_identifier());
+  Parse::Util::debug_print("\nDEBUG: ENTER SCOPE {} -- (looking for : {})\n",
+                                 cell.cell_type, scope.get_identifier());
 
-  if (!scope.get_scopes().empty()) {
+  if (scope.get_scopes().empty()) {
     Parse::Util::debug_print("DEBUG: no inner scopes \n");
   } else {
     for (auto &child_scope_tup : scope.get_scopes()) {
@@ -518,11 +526,13 @@ void TimingChecker::apply_sdf_cell_helper(SDF::DelayFile &d, SDF::Cell cell,
 
       if (child_scope.get_scope_type() == VCD::ScopeType::module) {
 
-        for (auto &&net_tup : netlist_lookup_) {
-          Parse::Util::debug_print("DEBUG: net_tup: ({}:{})\n", net_tup.first,
-                                   net_tup.second);
-        }
-
+        // for (auto &&net_tup : netlist_lookup_) {
+        //   Parse::Util::debug_print("DEBUG: net_tup: ({}:{})\n", net_tup.first,
+        //                            net_tup.second);
+        // }
+        // TODO : GO DOWN FOR NESTED MODULE ONLY OR ALL NESTED SCOPES?
+        apply_sdf_cell_helper(d, cell, child_scope);
+  
         auto verilog_definition_index = netlist_lookup_.find(child_index);
         if (((verilog_definition_index == netlist_lookup_.begin()) &&
              (verilog_definition_index == netlist_lookup_.end())) ||
@@ -546,17 +556,15 @@ void TimingChecker::apply_sdf_cell_helper(SDF::DelayFile &d, SDF::Cell cell,
           Parse::Util::debug_print("DEBUG: scope index not found\n");
           // else ignore..
         }
-
-        // TODO : GO DOWN FOR NESTED MODULE ONLY OR ALL NESTED SCOPES?
-        apply_sdf_cell_helper(d, cell, child_scope);
-        Parse::Util::debug_print("DEBUG: ENTER SCOPE : {}\n",
-                                 scope.get_identifier());
+        
       } else {
         // Currently not support for other scope types (functions?)
         Parse::Util::debug_print("DEBUG: not a module type\n");
       }
     }
   }
+  Parse::Util::debug_print("\nDEBUG: EXIT SCOPE {} -- (looking for : {})\n",
+                            cell.cell_type, scope.get_identifier());
 }
 
 void TimingChecker::apply_sdf_cell(SDF::DelayFile &d, SDF::Cell cell,

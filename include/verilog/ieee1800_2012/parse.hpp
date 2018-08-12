@@ -118,8 +118,8 @@ struct ParseData{
   std::shared_ptr<SV2012Lexer> lexer;
   std::shared_ptr<CommonTokenStream> tokens;
   std::shared_ptr<SV2012Parser> parser;
-  std::shared_ptr<SV2012Parser::Source_textContext> tree_root;
-  std::shared_ptr<ParseTreeWalker> walker;
+  // std::shared_ptr<SV2012Parser::Source_textContext> tree_root;
+  // std::shared_ptr<ParseTreeWalker> walker;
   // std::vector<std::shared_ptr<SV2012BaseListener> preproc_listeners;
   // std::vector<std::shared_ptr<SV2012BaseListener> normal_listeners;
 
@@ -151,10 +151,10 @@ struct ParseData{
     parser->removeErrorListeners();
 
     // Parse::Util::debug_puts("DEBUG: Create Verilog parse tree");
-    auto *tree = parser->source_text();
-    // tree_root = std::make_shared<SV2012Parser::Source_textContext>(tree);
-    tree_root = std::shared_ptr<SV2012Parser::Source_textContext>(tree);
-    walker = std::make_shared<ParseTreeWalker>();
+    // auto *tree = parser->source_text();
+    // // tree_root = std::make_shared<SV2012Parser::Source_textContext>(tree);
+    // tree_root = std::shared_ptr<SV2012Parser::Source_textContext>(tree);
+    // walker = std::make_shared<ParseTreeWalker>();
   }
 };
 
@@ -175,24 +175,24 @@ init_antlr_parsers(std::vector<Verilog::Util::ParseInput> parse_input_v)
   return std::move(result);
 }
 
-template <class ParseTree>
+template <class ParseTreePtr>
 void walk_w_listener(
-    std::shared_ptr<ParseTreeWalker> walker, std::shared_ptr<ParseTree> tree,
+    ParseTreeWalker& walker, ParseTreePtr tree,
     std::shared_ptr<SV2012BaseListener> listener)
 {
     Parse::Util::debug_puts("\nDEBUG:Walk tree with listener\n");
-    walker->walk(listener.get(), tree.get());
+    walker.walk(listener.get(), tree);
     Parse::Util::debug_puts("Finish walk");
 }
 
-template <class ParseTree>
+template <class ParseTreePtr>
 void walk_w_listeners(
-    std::shared_ptr<ParseTreeWalker> walker, std::shared_ptr<ParseTree> tree,
+    ParseTreeWalker& walker, ParseTreePtr tree,
     std::vector<std::shared_ptr<SV2012BaseListener>> listeners)
 {
   for (auto &&listen : listeners) {
     Parse::Util::debug_puts("\nDEBUG:Walk tree with listener\n");
-    walker->walk(listen.get(), tree.get());
+    walker.walk(listen.get(), tree);
     Parse::Util::debug_puts("Finish walk");
   }
 }
