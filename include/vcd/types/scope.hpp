@@ -85,7 +85,7 @@ public:
   /// \returns Wether the scope directly contains \p identifier
   bool contains_scope(std::string &identifier) const noexcept;
 
-  /// Get scope index by identifierthis
+  /// Get scope index by identifier
   /// \param identifier The child scope identifier
   /// \returns The scope index from \p identifier
   std::size_t get_scope_index(std::string &identifier) const;
