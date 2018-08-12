@@ -123,7 +123,7 @@ struct ParseData{
   // std::vector<std::shared_ptr<SV2012BaseListener> preproc_listeners;
   // std::vector<std::shared_ptr<SV2012BaseListener> normal_listeners;
 
-  ParseData(Verilog::Util::ParseInput parse_input) 
+  ParseData(Verilog::Util::ParseInput parse_input, bool enable_antlr_errors) 
   {
     if (parse_input.type == Util::InputTypeEnum::memory) {
 
@@ -143,13 +143,16 @@ struct ParseData{
     }
 
     lexer = std::make_shared<SV2012Lexer>(input.get());
-    lexer->removeErrorListeners();
+    if(!enable_antlr_errors){
+      lexer->removeErrorListeners();
+    }
 
     tokens = std::make_shared<CommonTokenStream>(lexer.get());
 
     parser = std::make_shared<SV2012Parser>(tokens.get());
-    parser->removeErrorListeners();
-
+    if(!enable_antlr_errors){
+      parser->removeErrorListeners();
+    }
     // Parse::Util::debug_puts("DEBUG: Create Verilog parse tree");
     // auto *tree = parser->source_text();
     // // tree_root = std::make_shared<SV2012Parser::Source_textContext>(tree);
@@ -162,14 +165,14 @@ struct ParseData{
   Initialize the ANTRL parser and parse tree (source text context)
 */
 std::vector<ParseData>
-init_antlr_parsers(std::vector<Verilog::Util::ParseInput> parse_input_v)
+init_antlr_parsers(std::vector<Verilog::Util::ParseInput> parse_input_v, bool enable_antlr_errors = false)
 {
 
   std::vector<ParseData> result{};
 
   for (auto &&parse_input : parse_input_v) {
 
-    ParseData data(parse_input);
+    ParseData data(parse_input, enable_antlr_errors);
     result.emplace_back(std::move(data));
   }
   return std::move(result);

@@ -50,12 +50,13 @@ public:
   /*For building MODULE->FILE map/symbols-table */
   void enterModule_declaration(SV2012Parser::Module_declarationContext *ctx);
 
-  /*For convertion to regular timescale annotation format*/
-  void enterPp_timescale_declaration(
-      SV2012Parser::Pp_timescale_declarationContext *ctx);
-
   /*For library file includes */
-  void enterInclude_statement(SV2012Parser::Include_statementContext *ctx);
+  void enterCompiler_include_statement(SV2012Parser::Compiler_include_statementContext *ctx);
+
+
+  /*For convertion to regular timescale annotation format*/
+  void enterCompiler_timescale_declaration(
+      SV2012Parser::Compiler_timescale_declarationContext *ctx);
 
   /*For a yet unknown reason*/
   void enterSource_text(SV2012Parser::Source_textContext *ctx);

@@ -210,7 +210,7 @@ int main(int argc, char **argv)
 
     // Initialize parser and parse Verilog source files
     using namespace antlr4::tree;
-    auto parsers = IEEE1800_2012::init_antlr_parsers(inputs);
+    auto parsers = IEEE1800_2012::init_antlr_parsers(inputs, (verbose >= 3));
 
     // Parse run 1 : preprocess + module declaration symbol table
     std::puts("\nINFO: Start preprocessor run");

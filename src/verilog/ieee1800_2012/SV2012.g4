@@ -2,42 +2,61 @@
 grammar SV2012;
 
 // A.1.1 Library source text
-library_text :  ( library_description )* 
-;
+// library_text :  ( library_description )* 
+// ;
 
-library_description :
-library_declaration
-| include_statement
-| config_declaration
-| ';'
-;
+// library_description :
+// library_declaration
+// | include_statement
+// | config_declaration
+// | ';'
+// ;
 
-library_declaration :
-'library' library_identifier File_path_spec  ( ',' File_path_spec )* 
-( '-incdir' File_path_spec  ( ',' File_path_spec )*  )? ';'
-;
+// library_declaration :
+// 'library' library_identifier File_path_spec  ( ',' File_path_spec )* 
+// ( '-incdir' File_path_spec  ( ',' File_path_spec )*  )? ';'
+// ;
 
-include_statement : 'include' File_path_spec ';'
-;
+// include_statement : 'include' File_path_spec ';'
+// ;
 
 File_path_spec : ([/~]|'./') ~[ \r\t\n]*? ;
 
-pp_include_statement : 'include' File_path_spec
+compiler_include_statement : compiler_directive_char 'include' File_path_spec
 ;
 
-pp_timescale_declaration :
-'timescale' time_literal ( '/' time_literal )?
+compiler_timescale_declaration :
+compiler_directive_char 'timescale' time_literal ( '/' time_literal )?
 ;
 
-compiler_directive_catchall : '`' ( pp_timescale_declaration | pp_include_statement )
+compiler_directive_char : '`' ;
+compiler_define : compiler_directive_char 'define' expression+ ;
+compiler_celldefine : compiler_directive_char 'celldefine';
+compiler_endcelldefine : compiler_directive_char 'endcelldefine';
+compiler_ifdefines : compiler_directive_char 'ifdef' identifier ;
+compiler_ifnotdefines : compiler_directive_char 'ifndef' identifier ;
+compiler_endifdefines : compiler_directive_char 'endif' identifier ;
+compiler_elsedefines : compiler_directive_char 'else' identifier ;
+compiler_defined_invoke : compiler_directive_char identifier ;
+
+compiler_directive : 
+compiler_timescale_declaration
+| compiler_include_statement
+| compiler_define
+| compiler_celldefine
+| compiler_ifdefines
+| compiler_ifnotdefines
+| compiler_defined_invoke
 ;
+
 
 // A.1.2 SystemVerilog source text
-source_text : ( timeunits_declaration | compiler_directive_catchall )?  ( description )*  EOF
+source_text : timeunits_declaration? ( description )*  EOF
 ;
 
 description :
-module_declaration
+compiler_directive 
+| module_declaration
 | udp_declaration
 | interface_declaration
 | program_declaration
@@ -292,6 +311,7 @@ generate_region
 | module_declaration
 | interface_declaration
 | timeunits_declaration
+| compiler_directive
 ;
 
 parameter_override : 'defparam' list_of_defparam_assignments ';'
@@ -906,6 +926,7 @@ net_decl_assignment : net_identifier  ( unpacked_dimension )*  ( '=' expression 
 
 param_assignment :
 parameter_identifier  ( unpacked_dimension )*  ( '=' constant_param_expression )?
+| parameter_identifier  ( '=' compiler_defined_invoke )?
 ;
 
 specparam_assignment :
@@ -2758,6 +2779,57 @@ expression
 
 scalar_constant : Integral_number ;
 
+
+// A.8.7 Numbers
+
+number :
+Integral_number
+| Real_number
+;
+
+Integral_number :
+Decimal_number
+| Octal_number
+| Binary_number
+| Hex_number
+;
+
+Decimal_number :
+Unsigned_number
+| Size? Decimal_base Unsigned_number
+| Size? Decimal_base X_digit  '_'*
+| Size? Decimal_base Z_digit  '_'*
+;
+
+fragment Binary_number : Size? Binary_base Binary_value
+;
+
+fragment Octal_number : Size? Octal_base Octal_value
+;
+
+fragment Hex_number : Size? Hex_base Hex_value
+;
+
+fragment Size : Non_zero_unsigned_number
+;
+
+fragment Non_zero_unsigned_number : Non_zero_decimal_digit  ( '_' | Decimal_digit)*
+;
+
+Unsigned_number : Decimal_digit  ( '_' | Decimal_digit )* 
+;
+
+
+Fixed_point_number : Unsigned_number '.' Unsigned_number
+;
+
+
+Real_number :
+Fixed_point_number
+| Unsigned_number ( '.' Unsigned_number )? [eE] [+-]? Unsigned_number
+;
+
+
 // A.8 Expressions
 // A.8.1 Concatenations
 
@@ -3030,7 +3102,7 @@ expression
 | part_select_range
 ;
 
-primary_literal : number | time_literal | Unbased_unsized_literal | String_literal
+primary_literal : number | time_literal | Unbased_unsized_literal | String_literal | compiler_defined_invoke
 ;
 
 time_literal :
@@ -3118,55 +3190,6 @@ unary_module_path_operator :
 
 binary_module_path_operator :
 '=' '=' | '!' '=' | '&' '&' | '|' '|' | '&' | '|' | '^' | '^' '~' | '~' '^'
-;
-
-// A.8.7 Numbers
-
-number :
-Integral_number
-| Real_number
-;
-
-Integral_number :
-Decimal_number
-| Octal_number
-| Binary_number
-| Hex_number
-;
-
-Decimal_number :
-Unsigned_number
-| Size? Decimal_base Unsigned_number
-| Size? Decimal_base X_digit  '_'*
-| Size? Decimal_base Z_digit  '_'*
-;
-
-fragment Binary_number : Size? Binary_base Binary_value
-;
-
-fragment Octal_number : Size? Octal_base Octal_value
-;
-
-fragment Hex_number : Size? Hex_base Hex_value
-;
-
-fragment Size : Non_zero_unsigned_number
-;
-
-fragment Non_zero_unsigned_number : Non_zero_decimal_digit  ( '_' | Decimal_digit)*
-;
-
-Unsigned_number : Decimal_digit  ( '_' | Decimal_digit )* 
-;
-
-
-Fixed_point_number : Unsigned_number '.' Unsigned_number
-;
-
-
-Real_number :
-Fixed_point_number
-| Unsigned_number ( '.' Unsigned_number )? [eE] [+-]? Unsigned_number
 ;
 
 

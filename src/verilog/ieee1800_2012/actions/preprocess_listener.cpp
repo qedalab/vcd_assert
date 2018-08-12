@@ -31,8 +31,8 @@ void PreprocessListener::enterModule_declaration(
   reader_->module(tokens->getText(mod_id_ctx), file_path_);
 }
 
-void PreprocessListener::enterInclude_statement(
-    SV2012Parser::Include_statementContext *ctx)
+void PreprocessListener::enterCompiler_include_statement(
+    SV2012Parser::Compiler_include_statementContext *ctx)
 {
   auto tokens = parser_->getTokenStream();
   // if (ctx->File_path_spec() != null) {
@@ -46,8 +46,8 @@ void PreprocessListener::enterInclude_statement(
   // }
 }
 
-void PreprocessListener::enterPp_timescale_declaration(
-    SV2012Parser::Pp_timescale_declarationContext *ctx)
+void PreprocessListener::enterCompiler_timescale_declaration(
+    SV2012Parser::Compiler_timescale_declarationContext *ctx)
 {
   auto tokens = parser_->getTokenStream();
   if (!ctx->time_literal().empty()) {
