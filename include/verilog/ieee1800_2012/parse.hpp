@@ -111,76 +111,90 @@ using namespace antlr4::tree;
 // SV2012BaseListener... listeners)
 // {
 
+struct ParseData{
+  std::string source_name = "";
+  std::variant<std::ifstream,std::string> source;
+  std::shared_ptr<ANTLRInputStream> input;
+  std::shared_ptr<SV2012Lexer> lexer;
+  std::shared_ptr<CommonTokenStream> tokens;
+  std::shared_ptr<SV2012Parser> parser;
+  std::shared_ptr<SV2012Parser::Source_textContext> tree_root;
+  std::shared_ptr<ParseTreeWalker> walker;
+  // std::vector<std::shared_ptr<SV2012BaseListener> preproc_listeners;
+  // std::vector<std::shared_ptr<SV2012BaseListener> normal_listeners;
+
+  ParseData(Verilog::Util::ParseInput parse_input) 
+  {
+    if (parse_input.type == Util::InputTypeEnum::memory) {
+
+      source = std::string(std::get<const char *>(parse_input.value));
+      input = std::make_shared<ANTLRInputStream>(std::get<std::string>(source));
+
+    } else if (parse_input.type == Util::InputTypeEnum::source_file) {
+
+      source_name = std::get<std::string>(parse_input.value);
+      std::ifstream stream;
+      stream.open(source_name);
+      source = std::move(stream);
+      input = std::make_shared<ANTLRInputStream>(std::get<std::ifstream>(source));
+
+    } else {
+      throw std::runtime_error("InternalError(library_file unsupported)");
+    }
+
+    lexer = std::make_shared<SV2012Lexer>(input.get());
+    lexer->removeErrorListeners();
+
+    tokens = std::make_shared<CommonTokenStream>(lexer.get());
+
+    parser = std::make_shared<SV2012Parser>(tokens.get());
+    parser->removeErrorListeners();
+
+    // Parse::Util::debug_puts("DEBUG: Create Verilog parse tree");
+    auto *tree = parser->source_text();
+    // tree_root = std::make_shared<SV2012Parser::Source_textContext>(tree);
+    tree_root = std::shared_ptr<SV2012Parser::Source_textContext>(tree);
+    walker = std::make_shared<ParseTreeWalker>();
+  }
+};
+
+/*
+  Initialize the ANTRL parser and parse tree (source text context)
+*/
+std::vector<ParseData>
+init_antlr_parsers(std::vector<Verilog::Util::ParseInput> parse_input_v)
+{
+
+  std::vector<ParseData> result{};
+
+  for (auto &&parse_input : parse_input_v) {
+
+    ParseData data(parse_input);
+    result.emplace_back(std::move(data));
+  }
+  return std::move(result);
+}
+
 template <class ParseTree>
-void walk_w_listeners(std::shared_ptr<ParseTreeWalker> walker, ParseTree tree,
-                      std::vector<std::shared_ptr<SV2012BaseListener>> listeners)
+void walk_w_listener(
+    std::shared_ptr<ParseTreeWalker> walker, std::shared_ptr<ParseTree> tree,
+    std::shared_ptr<SV2012BaseListener> listener)
+{
+    Parse::Util::debug_puts("\nDEBUG:Walk tree with listener\n");
+    walker->walk(listener.get(), tree.get());
+    Parse::Util::debug_puts("Finish walk");
+}
+
+template <class ParseTree>
+void walk_w_listeners(
+    std::shared_ptr<ParseTreeWalker> walker, std::shared_ptr<ParseTree> tree,
+    std::vector<std::shared_ptr<SV2012BaseListener>> listeners)
 {
   for (auto &&listen : listeners) {
     Parse::Util::debug_puts("\nDEBUG:Walk tree with listener\n");
     walker->walk(listen.get(), tree.get());
     Parse::Util::debug_puts("Finish walk");
   }
-}
-
-/*
-  Initialize the ANTRL parser and parse tree (source text context)
-*/
-std::vector<
-    std::tuple<std::shared_ptr<ParseTreeWalker>, std::shared_ptr<SV2012Parser>,
-               std::shared_ptr<SV2012Parser::Source_textContext>, std::string>>
-init_antlr_parsers(std::vector<Verilog::Util::ParseInput> parse_input_v)
-{
-
-  std::vector<std::tuple<
-      std::shared_ptr<ParseTreeWalker>, std::shared_ptr<SV2012Parser>,
-      std::shared_ptr<SV2012Parser::Source_textContext>, std::string>>
-      result{};
-
-  for (auto &&parse_input : parse_input_v) {
-
-    Parse::Util::debug_print("\nDEBUG: Start parse ({})\n", parse_input.name);
-    std::string parse_source;
-    std::optional<ANTLRInputStream> input_op = {};
-
-    if (parse_input.type == Util::InputTypeEnum::memory) {
-
-      parse_source = std::string(std::get<const char *>(parse_input.value));
-      input_op = ANTLRInputStream(parse_source);
-
-    } else if (parse_input.type == Util::InputTypeEnum::source_file) {
-
-      parse_source = std::get<std::string>(parse_input.value);
-      std::ifstream stream;
-      stream.open(parse_source);
-      input_op = ANTLRInputStream(stream);
-
-    } else {
-      throw std::runtime_error("InternalError(library_file unsupported)");
-    }
-
-    if (input_op.has_value()) {
-      SV2012Lexer lexer(&input_op.value());
-      lexer.removeErrorListeners();
-
-      CommonTokenStream tokens(&lexer);
-
-      auto parser = std::make_shared<SV2012Parser>(&tokens);
-      parser->removeErrorListeners();
-
-      Parse::Util::debug_puts("DEBUG: Create Verilog parse tree");
-      auto *tree = parser->source_text();
-      std::shared_ptr<SV2012Parser::Source_textContext> tree_sp(tree);
-      std::shared_ptr<ParseTreeWalker> walker = std::make_shared<ParseTreeWalker>();
-
-      result.emplace_back(std::make_tuple(std::move(walker), std::move(parser),
-                                          std::move(tree_sp), std::move(parse_source)));
-
-    } else {
-      throw std::runtime_error(
-          "InternalError(could not create antlr stream from input)");
-    }
-  }
-  return result;
 }
 
 } // namespace IEEE1800_2012

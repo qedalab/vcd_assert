@@ -209,22 +209,29 @@ int main(int argc, char **argv)
     assert(source_files.size() == inputs.size());
 
     // Initialize parser and parse Verilog source files
+    using namespace antlr4::tree;
     auto parsers = IEEE1800_2012::init_antlr_parsers(inputs);
 
     // Parse run 1 : preprocess + module declaration symbol table
     std::puts("\nINFO: Start preprocessor run");
-    for (auto &&[walker, parser, tree, parse_source] : parsers) {
-      // debug print
-      if (verbose >= 2) {
+    for (auto &&parse_data : parsers) {
+
+      if (verbose > 1) {
         Parse::Util::debug_print("DEBUG: parse tree start :\n");
-        Parse::Util::debug_puts(tree->toStringTree(parser.get()));
+        Parse::Util::debug_puts(
+            parse_data.tree_root->toStringTree(parse_data.parser.get()));
         Parse::Util::debug_print("DEBUG: parse tree end :\n");
       }
 
-      auto pp_listener = std::make_shared<PreprocessListener>(parser, design_reader, parse_source);
+      auto pp_listener = std::make_shared<PreprocessListener>(
+          parse_data.parser, design_reader, parse_data.source_name);
+
       std::vector<std::shared_ptr<SV2012BaseListener>> first_pass_listeners{};
+
       first_pass_listeners.emplace_back(pp_listener);
-      IEEE1800_2012::walk_w_listeners(walker, tree, first_pass_listeners);
+
+      IEEE1800_2012::walk_w_listeners(parse_data.walker, parse_data.tree_root,
+                                      first_pass_listeners);
     }
 
     // Find file containing top module
@@ -277,17 +284,34 @@ int main(int argc, char **argv)
       //                          Util::InputTypeEnum::library_file,
       //                          abs_path});
       //       }
- 
 
-      for (auto &&[walker, parser, tree, parse_source] : parsers) {
-        std::shared_ptr<SV2012BaseListener> c_listener = std::make_shared<CommandListener>(parser, design_reader, parse_source);
-        std::shared_ptr<SV2012BaseListener> n_listener = std::make_shared<NetlistListener>(parser, design_reader, parse_source);
-        std::vector<std::shared_ptr<SV2012BaseListener>> second_pass_listeners{};
-        second_pass_listeners.emplace_back(c_listener);
-        second_pass_listeners.emplace_back(n_listener);
 
-        IEEE1800_2012::walk_w_listeners(walker, tree, second_pass_listeners);
+      // std::shared_ptr<SV2012BaseListener> n_listener =
+      //     std::make_shared<NetlistListener>(parse_data.parser, design_reader,
+      //                                       parse_data.source_name);
+
+      // std::vector<std::shared_ptr<SV2012BaseListener>>
+      //     second_pass_listeners{};
+
+      // second_pass_listeners.emplace_back(c_listener);
+      // second_pass_listeners.emplace_back(n_listener);
+
+      for (auto &&parse_data : parsers) {
+        std::shared_ptr<SV2012BaseListener> c_listener =
+        std::make_shared<CommandListener>(parse_data.parser, design_reader,
+                                          parse_data.source_name);
+        IEEE1800_2012::walk_w_listener(parse_data.walker, parse_data.tree_root,
+        c_listener);
       }
+
+      for (auto &&parse_data : parsers) {
+        std::shared_ptr<SV2012BaseListener> n_listener =
+        std::make_shared<NetlistListener>(parse_data.parser, design_reader,
+                                          parse_data.source_name);
+        IEEE1800_2012::walk_w_listener(parse_data.walker, parse_data.tree_root,
+        n_listener);
+      }
+   
 
       std::puts("Verilog parse successful");
 
