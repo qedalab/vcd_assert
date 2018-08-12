@@ -68,7 +68,7 @@ VCDAssert::get_sdf_node_ptr(const VCD::Header &header, State &state,
 
 
   auto state_var_index = index_lookup.at(vcd_id_index).from;
-  auto var_svp = state.get_value_pointer(state_var_index);
+  auto var_svp = state.get_value_pointer(vcd_id_index);
 
   Parse::Util::debug_puts("DEBUG: vcd_var_index : ({})",vcd_var_index);
   Parse::Util::debug_puts("DEBUG: vcd_id_index : ({})",vcd_id_index);

@@ -1,6 +1,6 @@
 include(ExternalProject)
 
-find_package(Java)
+find_package(Java COMPONENTS Runtime)
 
 macro(antlr_init version)
   set(ANTLR_VERSION ${version})
@@ -8,6 +8,12 @@ macro(antlr_init version)
   set(ANTLR_GENERATED "${ANTLR_DIR}/generated")
   set(ANTLR_JAR "${ANTLR_DIR}/antlr-${version}-complete.jar")
   set(ANTLR_RUNTIME_ZIP "${ANTLR_DIR}/antlr-cpp-runtime-${version}-source.zip")
+
+  if (${CMAKE_BUILD_TYPE} MATCHES "Debug")
+    set(ANTLR_BUILD_TYPE RelWithDebInfo)
+  else ()
+    set(ANTLR_BUILD_TYPE ${CMAKE_BUILD_TYPE})
+  endif ()
 
   if(NOT EXISTS "${ANTLR_DIR}")
     file(MAKE_DIRECTORY "${ANTLR_DIR}")
@@ -38,7 +44,7 @@ macro(antlr_init version)
     PREFIX  ${ANTLR_DIR}/prefix/
     URL ${ANTLR_RUNTIME_ZIP}
     CONFIGURE_COMMAND ${CMAKE_COMMAND}
-      -DCMAKE_BUILD_TYPE=Release
+      -DCMAKE_BUILD_TYPE=${ANTLR_BUILD_TYPE}
       -DANTLR4CPP_JAR_LOCATION=${ANTLR_JAR}
       -DBUILD_SHARED_LIBS=OFF
       -BUILD_TESTS=OFF
