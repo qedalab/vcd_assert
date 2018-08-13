@@ -35,7 +35,7 @@ matrix:
     - env:
       - TEST_NAME="Valgrind"
       script:
-      - docker exec runner scl enable devtoolset-7 -- bash -c "cd repo/travis-build && conan install .. --build=missing -s build_type=Debug"
+      - docker exec runner scl enable devtoolset-7 -- bash -c "cd repo/travis-build && conan install .. --build=missing -s build_type=RelWithDebInfo"
       - docker exec runner scl enable devtoolset-7 -- bash -c "cd repo/travis-build && conan build .."
       - docker exec runner scl enable devtoolset-7 -- bash -c "cd repo/travis-build && ctest -T memcheck"
       - docker exec runner bash -c "cat repo/travis-build/Testing/Temporary/MemoryChecker.*.log"
@@ -43,6 +43,21 @@ matrix:
       - docker exec runner bash -c "if [ -s repo/travis-build/Testing/Temporary/MemoryChecker.1.log ]; then false; fi"
       - docker exec runner bash -c "if [ -s repo/travis-build/Testing/Temporary/MemoryChecker.2.log ]; then false; fi"
       - docker exec runner bash -c "if [ -s repo/travis-build/Testing/Temporary/MemoryChecker.3.log ]; then false; fi"
+      - docker exec runner bash -c "if [ -s repo/travis-build/Testing/Temporary/MemoryChecker.4.log ]; then false; fi"
+      - docker exec runner bash -c "if [ -s repo/travis-build/Testing/Temporary/MemoryChecker.5.log ]; then false; fi"
+      - docker exec runner bash -c "if [ -s repo/travis-build/Testing/Temporary/MemoryChecker.6.log ]; then false; fi"
+      - docker exec runner bash -c "if [ -s repo/travis-build/Testing/Temporary/MemoryChecker.7.log ]; then false; fi"
+      - docker exec runner bash -c "if [ -s repo/travis-build/Testing/Temporary/MemoryChecker.8.log ]; then false; fi"
+      - docker exec runner bash -c "if [ -s repo/travis-build/Testing/Temporary/MemoryChecker.9.log ]; then false; fi"
+      - docker exec runner bash -c "if [ -s repo/travis-build/Testing/Temporary/MemoryChecker.11.log ]; then false; fi"
+      - docker exec runner bash -c "if [ -s repo/travis-build/Testing/Temporary/MemoryChecker.12.log ]; then false; fi"
+      - docker exec runner bash -c "if [ -s repo/travis-build/Testing/Temporary/MemoryChecker.13.log ]; then false; fi"
+      - docker exec runner bash -c "if [ -s repo/travis-build/Testing/Temporary/MemoryChecker.14.log ]; then false; fi"
+      - docker exec runner bash -c "if [ -s repo/travis-build/Testing/Temporary/MemoryChecker.15.log ]; then false; fi"
+      - docker exec runner bash -c "if [ -s repo/travis-build/Testing/Temporary/MemoryChecker.16.log ]; then false; fi"
+      - docker exec runner bash -c "if [ -s repo/travis-build/Testing/Temporary/MemoryChecker.17.log ]; then false; fi"
+      - docker exec runner bash -c "if [ -s repo/travis-build/Testing/Temporary/MemoryChecker.18.log ]; then false; fi"
+      - docker exec runner bash -c "if [ -s repo/travis-build/Testing/Temporary/MemoryChecker.19.log ]; then false; fi"
   
     # Clang based tests
     - env:
