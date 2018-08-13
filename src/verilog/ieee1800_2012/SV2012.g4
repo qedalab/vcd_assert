@@ -20,6 +20,11 @@ grammar SV2012;
 // include_statement : 'include' File_path_spec ';'
 // ;
 
+// BAD_COMMENT2: '<!--' .*? '--->'
+// {System.err.println("Can't have ---> end comment");} -> skip ;
+// BAD_COMMENT1: '<!--' ('--'|.)*? '-->'
+// {System.err.println("Can't have -- in comment");} -> skip ;
+
 File_path_spec : ([/~]|'./') ~[ \r\t\n]*? ;
 
 compiler_include_statement : compiler_directive_char 'include' File_path_spec
@@ -30,13 +35,14 @@ compiler_directive_char 'timescale' time_literal ( '/' time_literal )?
 ;
 
 compiler_directive_char : '`' ;
-compiler_define : compiler_directive_char 'define' expression+ ;
+// compiler_define : compiler_directive_char 'define' identifier ('=' ~[ \t\n]+)? ;
+compiler_define : compiler_directive_char 'define' identifier (('=')? constant_expression )? ;
 compiler_celldefine : compiler_directive_char 'celldefine';
 compiler_endcelldefine : compiler_directive_char 'endcelldefine';
 compiler_ifdefines : compiler_directive_char 'ifdef' identifier ;
 compiler_ifnotdefines : compiler_directive_char 'ifndef' identifier ;
-compiler_endifdefines : compiler_directive_char 'endif' identifier ;
-compiler_elsedefines : compiler_directive_char 'else' identifier ;
+compiler_endifdefines : compiler_directive_char 'endif' (identifier)? ;
+compiler_elsedefines : compiler_directive_char 'else' (identifier)? ;
 compiler_defined_invoke : compiler_directive_char identifier ;
 
 compiler_directive : 
@@ -187,9 +193,9 @@ timeunits_declaration :
 
 // A.1.3 Module parameters and ports
 parameter_port_list :
-'#' '(' list_of_param_assignments  ( ',' parameter_port_declaration )*  ')'
-| '#' '(' parameter_port_declaration  ( ',' parameter_port_declaration )*  ')'
-| '#' '(' ')'
+'#(' list_of_param_assignments  ( ',' parameter_port_declaration )*  ')'
+| '#(' parameter_port_declaration  ( ',' parameter_port_declaration )*  ')'
+| '#(' ')'
 ;
 
 parameter_port_declaration :
@@ -857,11 +863,11 @@ charge_strength : '(' 'small' ')' | '(' 'medium' ')' | '(' 'large' ')'
 ;
 
 // A.2.2.3 Delays
-delay3 : '#' delay_value | '#' '(' mintypmax_expression ( ',' mintypmax_expression ( ','
+delay3 : '#' delay_value | '#(' mintypmax_expression ( ',' mintypmax_expression ( ','
 mintypmax_expression )? )? ')'
 ;
 
-delay2 : '#' delay_value | '#' '(' mintypmax_expression ( ',' mintypmax_expression )? ')'
+delay2 : '#' delay_value | '#(' mintypmax_expression ( ',' mintypmax_expression )? ')'
 ;
 
 delay_value :
@@ -1697,7 +1703,7 @@ module_instantiation :
 module_identifier ( parameter_value_assignment )? hierarchical_instance  ( ',' hierarchical_instance )*  ';'
 ;
 
-parameter_value_assignment : '#' '(' ( list_of_parameter_assignments )? ')'
+parameter_value_assignment : '#(' ( list_of_parameter_assignments )? ')'
 ;
 
 list_of_parameter_assignments :
@@ -2380,7 +2386,7 @@ clockvar_expression '<' '=' ( cycle_delay )? expression
 cycle_delay :
 '#' '#' Integral_number
 | '#' '#' identifier
-| '#' '#' '(' expression ')'
+| '#' '#(' expression ')'
 ;
 
 clockvar : hierarchical_identifier
@@ -2963,6 +2969,7 @@ constant_primary
 constant_mintypmax_expression :
 constant_expression
 | constant_expression ':' constant_expression ':' constant_expression
+| compiler_defined_invoke
 ;
 
 constant_param_expression :
@@ -3368,10 +3375,12 @@ hierarchical_tf_identifier : hierarchical_identifier
 hierarchical_variable_identifier : hierarchical_identifier
 ;
 
-identifier :
+ID :
 Simple_identifier
 | Escaped_identifier
 ;
+
+identifier : ID ;
 
 index_variable_identifier : identifier
 ;

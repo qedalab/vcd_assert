@@ -198,6 +198,10 @@ int main(int argc, char **argv)
         // auto file_path_normal = fs::path(file).lexically_normal();
         std::string abs_path = fs::canonical(file).string();
 
+        //overwrite stored value with abs version
+        file = abs_path;
+
+        //save as ParseInput entry
         inputs.emplace_back(
             Util::ParseInput{file, Util::InputTypeEnum::source_file, abs_path});
 
@@ -258,7 +262,10 @@ int main(int argc, char **argv)
       auto top_file_path = top.file_path;
 
       for (auto &&[i, file] : rsv::zip(rsv::indices, source_files)) {
+          Parse::Util::debug_puts("DEBUG: (top_file_path : file ) = ({}:{})", top_file_path, file);
+
         if (file == top_file_path) {
+          
           Parse::Util::debug_puts("DEBUG: index of file found : {}", i);
           starting_source_file_index_op = (std::size_t)i;
           break;
