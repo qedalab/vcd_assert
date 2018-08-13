@@ -4,12 +4,12 @@
 #include <range/v3/view/indices.hpp>
 
 #include <range/v3/algorithm/equal.hpp>
+#include <range/v3/view/zip.hpp>
 // return ranges::equal(value, other.value);
 
 using namespace Verilog;
 
 using namespace ranges::view;
-
 
 void Verilog::Test::catch_design_view(DesignView wanted, Design test)
 {
@@ -57,7 +57,7 @@ void Verilog::Test::catch_design_view(DesignView wanted, Design test)
   }
 }
 
-void Verilog::Test::catch_design(Design& wanted, Design& test)
+void Verilog::Test::catch_design(Design &wanted, Design &test)
 {
   SECTION("Verilog Design")
   {
@@ -85,7 +85,8 @@ void Verilog::Test::catch_design(Design& wanted, Design& test)
     //   REQUIRE(ranges::equal(wanted.module_lookup_, test.module_lookup_));
 
     // }
-    SECTION("Member : \"sdf_commands_\"") {
+    SECTION("Member : \"sdf_commands_\"")
+    {
       // get_sdf_for_module
       REQUIRE(wanted.num_sdf_commands() == test.num_sdf_commands());
       // for(auto&& index : indices(test.num_modules())){
@@ -117,9 +118,14 @@ void Verilog::Test::catch_module(Module wanted, Module test)
   SECTION("Field : \"instance_lookup_\"")
   {
     if (!ranges::equal(wanted.instance_lookup_, test.instance_lookup_)) {
+      REQUIRE(wanted.instance_lookup_.size() == test.instance_lookup_.size());
       CAPTURE(wanted.instance_lookup_);
       CAPTURE(test.instance_lookup_);
-      REQUIRE(ranges::equal(wanted.instance_lookup_, test.instance_lookup_));
+      for (auto &&[wanted_lu, test_lu] :
+           ranges::view::zip(wanted.instance_lookup_, test.instance_lookup_)) {
+        REQUIRE(wanted_lu.first == wanted_lu.first);
+        REQUIRE(wanted_lu.second == wanted_lu.second);
+      }
     }
   }
 }
@@ -136,5 +142,3 @@ void Verilog::Test::catch_instance(Instance wanted, Instance test)
     REQUIRE(wanted.definition_index == test.definition_index);
   }
 }
-
-

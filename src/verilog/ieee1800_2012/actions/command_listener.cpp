@@ -49,7 +49,7 @@ void CommandListener::exitSystem_tf_call(
       auto sdf_file_ctx = args_ctx->expression();
 
       if (!sdf_file_ctx) {
-        throw std::runtime_error("$sdf_annotate argument list empty.");
+        throw std::runtime_error("ParseError : CommandListener: $sdf_annotate argument list empty.");
       }
       // std::cout << "-- detected hierarchical identifier" << std::endl;
 
@@ -133,6 +133,6 @@ void CommandListener::exitSystem_tf_call(
       // do nothing
     }
   } else {
-    Parse::Util::debug_puts("DEBUG : task/funtion ignored");
+    Parse::Util::debug_puts("DEBUG : CommandListener: task/function ignored");
   }
 }

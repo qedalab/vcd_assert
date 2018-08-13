@@ -127,9 +127,10 @@ std::size_t DesignReader::module(std::string module_name, std::string file_path)
 
 bool DesignReader::next_module()
 {
+  Parse::Util::debug_puts("DEBUG: current module count : ({})", design_->num_modules());
   Parse::Util::debug_puts("DEBUG: old current module index: ({})",current_module_index_);
-  if (current_module_index_ < (design_->modules_.size() - 1)) {
-    current_module_index_++;
+  if (((design_->modules_.size() - 1) != 0 ) && (current_module_index_ < (design_->modules_.size() - 1))) {
+    current_module_index_ = current_module_index_ + 1 ;
     Parse::Util::debug_puts("DEBUG: new current module index: ({})",current_module_index_);
     return true;
   } else {

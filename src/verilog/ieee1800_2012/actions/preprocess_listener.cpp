@@ -18,14 +18,14 @@ void PreprocessListener::enterModule_declaration(
   auto tokens = parser_->getTokenStream();
   SV2012Parser::Module_identifierContext *mod_id_ctx;
   if (ctx->module_nonansi_header()) {
-    Parse::Util::debug_puts("DEBUG: Module nonansi header");
+    Parse::Util::debug_puts("DEBUG: PreprocessListener: Module nonansi header");
     mod_id_ctx = ctx->module_nonansi_header()->module_identifier();
   } else if (ctx->module_ansi_header()) {
-    Parse::Util::debug_puts("DEBUG: Module ansi header");
+    Parse::Util::debug_puts("DEBUG: PreprocessListener: Module ansi header");
     mod_id_ctx = ctx->module_ansi_header()->module_identifier();
   }
 
-  Parse::Util::debug_puts("DEBUG: Module identifier ({})",
+  Parse::Util::debug_puts("DEBUG: PreprocessListener: Module identifier ({})",
                           tokens->getText(mod_id_ctx));
 
   reader_->module(tokens->getText(mod_id_ctx), file_path_);

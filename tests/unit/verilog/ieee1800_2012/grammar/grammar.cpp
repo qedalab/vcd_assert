@@ -36,28 +36,28 @@ TEST_CASE("Verilog.Grammar.SV2012.Grammer",
           "[Verilog][Grammar][SV2012][Grammar]")
 {
 
- SECTION("delay_value")
-  {
-    std::string text{"5"};
-    std::string wanted{"(delay_value 5)"};
+//  SECTION("delay_value")
+//   {
+//     std::string text{"5"};
+//     std::string wanted{"(delay_value 5)"};
 
-    // std::array<std::string_view, 2> tests{
-    // "5",
-    // "50"};
+//     // std::array<std::string_view, 2> tests{
+//     // "5",
+//     // "50"};
 
-    // std::array<std::string_view, 1> test_fail_begin{
-    //   R"outer(R"not_a_raw_string")outer"};
+//     // std::array<std::string_view, 1> test_fail_begin{
+//     //   R"outer(R"not_a_raw_string")outer"};
 
-    ANTLRInputStream input(text);
-    SV2012Lexer lexer(&input);
-    CommonTokenStream tokens(&lexer);
+//     ANTLRInputStream input(text);
+//     SV2012Lexer lexer(&input);
+//     CommonTokenStream tokens(&lexer);
 
-    SV2012Parser parser(&tokens);
+//     SV2012Parser parser(&tokens);
         
-    auto *tree = parser.delay_value();
-    CAPTURE(tree->toStringTree(&parser));
-    REQUIRE(wanted == tree->toStringTree(&parser));
-  }
+//     auto *tree = parser.delay_value();
+//     CAPTURE(tree->toStringTree(&parser));
+//     REQUIRE(wanted == tree->toStringTree(&parser));
+//   }
 
 
   // SECTION("keyword not an identifier")

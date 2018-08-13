@@ -81,37 +81,37 @@ TEST_CASE("Verilog.Actions.CommandListener",
      catch_test_delayfile(test_delayfile_1, *test_p);
     */
 
-    // SECTION("tb dro example")
-    // {
-    //   INFO("Setup test input");
-    //     std::vector<Verilog::Util::ParseInput> inputs{
-    //     // clang-format off
-    //       {
-    //         "dummy", 
-    //         Verilog::Util::InputTypeEnum::memory,
-    //         tb_dro_example
-    //       }
-    //     // clang-format on
-    //   };
+    SECTION("tb dro example")
+    {
+      INFO("Setup test input");
+        std::vector<Verilog::Util::ParseInput> inputs{
+        // clang-format off
+          {
+            "dummy", 
+            Verilog::Util::InputTypeEnum::memory,
+            tb_dro_example
+          }
+        // clang-format on
+      };
 
-    //   INFO("Setup test data");
-    //   auto wanted_reader_sp = std::make_shared<DesignReader>();
-    //   auto test_reader_sp = std::make_shared<DesignReader>();
+      INFO("Setup test data");
+      auto wanted_reader_sp = std::make_shared<DesignReader>();
+      auto test_reader_sp = std::make_shared<DesignReader>();
 
-    //   wanted_reader_sp->module("tb_basic_dro", "dummy");
-    //   wanted_reader_sp->next_module();
-    //   wanted_reader_sp->command(SDFAnnotateCommand{"../../dro.sdf", "tb_basic_dro"});
+      wanted_reader_sp->module("tb_basic_dro", "dummy");
+      wanted_reader_sp->next_module();
+      wanted_reader_sp->command(SDFAnnotateCommand{"../../dro.sdf", "tb_basic_dro"});
 
-    //   // set module name so that command is created correctly
-    //   test_reader_sp->module("tb_basic_dro", "dummy");
+      // set module name so that command is created correctly
+      test_reader_sp->module("tb_basic_dro", "dummy");
 
-    //   std::shared_ptr<Design> wanted_design =
-    //       std::move(wanted_reader_sp->release());
+      std::shared_ptr<Design> wanted_design =
+          std::move(wanted_reader_sp->release());
 
-    //   INFO("Parse and match");
-    //   REQUIRE(wanted_design.operator bool());
-    //   match_exactly_w_listeners<CommandListener>(wanted_design,
-    //                                              test_reader_sp, inputs);
-    // }
+      INFO("Parse and match");
+      REQUIRE(wanted_design.operator bool());
+      match_exactly_w_listeners<CommandListener>(wanted_design,
+                                                 test_reader_sp, inputs);
+    }
   }
 }
