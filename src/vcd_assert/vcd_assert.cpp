@@ -183,7 +183,7 @@ int main(int argc, char **argv)
   auto design_reader = std::make_shared<DesignReader>();
 
   if (!source_files.empty()) {
-    std::puts("Start Verilog parsing");
+    std::puts("INFO: Start Verilog parsing");
 
     // Util::InputMap inputmap{};
     std::vector<Util::ParseInput> inputs{};
@@ -235,7 +235,6 @@ int main(int argc, char **argv)
       auto pp_listener = std::make_shared<PreprocessListener>(
           parse_data.parser, design_reader, parse_data.source_name);
                                    
-      // IEEE1800_2012::walk_w_listener(parse_data.walker, parse_data.tree_root,
         IEEE1800_2012::walk_w_listener(walker, tree,
                                        pp_listener);
         parse_data.parser->reset();
@@ -247,14 +246,6 @@ int main(int argc, char **argv)
     auto temp_design = design_reader_copy->release();
     auto search = temp_design->module_find(top_module);
     Parse::Util::debug_puts("DEBUG: Testing for : \"{}\"", top_module);
-
-    // #ifdef VERBOSE_DEBUG_OUTPUT
-    //     for (auto &&i : rsv::indices(temp_design->num_modules())) {
-    //       auto mod = temp_design->get_module(i);
-    //       Parse::Util::debug_puts("DEBUG: case {} : \"{}\" : ({})",i,
-    //       mod.identifier, mod.file_path);
-    //     }
-    // #endif
 
     if (search.has_value()) {
       Parse::Util::debug_puts("DEBUG: Top module found");
@@ -276,7 +267,7 @@ int main(int argc, char **argv)
     }
 
     // Parse run 2 : build netlist + get commands
-    Parse::Util::debug_puts("\n\nDEBUG: Pass 2 : netlist + commands");
+    std::puts("\nINFO: Start main parsing run");
     if (starting_source_file_index_op.has_value()) {
 
       // auto index = starting_source_file_index_op.value();
@@ -308,19 +299,13 @@ int main(int argc, char **argv)
       // second_pass_listeners.emplace_back(n_listener);
 
       for (auto &&parse_data : parsers) {
-        // std::shared_ptr<SV2012BaseListener> c_listener =
-        // std::make_shared<CommandListener>(parse_data.parser, design_reader,
-        //                                   parse_data.source_name);
-
+  
         auto c_listener = std::make_shared<CommandListener>(
           parse_data.parser, design_reader, parse_data.source_name);
 
         auto *tree = parse_data.parser->source_text();
-        // tree_root = std::make_shared<SV2012Parser::Source_textContext>(tree);
-        // auto tree_root = std::shared_ptr<SV2012Parser::Source_textContext>(tree);
-        // auto walker = std::make_shared<ParseTreeWalker>();
+    
         ParseTreeWalker walker;
-        // IEEE1800_2012::walk_w_listener(parse_data.walker, parse_data.tree_root,
         IEEE1800_2012::walk_w_listener(walker, tree,
         c_listener);
         parse_data.parser->reset();
@@ -331,14 +316,9 @@ int main(int argc, char **argv)
 
         auto n_listener = std::make_shared<NetlistListener>(
           parse_data.parser, design_reader, parse_data.source_name);
-        // std::shared_ptr<SV2012BaseListener> n_listener =
-        // std::make_shared<NetlistListener>(parse_data.parser, design_reader,
-        //                                   parse_data.source_name);
 
         auto *tree = parse_data.parser->source_text();
-        // tree_root = std::make_shared<SV2012Parser::Source_textContext>(tree);
-        // auto tree_root = std::shared_ptr<SV2012Parser::Source_textContext>(tree);
-        // auto walker = std::make_shared<ParseTreeWalker>();                                          
+                                          
         ParseTreeWalker walker;
         IEEE1800_2012::walk_w_listener(walker, tree,
         n_listener);
@@ -346,7 +326,7 @@ int main(int argc, char **argv)
       }
    
 
-      std::puts("Verilog parse successful");
+      std::puts("INFO: Verilog parse successful");
 
     } else {
       throw std::runtime_error("ERROR: Cannot find indicated top module!\n");

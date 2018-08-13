@@ -89,7 +89,7 @@ void serialize_number(OutputIterator oi, int /*unused*/,
                       Number n) noexcept(noexcept(*oi++ = '!')) {
 
   if(n.has_value())
-    ranges::copy(fmt::sprintf("%.g",n.value()), oi);
+    ranges::copy(fmt::sprintf("%.f",n.value()), oi);
 }
 
 /// Serialize SDF timing spec
