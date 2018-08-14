@@ -1,3 +1,6 @@
+Building
+========
+
 Binary dependencies
 -------------------
 * Building requires conan_ (optional, but recommended)
@@ -6,7 +9,7 @@ Binary dependencies
 
   * `g++`_ version 7 or newer
   * `clang++`_ version 6 with libc++ version or newer
-* LibUUID development libraries (Required by ANTLR)
+* UUID development libraries (Required by ANTLR)
 
 Setup the environment for building in CentOS
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -55,16 +58,18 @@ Library dependencies
 
 VCD Assert depends on the following libraries.
 
-* PEGTL_ (2.7.0 or newer) - Parse Expression Grammar Template Library (MIT)
-* Range-V3_ (0.3.6) - Experimental range library for C++11/14/17 (Mostly boost)
-* fmt_ (5.0 or newer) - A modern formatting library (BSD 2-Clause)
-* Catch2_ (2.3.0 or newer) - A modern, C++-native, header-only, test framework for unit-tests (Boost)
+* PEGTL_ (2.7.0 or newer) - Parse Expression Grammar Template Library
+* Range-V3_ (0.3.6) - Experimental range library for C++11/14/17
+* fmt_ (5.0 or newer) - A modern formatting library
+* Catch2_ (2.3.0 or newer) - A modern, C++-native, header-only, test framework for unit-tests
 * CLI11_ (1.6.0 or newer)- Command line parser for C++11
 * ANTLRv4_ - ANother Tool for Language Recognition (The runtime)
 
 The recommended way of handling library dependencies is through conan_, but the
 correct versions can also be installed manually in a place where cmake_ can
 find it.
+
+ANTLRv4_ is the exception. It is fetched and built automatically with cmake due to the nature of the library.
 
 Building
 --------
@@ -132,12 +137,12 @@ Still inside the build directory
 .. code-block:: bash
 
   ctest
-  ctest -R memcheck
 
 Build FAQ:
 ~~~~~~~~~~
 * To compile with clang you need to using libc++ version 6 or newer
 * Compiling with clang and trying to use libstdc++ triggers `a bug in clang <https://bugs.llvm.org/show_bug.cgi?id=31852>`_
+* If ANTLRv4 runtime fails to configure check if the UUID development libraries are installed and findable with PkgConfig
 
 .. _cmake: https://cmake.org/
 .. _g++: https://gcc.gnu.org/
