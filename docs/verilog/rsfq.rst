@@ -1,30 +1,48 @@
 RSFQ Verilog cells
 ==================
 
-RSFQ cells are statefull devices. Simulating them with timing assertions with
-open-source tools was the main motivation for this tool. This sections
-describes their verilog representation.
+RSFQ cells are stateful devices. Simulating these with timing assertions with
+open-source tools was the main motivation for the develpment of this tool.
+This section describes RSFQ Verilog representation.
 
-Verilog is inherently a voltage level logic verification language. RSFQ are
-distinct pulses which doesn't precicely match the voltage-level semantics that
-is available. The best way we found to describe them was using the edge
-representation (The same that is seen as die output from a SDF-to-DC
-converter). Both a posedge and negedge represents a pulse. The alternative to
-use a voltage pulse by adding a `1` time unit delay before dropping back to
+Verilog and SystemVerilog is inherently a voltage level logic verification language. SFQ circuits
+such as RSFQ and ERSFQ use distinct, quantized pulses which do not precicely
+match the voltage-level semantics that are available. We therefore describe
+SFQ pulses using the edge representation. The net effect is that simulation
+outputs resemble the output from a SFQ-to-DC converter.
+Both posedge and negedge represent a pulse. The alternative to
+use a voltage pulse by adding a ``1`` time unit delay before reverting to
 zero puts unnecesary strain on the simulator which immediately requires twice
-the amount of events as well as twice the amount of output data. The pulse
-representation adds no benefit over the edge representation so the edge
+the number of events as well as twice the output data. The pulse
+representation adds no benefit over the edge representation so that the edge
 representation is prefereble because of simulation effeciency.
 
 The integration tests include quite a few examples, but we are going to go
-through the `basic_and` as an example which covers everything.
+through the ``basic_and`` as an example which covers everything.
 
-First the time scale and module definition
+The first part of the file is the timescale and the module definition. The
+module takes a parameter that specifies when the cell start reacting on input.
+The default parameter is specified as a macro to allow the parameter to be
+set from the commandline as well if neccesary. This is neccesary too prevent
+the cell switching states and trigger timing violations from the initial setup.
 
 .. code-block:: verilog
 
+  `ifndef begin_time
+  `define begin_time 8
+  `endif
+
   `timescale 1ps/100fs
-  module basic_and (a, b, clk, out);
+  
+  module basic_and
+    #(
+      parameter begin_time = `begin_time
+    ) (
+      input a,
+      input b,
+      input clk,
+      output out
+    );
 
   // Starting definitions ...
   // Specify block ...
@@ -33,22 +51,19 @@ First the time scale and module definition
 
   endmodule
 
-Define the inputs
+Define internal output variables. This is to work around a limitation ``cver`` where it doesn't
+correctly handle delays if the output is a register.
 
 .. code-block:: verilog
 
-  input a, b, clk;
+  reg internal_out;
+  assign out = internal_out;
 
-Define the outputs and the registers that drive them
-
-.. code-block:: verilog
-
-  output out;
-  reg out;
-
-What is allowed in timing check conditions are quite limiting. The don't allow
-integer comparisons and we require the timing assertions be stateful so we
-introduce an intermediate wire that does the integer comparisons.
+Next the internal state variables are defined. What is allowed in timing check
+conditions are quite limiting. Integer comparisons are not allowed, and we require
+the timing assertions to be stateful so that we introduce an intermediate wire that
+handles the integer comparisons. The case equality operator, ``===``, is used so that we
+can have ``X`` as an invalid state.
 
 .. code-block:: verilog
 
@@ -75,16 +90,16 @@ specified.
 
   endspecify
 
-The `specparams` are there used to define variables that hold timing
-information. We follow a strict naming convention to make out lives easier.
+The ``specparams`` are used to define variables that hold timing
+information. We follow a strict naming convention to simplify toolchain integration.
 
-Critical timing violations start with `ct` , followed by which state they are
-for, followed on which input starts the timing check and finally which input no
-pulses should arrive.
+Critical timing violations start with `ct` , followed by which state these are
+for. Next is the name of the input that initiates the timing check, and finally 
+the name of the input on which no pulses should arrive.
 
-Delays start with `delay`, followed by which state they trigger in, followed by
-the input triggering the output and finally the output on which they produce a
-pulse.
+A delay parameter starts with ``delay``, followed by the state that triggers it,
+then followed by the input triggering the output and finally the output on which
+a pulse is produced.
 
 .. code-block:: verilog
 
@@ -109,7 +124,7 @@ Delays are specified conditionally based on the state
 
   if (internal_state_3) (clk => out) = delay_state3_clk_out;
 
-Critical Timing are specified with `$hold` assertions. They are used with the
+Critical timings are specified with `$hold` assertions. These are used with the
 following. The first condition:
 
 .. code-block:: verilog
@@ -117,16 +132,17 @@ following. The first condition:
   $hold( posedge clk &&& internal_state_0, a, ct_state0_clk_a);
   $hold( negedge clk &&& internal_state_0, a, ct_state0_clk_a);
 
-Both the posedge and negedge is required for compatibility with older verilog
-standards. They represent the sfq pulse arriving on that input (`clk` in the
-example). Since assertions are statefull we need to also include the state of
-the cell in which in assertion is made. The verilog standard requires a `&&&`
+Both the posedge and negedge are required for compatibility with older Verilog
+standards. These events represent an SFQ pulse arriving on that input (``clk`` in
+the example). Since assertions are stateful we need to include the state of
+the cell in which an assertion is made. The Verilog standard requires a ``&&&``
 to seperate the timing event and the timing condition. We again use the
-internal state wire due to the limiting syntac of Verilog/SystemVerilog. The
-next param is the line on which no outputs should come (`a` in this case). The
-final parameter is how long after the initial trigger no outputs should come.
+internal state wire due to the limiting syntax of Verilog/SystemVerilog. The
+next parameter is the input on which no pulses should arrive (`a` in this case).
+The final parameter is the duration after the initial trigger no input SFQ
+pulses are allowed.
 
-The rest of the and's assertions are as follows
+The rest of the AND's assertions are as follows
 
 .. code-block:: verilog
 
@@ -157,67 +173,63 @@ The rest of the and's assertions are as follows
   $hold( posedge clk &&& internal_state_3, b, ct_state3_clk_b);
   $hold( negedge clk &&& internal_state_3, b, ct_state3_clk_b);
 
-The rsfq cells aren't driven in the same way that voltage level logic is so we
-explicitly give it an initial state after the specify block. We also have to
-set the output pins to somethings. It doesn't matter if it's `1` or `0`. It is
-just something that always triggers an edge on `output = !output`.
+RSFQ cells are not driven in the same way that voltage level logic is, so 
+that we explicitly give it an initial state after the specify block. 
+We also have to set the output pins to some start value; either ``1``
+or ``0``. The value is irrelevant; it toggles on an event to
+``output = !output``.
 
-.. code-blocK:: verilog
+.. code-block:: verilog
 
   initial begin
-      state = 0;
-      out = 0;
+      state = 1'bX;
+      internal_out = 0;
+      #begin_time state = 0;
   end
 
-Finally the state machine which triggers on an edge and then uses a case to get
-to the correct state. To not trigger pulses on the initial set we start from
-time step 2 (an `arbitrary` number which does not include the initial time). To
-put the device in an invalid state we simple set the state and outputs to
-`1'bX`.  In this case it happes after either `a` or `b` arrive in the fragile
-state 3.
+Lastly, the state machine is defined that triggers on an edge event.
+We use case statements to get to the correct state. So as to avoid event
+triggers on the initial set, we start from an arbitrary time step (such as 2)
+that does not include the initial time. To put the device in an invalid or
+error state, the state and outputs are set to `1'bX`. In the example below,
+this occurs after either `a` or `b` arrive in state 3.
 
 .. code-block:: verilog
 
   always @(posedge a or negedge a)
-  begin if ($time>2)
-      case (state)
-          0: begin
-              state = 1;
-          end
-          2: begin
-              state = 3;
-          end
-          3: begin
-              // Input leads to invalid state
-              state = 1'bX;
-              out = 1'bX;
-          end
-      endcase
-  end
+  case (state)
+      0: begin
+          state = 1;
+      end
+      2: begin
+          state = 3;
+      end
+      3: begin
+          // Input leads to invalid state
+          state = 1'bX;
+          out = 1'bX;
+      end
+  endcase
 
   always @(posedge b or negedge b)
-  begin if ($time>2)
-      case (state)
-          0: begin
-              state = 2;
-          end
-          1: begin
-              state = 3;
-          end
-          3: begin
-              // Input leads to invalid state
-              state = 1'bX;
-              out = 1'bX;
-          end
-      endcase
-  end
+  case (state)
+      0: begin
+          state = 2;
+      end
+      1: begin
+          state = 3;
+      end
+      3: begin
+          // Input leads to invalid state
+          state = 1'bX;
+          out = 1'bX;
+      end
+  endcase
 
   always @(posedge clk or negedge clk)
-  begin if ($time>2)
-      case (state)
-          3: begin
-              out = !out;
-              state = 0;
-          end
-      endcase
-  end
+  case (state)
+      3: begin
+          out = !out;
+          state = 0;
+      end
+  endcase
