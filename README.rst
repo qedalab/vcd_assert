@@ -9,13 +9,14 @@ VCD Assert
   :target: https://codecov.io/gh/pleroux0/vcd_assert
 
 VCD Assert's main goal is to validate post-placed and routed RSFQ circuits. It
-does this by handling reading in a VCD file generated from a simulator and
+does this by reading in a VCD file generated from a simulator and
 checking that none of the events caused timing failures. It is done in a way
 that would allow back-annotation as well as different types of technologies.
 
 Small detailed example
 ======================
-In the `one_bit_adder_success` the simulator outputs the following
+
+In the basic_xor_success_ example the simulator outputs the following
 
 .. code-block:: bash
 
@@ -32,24 +33,24 @@ Running vcd_assert command
 
   vcd_assert tb_basic_xor.vcd ../tb_xor.v ../xor.v -t tb_basic_xor --node "tb_basic_xor --sdf ../xor.sdf
 
-The finishes with
+which finishes with
 
 .. code-block:: bash
 
   FINISHED: No timing violations occured
 
 Which is correct, but if we crunch one of the signal times from the
-`tb_basic_xor` to force a timing violation. Which is depicted in
-`basic_xor_fail`. Rerunning the iverilog we get
+``tb_basic_xor`` to force a timing violation. Which is depicted in
+basic_xor_fail_. Rerunning the iverilog we get
 
 .. image:: resources/images/example_xor_fail.png
 
 The red circle in the image shows where the fialure occurs. If we rerun the
-`vcd_assert` command as well we see that it picks up the timing violation.
+``vcd_assert`` command as well we see that it picks up the timing violation.
 
 During the stream
 
-.. code-block:: bash
+.. code-block::
 
   ASSERT: Triggered (HOLD b (COND internal_state_1 (negedge clk)) (25))
   ASSERT: Timing violation(s) occurred during scalar value change
@@ -57,14 +58,14 @@ During the stream
 
 and at the end
 
-.. code-block:: bash
+.. code-block::
 
   FINISHED: Timing violation(s) did occur
 
 Command line arguments
 ======================
 
-.. code-block:: bash
+.. code-block::
 
   VCD Assert 1.0.0 Release (Aug 14 2018 11:26:11)
   Copyright (C) 2018 Paul le Roux and Calvin Maree, Stellenbosch University
@@ -85,7 +86,7 @@ Command line arguments
     -s,--sdf FILE ...           SDF File to apply
     -v,--verbose                Verbosity level [1-3]
 
-More detailed explanation of the arguments are given in `docs/arguments.rst`
+More detailed explanation is given in the `argument documentation`_
 
 Motivation
 ==========
@@ -134,7 +135,7 @@ If you already have everything setup
   conan install ..
   conan build ..
 
-For detailed building instructions please go to `docs/building.rst`
+For detailed building instructions please go to `building documentation`_
 
 Status
 ======
@@ -168,7 +169,9 @@ Limitations
 
 Acknowledgements
 ================
+
 The following dependencies are used with their permissive licenses.
+
 * PEGTL_ (2.7.0 or newer) - Parse Expression Grammar Template Library (MIT)
 * Range-V3_ (0.3.6) - Experimental range library for C++11/14/17 (Mostly boost)
 * fmt_ (5.0 or newer) - A modern formatting library (BSD 2-Clause)
@@ -177,8 +180,6 @@ The following dependencies are used with their permissive licenses.
 * ANTLRv4_ - ANother Tool for Language Recognition (The runtime)
 
 .. _cmake: https://cmake.org/
-.. _g++: https://gcc.gnu.org/
-.. _clang++: https://clang.llvm.org/
 .. _conan: https://conan.io/
 .. _PEGTL: https://github.com/taocpp/PEGTL
 .. _Range-V3: https://github.com/ericniebler/range-v3
@@ -186,3 +187,7 @@ The following dependencies are used with their permissive licenses.
 .. _Catch2: https://github.com/catchorg/Catch2
 .. _CLI11: https://github.com/CLIUtils/CLI11
 .. _ANTLRv4: https://github.com/antlr/antlr4
+.. _basic_xor_success: examples/basic_xor_success
+.. _basic_xor_fail: examples/basic_xor_fail
+.. _`argument documentation`: docs/argument.rst
+.. _`building documentation`: docs/building.rst
