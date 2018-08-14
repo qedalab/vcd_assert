@@ -31,10 +31,9 @@
 
 void VCDAssert::print_version_preamble() {
   fmt::print("VCD Assert {} ({} {})\n", VCD_ASSERT_VERSION_MACRO , __DATE__, __TIME__);
-  std::puts("Copyright (C) 2018 Paul le Roux and Calvin Maree");
+  std::puts("Copyright (C) 2018 Paul le Roux and Calvin Maree, Stellenbosch University");
   std::puts("Licensed under the BSD 2-Clause License\n");
 
   std::string cwd = Parse::Util::fs::current_path().string();
   fmt::print("Working directory : {}\n\n", cwd);
 }
-
