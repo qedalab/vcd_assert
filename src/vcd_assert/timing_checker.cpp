@@ -43,8 +43,8 @@
 #include <sdf/serialize/timing_check.hpp>
 
 using namespace VCDAssert;
-using namespace ranges::view;
-namespace rsv = ranges::view;
+using namespace ranges::views;
+namespace rsv = ranges::views;
 namespace fs = Parse::Util::fs;
 
 TimingChecker::TimingChecker(std::shared_ptr<VCD::Header> header,

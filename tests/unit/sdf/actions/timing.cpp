@@ -47,10 +47,12 @@ TEST_CASE("SDF.Actions.NodeAction", "[SDF][Actions][NodeAction]") {
     require_parse<Grammar::bus_node, Actions::NodeAction>(test_str, test);
     CAPTURE(test.type);
     CAPTURE(test.basename_identifier);
-    if(test.start.has_value())
+    if(test.start.has_value()) {
       CAPTURE(test.start.value());
-    if(test.end.has_value())
+    }
+    if(test.end.has_value()) {
       CAPTURE(test.end.value());
+    }
     catch_test_node(wanted,test);
   }
 }
@@ -84,10 +86,12 @@ TEST_CASE("SDF.Actions.PortAction", "[SDF][Actions][PortAction") {
     CAPTURE(test.type);
     CAPTURE(test.basename_identifier);
     CAPTURE(test.hierarchical_identifier);
-    if(test.start.has_value())
+    if(test.start.has_value()) {
       CAPTURE(test.start.value());
-    if(test.end.has_value())
+    }
+    if(test.end.has_value()) {
       CAPTURE(test.end.value());
+    }
     catch_test_node(wanted,test);
     // catch_test_node(wanted,test);
   }

@@ -31,7 +31,7 @@
 #include <range/v3/view/indices.hpp>
 
 using namespace VCDAssert;
-using namespace ranges::view;
+using namespace ranges::views;
 
 State::State(VCD::Header &header)
 {
@@ -165,7 +165,8 @@ void State::set_value(std::size_t index, double value) {
 }
 
 void State::set_value(std::size_t index, ranges::span<VCD::Value> values) {
-  vector_buffer_.emplace_back(VectorValueChange{index, std::vector<VCD::Value>(values)});
+  auto vector_values = std::vector(values.begin(), values.end());
+  vector_buffer_.emplace_back(VectorValueChange{index, std::move(vector_values)});
 }
 
 void State::update_sim_time() noexcept {
@@ -188,14 +189,14 @@ void State::update_sim_time() noexcept {
   }
 }
 
-std::size_t State::num_values() { return values_.size(); }
+auto State::num_values() -> std::size_t { return values_.size(); }
 
-std::size_t State::num_packed_vector_values()
+auto State::num_packed_vector_values() -> std::size_t
 {
   return packed_vector_values_.size();
 }
 
-std::size_t State::num_total_values()
+auto State::num_total_values() -> std::size_t
 {
   return num_values() + num_packed_vector_values();
 }

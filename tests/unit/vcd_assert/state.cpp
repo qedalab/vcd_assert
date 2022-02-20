@@ -9,7 +9,7 @@
 
 using namespace VCD;
 using namespace VCDAssert;
-using ranges::view::indices;
+using ranges::views::indices;
 
 static void catch_state_value(State &state, std::size_t index, double value1,
                               double value2)

@@ -54,7 +54,7 @@ bool TriggeredTimingChecker::event(std::size_t index, VCD::Value from, VCD::Valu
   auto& ref = triggered_item_list_[index];
   bool out = false;
 
-  for(auto i : ranges::view::reverse(ranges::view::indices(ref.items.get_size()))) {
+  for(auto i : ranges::views::reverse(ranges::views::indices(ref.items.get_size()))) {
     auto &item = ref.items.as_range().at(i);
     Parse::Util::debug_print("DEBUG: Checking Triggered Event: {}\n", item.assertion_sv);
 

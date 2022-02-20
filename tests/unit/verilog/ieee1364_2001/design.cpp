@@ -7,7 +7,7 @@
 // return ranges::equal(value, other.value);
 
 namespace VerilogTest = Verilog::Test::Verilog::IEEE1364_2001;
-using namespace ranges::view;
+using namespace ranges::views;
 
 
 void VerilogTest::catch_design(DesignView wanted, Design test)

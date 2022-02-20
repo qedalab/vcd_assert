@@ -6,6 +6,7 @@ using namespace Test::SDF::Grammar;
 
 #include <range/v3/algorithm/copy.hpp>
 #include <string_view>
+#include <range/v3/iterator/insert_iterators.hpp>
 
 TEST_CASE("SDF.Grammar.Base", "[!hide][SDF][Grammar][Base]") {
 

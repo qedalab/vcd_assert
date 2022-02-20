@@ -27,25 +27,20 @@
 #ifndef LIBPARSE_CONCEPTS_ERROR_RULE_HPP
 #define LIBPARSE_CONCEPTS_ERROR_RULE_HPP
 
-#include "./rule.hpp"
-
-#include <range/v3/utility/concepts.hpp>
+#include <concepts/concepts.hpp>
 
 namespace Parse::Concepts {
 
-namespace Internal {
-
-using namespace ranges::concepts;
-
-struct ErrorRule : refines<Rule> {
-  template <typename T>
-  auto requires_() -> decltype(valid_expr(T::error()));
-};
-
-} // namespace Internal
+template <typename T>
+CPP_requires(ErrorRule_,
+    requires ()
+    (
+        T::error()
+    ));
 
 template <typename T>
-constexpr bool ErrorRule = ranges::concepts::models<Internal::ErrorRule, T>();
+CPP_concept ErrorRule =
+    CPP_requires_ref(Parse::Concepts::ErrorRule_, T);
 
 } // namespace Parse::Concepts
 

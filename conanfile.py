@@ -11,15 +11,15 @@ class VCDAssertConan(ConanFile):
         "tests/*",
         "CMakeLists.txt"
     )
-    generators = "cmake_paths"
+    generators = "cmake_find_package"
 
     def build(self):
         cmake = CMake(self)
 
         cmake.definitions["BUILD_TESTS"] = "ON"
         cmake.definitions["BUILD_DOCS"] = "ON"
-        cmake.definitions["CMAKE_TOOLCHAIN_FILE"] = "conan_paths.cmake"
         cmake.definitions["RUN_ALL_TESTS"] = "ON"
+        cmake.definitions["CMAKE_EXPORT_COMPILE_COMMANDS"] = "ON"
 
         cmake.configure()
 
@@ -30,8 +30,8 @@ class VCDAssertConan(ConanFile):
         pass
 
     def build_requirements(self):
-        self.build_requires("pegtl/2.7.0@taocpp/stable")
-        self.build_requires("range-v3/0.3.6@pleroux0/stable")
-        self.build_requires("fmt/5.1.0@bincrafters/stable")
-        self.build_requires("Catch/2.2.3@pleroux0/stable")
-        self.build_requires("CLI11/1.6.1@cliutils/stable")
+        self.build_requires("taocpp-pegtl/2.8.3")
+        self.build_requires("range-v3/0.11.0")
+        self.build_requires("fmt/5.3.0")
+        self.build_requires("catch2/2.13.8")
+        self.build_requires("cli11/1.9.1")

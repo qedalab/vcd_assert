@@ -35,29 +35,21 @@
 
 namespace Parse::Concepts {
 
-namespace Internal {
-
-using namespace ranges::concepts;
-
-struct ComplexRule {
-  // clang-format off
-  template <typename T>
-  auto requires_(Input::type input) -> decltype(valid_expr(
+template <typename T>
+CPP_requires(ComplexRule_, 
+    requires (Internal::Input::type input) 
+    (
       T::template match<
           tao::pegtl::apply_mode{},
           tao::pegtl::rewind_mode{},
-          Action::type,
-          Control::type
+          Internal::Action::type,
+          Internal::Control::type
       >(input)
-  ));
-  // clang-format on
-};
-
-} // namespace Internal
+    ));
 
 template <typename T>
-constexpr bool
-    ComplexRule = ranges::concepts::models<Internal::ComplexRule, T>();
+CPP_concept ComplexRule =
+    CPP_requires_ref(Parse::Concepts::ComplexRule_, T);
 
 } // namespace Parse::Concepts
 

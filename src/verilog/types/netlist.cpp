@@ -78,15 +78,15 @@
 
 // std::size_t Net::num_nets() const noexcept { return child_nets_.size(); }
 
-// auto Net::get_nets() const -> decltype(ranges::view::all(this->child_nets_))
+// auto Net::get_nets() const -> decltype(ranges::views::all(this->child_nets_))
 // {
-//   return ranges::view::all(this->child_nets_);
+//   return ranges::views::all(this->child_nets_);
 // }
 
 // auto Net::get_variables() const
-//     -> decltype(ranges::view::all(this->child_variables_))
+//     -> decltype(ranges::views::all(this->child_variables_))
 // {
-//   return ranges::view::all(this->child_variables_);
+//   return ranges::views::all(this->child_variables_);
 // }
 
 // std::string_view Net::get_identifier() const noexcept { return identifier_; }

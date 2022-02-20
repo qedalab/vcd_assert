@@ -9,7 +9,7 @@
 
 using namespace Verilog;
 
-using namespace ranges::view;
+using namespace ranges::views;
 
 void Verilog::Test::catch_design_view(DesignView wanted, Design test)
 {

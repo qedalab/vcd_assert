@@ -31,19 +31,15 @@
 
 namespace Parse::Concepts {
 
-namespace Internal {
-
-using namespace ranges::concepts;
-
-struct ValueRule : refines<Rule> {
-  template <typename T>
-  auto requires_() -> decltype(valid_expr(T::value));
-};
-
-} // namespace Internal
+template <typename T>
+CPP_requires(ValueRule_,
+    requires ()
+    (
+        T::value
+    ));
 
 template <typename T>
-constexpr bool ValueRule = ranges::concepts::models<Internal::ValueRule, T>();
+CPP_concept ValueRule = CPP_requires_ref(Parse::Concepts::ValueRule_, T) && Rule<T>;
 
 } // namespace Parse::Concepts
 

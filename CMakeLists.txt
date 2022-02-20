@@ -15,7 +15,7 @@ antlr_init("4.7.1")
 #Include dependencies
 find_package(fmt REQUIRED)
 find_package(pegtl REQUIRED)
-find_package(range-v3 0.3.6 REQUIRED)
+find_package(range-v3 0.11.0 REQUIRED)
 find_package(CLI11 REQUIRED)
 # find_package(antlr4-runtime REQUIRED)
 
@@ -26,7 +26,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 #Add libparse library
 add_library(libparse "src/parse")
 target_include_directories(libparse PUBLIC "${PROJECT_SOURCE_DIR}/include/")
-target_link_libraries(libparse PUBLIC range-v3 taocpp::pegtl)
+target_link_libraries(libparse PUBLIC range-v3::range-v3 taocpp::pegtl)
 target_add_warnings(libparse)
 
 #Handle filesystem seperately

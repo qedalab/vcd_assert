@@ -66,15 +66,15 @@ std::size_t Scope::get_scope_index(std::string &identifier) const
 
 std::size_t Scope::num_scopes() const noexcept { return child_scopes_.size(); }
 
-auto Scope::get_scopes() const -> decltype(ranges::view::all(this->child_scopes_))
+auto Scope::get_scopes() const -> decltype(ranges::views::all(this->child_scopes_))
 {
-  return ranges::view::all(this->child_scopes_);
+  return ranges::views::all(this->child_scopes_);
 }
 
 auto Scope::get_variables() const
-    -> decltype(ranges::view::all(this->child_variables_))
+    -> decltype(ranges::views::all(this->child_variables_))
 {
-  return ranges::view::all(this->child_variables_);
+  return ranges::views::all(this->child_variables_);
 }
 
 std::string_view Scope::get_identifier() const noexcept { return identifier_; }

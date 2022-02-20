@@ -33,6 +33,7 @@
 #include <fmt/printf.h>
 #include <range/v3/algorithm/equal.hpp>
 #include <range/v3/algorithm/copy.hpp>
+#include <range/v3/iterator/insert_iterators.hpp>
 
 #include <iostream>
 #include <string>
